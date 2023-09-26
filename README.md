@@ -20,14 +20,14 @@ Before you can start contributing to CollegeCupid, you need to set up your devel
 
 ### Fork the Repository
 
-1. Fork the [CollegeCupid repository](https://github.com/swciitg/college-cupid) to your GitHub account by clicking the "Fork" button on the top-right corner of the repository page.
+1. Fork the [CollegeCupid repository](https://github.com/swciitg/college_cupid) to your GitHub account by clicking the "Fork" button on the top-right corner of the repository page.
 
 ### Clone Your Fork
 
 1. Clone your forked repository to your local machine using the following command:
 
    ```bash
-   git clone https://github.com/swciitg/college-cupid.git
+   git clone https://github.com/swciitg/college_cupid.git
    ```
 
 ### Install Dependencies
@@ -51,7 +51,7 @@ Before you can start contributing to CollegeCupid, you need to set up your devel
 
 We welcome all contributions, big or small. Here's how you can contribute to CollegeCupid:
 
-1. **Pick an Issue**: Check out our [Issues](https://github.com/swciitg/college-cupid/issues) page to find a task that interests you. 
+1. **Pick an Issue**: Check out our [Issues](https://github.com/swciitg/college_cupid/issues) page to find a task that interests you. 
 
 2. **Create a Branch**: Create a new branch for your contribution using a descriptive name, such as `fix-issue-123` or `feature-add-new-feature`.
 
