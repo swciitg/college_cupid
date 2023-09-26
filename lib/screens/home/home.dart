@@ -1,8 +1,8 @@
-import 'package:college_cupid/functions/home/nav_icons.dart';
-import 'package:college_cupid/screens//add_choices/add_choices_tab.dart';
-import 'package:college_cupid/screens//home/home_tab.dart';
-import 'package:college_cupid/screens//profile/profile_tab.dart';
-import 'package:college_cupid/shared/colors.dart';
+import '../../functions/home/nav_icons.dart';
+import '../add_choices/add_choices_tab.dart';
+import './home_tab.dart';
+import '../profile/profile_tab.dart';
+import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {

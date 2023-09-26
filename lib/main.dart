@@ -1,4 +1,4 @@
-import 'package:college_cupid/screens/home/home.dart';
+import './screens/home/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
