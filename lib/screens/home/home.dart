@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 }
@@ -18,17 +19,18 @@ class _HomeState extends State<Home> {
     AddChoicesTab(),
     ProfileTab(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CupidTheme.backgroundColor,
+      backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
           'CollegeCupid',
           style: TextStyle(
-            color: CupidTheme.titleColor,
+            color: CupidColors.titleColor,
             fontFamily: 'SedgwickAve',
             fontSize: 28,
           ),
@@ -36,16 +38,16 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: CupidTheme.navBarIndicatorColor,
+          indicatorColor: CupidColors.navBarIndicatorColor,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           height: 60,
           iconTheme: MaterialStateProperty.all(
-            const IconThemeData(color: CupidTheme.navBarIconColor),
+            const IconThemeData(color: CupidColors.navBarIconColor),
           ),
         ),
         child: NavigationBar(
           elevation: 4,
-          backgroundColor: CupidTheme.navBarBackgroundColor,
+          backgroundColor: CupidColors.navBarBackgroundColor,
           selectedIndex: index,
           onDestinationSelected: (i) => setState(() {
             index = i;
