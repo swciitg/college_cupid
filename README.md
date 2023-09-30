@@ -1,10 +1,10 @@
-# CollegeCupid Hacktoberfest README
+# CollegeCupid
 
-Welcome to CollegeCupid's Hacktoberfest! We are excited to have you contribute to our Flutter app and help make it even better. This README will guide you through the process of getting started with CollegeCupid, understanding our project, and contributing to it.
+CollegeCupid is a Flutter app designed to help college students connect with one another. CollegeCupid aims to make the process of matching wih your crushes within your college community easy and fun.
 
-## About CollegeCupid
+## UI Design
 
-CollegeCupid is a Flutter app designed to help college students connect with one another. Whether you're looking for friends, study partners, or even a potential romantic interest, CollegeCupid aims to make the process of finding like-minded individuals within your college community easy and fun.
+Look at the design [here](https://www.figma.com/file/UflmkdmzL9LVwFgbfdlJaa/CampusCupid---SWC-IITG?type=design&node-id=4-1476&mode=design&t=ABmiAo6g0caTFR8y-0)
 
 ## Getting Started
 
@@ -52,8 +52,6 @@ Before you can start contributing to CollegeCupid, you need to set up your devel
 We welcome all contributions, big or small. Here's how you can contribute to CollegeCupid:
 
 1. **Pick an Issue**: Check out our [Issues](https://github.com/swciitg/college_cupid/issues) page to find a task that interests you. 
-
-2. **Create a Branch**: Create a new branch for your contribution using a descriptive name, such as `fix-issue-123` or `feature-add-new-feature`.
 
 3. **Make Changes**: Make your changes or improvements to the code.
 
