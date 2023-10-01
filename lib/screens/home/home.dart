@@ -28,16 +28,20 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.pink, // Change this to pink
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
-          'CollegeCupid',
-          style: TextStyle(
-            color: CupidColors.titleColor,
-            fontFamily: 'SedgwickAve',
-            fontSize: 28,
-          ),
-        ),
+        title: const Text('CollegeCupid',
+            style: TextStyle(
+              color: CupidColors.titleColor,
+              fontSize: 28,
+            )),
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
@@ -60,7 +64,6 @@ class _HomeState extends State<Home> {
       ),
       body: SafeArea(
         child: tabs[index],
-        //fixed code
       ),
     );
   }
