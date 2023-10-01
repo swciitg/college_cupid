@@ -27,7 +27,7 @@ Before you can start contributing to CollegeCupid, you need to set up your devel
 1. Clone your forked repository to your local machine using the following command:
 
    ```bash
-   git clone https://github.com/swciitg/college_cupid.git
+   git clone https://github.com/<Your Github username>/college_cupid.git
    ```
 
 ### Install Dependencies
