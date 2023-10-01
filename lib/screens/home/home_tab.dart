@@ -23,7 +23,7 @@ class _HomeTabState extends State<HomeTab> {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Center(
-        child: Text('Home'),
+        child: Text('VIVEK'),
       ),
     );
   }
