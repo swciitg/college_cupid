@@ -8,4 +8,7 @@ class CupidColors {
   static const navBarIndicatorColor = Color.fromRGBO(255, 242, 245, 1);
   static const countdownColor = Color.fromRGBO(250, 200, 170, 1);
   static const secondaryColor = Color.fromRGBO(245, 150, 175, 1);
+  static const blackColor= Color.fromRGBO(0, 0, 0, 1);
+  static const pinkColor= Color.fromRGBO(241, 95, 138, 1);
+  static const grayColor= Color.fromRGBO(0, 0, 0, 0.7);
 }
