@@ -62,6 +62,10 @@ flutter:
   assets:
     - assets/images/profile_photo.png
     - assets/images/close_image.png
+    - assets/icons/acc.png
+    - assets/icons/slides.png
+    - assets/icons/phone.png
+    - assets/icons/likelike(1).png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

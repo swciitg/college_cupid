@@ -1,5 +1,5 @@
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
-
+import 'package:college_cupid/screens/account/acc.dart';
 import '../../functions/home/nav_icons.dart';
 import '../add_choices/add_choices_tab.dart';
 import './home_tab.dart';
@@ -21,6 +21,7 @@ class _HomeState extends State<Home> {
     YourCrushesTab(),
     AddChoicesTab(),
     ProfileTab(),
+    Accounttab(),
   ];
 
   @override
@@ -48,6 +49,7 @@ class _HomeState extends State<Home> {
       ),
       body: SafeArea(
         child: tabs[index],
+        //fixed code
       ),
     );
   }
