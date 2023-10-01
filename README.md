@@ -1,6 +1,6 @@
 # CollegeCupid
 
-CollegeCupid is a Flutter app designed to help college students connect with one another. CollegeCupid aims to make the process of matching wih your crushes within your college community easy and fun.
+CollegeCupid is a Flutter app designed to help college students connect with one another. CollegeCupid aims to make the process of matching students with their crushes within their college community easy and fun.
 
 ## UI Design
 
@@ -61,7 +61,7 @@ We welcome all contributions, big or small. Here's how you can contribute to Col
 
 6. **Push Changes**: Push your changes to your fork on GitHub.
 
-7. **Create a Pull Request**: Open a pull request from your fork to the `main` branch of the original repository.
+7. **Create a Pull Request**: Open a pull request from your fork to the `main` branch of the original repository, also write a suitable comment explaining your Pull request for better understanding.
 
 8. **Review and Feedback**: Your pull request will be reviewed by our team. Make any necessary changes based on feedback.
 
@@ -72,3 +72,5 @@ We welcome all contributions, big or small. Here's how you can contribute to Col
 Thank you for participating in CollegeCupid's Hacktoberfest. We appreciate your contributions, and together, we can make CollegeCupid even better for college students everywhere. If you have any questions or need assistance, feel free to reach out to us via GitHub issues or our community chat.
 
 Happy coding! 🚀🎉
+
+![Alt text](https://miro.medium.com/v2/resize:fit:828/format:webp/1*Lz_KFgbak2sUjwjOG9SZ4g.png)
