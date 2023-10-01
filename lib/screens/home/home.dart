@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: CupidColors.navBarIndicatorColor,
+          indicatorColor: Colors.pink.shade50,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           height: 60,
           iconTheme: MaterialStateProperty.all(

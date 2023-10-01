@@ -65,6 +65,7 @@ flutter:
     - assets/icons/slides.png
     - assets/icons/phone.png
     - assets/icons/likelike(1).png
+    - assets/icons/couple.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
