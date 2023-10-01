@@ -60,6 +60,7 @@ class _HomeState extends State<Home> {
       ),
       body: SafeArea(
         child: tabs[index],
+        //fixed code
       ),
     );
   }
