@@ -1,40 +1,85 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:slide_countdown/slide_countdown.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 
-class Countdown extends StatefulWidget {
-  @override
-  _CountdownState createState() => _CountdownState();
-}
-
-class _CountdownState extends State<Countdown> {
+class Timer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        widthFactor: 10,
-        child: SizedBox(
-          width: 300,
-          height: 100,
-          child: SlideCountdown(
-            duration: Duration(days: 10),
-            decoration: BoxDecoration(
-              color: Colors.pinkAccent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            icon: Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.access_time_sharp,
-                color: Colors.white,
-                size: 40,
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 20, bottom: 20, top: 40, right: 80),
+              child: Text(
+                'Your Matches',
+                style: TextStyle(
+                    color: Colors.pinkAccent,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.left,
               ),
             ),
-            showZeroValue: true,
           ),
-        ),
+          const Spacer(),
+          SizedBox(height: 70, child: Image.asset('assets/icons/clock.png')),
+          SizedBox(height: 25),
+          Center(
+            child: Container(
+              width: 300,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.pinkAccent,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Center(
+                child: TimerCountdown(
+                  format: CountDownTimerFormat.daysHoursMinutesSeconds,
+                  descriptionTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  endTime: DateTime.now().add(
+                    Duration(
+                      days: 30,
+                      hours: 00,
+                      minutes: 00,
+                      seconds: 00,
+                    ),
+                  ),
+                  onEnd: () {
+                    print("Timer finished");
+                  },
+                  timeTextStyle: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 25),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Please wait till the end of the timer to see your matches',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          const Spacer(),
+          const Spacer(),
+        ],
       ),
     );
   }

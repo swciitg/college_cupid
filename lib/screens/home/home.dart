@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:college_cupid/screens/account/acc.dart';
 
 import '../../functions/home/nav_icons.dart';
@@ -19,7 +21,7 @@ class _HomeState extends State<Home> {
   List<Widget> tabs = [
     HomeTab(),
     AddChoicesTab(),
-    Countdown(),
+    Timer(),
     Accounttab(),
   ];
 
@@ -39,7 +41,7 @@ class _HomeState extends State<Home> {
         elevation: 0,
         title: const Text('CollegeCupid',
             style: TextStyle(
-              color: CupidColors.titleColor,
+              color: Colors.black,
               fontSize: 28,
             )),
       ),
