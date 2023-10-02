@@ -16,10 +16,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int index = 0;
-  List<Widget> tabs = const [
+  List<Widget> tabs = [
     HomeTab(),
     AddChoicesTab(),
-    ProfileTab(),
+    Countdown(),
     Accounttab(),
   ];
 

@@ -10,12 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'CollegeCupid',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SignIn(),
-      ),
+      home: SignIn(),
     );
   }
 }
