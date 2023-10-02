@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/screens/account/acc.dart';
 import '../../functions/home/nav_icons.dart';
 import '../add_choices/add_choices_tab.dart';
@@ -19,6 +20,7 @@ class _HomeState extends State<Home> {
   int index = 0;
   List<Widget> tabs = [
     HomeTab(),
+    YourCrushesTab(),
     AddChoicesTab(),
     Timer(),
     Accounttab(),
