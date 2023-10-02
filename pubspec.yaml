@@ -72,6 +72,9 @@ flutter:
     - assets/icons/likelike(1).png
     - assets/icons/couple.jpg
     - assets/icons/clock.png
+    - assets/icons/crush.png
+    - assets/icons/filter.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
