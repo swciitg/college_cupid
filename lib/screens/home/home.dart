@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/screens/account/acc.dart';
 import '../../functions/home/nav_icons.dart';
@@ -21,9 +22,8 @@ class _HomeState extends State<Home> {
   List<Widget> tabs = [
     HomeTab(),
     YourCrushesTab(),
-    AddChoicesTab(),
     Timer(),
-    Accounttab(),
+    const ProfileTab(isMine: true),
   ];
 
   @override

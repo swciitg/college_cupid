@@ -5,7 +5,8 @@ import 'package:expandable_text/expandable_text.dart';
 import '../../shared/colors.dart';
 
 class ProfileTab extends StatefulWidget {
-  const ProfileTab({super.key});
+  final bool isMine;
+  const ProfileTab({required this.isMine, super.key});
 
   @override
   State<ProfileTab> createState() => _ProfileTabState();
@@ -24,13 +25,16 @@ class _ProfileTabState extends State<ProfileTab> {
         ),
         child: GestureDetector(
           child: Icon(
-            Icons.edit,
+            widget.isMine ? Icons.edit : Icons.favorite,
             size: w / 8,
             color: Colors.white,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ProfileList()));
+            if(widget.isMine){
+              //TODO: Navigate to edit profile screen
+            }else{
+              //TODO: Add the person to My Crushes List
+            }
           },
         ));
   }
@@ -158,17 +162,19 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     var safeArea = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-        child: Container(
-      child: Stack(
-        children: [
-          aboutMe(safeArea.height),
-          Positioned(
-              left: 2 * safeArea.width / 5,
-              top: safeArea.height / 2 - safeArea.width / 10,
-              child: editButton(safeArea.width)),
-        ],
-      ),
-    ));
+    return Scaffold(
+      body: SingleChildScrollView(
+          child: Container(
+        child: Stack(
+          children: [
+            aboutMe(safeArea.height),
+            Positioned(
+                left: 2 * safeArea.width / 5,
+                top: safeArea.height / 2 - safeArea.width / 10,
+                child: editButton(safeArea.width)),
+          ],
+        ),
+      )),
+    );
   }
 }
