@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../home/home.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -11,10 +12,6 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign in'),
-        elevation: 4,
-      ),
       body: SizedBox(
         width: double.infinity,
         child: Container(
@@ -30,7 +27,6 @@ class _SignInState extends State<SignIn> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'SedgwickAve',
                   fontSize: 30,
                 ),
               ),
@@ -38,7 +34,7 @@ class _SignInState extends State<SignIn> {
               SizedBox(
                 height: 400,
                 width: 400,
-                child: Image.asset('lib/assets/couple.jpg'),
+                child: Image.asset('assets/icons/couple.jpg'),
               ),
               const Spacer(),
               const Text(
@@ -46,13 +42,19 @@ class _SignInState extends State<SignIn> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'SedgwickAve',
                   fontSize: 20,
                 ),
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Home(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,

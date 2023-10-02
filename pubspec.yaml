@@ -35,6 +35,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  curved_navigation_bar: ^1.0.3
+  flutter_timer_countdown: ^1.0.5
+  slide_countdown: ^0.6.0
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +70,8 @@ flutter:
     - assets/icons/slides.png
     - assets/icons/phone.png
     - assets/icons/likelike(1).png
+    - assets/icons/couple.jpg
+    - assets/icons/clock.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
