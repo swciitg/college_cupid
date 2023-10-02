@@ -1,5 +1,6 @@
+import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:flutter/material.dart';
-import '../home/home.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -50,8 +51,10 @@ class _SignInState extends State<SignIn> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => Home(),
+                    PageTransition(
+                      child: const AboutYouScreen(),
+                      type: PageTransitionType.rightToLeftWithFade,
+                      curve: Curves.decelerate,
                     ),
                   );
                 },

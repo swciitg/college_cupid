@@ -11,5 +11,27 @@ class CupidStyles {
   static const countdownLabelStyle =
       TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
 
-  static const headingStyle = TextStyle(fontSize: 24);
+  static const headingStyle = TextStyle(
+    fontFamily: 'Sk-Modernist',
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+  static const pageHeadingStyle = TextStyle(
+    fontFamily: 'Sk-Modernist',
+    fontSize: 34,
+    fontWeight: FontWeight.bold,
+    color: CupidColors.normalTextColor,
+  );
+  static const lightTextStyle = TextStyle(
+    fontFamily: 'Sk-Modernist',
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    color: CupidColors.lightTextColor,
+  );
+  static const normalTextStyle = TextStyle(
+    fontFamily: 'Sk-Modernist',
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: CupidColors.normalTextColor,
+  );
 }
