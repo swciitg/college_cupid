@@ -17,13 +17,15 @@ class Timer extends StatelessWidget {
                 'Your Matches',
                 style: TextStyle(
                     color: Colors.pinkAccent,
-                    fontSize: 30,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.left,
               ),
             ),
           ),
-          const Spacer(),
+          SizedBox(
+            height: 30,
+          ),
           SizedBox(height: 70, child: Image.asset('assets/icons/clock.png')),
           SizedBox(height: 25),
           Center(
@@ -62,7 +64,7 @@ class Timer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 25),
+          SizedBox(height: 15),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(

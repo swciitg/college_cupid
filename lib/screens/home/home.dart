@@ -1,13 +1,12 @@
 import 'dart:async';
-
 import 'package:college_cupid/screens/account/acc.dart';
-
 import '../../functions/home/nav_icons.dart';
 import '../add_choices/add_choices_tab.dart';
 import './home_tab.dart';
 import '../profile/profile_tab.dart';
 import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -39,7 +38,7 @@ class _HomeState extends State<Home> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('CollegeCupid',
+        title: Text('CollegeCupid',
             style: TextStyle(
               color: Colors.black,
               fontSize: 28,
@@ -50,9 +49,14 @@ class _HomeState extends State<Home> {
           indicatorColor: Colors.pink.shade50,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           height: 60,
-          iconTheme: MaterialStateProperty.all(
-            const IconThemeData(color: CupidColors.navBarIconColor),
-          ),
+          iconTheme: MaterialStateProperty.resolveWith((states) {
+            // Change icon color based on the tab being active or inactive
+            if (states.contains(MaterialState.selected)) {
+              return const IconThemeData(color: CupidColors.navBarIconColor);
+            } else {
+              return const IconThemeData(color: Colors.grey);
+            }
+          }),
         ),
         child: NavigationBar(
           elevation: 4,

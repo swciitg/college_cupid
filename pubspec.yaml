@@ -38,6 +38,7 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_timer_countdown: ^1.0.5
   slide_countdown: ^0.6.0
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
