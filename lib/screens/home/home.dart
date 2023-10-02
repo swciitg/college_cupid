@@ -4,7 +4,7 @@ import 'package:college_cupid/screens/account/acc.dart';
 import '../../functions/home/nav_icons.dart';
 import '../add_choices/add_choices_tab.dart';
 import './home_tab.dart';
-import '../profile/profile_tab.dart';
+import '../your_matches/your_matches.dart';
 import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
