@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 
-const List<NavigationDestination> navIcons = [
+List<NavigationDestination> navIcons = [
   NavigationDestination(
-    icon: Icon(
-      Icons.home_rounded,
-      size: 32,
-    ),
-    label: 'Home',
-  ),
-  NavigationDestination(icon: Icon(Icons.edit_rounded), label: 'Add Choices'),
+      icon: Image.asset('assets/icons/slides.png'), label: 'slides'),
   NavigationDestination(
-    icon: Icon(
-      Icons.person_rounded,
-      size: 32,
-    ),
-    label: 'Profile',
-  )
+      icon: Image.asset('assets/icons/likelike(1).png'), label: 'check likes'),
+  NavigationDestination(
+      icon: Image.asset('assets/icons/phone.png'), label: 'recent calls '),
+  NavigationDestination(
+      icon: Image.asset('assets/icons/acc.png'), label: 'your account'),
 ];
