@@ -40,6 +40,7 @@ dependencies:
   flutter_timer_countdown: ^1.0.5
   slide_countdown: ^0.6.0
   google_fonts: ^6.1.0
+  page_transition: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +96,9 @@ flutter:
     - family: Sk-Modernist
       fonts:
         - asset: assets/fonts/Sk-Modernist-Regular.otf
+        - asset: assets/fonts/Sk-Modernist-Bold.otf
+          weight: 700
+
 
 
   #   - family: Trajan Pro
