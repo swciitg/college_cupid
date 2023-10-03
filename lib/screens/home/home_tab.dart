@@ -1,3 +1,4 @@
+import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:flutter/material.dart';
 
 class HomeTab extends StatefulWidget {
@@ -76,11 +77,36 @@ class _HomeTabState extends State<HomeTab> {
                     mainAxisSpacing: 12,
                     crossAxisCount: 2,
                     children: List.generate(30, (index) {
-                      return Container(
-                        padding: const EdgeInsets.all(8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset('assets/icons/crush.png'),
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            // isMine = false;
+                          });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileList()));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('assets/icons/crush.png'))),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: SizedBox()),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    "Name",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                )
+                              ]),
                         ),
                       );
                     }),
