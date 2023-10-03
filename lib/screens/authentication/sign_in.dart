@@ -1,4 +1,5 @@
 import 'package:college_cupid/screens/about_you/about_you.dart';
+import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -52,7 +53,7 @@ class _SignInState extends State<SignIn> {
                   Navigator.push(
                     context,
                     PageTransition(
-                      child: const AboutYouScreen(),
+                      child: const ProfileDetails(),
                       type: PageTransitionType.rightToLeftWithFade,
                       curve: Curves.decelerate,
                     ),
