@@ -1,3 +1,4 @@
+import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                   child: TextField(
                     controller: _searchController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Search',
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none, // No border for the TextField
@@ -46,7 +47,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     // Handle the clear button press
                   },
@@ -58,11 +59,11 @@ class _HomeTabState extends State<HomeTab> {
             mainAxisAlignment:
                 MainAxisAlignment.end, // Align the row to the right
             children: [
-              Text('Filter '),
+              const Text('Filter '),
               IconButton(
                 icon: Image.asset('assets/icons/filter.png'),
                 onPressed: () {
-                  // Handle the filter button press
+                  showFilterSheet(context);
                 },
               ),
             ],
@@ -85,19 +86,19 @@ class _HomeTabState extends State<HomeTab> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileList()));
+                                  builder: (context) => const ProfileList()));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               image: DecorationImage(
                                   image: AssetImage('assets/icons/crush.png'))),
-                          child: Column(
+                          child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Expanded(child: SizedBox()),
                                 Padding(
-                                  padding: const EdgeInsets.all(16.0),
+                                  padding: EdgeInsets.all(16.0),
                                   child: Text(
                                     "Name",
                                     style: TextStyle(
@@ -118,5 +119,14 @@ class _HomeTabState extends State<HomeTab> {
         ],
       ),
     );
+  }
+
+  Future<dynamic> showFilterSheet(BuildContext context) {
+    return showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return const FilterBottomSheet();
+        });
   }
 }
