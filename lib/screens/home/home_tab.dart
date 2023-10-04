@@ -1,18 +1,17 @@
 import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
-import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({Key? key});
+  const HomeTab({super.key});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
@@ -37,7 +36,8 @@ class _HomeTabState extends State<HomeTab> {
                     border: Border.all(
                       color: Colors.pink, // Highlight color
                     ),
-                    color: CupidColors.backgroundColor, // Background color for the TextField
+                    color: CupidColors
+                        .backgroundColor, // Background color for the TextField
                   ),
                   child: TextField(
                     controller: _searchController,
@@ -72,7 +72,6 @@ class _HomeTabState extends State<HomeTab> {
           ),
           Expanded(
             child: CustomScrollView(
-              
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -89,7 +88,8 @@ class _HomeTabState extends State<HomeTab> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ProfileTab(isMine: false)));
+                                  builder: (context) =>
+                                      const ProfileTab(isMine: false)));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),

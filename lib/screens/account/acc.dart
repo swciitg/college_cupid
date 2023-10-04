@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
 
 class Accounttab extends StatefulWidget {
   const Accounttab({super.key});

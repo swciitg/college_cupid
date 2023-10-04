@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:expandable_text/expandable_text.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 import '../../shared/colors.dart';
 
 class ProfileList extends StatefulWidget {
@@ -11,69 +9,76 @@ class ProfileList extends StatefulWidget {
 }
 
 class _ProfileListState extends State<ProfileList> {
+  bool readMore = false;
 
-  bool read_more = false;
-
-  Widget likeButton(var w){
+  Widget likeButton(var w) {
     return Container(
-      height: w/5,
-      width: w/5,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(w/10)),
-        color: Colors.pinkAccent,
-      ),
-      child: GestureDetector(
-        child:Icon(Icons.favorite,size: w/8,color: Colors.white,),
-        onTap: () {
-          // like function for your crush
-        },
-      )
-    );
+        height: w / 5,
+        width: w / 5,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(w / 10)),
+          color: Colors.pinkAccent,
+        ),
+        child: GestureDetector(
+          child: Icon(
+            Icons.favorite,
+            size: w / 8,
+            color: Colors.white,
+          ),
+          onTap: () {
+            // like function for your crush
+          },
+        ));
   }
 
-
-    Widget backButton(var w){
+  Widget backButton(var w) {
     return Container(
-      height: w/8,
-      width: w/8,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(w/16)),
-        color: const Color.fromARGB(255, 208, 199, 199),
-      ),
-      child: GestureDetector(
-        child:Center(child: Padding(
-          padding: const EdgeInsets.only(left: 9.7),
-          child: Icon(Icons.arrow_back_ios,size: w/12,color: Colors.white,),
-        )),
-        onTap: () {
-            // go back function 
-        },
-      )
-    );
+        height: w / 8,
+        width: w / 8,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(w / 16)),
+          color: const Color.fromARGB(255, 208, 199, 199),
+        ),
+        child: GestureDetector(
+          child: Center(
+              child: Padding(
+            padding: const EdgeInsets.only(left: 9.7),
+            child: Icon(
+              Icons.arrow_back_ios,
+              size: w / 12,
+              color: Colors.white,
+            ),
+          )),
+          onTap: () {
+            // go back function
+          },
+        ));
   }
 
-  Widget gridView(){
+  Widget gridView() {
     return Container(
       height: 100,
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: GridView.count(
         crossAxisCount: 3,
-        childAspectRatio: 8/2,
+        childAspectRatio: 8 / 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         children: List.generate(5, (index) {
           return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.pink,
-                  spreadRadius: 1,
-                )
-              ]
-            ),
-            child: Center(
-              child: Text("Anime",style: TextStyle(color: Colors.black,),),
+            decoration: const BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                color: Colors.pink,
+                spreadRadius: 1,
+              )
+            ]),
+            child: const Center(
+              child: Text(
+                "Anime",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
             ),
           );
         }),
@@ -81,69 +86,87 @@ class _ProfileListState extends State<ProfileList> {
     );
   }
 
-  
-
-
-
-
-
-  Widget aboutMe(var h){
+  Widget aboutMe(var h) {
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage('https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSTWW4wvzwA9V0xdjG-kF_yXQH__lV5ciORmTPCi4iO6OzxzhJi'),
-          fit: BoxFit.cover
-        )
-      ),
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(
+                  'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSTWW4wvzwA9V0xdjG-kF_yXQH__lV5ciORmTPCi4iO6OzxzhJi'),
+              fit: BoxFit.cover)),
       child: Column(
         children: [
           SizedBox(
-            height: h/2,
+            height: h / 2,
           ),
-
           Container(
-            padding: EdgeInsets.all(20),
-
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))
-            ),
-            child:  Column(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Name",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                const Text(
+                  "Name",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
                   child: Row(
                     children: [
-                      Text("Id",textAlign: TextAlign.left,),
+                      Text(
+                        "Id",
+                        textAlign: TextAlign.left,
+                      ),
                       Expanded(child: SizedBox()),
-                      Text("Btech 25",textAlign: TextAlign.right,)
+                      Text(
+                        "Btech 25",
+                        textAlign: TextAlign.right,
+                      )
                     ],
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                Text("About",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),textAlign: TextAlign.left,),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                // Text(),
-               Container(
-                        height: !read_more ? 33 : null,
-                        child: Text("About me RichText Widget: Allows you to style different parts of the text differently. "
-                     "It uses the TextSpan widget to define styled spans of text within the widget.",overflow: TextOverflow.clip,),
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                const Text(
+                  "About",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  textAlign: TextAlign.left,
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                // Text(),
+                SizedBox(
+                  height: !readMore ? 33 : null,
+                  child: const Text(
+                    "About me RichText Widget: Allows you to style different parts of the text differently. "
+                    "It uses the TextSpan widget to define styled spans of text within the widget.",
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 8)),
                 GestureDetector(
-                  child: Text( read_more ? "Show less":"Read more",style: TextStyle(color: CupidColors.navBarIconColor),textAlign: TextAlign.left,),
+                  child: Text(
+                    readMore ? "Show less" : "Read more",
+                    style: const TextStyle(color: CupidColors.navBarIconColor),
+                    textAlign: TextAlign.left,
+                  ),
                   onTap: () {
                     setState(() {
-                      read_more = !read_more;
+                      readMore = !readMore;
                     });
-                    
                   },
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                Text("Interests",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
-                Padding(padding: EdgeInsets.only(top: 8)),
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                const Text(
+                  "Interests",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.left,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 8)),
                 gridView(),
               ],
             ),
@@ -153,36 +176,29 @@ class _ProfileListState extends State<ProfileList> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     var safeArea = MediaQuery.of(context).size;
-     return 
-    Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-       body:
-       SingleChildScrollView(
-        child: Container(
-        // height: double.maxFinite,
+      body: SingleChildScrollView(
         child: Stack(
           children: [
-            Padding(padding: EdgeInsets.only(top: 10)),
+            const Padding(padding: EdgeInsets.only(top: 10)),
             aboutMe(safeArea.height),
             Positioned(
-                left: 2*safeArea.width/5,
-                top: safeArea.height/2-safeArea.width/10,
-                child: likeButton(safeArea.width)
-            ),
+                left: 2 * safeArea.width / 5,
+                top: safeArea.height / 2 - safeArea.width / 10,
+                child: likeButton(safeArea.width)),
             Positioned(
-              left: safeArea.width/12,
-              top: safeArea.width/12,
-              child: backButton(safeArea.width))
+                left: safeArea.width / 12,
+                top: safeArea.width / 12,
+                child: backButton(safeArea.width))
           ],
         ),
-      ),
       ),
     );
   }

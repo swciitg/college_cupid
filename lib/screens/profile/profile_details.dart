@@ -37,7 +37,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         this.image = imageTemporary;
       });
     } catch (e) {
-      print('Error picking image: $e');
+      debugPrint('Error picking image: $e');
     }
   }
 
@@ -93,8 +93,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         child: Padding(
                           padding: EdgeInsets.all(3),
                           child: Icon(Icons.camera_alt_outlined,
-                              size: 16,
-                              color: Colors.white),
+                              size: 16, color: Colors.white),
                         ),
                       )))
             ]),

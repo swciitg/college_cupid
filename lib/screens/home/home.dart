@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
-import 'package:college_cupid/screens/account/acc.dart';
 import '../../functions/home/nav_icons.dart';
-import '../add_choices/add_choices_tab.dart';
 import './home_tab.dart';
 import '../your_matches/your_matches.dart';
 import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,9 +16,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int index = 0;
   List<Widget> tabs = [
-    HomeTab(),
-    YourCrushesTab(),
-    Timer(),
+    const HomeTab(),
+    const YourCrushesTab(),
+    const Timer(),
     const ProfileTab(isMine: true),
   ];
 
@@ -32,7 +28,7 @@ class _HomeState extends State<Home> {
       backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           color: Colors.pink, // Change this to pink
           onPressed: () {
             Navigator.pop(context);
@@ -40,7 +36,7 @@ class _HomeState extends State<Home> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('CollegeCupid',
+        title: const Text('CollegeCupid',
             style: TextStyle(
               color: Colors.black,
               fontSize: 28,

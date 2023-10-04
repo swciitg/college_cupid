@@ -66,9 +66,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   void applyFilter() {
     final selectedGender = intoGirls ? "Girls" : "Boys";
-    print("selected gender: $selectedGender");
-    print("program: $program");
-    print("year: $year");
+    debugPrint("selected gender: $selectedGender");
+    debugPrint("program: $program");
+    debugPrint("year: $year");
     Navigator.pop(context);
     // TODO: implement actual filter function
   }
@@ -167,7 +167,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 label: 'Programs',
                 value: program,
                 onChanged: changeProgram,
-                validator: (value) {},
+                validator: (value) {
+                  return null;
+                },
                 icon: dropDownIcon,
               ),
               const SizedBox(width: 20),
@@ -176,7 +178,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 label: "Year of study ",
                 value: year,
                 onChanged: changeYear,
-                validator: (value) {},
+                validator: (value) {
+                  return null;
+                },
                 icon: dropDownIcon,
               ),
             ],

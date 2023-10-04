@@ -1,4 +1,3 @@
-import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';

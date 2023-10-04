@@ -30,21 +30,21 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
   Widget getTitle() {
     return Container(
       margin: const EdgeInsets.only(top: 23),
-      child:  Text('CollegeCupid', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist')),
+      child:  const Text('CollegeCupid', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist')),
     );
   }
 
   Widget getSubTitle() {
     return Container(
       margin: const EdgeInsets.only(top: 11),
-      child:  Text('Your Crushes', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.pinkColor, fontFamily: 'Sk-Modernist')),
+      child:  const Text('Your Crushes', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.pinkColor, fontFamily: 'Sk-Modernist')),
     );
   }
 
   Widget getInstruction() {
     return Container(
       margin: const EdgeInsets.only(top: 10),
-      child:  Text('You can select a maximum of 5 crushes at a time.', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: CupidColors.grayColor, fontFamily: 'Sk-Modernist')),
+      child:  const Text('You can select a maximum of 5 crushes at a time.', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: CupidColors.grayColor, fontFamily: 'Sk-Modernist')),
     );
   }
 
@@ -59,7 +59,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                   width: 295,
                   decoration: BoxDecoration(
                     border: Border.all(width: 1, color: CupidColors.pinkColor),
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                   ),
                   child: getCrushListItem()
               );
@@ -84,7 +84,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20), // Image border
       child: SizedBox.fromSize(
-        child: Image(image: AssetImage('assets/images/profile_photo.png'), fit: BoxFit.cover, width: 64, height: 66),
+        child: const Image(image: AssetImage('assets/images/profile_photo.png'), fit: BoxFit.cover, width: 64, height: 66),
       ),
     );
   }
@@ -106,12 +106,12 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
   Widget getName() {
     return Container(
       margin: const EdgeInsets.only(top: 9),
-      child:  Text('Selena Singh', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist')),
+      child:  const Text('Selena Singh', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist')),
     );
   }
 
   Widget getCourse() {
-     return Text('B. Tech ‘25', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist'));
+     return const Text('B. Tech ‘25', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: CupidColors.blackColor, fontFamily: 'Sk-Modernist'));
   }
 
   Widget getCloseButton() {
@@ -129,7 +129,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
   Widget getCloseImage() {
     return Container(
       margin: const EdgeInsets.only(right: 24.54, top: 24.54),
-      child: Image(image: AssetImage('assets/images/close_image.png'), fit: BoxFit.cover, width: 17, height: 17),
+      child: const Image(image: AssetImage('assets/images/close_image.png'), fit: BoxFit.cover, width: 17, height: 17),
     );
   }
 }

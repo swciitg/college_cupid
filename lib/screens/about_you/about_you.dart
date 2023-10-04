@@ -73,7 +73,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
   }
 
   void _navigateToNextScreen(BuildContext context) {
-    print("selected interests: $selectedInterests");
+    debugPrint("selected interests: $selectedInterests");
     Navigator.push(
       context,
       PageTransition(

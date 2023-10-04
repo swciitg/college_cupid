@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 
 class Timer extends StatelessWidget {
+  const Timer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Align(
+          const Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, bottom: 20, top: 40, right: 80),
+              padding:
+                  EdgeInsets.only(left: 20, bottom: 20, top: 40, right: 80),
               child: Text(
                 'Your Matches',
                 style: TextStyle(
@@ -23,11 +25,11 @@ class Timer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           SizedBox(height: 70, child: Image.asset('assets/icons/clock.png')),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           Center(
             child: Container(
               width: 300,
@@ -39,13 +41,13 @@ class Timer extends StatelessWidget {
               child: Center(
                 child: TimerCountdown(
                   format: CountDownTimerFormat.daysHoursMinutesSeconds,
-                  descriptionTextStyle: TextStyle(
+                  descriptionTextStyle: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                   endTime: DateTime.now().add(
-                    Duration(
+                    const Duration(
                       days: 30,
                       hours: 00,
                       minutes: 00,
@@ -53,9 +55,9 @@ class Timer extends StatelessWidget {
                     ),
                   ),
                   onEnd: () {
-                    print("Timer finished");
+                    debugPrint("Timer finished");
                   },
-                  timeTextStyle: TextStyle(
+                  timeTextStyle: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.w400,
                     color: Colors.white,
@@ -64,11 +66,11 @@ class Timer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 15),
-          Align(
+          const SizedBox(height: 15),
+          const Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
               child: Text(
                 'Please wait till the end of the timer to see your matches',
                 style: TextStyle(
