@@ -53,8 +53,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 30),
       child: GridView.count(
         crossAxisCount: 2,
-        childAspectRatio: 140 / 45, // as in figma design
-        crossAxisSpacing: 20,
+        childAspectRatio: 140 / 50, // as in figma design
+        crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
