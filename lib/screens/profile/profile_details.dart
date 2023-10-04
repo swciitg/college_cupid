@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileDetails extends StatefulWidget {
@@ -51,7 +49,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Profile Details',
+        title: const Text('Profile Details',
             textAlign: TextAlign.start,
             style: TextStyle(
               color: Colors.black,
@@ -89,27 +87,31 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   right: 0,
                   child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.pink, shape: BoxShape.circle),
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Icon(Icons.camera_alt_outlined,
-                            color: Colors.white),
+                          color: Colors.pink.shade400, shape: BoxShape.circle),
+                      child: const Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Icon(Icons.camera_alt_outlined,
+                              size: 16,
+                              color: Colors.white),
+                        ),
                       )))
             ]),
-            Padding(padding: EdgeInsets.only(top: 30)),
+            const Padding(padding: EdgeInsets.only(top: 30)),
             TextField(
               focusNode: FocusNode(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Name",
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
-                enabledBorder: const OutlineInputBorder(
+                enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
@@ -117,7 +119,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(top: 15)),
+            const Padding(padding: EdgeInsets.only(top: 15)),
             Container(
               height: 56,
               decoration: BoxDecoration(
@@ -128,7 +130,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
+                    const Text(
                       'Select Gender ',
                       style: TextStyle(
                         color: Colors.pink,
@@ -141,7 +143,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         });
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 8, bottom: 8),
+                        margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
                             color: isMale ? Colors.pink : Colors.white,
                             borderRadius: BorderRadius.circular(10)),
@@ -163,7 +165,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         });
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 8, bottom: 8),
+                        margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
                             color: !isMale ? Colors.pink : Colors.white,
                             borderRadius: BorderRadius.circular(10)),
@@ -180,7 +182,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     )
                   ]),
             ),
-            Padding(padding: EdgeInsets.only(top: 15)),
+            const Padding(padding: EdgeInsets.only(top: 15)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -203,17 +205,17 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     decoration: InputDecoration(
                         labelText: "Program",
-                        labelStyle: TextStyle(color: Colors.pink),
+                        labelStyle: const TextStyle(color: Colors.pink),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.pink),
+                          borderSide: const BorderSide(color: Colors.pink),
                           borderRadius: BorderRadius.circular(15),
                         )),
                   ),
                 ),
-                SizedBox(width: 16), // Add some spacing between dropdowns
+                const SizedBox(width: 16), // Add some spacing between dropdowns
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     value: selectedValue2,
@@ -233,35 +235,35 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     decoration: InputDecoration(
                         labelText: "Year",
-                        labelStyle: TextStyle(color: Colors.pink),
+                        labelStyle: const TextStyle(color: Colors.pink),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.pink),
+                          borderSide: const BorderSide(color: Colors.pink),
                           borderRadius: BorderRadius.circular(15),
                         )),
                   ),
                 ),
               ],
             ),
-            Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 20)),
             TextField(
               focusNode: FocusNode(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 label: Text(
                   "Password",
                   style: TextStyle(color: Colors.pink),
                 ),
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
-                enabledBorder: const OutlineInputBorder(
+                enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
@@ -269,20 +271,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 20)),
             TextField(
               focusNode: FocusNode(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Confirm Password",
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
-                enabledBorder: const OutlineInputBorder(
+                enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
@@ -290,7 +292,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 ),
               ),
             ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Container(
               width: double.maxFinite,
               decoration: BoxDecoration(
@@ -304,9 +306,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AboutYouScreen()));
+                          builder: (context) => const AboutYouScreen()));
                 },
-                child: Text(
+                child: const Text(
                   'Continue',
                   style: TextStyle(color: Colors.white),
                 ),

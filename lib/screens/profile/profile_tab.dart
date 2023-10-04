@@ -1,8 +1,5 @@
 import 'package:college_cupid/screens/profile/edit_profile.dart';
-import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:flutter/material.dart';
-import 'package:expandable_text/expandable_text.dart';
-
 import '../../shared/colors.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -14,7 +11,7 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  bool read_more = true;
+  bool readMore = true;
 
   Widget editButton(var w) {
     return Container(
@@ -33,7 +30,7 @@ class _ProfileTabState extends State<ProfileTab> {
           onTap: () {
             if (widget.isMine) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditProfile()));
+                  MaterialPageRoute(builder: (context) => const EditProfile()));
             } else {
               //TODO: Add the person to My Crushes List
             }
@@ -44,7 +41,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget gridView() {
     return Container(
       height: 80,
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: GridView.count(
         crossAxisCount: 3,
         childAspectRatio: 8 / 2,
@@ -53,13 +50,13 @@ class _ProfileTabState extends State<ProfileTab> {
         children: List.generate(5, (index) {
           return Container(
             // height: 20,
-            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+            decoration: const BoxDecoration(color: Colors.white, boxShadow: [
               BoxShadow(
                 color: Colors.pink,
                 spreadRadius: 1,
               )
             ]),
-            child: Center(
+            child: const Center(
               child: Text(
                 "Anime",
                 style: TextStyle(
@@ -75,7 +72,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
   Widget aboutMe(var h) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: NetworkImage(
                   'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSTWW4wvzwA9V0xdjG-kF_yXQH__lV5ciORmTPCi4iO6OzxzhJi'),
@@ -86,8 +83,8 @@ class _ProfileTabState extends State<ProfileTab> {
             height: h / 2,
           ),
           Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -95,12 +92,12 @@ class _ProfileTabState extends State<ProfileTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Name",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
                   child: Row(
                     children: [
                       Text(
@@ -109,41 +106,41 @@ class _ProfileTabState extends State<ProfileTab> {
                       ),
                       Expanded(child: SizedBox()),
                       Text(
-                        "Btech 25",
+                        "B.Tech '25",
                         textAlign: TextAlign.right,
                       )
                     ],
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                Text(
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                const Text(
                   "About",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   textAlign: TextAlign.left,
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                Container(
-                  height: read_more ? 33 : null,
-                  child: Text(
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                SizedBox(
+                  height: readMore ? 33 : null,
+                  child: const Text(
                       "About me RichText Widget: Allows you to style different parts of the text differently. "
                       "It uses the TextSpan widget to define styled spans of text within the widget.",
                       overflow: TextOverflow.clip),
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
+                const Padding(padding: EdgeInsets.only(top: 8)),
                 GestureDetector(
                   child: Text(
-                    !read_more ? "Show less" : "Read more",
-                    style: TextStyle(color: CupidColors.navBarIconColor),
+                    !readMore ? "Show less" : "Read more",
+                    style: const TextStyle(color: CupidColors.navBarIconColor),
                     textAlign: TextAlign.left,
                   ),
                   onTap: () {
                     setState(() {
-                      read_more = !read_more;
+                      readMore = !readMore;
                     });
                   },
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
-                Text(
+                const Padding(padding: EdgeInsets.only(top: 8)),
+                const Text(
                   "Interests",
                   style: TextStyle(
                       color: Colors.black,
@@ -151,7 +148,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left,
                 ),
-                Padding(padding: EdgeInsets.only(top: 8)),
+                const Padding(padding: EdgeInsets.only(top: 8)),
                 gridView(),
               ],
             ),
@@ -166,17 +163,15 @@ class _ProfileTabState extends State<ProfileTab> {
     var safeArea = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
-          child: Container(
-        child: Stack(
-          children: [
-            aboutMe(safeArea.height),
-            Positioned(
-                left: 2 * safeArea.width / 5,
-                top: safeArea.height / 2 - safeArea.width / 10,
-                child: editButton(safeArea.width)),
-          ],
-        ),
-      )),
+          child: Stack(
+            children: [
+              aboutMe(safeArea.height),
+              Positioned(
+                  left: 2 * safeArea.width / 5,
+                  top: safeArea.height / 2 - safeArea.width / 10,
+                  child: editButton(safeArea.width)),
+            ],
+          )),
     );
   }
 }

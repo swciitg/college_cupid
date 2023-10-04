@@ -1,5 +1,7 @@
 import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/screens/profile/profile_list.dart';
+import 'package:college_cupid/screens/profile/profile_tab.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class HomeTab extends StatefulWidget {
@@ -24,7 +26,7 @@ class _HomeTabState extends State<HomeTab> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
             child: Stack(
               alignment:
                   Alignment.centerRight, // Align the clear button to the right
@@ -35,7 +37,7 @@ class _HomeTabState extends State<HomeTab> {
                     border: Border.all(
                       color: Colors.pink, // Highlight color
                     ),
-                    color: Colors.white, // Background color for the TextField
+                    color: CupidColors.backgroundColor, // Background color for the TextField
                   ),
                   child: TextField(
                     controller: _searchController,
@@ -70,9 +72,10 @@ class _HomeTabState extends State<HomeTab> {
           ),
           Expanded(
             child: CustomScrollView(
+              
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   sliver: SliverGrid.count(
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 12,
@@ -86,7 +89,7 @@ class _HomeTabState extends State<HomeTab> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ProfileList()));
+                                  builder: (context) => const ProfileTab(isMine: false)));
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),
@@ -98,7 +101,7 @@ class _HomeTabState extends State<HomeTab> {
                               children: [
                                 Expanded(child: SizedBox()),
                                 Padding(
-                                  padding: EdgeInsets.all(16.0),
+                                  padding: EdgeInsets.all(16),
                                   child: Text(
                                     "Name",
                                     style: TextStyle(
