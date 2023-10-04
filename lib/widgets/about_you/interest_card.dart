@@ -26,7 +26,7 @@ class InterestCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15).copyWith(left: 15),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         height: height ?? 50,
         width: width ?? double.infinity,
         decoration: BoxDecoration(
@@ -46,17 +46,27 @@ class InterestCard extends StatelessWidget {
               : null,
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: isSelected ? Colors.white : CupidColors.titleColor,
             ),
             SizedBox(width: gapInBetween ?? 10),
-            Text(
-              text,
-              overflow: TextOverflow.ellipsis,
-              style: CupidStyles.normalTextStyle.copyWith(
-                color: isSelected ? Colors.white : CupidColors.normalTextColor,
+            Flexible(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: CupidStyles.normalTextStyle.copyWith(
+                    color:
+                        isSelected ? Colors.white : CupidColors.normalTextColor,
+                  ),
+                ),
               ),
             ),
           ],
