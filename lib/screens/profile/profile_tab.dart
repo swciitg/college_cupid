@@ -1,3 +1,4 @@
+import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -30,9 +31,10 @@ class _ProfileTabState extends State<ProfileTab> {
             color: Colors.white,
           ),
           onTap: () {
-            if(widget.isMine){
-              //TODO: Navigate to edit profile screen
-            }else{
+            if (widget.isMine) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfile()));
+            } else {
               //TODO: Add the person to My Crushes List
             }
           },
