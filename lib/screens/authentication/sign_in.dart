@@ -1,5 +1,5 @@
-import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
+import 'package:college_cupid/widgets/global/cupid_botton.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -48,8 +48,8 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               const Spacer(),
-              ElevatedButton(
-                onPressed: () {
+              CupidButton(
+                text: 'Continue with Outlook', onTap: (){
                   Navigator.push(
                     context,
                     PageTransition(
@@ -58,25 +58,7 @@ class _SignInState extends State<SignIn> {
                       curve: Curves.decelerate,
                     ),
                   );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 30,
-                  ),
-                  backgroundColor: Colors.pinkAccent,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  'Continue with Outlook',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                }, height: 50,
               ),
               const Spacer(),
             ],

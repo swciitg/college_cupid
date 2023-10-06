@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_cupid/screens/home/home.dart';
@@ -8,8 +6,6 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
 import 'package:college_cupid/widgets/global/cupid_botton.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -62,26 +58,23 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Widget _buildInterestsGrid() {
-    return Container(
-      // margin: const EdgeInsets.symmetric(horizontal: 0),
-      child: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 140 / 53, // as in figma design
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 10,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: interests.entries
-            .map(
-              (interest) => InterestCard(
-                icon: interest.value,
-                text: interest.key,
-                isSelected: selectedInterests.contains(interest.key),
-                onTap: () => interestSelected(interest.key),
-              ),
-            )
-            .toList(),
-      ),
+    return GridView.count(
+      crossAxisCount: 2,
+      childAspectRatio: 140 / 53, // as in figma design
+      crossAxisSpacing: 20,
+      mainAxisSpacing: 10,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: interests.entries
+          .map(
+            (interest) => InterestCard(
+              icon: interest.value,
+              text: interest.key,
+              isSelected: selectedInterests.contains(interest.key),
+              onTap: () => interestSelected(interest.key),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -105,7 +98,7 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text("Edit Profile",
+        title: const Text("Edit Profile",
             style: TextStyle(
               color: Colors.black,
               fontSize: 28,
@@ -135,57 +128,57 @@ class _EditProfileState extends State<EditProfile> {
                             child: Container(
                               width: 100,
                               height: 100,
-                              color: Colors.pink,
+                              color: CupidColors.titleColor,
                             ),
                           )),
                 Positioned(
                     bottom: 0,
                     right: 0,
                     child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.pink, shape: BoxShape.circle),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
+                        decoration: const BoxDecoration(
+                            color: CupidColors.titleColor, shape: BoxShape.circle),
+                        child: const Padding(
+                          padding: EdgeInsets.all(2.0),
                           child: Icon(Icons.camera_alt_outlined,
                               color: Colors.white),
                         )))
               ]),
-              Padding(padding: EdgeInsets.only(top: 30)),
+              const Padding(padding: EdgeInsets.only(top: 30)),
               TextField(
                 focusNode: FocusNode(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Name",
                   floatingLabelAlignment: FloatingLabelAlignment.start,
-                  labelStyle: TextStyle(color: Colors.pink),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.pink, width: 1),
+                  labelStyle: TextStyle(color: CupidColors.pinkColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15),
                     ),
                   ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.pink, width: 1),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15),
                     ),
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 15)),
+              const Padding(padding: EdgeInsets.only(top: 15)),
               Container(
                 height: 56,
                 decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.pink,
+                      color: CupidColors.pinkColor,
                     ),
                     borderRadius: BorderRadius.circular(15)),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
+                      const Text(
                         'Select Gender ',
                         style: TextStyle(
-                          color: Colors.pink,
+                          color: CupidColors.pinkColor,
                         ),
                       ),
                       GestureDetector(
@@ -195,9 +188,9 @@ class _EditProfileState extends State<EditProfile> {
                           });
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 8, bottom: 8),
+                          margin: const EdgeInsets.only(top: 8, bottom: 8),
                           decoration: BoxDecoration(
-                              color: isMale ? Colors.pink : Colors.white,
+                              color: isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Center(
                               child: Padding(
@@ -205,7 +198,7 @@ class _EditProfileState extends State<EditProfile> {
                             child: Text(
                               "Male",
                               style: TextStyle(
-                                  color: isMale ? Colors.white : Colors.pink),
+                                  color: isMale ? Colors.white : CupidColors.titleColor),
                             ),
                           )),
                         ),
@@ -217,9 +210,9 @@ class _EditProfileState extends State<EditProfile> {
                           });
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 8, bottom: 8),
+                          margin: const EdgeInsets.only(top: 8, bottom: 8),
                           decoration: BoxDecoration(
-                              color: !isMale ? Colors.pink : Colors.white,
+                              color: !isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Center(
                               child: Padding(
@@ -227,14 +220,14 @@ class _EditProfileState extends State<EditProfile> {
                             child: Text(
                               "Female",
                               style: TextStyle(
-                                  color: !isMale ? Colors.white : Colors.pink),
+                                  color: !isMale ? Colors.white : CupidColors.titleColor),
                             ),
                           )),
                         ),
                       )
                     ]),
               ),
-              Padding(padding: EdgeInsets.only(top: 15)),
+              const Padding(padding: EdgeInsets.only(top: 15)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -257,17 +250,17 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       decoration: InputDecoration(
                           labelText: "Program",
-                          labelStyle: TextStyle(color: Colors.pink),
+                          labelStyle: const TextStyle(color: CupidColors.pinkColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.pink),
+                            borderSide: const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
                           )),
                     ),
                   ),
-                  SizedBox(width: 16), // Add some spacing between dropdowns
+                  const SizedBox(width: 16), // Add some spacing between dropdowns
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: selectedValue2,
@@ -287,12 +280,12 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       decoration: InputDecoration(
                           labelText: "Year",
-                          labelStyle: TextStyle(color: Colors.pink),
+                          labelStyle: const TextStyle(color: CupidColors.pinkColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.pink),
+                            borderSide: const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
                           )),
                     ),
@@ -362,7 +355,7 @@ class _EditProfileState extends State<EditProfile> {
           text: "Confirm",
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Home()));
+                context, MaterialPageRoute(builder: (context) => const Home()));
           },
         ),
       ),

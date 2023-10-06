@@ -1,18 +1,18 @@
 import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
-import 'package:college_cupid/screens/profile/profile_list.dart';
 import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/widgets/home/profile_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({Key? key});
+  const HomeTab({super.key});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
@@ -72,12 +72,11 @@ class _HomeTabState extends State<HomeTab> {
           ),
           Expanded(
             child: CustomScrollView(
-              
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   sliver: SliverGrid.count(
-                    crossAxisSpacing: 5,
+                    crossAxisSpacing: 8,
                     mainAxisSpacing: 12,
                     crossAxisCount: 2,
                     children: List.generate(30, (index) {
@@ -91,27 +90,7 @@ class _HomeTabState extends State<HomeTab> {
                               MaterialPageRoute(
                                   builder: (context) => const ProfileTab(isMine: false)));
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/icons/crush.png'))),
-                          child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(child: SizedBox()),
-                                Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Text(
-                                    "Name",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                )
-                              ]),
-                        ),
+                        child: const ProfileCard(),
                       );
                     }),
                   ),

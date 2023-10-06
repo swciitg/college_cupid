@@ -1,4 +1,4 @@
-import '../home/timer_block.dart';
+import './timer_block.dart';
 import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -29,12 +29,13 @@ class _CountdownState extends State<Countdown> {
   @override
   Widget build(BuildContext context) {
     DateTime valentineTime = DateTime(currTime.year + 1, 2, 14);
+    if(currTime.compareTo(DateTime(currTime.year, 2, 14)) < 0)valentineTime = DateTime(currTime.year, 2, 14);
     Duration timeLeft = valentineTime.difference(currTime);
     return Container(
       width: 280,
       height: 100,
       decoration: BoxDecoration(
-          color: CupidColors.secondaryColor,
+          color: CupidColors.pinkColor,
           borderRadius: BorderRadius.circular(30)),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         TimerBlock(time: timeLeft.inDays.toString(), label: 'DAYS'),
