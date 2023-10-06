@@ -2,7 +2,7 @@ import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
-import 'package:college_cupid/widgets/global/cupid_botton.dart';
+import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 

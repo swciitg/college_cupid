@@ -23,11 +23,12 @@ class CupidButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: height ?? 60,
-        width: width ?? double.infinity,
+        width: width ?? screenWidth,
         decoration: BoxDecoration(
           color: backgroundColor ?? CupidColors.titleColor,
           borderRadius: borderRadius ?? BorderRadius.circular(20),

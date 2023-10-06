@@ -1,5 +1,5 @@
 import 'package:college_cupid/screens/profile/profile_details.dart';
-import 'package:college_cupid/widgets/global/cupid_botton.dart';
+import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 

@@ -50,7 +50,7 @@ class _ProfileTabState extends State<ProfileTab> {
         children: List.generate(5, (index) {
           return Container(
             // height: 20,
-            decoration: const BoxDecoration(color: Colors.white, boxShadow: [
+            decoration: const BoxDecoration(color: CupidColors.backgroundColor, boxShadow: [
               BoxShadow(
                 color: Colors.pink,
                 spreadRadius: 1,
@@ -85,7 +85,7 @@ class _ProfileTabState extends State<ProfileTab> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
-                color: Colors.white,
+                color: CupidColors.backgroundColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
@@ -162,6 +162,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     var safeArea = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: CupidColors.backgroundColor,
       body: SingleChildScrollView(
           child: Stack(
             children: [

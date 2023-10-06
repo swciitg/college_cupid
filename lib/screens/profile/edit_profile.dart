@@ -5,7 +5,7 @@ import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
-import 'package:college_cupid/widgets/global/cupid_botton.dart';
+import 'package:college_cupid/widgets/global/cupid_button.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -33,7 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   Map<String, IconData> interests = {
     "Photography": Icons.camera_alt_outlined,
     "Shopping": Icons.shopping_bag_outlined,
-    "Karoake": Icons.mic_none_outlined,
+    "Karaoke": Icons.mic_none_outlined,
     "Yoga": Icons.circle_outlined,
     "Cooking": Icons.food_bank_outlined,
     "Tennis": Icons.sports_baseball_outlined,
@@ -95,7 +95,9 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
+        foregroundColor: CupidColors.titleColor,
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text("Edit Profile",
@@ -348,15 +350,17 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 30).copyWith(bottom: 20),
-        child: CupidButton(
-          text: "Confirm",
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const Home()));
-          },
+      bottomNavigationBar: Container(
+        color: CupidColors.backgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+          child: CupidButton(
+            text: "Confirm",
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const Home()));
+            },
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/widgets/global/cupid_botton.dart';
+import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/home/selection_button.dart';
 import 'package:flutter/material.dart';

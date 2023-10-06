@@ -23,7 +23,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
           Container(
             margin: const EdgeInsets.only(top: 11),
             child:  Text('Your Crushes', 
-              style: CupidStyles.headingStyle.copyWith(color: CupidColors.pinkColor)
+              style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor)
             ),
           ),
           Container(
