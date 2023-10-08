@@ -42,6 +42,8 @@ dependencies:
   slide_countdown: ^0.6.0
   google_fonts: ^6.1.0
   page_transition: ^2.1.0
+  dio: ^5.3.3
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:

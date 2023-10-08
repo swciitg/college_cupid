@@ -146,7 +146,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: isMale ? CupidColors.titleColor : Colors.white,
+                            color: isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: Center(
                             child: Padding(
@@ -154,7 +154,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           child: Text(
                             "Male",
                             style: TextStyle(
-                                color: isMale ? Colors.white : CupidColors.pinkColor),
+                                color: isMale ? CupidColors.whiteColor : CupidColors.titleColor),
                           ),
                         )),
                       ),
@@ -168,7 +168,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: !isMale ? CupidColors.pinkColor : Colors.white,
+                            color: !isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: Center(
                             child: Padding(
@@ -176,7 +176,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           child: Text(
                             "Female",
                             style: TextStyle(
-                                color: !isMale ? Colors.white : CupidColors.pinkColor),
+                                color: !isMale ? CupidColors.whiteColor : CupidColors.titleColor),
                           ),
                         )),
                       ),
