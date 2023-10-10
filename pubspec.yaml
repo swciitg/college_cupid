@@ -44,6 +44,7 @@ dependencies:
   page_transition: ^2.1.0
   dio: ^5.3.3
   shared_preferences: ^2.2.1
+  webview_flutter: ^4.4.1
 
 dev_dependencies:
   flutter_test:

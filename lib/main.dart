@@ -1,3 +1,4 @@
+import 'package:college_cupid/screens/authentication/login_webview.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import './screens/authentication/sign_in.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
           selectionColor: CupidColors.secondaryColor.withOpacity(0.75),
         ),
       ),
-      home: const SignIn(),
+      home: const LoginWebview(),
     );
   }
 }
