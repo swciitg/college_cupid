@@ -1,7 +1,9 @@
 class Endpoints {
-  static const baseUrl = 'http://192.168.54.67:3000';
+  static const baseUrl = 'https://swc.iitg.ac.in/collegeCupid';
   static const apiSecurityKey = '';
-  static getHeader(){
+  static const oneStopbaseUrl = 'https://swc.iitg.ac.in/onestop/api/v3';
+
+  static getHeader() {
     return {
       'Content-Type': 'application/json',
       // 'security-key': Endpoints.apiSecurityKey

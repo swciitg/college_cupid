@@ -45,6 +45,7 @@ dependencies:
   dio: ^5.3.3
   shared_preferences: ^2.2.1
   http_parser: ^4.0.2
+  webview_flutter: ^4.4.1
 
 dev_dependencies:
   flutter_test:
