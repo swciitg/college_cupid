@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:college_cupid/models/user.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
@@ -15,8 +16,14 @@ class ProfileDetails extends StatefulWidget {
 class _ProfileDetailsState extends State<ProfileDetails> {
   bool isMale = true;
   File? image;
+  // late UserModel user;
   List<String> programs = ['B.Tech', 'B.Sc', 'M.Tech', 'PHd', 'M.Sc', 'M.BA'];
   var selectedValue1 = 'B.Tech';
+  TextEditingController name = TextEditingController();
+  TextEditingController gender = TextEditingController();
+  // late TextEditingController program;
+  // late TextEditingController year;
+  TextEditingController pass = TextEditingController();
 
   List<String> year = [
     '1st Year',
@@ -40,6 +47,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     } catch (e) {
       print('Error picking image: $e');
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    name.text = '';
+    pass.text = '';
+    gender.text = 'male';
   }
 
   @override
@@ -88,32 +104,35 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   right: 0,
                   child: Container(
                       decoration: const BoxDecoration(
-                          color: CupidColors.titleColor, shape: BoxShape.circle),
+                          color: CupidColors.titleColor,
+                          shape: BoxShape.circle),
                       child: const Padding(
                         padding: EdgeInsets.all(2.0),
                         child: Padding(
                           padding: EdgeInsets.all(3),
                           child: Icon(Icons.camera_alt_outlined,
-                              size: 16,
-                              color: Colors.white),
+                              size: 16, color: Colors.white),
                         ),
                       )))
             ]),
             const Padding(padding: EdgeInsets.only(top: 30)),
             TextField(
               focusNode: FocusNode(),
+              controller: name,
               decoration: const InputDecoration(
                 labelText: "Name",
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: CupidColors.pinkColor),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
@@ -146,7 +165,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
+                            color: isMale
+                                ? CupidColors.titleColor
+                                : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: Center(
                             child: Padding(
@@ -154,7 +175,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           child: Text(
                             "Male",
                             style: TextStyle(
-                                color: isMale ? CupidColors.whiteColor : CupidColors.titleColor),
+                                color: isMale
+                                    ? CupidColors.whiteColor
+                                    : CupidColors.titleColor),
                           ),
                         )),
                       ),
@@ -168,7 +191,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: !isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
+                            color: !isMale
+                                ? CupidColors.titleColor
+                                : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: Center(
                             child: Padding(
@@ -176,7 +201,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           child: Text(
                             "Female",
                             style: TextStyle(
-                                color: !isMale ? CupidColors.whiteColor : CupidColors.titleColor),
+                                color: !isMale
+                                    ? CupidColors.whiteColor
+                                    : CupidColors.titleColor),
                           ),
                         )),
                       ),
@@ -206,12 +233,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     decoration: InputDecoration(
                         labelText: "Program",
-                        labelStyle: const TextStyle(color: CupidColors.pinkColor),
+                        labelStyle:
+                            const TextStyle(color: CupidColors.pinkColor),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: CupidColors.pinkColor),
+                          borderSide:
+                              const BorderSide(color: CupidColors.pinkColor),
                           borderRadius: BorderRadius.circular(15),
                         )),
                   ),
@@ -236,12 +265,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     decoration: InputDecoration(
                         labelText: "Year",
-                        labelStyle: const TextStyle(color: CupidColors.pinkColor),
+                        labelStyle:
+                            const TextStyle(color: CupidColors.pinkColor),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: CupidColors.pinkColor),
+                          borderSide:
+                              const BorderSide(color: CupidColors.pinkColor),
                           borderRadius: BorderRadius.circular(15),
                         )),
                   ),
@@ -251,6 +282,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             const Padding(padding: EdgeInsets.only(top: 20)),
             TextField(
               focusNode: FocusNode(),
+              controller: pass,
               decoration: const InputDecoration(
                 label: Text(
                   "Password",
@@ -259,13 +291,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: CupidColors.pinkColor),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
@@ -280,13 +314,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 floatingLabelAlignment: FloatingLabelAlignment.start,
                 labelStyle: TextStyle(color: CupidColors.pinkColor),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
@@ -294,12 +330,41 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               ),
             ),
             const Expanded(child: SizedBox()),
-            CupidButton(text: 'Continue', onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const AboutYouScreen()));
-            }),
+            CupidButton(
+                text: 'Continue',
+                onTap: () {
+                  UserModel user = UserModel(
+                      name: name.text,
+                      profilePicUrl: '',
+                      gender: isMale ? 'male' : 'female',
+                      email: 'piyush1@gmail.com',
+                      hashedPassword: pass.text,
+                      bio: '',
+                      yearOfStudy: selectedValue2,
+                      program: selectedValue1,
+                      ecryptedPrivateKey: '',
+                      publicKey: '',
+                      interests: [],
+                      crushes: [],
+                      ecryptedCrushes: [],
+                      matches: []);
+                  // user = UserModel.fromJson({
+                  //   'name': name.text,
+                  //   'gender': isMale ? 'male' : 'female',
+                  //   'program': selectedValue1,
+                  //   'yearOfStudy': selectedValue2,
+                  //   'hashedPassword': pass,
+                  //   'email': 'piyush@gmail.com',
+                  //   'prooo'
+                  // });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AboutYouScreen(
+                                image: image!,
+                                user: user,
+                              )));
+                }),
           ],
         ),
       ),

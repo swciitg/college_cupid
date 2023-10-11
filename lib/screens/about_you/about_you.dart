@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:college_cupid/models/user.dart';
 import 'package:college_cupid/screens/home/home.dart';
+import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
@@ -7,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AboutYouScreen extends StatefulWidget {
-  const AboutYouScreen({super.key});
+  final UserModel user;
+  final File image;
+  const AboutYouScreen({super.key, required this.image, required this.user});
 
   @override
   State<AboutYouScreen> createState() => _AboutYouScreenState();
@@ -37,7 +42,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
   };
 
   Set<String> selectedInterests = {};
-
   void interestSelected(String interest) {
     setState(() {
       if (selectedInterests.contains(interest)) {
@@ -72,8 +76,11 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
     );
   }
 
-  void _navigateToNextScreen(BuildContext context) {
+  Future<void> _navigateToNextScreen(BuildContext context) async {
     print("selected interests: $selectedInterests");
+    widget.user.bio = bioController.text;
+    widget.user.interests = selectedInterests.toList();
+    await APIService().signIn(widget.image, widget.user);
     Navigator.push(
       context,
       PageTransition(

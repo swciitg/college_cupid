@@ -75,4 +75,8 @@ class AuthUserHelpers{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(BackendHelper.refreshToken, value);
   }
+  static Future<void> setGValue(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(BackendHelper.gValue, value);
+  }
 }
