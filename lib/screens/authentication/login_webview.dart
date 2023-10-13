@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
+  static String id = '/loginWebview';
+
   const LoginWebview({super.key});
 
   @override

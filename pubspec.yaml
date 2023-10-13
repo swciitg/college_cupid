@@ -46,6 +46,10 @@ dependencies:
   shared_preferences: ^2.2.1
   http_parser: ^4.0.2
   webview_flutter: ^4.4.1
+  pointycastle: ^3.7.3
+  aes_crypt_null_safe: ^2.0.2
+  diffie_hellman: ^0.1.2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

@@ -2,11 +2,13 @@ import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import '../../functions/home/nav_icons.dart';
 import './home_tab.dart';
-import '../your_matches/your_matches.dart';
+import '../your_matches/your_matches_tab.dart';
 import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
+  static String id = '/home';
+
   const Home({super.key});
 
   @override
@@ -27,13 +29,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.pink, // Change this to pink
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('CollegeCupid',

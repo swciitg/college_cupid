@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AboutYouScreen extends StatefulWidget {
+  static String id = 'aboutYou';
   final UserModel user;
-  final File image;
+  final File? image;
+
   const AboutYouScreen({super.key, required this.image, required this.user});
 
   @override
@@ -20,6 +22,7 @@ class AboutYouScreen extends StatefulWidget {
 
 class _AboutYouScreenState extends State<AboutYouScreen> {
   late TextEditingController bioController;
+
   @override
   void initState() {
     bioController = TextEditingController();
@@ -42,6 +45,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
   };
 
   Set<String> selectedInterests = {};
+
   void interestSelected(String interest) {
     setState(() {
       if (selectedInterests.contains(interest)) {
@@ -57,7 +61,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 30),
       child: GridView.count(
         crossAxisCount: 2,
-        childAspectRatio: 140 / 50, // as in figma design
+        childAspectRatio: 140 / 50,
+        // as in figma design
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         shrinkWrap: true,
@@ -72,21 +77,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               ),
             )
             .toList(),
-      ),
-    );
-  }
-
-  Future<void> _navigateToNextScreen(BuildContext context) async {
-    print("selected interests: $selectedInterests");
-    widget.user.bio = bioController.text;
-    widget.user.interests = selectedInterests.toList();
-    await APIService().signIn(widget.image, widget.user);
-    Navigator.push(
-      context,
-      PageTransition(
-        child: const Home(),
-        type: PageTransitionType.rightToLeftWithFade,
-        curve: Curves.decelerate,
       ),
     );
   }
@@ -171,15 +161,18 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
           ],
         ),
       ),
-
-      // placed the confirm button here so that it always sticks to bottom
-      // and we can scroll the interests to select if the screen size is small
       bottomNavigationBar: Padding(
         padding:
             const EdgeInsets.symmetric(horizontal: 30).copyWith(bottom: 20),
         child: CupidButton(
           text: "Confirm",
-          onTap: () => _navigateToNextScreen(context),
+          onTap: () async {
+            widget.user.bio = bioController.text;
+            widget.user.interests = selectedInterests.toList();
+            NavigatorState nav = Navigator.of(context);
+            await APIService().signIn(widget.image, widget.user);
+            nav.pushNamedAndRemoveUntil(Home.id, (route) => false);
+          },
         ),
       ),
     );

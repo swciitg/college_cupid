@@ -3,14 +3,16 @@ import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class Welcome extends StatefulWidget {
+  static String id = '/welcome';
+
+  const Welcome({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Welcome> createState() => _WelcomeState();
 }
 
-class _SignInState extends State<SignIn> {
+class _WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,16 +51,17 @@ class _SignInState extends State<SignIn> {
               ),
               const Spacer(),
               CupidButton(
-                text: 'Continue with Outlook', onTap: (){
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      child: const ProfileDetails(),
-                      type: PageTransitionType.rightToLeftWithFade,
-                      curve: Curves.decelerate,
-                    ),
-                  );
-                }, height: 50,
+                text: 'Continue with Outlook',
+                onTap: () {
+                  Navigator.pushNamed(context, ProfileDetails.id
+                      // PageTransition(
+                      //   child: const ProfileDetails(),
+                      //   type: PageTransitionType.rightToLeftWithFade,
+                      //   curve: Curves.decelerate,
+                      // ),
+                      );
+                },
+                height: 50,
               ),
               const Spacer(),
             ],

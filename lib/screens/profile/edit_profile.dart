@@ -8,6 +8,8 @@ import 'package:college_cupid/widgets/about_you/interest_card.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 
 class EditProfile extends StatefulWidget {
+  static String id = '/editProfile';
+
   const EditProfile({super.key});
 
   @override
@@ -60,7 +62,8 @@ class _EditProfileState extends State<EditProfile> {
   Widget _buildInterestsGrid() {
     return GridView.count(
       crossAxisCount: 2,
-      childAspectRatio: 140 / 53, // as in figma design
+      childAspectRatio: 140 / 53,
+      // as in figma design
       crossAxisSpacing: 20,
       mainAxisSpacing: 10,
       shrinkWrap: true,
@@ -138,7 +141,8 @@ class _EditProfileState extends State<EditProfile> {
                     right: 0,
                     child: Container(
                         decoration: const BoxDecoration(
-                            color: CupidColors.titleColor, shape: BoxShape.circle),
+                            color: CupidColors.titleColor,
+                            shape: BoxShape.circle),
                         child: const Padding(
                           padding: EdgeInsets.all(2.0),
                           child: Icon(Icons.camera_alt_outlined,
@@ -153,13 +157,15 @@ class _EditProfileState extends State<EditProfile> {
                   floatingLabelAlignment: FloatingLabelAlignment.start,
                   labelStyle: TextStyle(color: CupidColors.pinkColor),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15),
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15),
                     ),
@@ -192,7 +198,9 @@ class _EditProfileState extends State<EditProfile> {
                         child: Container(
                           margin: const EdgeInsets.only(top: 8, bottom: 8),
                           decoration: BoxDecoration(
-                              color: isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
+                              color: isMale
+                                  ? CupidColors.titleColor
+                                  : CupidColors.backgroundColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Center(
                               child: Padding(
@@ -200,7 +208,9 @@ class _EditProfileState extends State<EditProfile> {
                             child: Text(
                               "Male",
                               style: TextStyle(
-                                  color: isMale ? Colors.white : CupidColors.titleColor),
+                                  color: isMale
+                                      ? Colors.white
+                                      : CupidColors.titleColor),
                             ),
                           )),
                         ),
@@ -214,7 +224,9 @@ class _EditProfileState extends State<EditProfile> {
                         child: Container(
                           margin: const EdgeInsets.only(top: 8, bottom: 8),
                           decoration: BoxDecoration(
-                              color: !isMale ? CupidColors.titleColor : CupidColors.backgroundColor,
+                              color: !isMale
+                                  ? CupidColors.titleColor
+                                  : CupidColors.backgroundColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Center(
                               child: Padding(
@@ -222,7 +234,9 @@ class _EditProfileState extends State<EditProfile> {
                             child: Text(
                               "Female",
                               style: TextStyle(
-                                  color: !isMale ? Colors.white : CupidColors.titleColor),
+                                  color: !isMale
+                                      ? Colors.white
+                                      : CupidColors.titleColor),
                             ),
                           )),
                         ),
@@ -252,17 +266,20 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       decoration: InputDecoration(
                           labelText: "Program",
-                          labelStyle: const TextStyle(color: CupidColors.pinkColor),
+                          labelStyle:
+                              const TextStyle(color: CupidColors.pinkColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: CupidColors.pinkColor),
+                            borderSide:
+                                const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
                           )),
                     ),
                   ),
-                  const SizedBox(width: 16), // Add some spacing between dropdowns
+                  const SizedBox(width: 16),
+                  // Add some spacing between dropdowns
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: selectedValue2,
@@ -282,12 +299,14 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       decoration: InputDecoration(
                           labelText: "Year",
-                          labelStyle: const TextStyle(color: CupidColors.pinkColor),
+                          labelStyle:
+                              const TextStyle(color: CupidColors.pinkColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: CupidColors.pinkColor),
+                            borderSide:
+                                const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
                           )),
                     ),
@@ -357,8 +376,8 @@ class _EditProfileState extends State<EditProfile> {
           child: CupidButton(
             text: "Confirm",
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const Home()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Home()));
             },
           ),
         ),

@@ -42,14 +42,18 @@ class APIService {
     }));
   }
 
-  Future<void> signIn(File image, UserModel user) async {
-    String fileName = image.path.split('/').last;
+  Future<void> signIn(File? image, UserModel user) async {
     final userMap = user.toJson();
-    userMap['dp'] = await MultipartFile.fromFile(
-      image.path,
-      filename: fileName,
-      contentType: MediaType('image', 'png'),
-    );
+    if(image!=null) {
+      String fileName = image.path
+          .split('/')
+          .last;
+      userMap['dp'] = await MultipartFile.fromFile(
+        image.path,
+        filename: fileName,
+        contentType: MediaType('image', 'png'),
+      );
+    }
     FormData formData = FormData.fromMap(userMap);
 
     try {
@@ -58,16 +62,11 @@ class APIService {
           await dio.post('${Endpoints.baseUrl}/user/signin', data: formData);
 
       if (res.statusCode == 200) {
-        print('Image uploaded successfully');
+        print(res.data);
         String access = res.data['accessToken'];
         String refresh = res.data['refreshToken'];
-        String gval = res.data['gValue'];
-        print(access);
-        print(gval);
-        print(refresh);
         await AuthUserHelpers.setAccessToken(access);
         await AuthUserHelpers.setRefreshToken(refresh);
-        await AuthUserHelpers.setGValue(gval);
         // return res.data['imageUrl'].toString();
       } else {
         return Future.error(res.statusMessage.toString());

@@ -1,12 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:college_cupid/functions/diffie_hellman.dart';
+import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
+import 'package:diffie_hellman/diffie_hellman.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileDetails extends StatefulWidget {
+  static String id = '/profileDetails';
+
   const ProfileDetails({super.key});
 
   @override
@@ -16,11 +23,13 @@ class ProfileDetails extends StatefulWidget {
 class _ProfileDetailsState extends State<ProfileDetails> {
   bool isMale = true;
   File? image;
+
   // late UserModel user;
   List<String> programs = ['B.Tech', 'B.Sc', 'M.Tech', 'PHd', 'M.Sc', 'M.BA'];
   var selectedValue1 = 'B.Tech';
   TextEditingController name = TextEditingController();
   TextEditingController gender = TextEditingController();
+
   // late TextEditingController program;
   // late TextEditingController year;
   TextEditingController pass = TextEditingController();
@@ -333,21 +342,32 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             CupidButton(
                 text: 'Continue',
                 onTap: () {
+                  DiffieHellman df = DiffieHellman();
+                  String publicKey = df.publicKey.toString();
+                  String privateKey = df.privateKey.toString();
+                  Uint8List encryptedPvtBytes =
+                      Encryption.encryptAES(privateKey, pass.text);
+                  String encryptedPrivateKey = encryptedPvtBytes
+                      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+                      .join('');
+
                   UserModel user = UserModel(
                       name: name.text,
                       profilePicUrl: '',
                       gender: isMale ? 'male' : 'female',
-                      email: 'piyush1@gmail.com',
-                      hashedPassword: pass.text,
+                      email: 'abcd@gmail.com',
+                      hashedPassword: Encryption.calculateSHA256(pass.text),
                       bio: '',
                       yearOfStudy: selectedValue2,
                       program: selectedValue1,
-                      ecryptedPrivateKey: '',
-                      publicKey: '',
+                      ecryptedPrivateKey: encryptedPrivateKey,
+                      publicKey: publicKey,
                       interests: [],
                       crushes: [],
                       ecryptedCrushes: [],
                       matches: []);
+
+                  print(user.toJson().toString());
                   // user = UserModel.fromJson({
                   //   'name': name.text,
                   //   'gender': isMale ? 'male' : 'female',
@@ -361,7 +381,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => AboutYouScreen(
-                                image: image!,
+                                image: image,
                                 user: user,
                               )));
                 }),
