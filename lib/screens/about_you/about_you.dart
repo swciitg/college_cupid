@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:college_cupid/models/user.dart';
+import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -11,10 +11,10 @@ import 'package:page_transition/page_transition.dart';
 
 class AboutYouScreen extends StatefulWidget {
   static String id = 'aboutYou';
-  final UserModel user;
+  final PersonalInfo myInfo;
   final File? image;
 
-  const AboutYouScreen({super.key, required this.image, required this.user});
+  const AboutYouScreen({super.key, required this.image, required this.myInfo});
 
   @override
   State<AboutYouScreen> createState() => _AboutYouScreenState();
@@ -167,10 +167,10 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         child: CupidButton(
           text: "Confirm",
           onTap: () async {
-            widget.user.bio = bioController.text;
-            widget.user.interests = selectedInterests.toList();
+            widget.myInfo.bio = bioController.text;
+            widget.myInfo.interests = selectedInterests.toList();
             NavigatorState nav = Navigator.of(context);
-            await APIService().signIn(widget.image, widget.user);
+            await APIService().signIn(widget.image, widget.myInfo);
             nav.pushNamedAndRemoveUntil(Home.id, (route) => false);
           },
         ),

@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
-import 'package:college_cupid/models/user.dart';
+import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
@@ -42,7 +43,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     '5th Year',
     '6th Year'
   ];
-  var selectedValue2 = '1st Year';
+  String selectedValue2 = '1st Year';
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -351,7 +352,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
                       .join('');
 
-                  UserModel user = UserModel(
+                  PersonalInfo myInfo = PersonalInfo(
                       name: name.text,
                       profilePicUrl: '',
                       gender: isMale ? 'male' : 'female',
@@ -367,7 +368,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       ecryptedCrushes: [],
                       matches: []);
 
-                  print(user.toJson().toString());
+                  print(myInfo.toJson().toString());
                   // user = UserModel.fromJson({
                   //   'name': name.text,
                   //   'gender': isMale ? 'male' : 'female',
@@ -382,7 +383,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       MaterialPageRoute(
                           builder: (context) => AboutYouScreen(
                                 image: image,
-                                user: user,
+                                myInfo: myInfo,
                               )));
                 }),
           ],

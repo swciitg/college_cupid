@@ -1,4 +1,4 @@
-class UserModel {
+class PersonalInfo {
   late String name;
   late String profilePicUrl;
   late String gender;
@@ -14,7 +14,7 @@ class UserModel {
   late List<String> crushes;
   late List<String> matches;
 
-  UserModel(
+  PersonalInfo(
       {required this.name,
       required this.profilePicUrl,
       required this.gender,
@@ -30,7 +30,7 @@ class UserModel {
       required this.ecryptedCrushes,
       required this.matches});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  PersonalInfo.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     profilePicUrl = json['profilePicUrl'];
     gender = json['gender'];

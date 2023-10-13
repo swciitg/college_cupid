@@ -1,4 +1,7 @@
-import 'package:college_cupid/models/user.dart';
+import 'dart:convert';
+
+import 'package:college_cupid/models/personal_info.dart';
+import 'package:college_cupid/models/user_info.dart';
 import 'package:dio/dio.dart';
 import '../globals/endpoints.dart';
 import './auth_helpers.dart';
@@ -8,7 +11,7 @@ import 'package:http_parser/http_parser.dart';
 class APIService {
   final dio = Dio(BaseOptions(
       baseUrl: Endpoints.baseUrl,
-      connectTimeout: const Duration(seconds: 15),
+      connectTimeout: const Duration(seconds: 35),
       receiveTimeout: const Duration(seconds: 15),
       headers: Endpoints.getHeader()));
 
@@ -42,12 +45,10 @@ class APIService {
     }));
   }
 
-  Future<void> signIn(File? image, UserModel user) async {
-    final userMap = user.toJson();
-    if(image!=null) {
-      String fileName = image.path
-          .split('/')
-          .last;
+  Future<void> signIn(File? image, PersonalInfo myInfo) async {
+    final userMap = myInfo.toJson();
+    if (image != null) {
+      String fileName = image.path.split('/').last;
       userMap['dp'] = await MultipartFile.fromFile(
         image.path,
         filename: fileName,
@@ -58,8 +59,8 @@ class APIService {
 
     try {
       print('sending request');
-      Response res =
-          await dio.post('${Endpoints.baseUrl}/user/signin', data: formData);
+      Response res = await dio.post(Endpoints.baseUrl + Endpoints.postMyInfo,
+          data: formData);
 
       if (res.statusCode == 200) {
         print(res.data);
@@ -73,6 +74,35 @@ class APIService {
       }
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  Future<List<UserInfo>> getAllUsers() async {
+    try {
+      Response res = await dio.get(Endpoints.baseUrl + Endpoints.getAllUsers);
+      if (res.statusCode == 200) {
+        final users = res.data['users'];
+        List<UserInfo> usersInfo = [];
+        for (int i = 0; i < users.length; i++) {
+          usersInfo.add(UserInfo(
+              name: users[i]['name'] as String,
+              profilePicUrl: users[i]['profilePicUrl'] as String,
+              gender: users[i]['gender'] as String,
+              email: users[i]['email'] as String,
+              bio: users[i]['bio'] as String,
+              yearOfStudy: users[i]['yearOfStudy'] as String,
+              program: users[i]['program'] as String,
+              publicKey: users[i]['publicKey'] as String,
+              // interests: users[i]['interests'] as List<String>
+              interests: []));
+        }
+        print(usersInfo);
+        return usersInfo;
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
     }
   }
 }
