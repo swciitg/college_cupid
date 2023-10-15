@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:college_cupid/functions/diffie_hellman.dart';
@@ -8,7 +6,6 @@ import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
-import 'package:diffie_hellman/diffie_hellman.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -356,7 +353,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       name: name.text,
                       profilePicUrl: '',
                       gender: isMale ? 'male' : 'female',
-                      email: 'abcd@gmail.com',
+                      email: 'bcdef@gmail.com',
                       hashedPassword: Encryption.calculateSHA256(pass.text),
                       bio: '',
                       yearOfStudy: selectedValue2,

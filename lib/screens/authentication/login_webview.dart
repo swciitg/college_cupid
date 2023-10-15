@@ -1,8 +1,6 @@
-import 'package:college_cupid/globals/database_strings.dart';
 import 'package:college_cupid/globals/endpoints.dart';
-import 'package:college_cupid/services/auth_helpers.dart';
+import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
@@ -17,9 +15,10 @@ class LoginWebview extends StatefulWidget {
 class _LoginWebviewState extends State<LoginWebview> {
   late WebViewController controller;
 
-  Future<Object> injectJavascript(WebViewController controller) async {
+  Future<Object> injectJavascript(
+      WebViewController controller, String elementId) async {
     return controller.runJavaScriptReturningResult(
-        "document.querySelector('#userTokens').innerText");
+        "document.querySelector('#$elementId').innerText");
   }
 
   @override
@@ -29,24 +28,38 @@ class _LoginWebviewState extends State<LoginWebview> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(NavigationDelegate(
           onPageFinished: (String url) async {
-            if (url.startsWith(
-                '${Endpoints.oneStopbaseUrl}/auth/microsoft/redirect?code')) {
-              var userTokenObject = await injectJavascript(controller);
-              String userTokenString =
-                  userTokenObject.toString().replaceAll('"', '');
-              if (userTokenString != 'ERROR OCCURED!') {
-                if (!mounted) return;
-                Map userTokens = {
-                  BackendHelper.accessToken: userTokenString.split('/')[0],
-                  BackendHelper.refreshToken: userTokenString.split('/')[1]
-                };
-                print(userTokens);
-                await AuthUserHelpers.setAccessToken(
-                    userTokens[BackendHelper.accessToken]);
-                await AuthUserHelpers.setRefreshToken(
-                    userTokens[BackendHelper.refreshToken]);
-              }
-            }
+            NavigatorState nav = Navigator.of(context);
+            nav.pushNamedAndRemoveUntil(ProfileDetails.id, (route) => false);
+            //TODO: use college_cupid api for authentication
+            // if (url.startsWith(
+            //     '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+            //   var authStatusObject =
+            //       await injectJavascript(controller, 'status');
+            //   String authStatusString =
+            //       authStatusObject.toString().replaceAll('"', '');
+            //   if (authStatusString != 'ERROR') {
+            //     if (!mounted) return;
+            //     String accessToken =
+            //         (await injectJavascript(controller, 'accessToken'))
+            //             .toString()
+            //             .replaceAll('"', '');
+            //     String refreshToken =
+            //         (await injectJavascript(controller, 'refreshToken'))
+            //             .toString()
+            //             .replaceAll('"', '');
+            //     Map userTokens = {
+            //       BackendHelper.accessToken: accessToken,
+            //       BackendHelper.refreshToken: refreshToken
+            //     };
+            //     print(userTokens);
+            //     await AuthUserHelpers.setAccessToken(
+            //         userTokens[BackendHelper.accessToken]);
+            //     await AuthUserHelpers.setRefreshToken(
+            //         userTokens[BackendHelper.refreshToken]);
+            //     nav.pushNamedAndRemoveUntil(
+            //         ProfileDetails.id, (route) => false);
+            //   }
+            // }
           },
           onPageStarted: (String url) {}))
       ..loadRequest(Uri.parse('${Endpoints.oneStopbaseUrl}/auth/microsoft'));
@@ -55,11 +68,10 @@ class _LoginWebviewState extends State<LoginWebview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: WebViewWidget(
-        controller: controller,
+      body: SafeArea(
+        child: WebViewWidget(
+          controller: controller,
+        ),
       ),
     );
   }

@@ -10,13 +10,13 @@ class Encryption {
     Uint8List digest = SHA256Digest().process(bytes);
 
     String hashedString =
-    digest.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('');
+        digest.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('');
     return hashedString;
   }
 
   static Uint8List encryptAES(String plainText, String key) {
     Uint8List keyBytes =
-    SHA256Digest().process(Uint8List.fromList(utf8.encode(key)));
+        SHA256Digest().process(Uint8List.fromList(utf8.encode(key)));
     Uint8List iv = Uint8List(16);
 
     var crypt = AesCrypt();
@@ -30,7 +30,7 @@ class Encryption {
 
   static String decryptAES(Uint8List encryptedText, String key) {
     Uint8List keyBytes =
-    SHA256Digest().process(Uint8List.fromList(utf8.encode(key)));
+        SHA256Digest().process(Uint8List.fromList(utf8.encode(key)));
 
     var crypt = AesCrypt();
     Uint8List iv = Uint8List(16);

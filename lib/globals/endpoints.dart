@@ -7,6 +7,7 @@ class Endpoints {
 
   static const getAllUsers = '/user';
   static const postMyInfo = '/user/signin';
+  static const addCrush = '/user/addCrush';
 
   static getHeader() {
     return {

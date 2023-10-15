@@ -1,7 +1,6 @@
-import 'package:college_cupid/screens/profile/profile_details.dart';
+import 'package:college_cupid/screens/authentication/login_webview.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 class Welcome extends StatefulWidget {
   static String id = '/welcome';
@@ -53,7 +52,7 @@ class _WelcomeState extends State<Welcome> {
               CupidButton(
                 text: 'Continue with Outlook',
                 onTap: () {
-                  Navigator.pushNamed(context, ProfileDetails.id
+                  Navigator.pushReplacementNamed(context, LoginWebview.id
                       // PageTransition(
                       //   child: const ProfileDetails(),
                       //   type: PageTransitionType.rightToLeftWithFade,

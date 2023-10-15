@@ -1,9 +1,9 @@
 import 'package:college_cupid/routes.dart';
+import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:provider/provider.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
-import './screens/authentication/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             selectionColor: CupidColors.secondaryColor.withOpacity(0.75),
           ),
         ),
-        initialRoute: Welcome.id,
+        initialRoute: SplashScreen.id,
         routes: routes,
       ),
     );

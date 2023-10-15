@@ -26,6 +26,7 @@ class _HomeTabState extends State<HomeTab> {
     return FutureBuilder(
         future: APIService().getAllUsers(),
         builder: (context, snapshot) {
+          print(snapshot.data);
           if (snapshot.hasData == false) {
             return const Center(
               child: Text('Loading'),
@@ -101,8 +102,10 @@ class _HomeTabState extends State<HomeTab> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProfileTab(isMine: false)));
+                                      builder: (context) => ProfileTab(
+                                            isMine: false,
+                                            userInfo: user,
+                                          )));
                             },
                             child: ProfileCard(
                               name: user.name,

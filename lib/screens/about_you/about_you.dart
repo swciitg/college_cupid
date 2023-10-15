@@ -1,13 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:college_cupid/models/personal_info.dart';
-import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/splash.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AboutYouScreen extends StatefulWidget {
   static String id = 'aboutYou';
@@ -171,7 +173,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
             widget.myInfo.interests = selectedInterests.toList();
             NavigatorState nav = Navigator.of(context);
             await APIService().signIn(widget.image, widget.myInfo);
-            nav.pushNamedAndRemoveUntil(Home.id, (route) => false);
+
+            SharedPreferences user = await SharedPreferences.getInstance();
+            await user.setString('myInfo', jsonEncode(widget.myInfo.toJson()));
+            await LoginStore().updateUserData();
+            await user.setBool('isProfileCompleted', true);
+
+            nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
           },
         ),
       ),

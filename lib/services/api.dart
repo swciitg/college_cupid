@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_info.dart';
 import 'package:dio/dio.dart';
@@ -83,7 +82,8 @@ class APIService {
       if (res.statusCode == 200) {
         final users = res.data['users'];
         List<UserInfo> usersInfo = [];
-        for (int i = 0; i < users.length; i++) {
+        for (int i = users.length - 1; i >= 0; i--) {
+          //TODO: Skip my own userInfo
           usersInfo.add(UserInfo(
               name: users[i]['name'] as String,
               profilePicUrl: users[i]['profilePicUrl'] as String,
@@ -96,10 +96,27 @@ class APIService {
               // interests: users[i]['interests'] as List<String>
               interests: []));
         }
-        print(usersInfo);
         return usersInfo;
       } else {
         return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
+  Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
+    try {
+      Response res = await dio.put(Endpoints.baseUrl + Endpoints.addCrush,
+          data: jsonEncode({
+            'sharedSecret': sharedSecret,
+            'encryptedCrushEmail': encryptedCrushEmail
+          }));
+
+      if (res.statusCode == 200) {
+        return;
+      } else {
+        Future.error(res.statusMessage.toString());
       }
     } catch (err) {
       return Future.error(err.toString());

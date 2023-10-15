@@ -1,4 +1,3 @@
-import 'package:college_cupid/screens/profile/profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import '../../functions/home/nav_icons.dart';
 import './home_tab.dart';
@@ -21,7 +20,7 @@ class _HomeState extends State<Home> {
     const HomeTab(),
     const YourCrushesTab(),
     const YourMatches(),
-    const ProfileTab(isMine: true),
+    // const ProfileTab(isMine: true),
   ];
 
   @override

@@ -1,10 +1,16 @@
+import 'package:college_cupid/functions/diffie_hellman.dart';
+import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/models/user_info.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
+import 'package:college_cupid/services/api.dart';
 import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
 
 class ProfileTab extends StatefulWidget {
   final bool isMine;
-  const ProfileTab({required this.isMine, super.key});
+  final UserInfo userInfo;
+
+  const ProfileTab({required this.isMine, required this.userInfo, super.key});
 
   @override
   State<ProfileTab> createState() => _ProfileTabState();
@@ -27,12 +33,22 @@ class _ProfileTabState extends State<ProfileTab> {
             size: w / 8,
             color: Colors.white,
           ),
-          onTap: () {
+          onTap: () async {
             if (widget.isMine) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const EditProfile()));
             } else {
               //TODO: Add the person to My Crushes List
+              final df = DiffieHellman();
+              String sharedSecret = df
+                  .getSecretKey(BigInt.parse(widget.userInfo.publicKey))
+                  .toString();
+              String encryptedCrushEmail =
+                  Encryption.encryptAES(widget.userInfo.email, 'key')
+                      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+                      .join('');
+
+              await APIService().addCrush(sharedSecret, encryptedCrushEmail);
             }
           },
         ));
@@ -47,35 +63,36 @@ class _ProfileTabState extends State<ProfileTab> {
         childAspectRatio: 8 / 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        children: List.generate(5, (index) {
+        children: widget.userInfo.interests.map((interest) {
           return Container(
             // height: 20,
-            decoration: const BoxDecoration(color: CupidColors.backgroundColor, boxShadow: [
-              BoxShadow(
-                color: Colors.pink,
-                spreadRadius: 1,
-              )
-            ]),
-            child: const Center(
+            decoration: const BoxDecoration(
+                color: CupidColors.backgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink,
+                    spreadRadius: 1,
+                  )
+                ]),
+            child: Center(
               child: Text(
-                "Anime",
-                style: TextStyle(
+                interest,
+                style: const TextStyle(
                   color: Colors.black,
                 ),
               ),
             ),
           );
-        }),
+        }).toList(),
       ),
     );
   }
 
   Widget aboutMe(var h) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(
-                  'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSTWW4wvzwA9V0xdjG-kF_yXQH__lV5ciORmTPCi4iO6OzxzhJi'),
+              image: NetworkImage(widget.userInfo.profilePicUrl),
               fit: BoxFit.cover)),
       child: Column(
         children: [
@@ -92,21 +109,22 @@ class _ProfileTabState extends State<ProfileTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Name",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                Text(
+                  widget.userInfo.name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 25),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
                     children: [
                       Text(
-                        "Id",
+                        widget.userInfo.email,
                         textAlign: TextAlign.left,
                       ),
-                      Expanded(child: SizedBox()),
+                      const Expanded(child: SizedBox()),
                       Text(
-                        "B.Tech '25",
+                        '${widget.userInfo.program}, ${widget.userInfo.yearOfStudy.toLowerCase()}',
                         textAlign: TextAlign.right,
                       )
                     ],
@@ -114,17 +132,14 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
                 const Padding(padding: EdgeInsets.only(top: 8)),
                 const Text(
-                  "About",
+                  'About',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   textAlign: TextAlign.left,
                 ),
                 const Padding(padding: EdgeInsets.only(top: 8)),
                 SizedBox(
                   height: readMore ? 33 : null,
-                  child: const Text(
-                      "About me RichText Widget: Allows you to style different parts of the text differently. "
-                      "It uses the TextSpan widget to define styled spans of text within the widget.",
-                      overflow: TextOverflow.clip),
+                  child: Text(widget.userInfo.bio, overflow: TextOverflow.clip),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 8)),
                 GestureDetector(
@@ -165,14 +180,14 @@ class _ProfileTabState extends State<ProfileTab> {
       backgroundColor: CupidColors.backgroundColor,
       body: SingleChildScrollView(
           child: Stack(
-            children: [
-              aboutMe(safeArea.height),
-              Positioned(
-                  left: 2 * safeArea.width / 5,
-                  top: safeArea.height / 2 - safeArea.width / 10,
-                  child: editButton(safeArea.width)),
-            ],
-          )),
+        children: [
+          aboutMe(safeArea.height),
+          Positioned(
+              left: 2 * safeArea.width / 5,
+              top: safeArea.height / 2 - safeArea.width / 10,
+              child: editButton(safeArea.width)),
+        ],
+      )),
     );
   }
 }

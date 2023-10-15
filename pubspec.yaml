@@ -50,6 +50,7 @@ dependencies:
   aes_crypt_null_safe: ^2.0.2
   diffie_hellman: ^0.1.2
   provider: ^6.0.5
+  mobx: ^2.2.0
 
 dev_dependencies:
   flutter_test:
