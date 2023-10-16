@@ -353,8 +353,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       name: name.text,
                       profilePicUrl: '',
                       gender: isMale ? 'male' : 'female',
-                      email: 'bcdef@gmail.com',
-                      hashedPassword: Encryption.calculateSHA256(pass.text),
+                      email: 'r.hardik@iitg.ac.in',
+                      hashedPassword: Encryption.bytesToHexadecimal(
+                          Encryption.calculateSHA256(pass.text)),
                       bio: '',
                       yearOfStudy: selectedValue2,
                       program: selectedValue1,
@@ -366,15 +367,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       matches: []);
 
                   print(myInfo.toJson().toString());
-                  // user = UserModel.fromJson({
-                  //   'name': name.text,
-                  //   'gender': isMale ? 'male' : 'female',
-                  //   'program': selectedValue1,
-                  //   'yearOfStudy': selectedValue2,
-                  //   'hashedPassword': pass,
-                  //   'email': 'piyush@gmail.com',
-                  //   'prooo'
-                  // });
                   Navigator.push(
                       context,
                       MaterialPageRoute(

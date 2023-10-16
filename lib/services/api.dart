@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_info.dart';
 import 'package:dio/dio.dart';
@@ -24,7 +25,7 @@ class APIService {
       var response = error.response;
       if (response != null && response.statusCode == 401) {
         if ((await AuthUserHelpers.getAccessToken()).isEmpty) {
-          //showSnackBar("Login to continue!!");
+          showSnackBar("Login to continue!!");
         } else {
           bool couldRegenerate =
               await AuthUserHelpers().regenerateAccessToken();
@@ -33,10 +34,11 @@ class APIService {
             return handler
                 .resolve(await AuthUserHelpers().retryRequest(response));
           } else {
-            //showSnackBar("Your session has expired!! Login again.");
+            showSnackBar("Your session has expired!! Login again.");
           }
         }
       } else if (response != null && response.statusCode == 403) {
+        //TODO: Resolve authorization errors
         //showSnackBar("Access not allowed in guest mode");
       } else if (response != null && response.statusCode == 400) {}
       // admin user with expired tokens
@@ -83,6 +85,11 @@ class APIService {
         final users = res.data['users'];
         List<UserInfo> usersInfo = [];
         for (int i = users.length - 1; i >= 0; i--) {
+          List<String> interests = [];
+          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
+            interests.add(users[i]['interests'][j].toString());
+          }
+
           //TODO: Skip my own userInfo
           usersInfo.add(UserInfo(
               name: users[i]['name'] as String,
@@ -93,8 +100,7 @@ class APIService {
               yearOfStudy: users[i]['yearOfStudy'] as String,
               program: users[i]['program'] as String,
               publicKey: users[i]['publicKey'] as String,
-              // interests: users[i]['interests'] as List<String>
-              interests: []));
+              interests: interests));
         }
         return usersInfo;
       } else {

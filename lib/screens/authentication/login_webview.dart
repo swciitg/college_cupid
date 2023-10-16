@@ -62,7 +62,7 @@ class _LoginWebviewState extends State<LoginWebview> {
             // }
           },
           onPageStarted: (String url) {}))
-      ..loadRequest(Uri.parse('${Endpoints.oneStopbaseUrl}/auth/microsoft'));
+      ..loadRequest(Uri.parse('${Endpoints.oneStopBaseUrl}/auth/microsoft'));
   }
 
   @override

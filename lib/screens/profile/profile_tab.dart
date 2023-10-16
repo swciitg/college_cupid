@@ -43,10 +43,8 @@ class _ProfileTabState extends State<ProfileTab> {
               String sharedSecret = df
                   .getSecretKey(BigInt.parse(widget.userInfo.publicKey))
                   .toString();
-              String encryptedCrushEmail =
-                  Encryption.encryptAES(widget.userInfo.email, 'key')
-                      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-                      .join('');
+              String encryptedCrushEmail = Encryption.bytesToHexadecimal(
+                  Encryption.encryptAES(widget.userInfo.email, 'key'));
 
               await APIService().addCrush(sharedSecret, encryptedCrushEmail);
             }
