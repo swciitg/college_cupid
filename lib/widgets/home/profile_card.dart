@@ -10,19 +10,24 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-            image: NetworkImage(profilePicUrl), fit: BoxFit.cover),
+            image: profilePicUrl == ''
+                ? const NetworkImage('')
+                : NetworkImage(profilePicUrl),
+            fit: BoxFit.cover),
       ),
       child: Container(
         decoration: const BoxDecoration(
           borderRadius:
               BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
           gradient: LinearGradient(
-              colors: [Colors.black87, Colors.transparent],
-              begin: Alignment.bottomCenter,
-              end: Alignment.center),
+              stops: [0, 0.6, 1],
+              colors: [Colors.transparent, Colors.transparent, Colors.black38],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Expanded(child: SizedBox()),

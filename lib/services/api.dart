@@ -46,7 +46,7 @@ class APIService {
     }));
   }
 
-  Future<void> signIn(File? image, PersonalInfo myInfo) async {
+  Future<String> postMyInfo(File? image, PersonalInfo myInfo) async {
     final userMap = myInfo.toJson();
     if (image != null) {
       String fileName = image.path.split('/').last;
@@ -64,12 +64,7 @@ class APIService {
           data: formData);
 
       if (res.statusCode == 200) {
-        print(res.data);
-        String access = res.data['accessToken'];
-        String refresh = res.data['refreshToken'];
-        await AuthUserHelpers.setAccessToken(access);
-        await AuthUserHelpers.setRefreshToken(refresh);
-        // return res.data['imageUrl'].toString();
+        return res.data['profilePicUrl'] ?? '';
       } else {
         return Future.error(res.statusMessage.toString());
       }

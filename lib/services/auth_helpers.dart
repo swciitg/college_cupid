@@ -3,22 +3,21 @@ import '../globals/database_strings.dart';
 import '../globals/endpoints.dart';
 import 'package:dio/dio.dart';
 
-class AuthUserHelpers{
-
+class AuthUserHelpers {
   Future<Response<dynamic>> retryRequest(Response response) async {
     // print(response);
     // print("INSIDE RETRY REQUEST");
     RequestOptions requestOptions = response.requestOptions;
-    response.requestOptions.headers[BackendHelper.authorization] = "Bearer ${await AuthUserHelpers.getAccessToken()}";
-    try{
-      final options = Options(method: requestOptions.method, headers: requestOptions.headers);
+    response.requestOptions.headers[BackendHelper.authorization] =
+        "Bearer ${await AuthUserHelpers.getAccessToken()}";
+    try {
+      final options = Options(
+          method: requestOptions.method, headers: requestOptions.headers);
       Dio retryDio = Dio(BaseOptions(
           baseUrl: Endpoints.baseUrl,
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5),
-          headers: {
-            'Security-Key': Endpoints.apiSecurityKey
-          }));
+          headers: {'Security-Key': Endpoints.apiSecurityKey}));
       if (requestOptions.method == "GET") {
         return retryDio.request(requestOptions.path,
             queryParameters: requestOptions.queryParameters, options: options);
@@ -28,8 +27,7 @@ class AuthUserHelpers{
             data: requestOptions.data,
             options: options);
       }
-    }
-    catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }
@@ -43,9 +41,11 @@ class AuthUserHelpers{
           baseUrl: Endpoints.baseUrl,
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5)));
-      Response resp = await regenDio.post(
-          "/user/refresh_token",
-          options: Options(headers: {'Security-Key': Endpoints.apiSecurityKey,"authorization": "Bearer $refreshToken"}));
+      Response resp = await regenDio.post("/user/refresh_token",
+          options: Options(headers: {
+            'Security-Key': Endpoints.apiSecurityKey,
+            "authorization": "Bearer $refreshToken"
+          }));
       var data = resp.data!;
       await AuthUserHelpers.setAccessToken(data[BackendHelper.accessToken]);
       return true;
@@ -75,8 +75,24 @@ class AuthUserHelpers{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(BackendHelper.refreshToken, value);
   }
-  static Future<void> setGValue(String value) async {
+
+  static Future<void> setEmail(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.gValue, value);
+    await prefs.setString(BackendHelper.email, value);
+  }
+
+  static Future<String> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(BackendHelper.email) ?? " ";
+  }
+
+  static Future<void> setDisplayName(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(BackendHelper.displayName, value);
+  }
+
+  static Future<String> getDisplayName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(BackendHelper.displayName) ?? " ";
   }
 }

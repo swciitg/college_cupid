@@ -7,10 +7,10 @@ class PersonalInfo {
   late String bio;
   late String yearOfStudy;
   late String program;
-  late String ecryptedPrivateKey;
+  late String encryptedPrivateKey;
   late String publicKey;
   late List<String> interests;
-  late List<String> ecryptedCrushes;
+  late List<String> encryptedCrushes;
   late List<String> crushes;
   late List<String> matches;
 
@@ -23,11 +23,11 @@ class PersonalInfo {
       required this.bio,
       required this.yearOfStudy,
       required this.program,
-      required this.ecryptedPrivateKey,
+      required this.encryptedPrivateKey,
       required this.publicKey,
       required this.interests,
       required this.crushes,
-      required this.ecryptedCrushes,
+      required this.encryptedCrushes,
       required this.matches});
 
   PersonalInfo.fromJson(Map<String, dynamic> json) {
@@ -39,10 +39,10 @@ class PersonalInfo {
     bio = json['bio'];
     yearOfStudy = json['yearOfStudy'];
     program = json['program'];
-    ecryptedPrivateKey = json['ecryptedPrivateKey'];
+    encryptedPrivateKey = json['encryptedPrivateKey'];
     publicKey = json['publicKey'];
     interests = json['interests'].cast<String>();
-    ecryptedCrushes = json['ecryptedCrushes'].cast<String>();
+    encryptedCrushes = json['encryptedCrushes'].cast<String>();
     crushes = json['crushes'].cast<String>();
     matches = json['matches'].cast<String>();
   }
@@ -57,10 +57,10 @@ class PersonalInfo {
     data['bio'] = bio;
     data['yearOfStudy'] = yearOfStudy;
     data['program'] = program;
-    data['ecryptedPrivateKey'] = ecryptedPrivateKey;
+    data['encryptedPrivateKey'] = encryptedPrivateKey;
     data['publicKey'] = publicKey;
     data['interests'] = interests;
-    data['ecryptedCrushes'] = ecryptedCrushes;
+    data['encryptedCrushes'] = encryptedCrushes;
     data['crushes'] = crushes;
     data['matches'] = matches;
     return data;

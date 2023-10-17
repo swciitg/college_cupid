@@ -5,6 +5,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,6 +27,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   List<String> programs = ['B.Tech', 'B.Sc', 'M.Tech', 'PHd', 'M.Sc', 'M.BA'];
   var selectedValue1 = 'B.Tech';
   TextEditingController name = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController gender = TextEditingController();
 
   // late TextEditingController program;
@@ -60,8 +62,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    name.text = '';
+    name.text = LoginStore.displayName!;
     pass.text = '';
+    emailController.text = LoginStore.email!;
     gender.text = 'male';
   }
 
@@ -123,27 +126,43 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       )))
             ]),
             const Padding(padding: EdgeInsets.only(top: 30)),
-            TextField(
-              focusNode: FocusNode(),
-              controller: name,
-              decoration: const InputDecoration(
-                labelText: "Name",
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: TextStyle(color: CupidColors.pinkColor),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                ),
+            SizedBox(
+              height: 56,
+              child: TextField(
+                focusNode: FocusNode(),
+                controller: name,
+                enabled: false,
+                decoration: const InputDecoration(
+                    labelText: "Name",
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    )),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.only(top: 15)),
+            SizedBox(
+              height: 56,
+              child: TextField(
+                focusNode: FocusNode(),
+                controller: emailController,
+                enabled: false,
+                decoration: const InputDecoration(
+                    labelText: 'Email',
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    )),
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 15)),
@@ -218,120 +237,130 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ]),
             ),
             const Padding(padding: EdgeInsets.only(top: 15)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: selectedValue1,
-                    items: programs.map((String item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValue1 = value!;
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.arrow_drop_down,
+            SizedBox(
+              height: 56,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: selectedValue1,
+                      items: programs.map((String item) {
+                        return DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue1 = value!;
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                      decoration: InputDecoration(
+                          labelText: "Program",
+                          labelStyle:
+                              const TextStyle(color: CupidColors.pinkColor),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: CupidColors.pinkColor),
+                            borderRadius: BorderRadius.circular(15),
+                          )),
                     ),
-                    decoration: InputDecoration(
-                        labelText: "Program",
-                        labelStyle:
-                            const TextStyle(color: CupidColors.pinkColor),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: CupidColors.pinkColor),
-                          borderRadius: BorderRadius.circular(15),
-                        )),
                   ),
-                ),
-                const SizedBox(width: 16), // Add some spacing between dropdowns
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: selectedValue2,
-                    items: year.map((String item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValue2 = value!;
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.arrow_drop_down,
+                  const SizedBox(width: 16),
+                  // Add some spacing between dropdowns
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: selectedValue2,
+                      items: year.map((String item) {
+                        return DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue2 = value!;
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                      decoration: InputDecoration(
+                          labelText: "Year",
+                          labelStyle:
+                              const TextStyle(color: CupidColors.pinkColor),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: CupidColors.pinkColor),
+                            borderRadius: BorderRadius.circular(15),
+                          )),
                     ),
-                    decoration: InputDecoration(
-                        labelText: "Year",
-                        labelStyle:
-                            const TextStyle(color: CupidColors.pinkColor),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: CupidColors.pinkColor),
-                          borderRadius: BorderRadius.circular(15),
-                        )),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
-            TextField(
-              focusNode: FocusNode(),
-              controller: pass,
-              decoration: const InputDecoration(
-                label: Text(
-                  "Password",
-                  style: TextStyle(color: CupidColors.pinkColor),
-                ),
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: TextStyle(color: CupidColors.pinkColor),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
+            const Padding(padding: EdgeInsets.only(top: 15)),
+            SizedBox(
+              height: 56,
+              child: TextField(
+                focusNode: FocusNode(),
+                controller: pass,
+                decoration: const InputDecoration(
+                  label: Text(
+                    "Password",
+                    style: TextStyle(color: CupidColors.pinkColor),
                   ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
+                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                  labelStyle: TextStyle(color: CupidColors.pinkColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
                   ),
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
-            TextField(
-              focusNode: FocusNode(),
-              decoration: const InputDecoration(
-                labelText: "Confirm Password",
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: TextStyle(color: CupidColors.pinkColor),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
+            const Padding(padding: EdgeInsets.only(top: 15)),
+            SizedBox(
+              height: 56,
+              child: TextField(
+                focusNode: FocusNode(),
+                decoration: const InputDecoration(
+                  labelText: "Confirm Password",
+                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                  labelStyle: TextStyle(color: CupidColors.pinkColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
                   ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: CupidColors.pinkColor, width: 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
                   ),
                 ),
               ),
@@ -350,20 +379,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       .join('');
 
                   PersonalInfo myInfo = PersonalInfo(
-                      name: name.text,
+                      name: LoginStore.displayName!,
                       profilePicUrl: '',
                       gender: isMale ? 'male' : 'female',
-                      email: 'r.hardik@iitg.ac.in',
+                      email: LoginStore.email!,
                       hashedPassword: Encryption.bytesToHexadecimal(
                           Encryption.calculateSHA256(pass.text)),
                       bio: '',
                       yearOfStudy: selectedValue2,
                       program: selectedValue1,
-                      ecryptedPrivateKey: encryptedPrivateKey,
+                      encryptedPrivateKey: encryptedPrivateKey,
                       publicKey: publicKey,
                       interests: [],
                       crushes: [],
-                      ecryptedCrushes: [],
+                      encryptedCrushes: [],
                       matches: []);
 
                   print(myInfo.toJson().toString());
