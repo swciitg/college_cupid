@@ -83,6 +83,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
     );
   }
 
+  final _cupidFormkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,67 +102,81 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         title: const Text("About You", style: CupidStyles.pageHeadingStyle),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              // had to keep these in different column
-              // so that padding does cut the boxshadow of selected interests
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 5),
-                  Text('Bio',
-                      style: CupidStyles.headingStyle
-                          .copyWith(color: CupidColors.titleColor)),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Write a brief description about yourself to attract people to your profile.',
-                    softWrap: true,
-                    style: CupidStyles.lightTextStyle,
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: bioController,
-                    maxLines: 5,
-                    style: CupidStyles.normalTextStyle,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 20),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          width: 1.2,
-                          color: CupidColors.secondaryColor,
+      body: Form(
+        key: _cupidFormkey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                // had to keep these in different column
+                // so that padding does cut the boxshadow of selected interests
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    Text('Bio',
+                        style: CupidStyles.headingStyle
+                            .copyWith(color: CupidColors.titleColor)),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Write a brief description about yourself to attract people to your profile.',
+                      softWrap: true,
+                      style: CupidStyles.lightTextStyle,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: bioController,
+                      maxLines: 5,
+                      style: CupidStyles.normalTextStyle,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: const BorderSide(
+                            width: 1.2,
+                            color: CupidColors.secondaryColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide:
+                              const BorderSide(color: CupidColors.titleColor),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            const BorderSide(color: CupidColors.titleColor),
-                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter your bio";
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Your Interests",
-                    style: CupidStyles.headingStyle
-                        .copyWith(color: CupidColors.titleColor),
-                  ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    "Select a few of your interests and let everyone know what you’re passionate about.",
-                    style: CupidStyles.lightTextStyle,
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 10),
+                    Text(
+                      "Your Interests",
+                      style: CupidStyles.headingStyle
+                          .copyWith(color: CupidColors.titleColor),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      "Select a few of your interests and let everyone know what you’re passionate about.",
+                      style: CupidStyles.lightTextStyle,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-            _buildInterestsGrid(),
-            const SizedBox(height: 20),
-          ],
+              _buildInterestsGrid(),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Padding(
@@ -169,19 +185,20 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         child: CupidButton(
           text: "Confirm",
           onTap: () async {
-            widget.myInfo.bio = bioController.text;
-            widget.myInfo.interests = selectedInterests.toList();
-            NavigatorState nav = Navigator.of(context);
-            String profilePicUrl =
-                await APIService().postMyInfo(widget.image, widget.myInfo);
-            widget.myInfo.profilePicUrl = profilePicUrl;
+            if (_cupidFormkey.currentState!.validate()) {
+              widget.myInfo.bio = bioController.text;
+              widget.myInfo.interests = selectedInterests.toList();
+              NavigatorState nav = Navigator.of(context);
+              // await APIService().signIn(widget.image, widget.myInfo);
 
-            SharedPreferences user = await SharedPreferences.getInstance();
-            await user.setString('myInfo', jsonEncode(widget.myInfo.toJson()));
-            await LoginStore().updateUserData();
-            await user.setBool('isProfileCompleted', true);
+              SharedPreferences user = await SharedPreferences.getInstance();
+              await user.setString(
+                  'myInfo', jsonEncode(widget.myInfo.toJson()));
+              await LoginStore().updateUserData();
+              await user.setBool('isProfileCompleted', true);
 
-            nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+              nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+            }
           },
         ),
       ),

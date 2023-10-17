@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -33,6 +34,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   // late TextEditingController program;
   // late TextEditingController year;
   TextEditingController pass = TextEditingController();
+  TextEditingController confirmPass = TextEditingController();
 
   List<String> year = [
     '1st Year',
@@ -68,6 +70,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     gender.text = 'male';
   }
 
+  final _cupidProfileKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,161 +89,156 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(25.0),
-        child: Column(
-          children: [
-            Stack(children: [
-              GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      pickImage(ImageSource.gallery);
-                    });
-                  },
-                  child: image != null
-                      ? ClipOval(
-                          child: Image.file(
-                          image!,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ))
-                      : ClipOval(
-                          child: Container(
+        child: Form(
+          key: _cupidProfileKey,
+          child: Column(
+            children: [
+              Stack(children: [
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        pickImage(ImageSource.gallery);
+                      });
+                    },
+                    child: image != null
+                        ? ClipOval(
+                            child: Image.file(
+                            image!,
                             width: 100,
                             height: 100,
+                            fit: BoxFit.cover,
+                          ))
+                        : ClipOval(
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              color: CupidColors.titleColor,
+                            ),
+                          )),
+                Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                        decoration: const BoxDecoration(
                             color: CupidColors.titleColor,
+                            shape: BoxShape.circle),
+                        child: const Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Icon(Icons.camera_alt_outlined,
+                                size: 16, color: Colors.white),
                           ),
-                        )),
-              Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                      decoration: const BoxDecoration(
-                          color: CupidColors.titleColor,
-                          shape: BoxShape.circle),
-                      child: const Padding(
-                        padding: EdgeInsets.all(2.0),
-                        child: Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Icon(Icons.camera_alt_outlined,
-                              size: 16, color: Colors.white),
-                        ),
-                      )))
-            ]),
-            const Padding(padding: EdgeInsets.only(top: 30)),
-            SizedBox(
-              height: 56,
-              child: TextField(
+                        )))
+              ]),
+              const Padding(padding: EdgeInsets.only(top: 30)),
+              TextFormField(
                 focusNode: FocusNode(),
                 controller: name,
-                enabled: false,
                 decoration: const InputDecoration(
-                    labelText: "Name",
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    )),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
-            SizedBox(
-              height: 56,
-              child: TextField(
-                focusNode: FocusNode(),
-                controller: emailController,
-                enabled: false,
-                decoration: const InputDecoration(
-                    labelText: 'Email',
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    )),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
-            Container(
-              height: 56,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    color: CupidColors.pinkColor,
+                  labelText: "Name",
+                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                  labelStyle: TextStyle(color: CupidColors.pinkColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(15)),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Text(
-                      'Select Gender ',
-                      style: TextStyle(
-                        color: CupidColors.pinkColor,
-                      ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMale = true;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: isMale
-                                ? CupidColors.titleColor
-                                : CupidColors.backgroundColor,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            "Male",
-                            style: TextStyle(
-                                color: isMale
-                                    ? CupidColors.whiteColor
-                                    : CupidColors.titleColor),
-                          ),
-                        )),
-                      ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Your name please!";
+                  }
+                  return null;
+                },
+              ),
+              const Padding(padding: EdgeInsets.only(top: 15)),
+              Container(
+                height: 56,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: CupidColors.pinkColor,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMale = false;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: !isMale
-                                ? CupidColors.titleColor
-                                : CupidColors.backgroundColor,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            "Female",
-                            style: TextStyle(
-                                color: !isMale
-                                    ? CupidColors.whiteColor
-                                    : CupidColors.titleColor),
-                          ),
-                        )),
+                    borderRadius: BorderRadius.circular(15)),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        'Select Gender ',
+                        style: TextStyle(
+                          color: CupidColors.pinkColor,
+                        ),
                       ),
-                    )
-                  ]),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
-            SizedBox(
-              height: 56,
-              child: Row(
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isMale = true;
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 8, bottom: 8),
+                          decoration: BoxDecoration(
+                              color: isMale
+                                  ? CupidColors.titleColor
+                                  : CupidColors.backgroundColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              "Male",
+                              style: TextStyle(
+                                  color: isMale
+                                      ? CupidColors.whiteColor
+                                      : CupidColors.titleColor),
+                            ),
+                          )),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isMale = false;
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 8, bottom: 8),
+                          decoration: BoxDecoration(
+                              color: !isMale
+                                  ? CupidColors.titleColor
+                                  : CupidColors.backgroundColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              "Female",
+                              style: TextStyle(
+                                  color: !isMale
+                                      ? CupidColors.whiteColor
+                                      : CupidColors.titleColor),
+                            ),
+                          )),
+                        ),
+                      )
+                    ]),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 15)),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
@@ -273,8 +272,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           )),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  // Add some spacing between dropdowns
+                  const SizedBox(
+                      width: 16), // Add some spacing between dropdowns
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: selectedValue2,
@@ -293,28 +292,27 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         Icons.arrow_drop_down,
                       ),
                       decoration: InputDecoration(
-                          labelText: "Year",
-                          labelStyle:
-                              const TextStyle(color: CupidColors.pinkColor),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: CupidColors.pinkColor),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
+                        labelText: "Year",
+                        labelStyle:
+                            const TextStyle(color: CupidColors.pinkColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: CupidColors.pinkColor),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
-            SizedBox(
-              height: 56,
-              child: TextField(
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              TextFormField(
                 focusNode: FocusNode(),
                 controller: pass,
+                obscureText: true,
                 decoration: const InputDecoration(
                   label: Text(
                     "Password",
@@ -336,77 +334,108 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       Radius.circular(15),
                     ),
                   ),
-                ),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
-            SizedBox(
-              height: 56,
-              child: TextField(
-                focusNode: FocusNode(),
-                decoration: const InputDecoration(
-                  labelText: "Confirm Password",
-                  floatingLabelAlignment: FloatingLabelAlignment.start,
-                  labelStyle: TextStyle(color: CupidColors.pinkColor),
-                  focusedBorder: OutlineInputBorder(
+                  errorBorder: OutlineInputBorder(
                     borderSide:
                         BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Your password ?";
+                  }
+                  return null;
+                },
               ),
-            ),
-            const Expanded(child: SizedBox()),
-            CupidButton(
-                text: 'Continue',
-                onTap: () {
-                  DiffieHellman df = DiffieHellman();
-                  String publicKey = df.publicKey.toString();
-                  String privateKey = df.privateKey.toString();
-                  Uint8List encryptedPvtBytes =
-                      Encryption.encryptAES(privateKey, pass.text);
-                  String encryptedPrivateKey = encryptedPvtBytes
-                      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-                      .join('');
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              TextFormField(
+                  focusNode: FocusNode(),
+                  controller: confirmPass,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      labelText: "Confirm Password",
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      labelStyle: TextStyle(color: CupidColors.pinkColor),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      )),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Confirm your password!";
+                    }
+                    return null;
+                  }),
+              const Expanded(child: SizedBox()),
+              CupidButton(
+                  text: 'Continue',
+                  onTap: () {
+                    if (_cupidProfileKey.currentState!.validate() &&
+                        _validatePasswords()) {
+                      DiffieHellman df = DiffieHellman();
+                      String publicKey = df.publicKey.toString();
+                      String privateKey = df.privateKey.toString();
+                      Uint8List encryptedPvtBytes =
+                          Encryption.encryptAES(privateKey, pass.text);
+                      String encryptedPrivateKey = encryptedPvtBytes
+                          .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+                          .join('');
 
-                  PersonalInfo myInfo = PersonalInfo(
-                      name: LoginStore.displayName!,
-                      profilePicUrl: '',
-                      gender: isMale ? 'male' : 'female',
-                      email: LoginStore.email!,
-                      hashedPassword: Encryption.bytesToHexadecimal(
-                          Encryption.calculateSHA256(pass.text)),
-                      bio: '',
-                      yearOfStudy: selectedValue2,
-                      program: selectedValue1,
-                      encryptedPrivateKey: encryptedPrivateKey,
-                      publicKey: publicKey,
-                      interests: [],
-                      crushes: [],
-                      encryptedCrushes: [],
-                      matches: []);
+                      PersonalInfo myInfo = PersonalInfo(
+                        name: LoginStore.displayName!,
+                        profilePicUrl: '',
+                        gender: isMale ? 'male' : 'female',
+                        email: LoginStore.email!,
+                        hashedPassword: Encryption.bytesToHexadecimal(
+                            Encryption.calculateSHA256(pass.text)),
+                        bio: '',
+                        yearOfStudy: selectedValue2,
+                        program: selectedValue1,
+                        encryptedPrivateKey: encryptedPrivateKey,
+                        publicKey: publicKey,
+                        interests: [],
+                        crushes: [],
+                        encryptedCrushes: [],
+                        matches: [],
+                      );
 
-                  print(myInfo.toJson().toString());
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AboutYouScreen(
-                                image: image,
-                                myInfo: myInfo,
-                              )));
-                }),
-          ],
+                      print(myInfo.toJson().toString());
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AboutYouScreen(
+                                    image: image,
+                                    myInfo: myInfo,
+                                  )));
+                    } else if (!_validatePasswords()) {
+                      showSnackBar("Passwords do not match!");
+                      pass.clear();
+                      confirmPass.clear();
+                    } else {
+                      showSnackBar("Please fill full details!");
+                    }
+                  }),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  bool _validatePasswords() {
+    return confirmPass.text == pass.text;
   }
 }
