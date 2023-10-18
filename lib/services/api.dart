@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_info.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:dio/dio.dart';
 import '../globals/endpoints.dart';
 import './auth_helpers.dart';
@@ -73,7 +74,7 @@ class APIService {
     }
   }
 
-  Future<List<UserInfo>> getAllUsers() async {
+  Future<List<UserInfo>> getAllOtherUsers() async {
     try {
       Response res = await dio.get(Endpoints.baseUrl + Endpoints.getAllUsers);
       if (res.statusCode == 200) {
@@ -85,7 +86,7 @@ class APIService {
             interests.add(users[i]['interests'][j].toString());
           }
 
-          //TODO: Skip my own userInfo
+          if (users[i]['email'].toString() == LoginStore.email) continue;
           usersInfo.add(UserInfo(
               name: users[i]['name'] as String,
               profilePicUrl: users[i]['profilePicUrl'] as String,

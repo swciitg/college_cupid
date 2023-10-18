@@ -147,8 +147,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                         ),
                         errorBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: CupidColors.pinkColor, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                              color: Colors.red, width: 1.2),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.red, width: 1.5),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                       ),
                       validator: (value) {

@@ -24,7 +24,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: APIService().getAllUsers(),
+        future: APIService().getAllOtherUsers(),
         builder: (context, snapshot) {
           print(snapshot.data);
           if (snapshot.hasData == false) {

@@ -12,7 +12,10 @@ class LoginStore {
     SharedPreferences user = await SharedPreferences.getInstance();
 
     if (user.containsKey('myInfo')) {
-      //TODO: fetch user data from db and update in shared prefs
+      await updateEmail();
+      await updateDisplayName();
+      //TODO: fetch user data FROM DATABASE and update in shared prefs
+      await updateUserData();
       if (user.containsKey('isProfileCompleted')) {
         isProfileCompleted = true;
       }
