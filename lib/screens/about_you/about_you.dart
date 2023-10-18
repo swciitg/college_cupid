@@ -189,8 +189,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               widget.myInfo.bio = bioController.text;
               widget.myInfo.interests = selectedInterests.toList();
               NavigatorState nav = Navigator.of(context);
-              // await APIService().signIn(widget.image, widget.myInfo);
-
+              String profilePicUrl =
+                  await APIService().postMyInfo(widget.image, widget.myInfo);
+              widget.myInfo.profilePicUrl = profilePicUrl;
               SharedPreferences user = await SharedPreferences.getInstance();
               await user.setString(
                   'myInfo', jsonEncode(widget.myInfo.toJson()));

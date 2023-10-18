@@ -132,39 +132,75 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         )))
               ]),
               const Padding(padding: EdgeInsets.only(top: 30)),
-              TextFormField(
-                focusNode: FocusNode(),
-                controller: name,
-                decoration: const InputDecoration(
-                  labelText: "Name",
-                  floatingLabelAlignment: FloatingLabelAlignment.start,
-                  labelStyle: TextStyle(color: CupidColors.pinkColor),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+              SizedBox(
+                height: 56,
+                child: TextFormField(
+                  focusNode: FocusNode(),
+                  controller: name,
+                  decoration: const InputDecoration(
+                    labelText: "Name",
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Your name please!";
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Your name please!";
-                  }
-                  return null;
-                },
+              ),
+              const Padding(padding: EdgeInsets.only(top: 15)),
+              SizedBox(
+                height: 56,
+                child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: emailController,
+                    enabled: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      labelStyle: TextStyle(color: CupidColors.pinkColor),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Your name please!";
+                      }
+                      return null;
+                    }),
               ),
               const Padding(padding: EdgeInsets.only(top: 15)),
               Container(
@@ -238,28 +274,63 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ]),
               ),
               const Padding(padding: EdgeInsets.only(top: 15)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: selectedValue1,
-                      items: programs.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedValue1 = value!;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
+              SizedBox(
+                height: 56,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedValue1,
+                        items: programs.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValue1 = value!;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                        ),
+                        decoration: InputDecoration(
+                            labelText: "Program",
+                            labelStyle:
+                                const TextStyle(color: CupidColors.pinkColor),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: CupidColors.pinkColor),
+                              borderRadius: BorderRadius.circular(15),
+                            )),
                       ),
-                      decoration: InputDecoration(
-                          labelText: "Program",
+                    ),
+                    const SizedBox(
+                        width: 16), // Add some spacing between dropdowns
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedValue2,
+                        items: year.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValue2 = value!;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: "Year",
                           labelStyle:
                               const TextStyle(color: CupidColors.pinkColor),
                           border: OutlineInputBorder(
@@ -269,116 +340,90 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             borderSide:
                                 const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
-                          )),
-                    ),
-                  ),
-                  const SizedBox(
-                      width: 16), // Add some spacing between dropdowns
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: selectedValue2,
-                      items: year.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedValue2 = value!;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: "Year",
-                        labelStyle:
-                            const TextStyle(color: CupidColors.pinkColor),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: CupidColors.pinkColor),
-                          borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const Padding(padding: EdgeInsets.only(top: 20)),
-              TextFormField(
-                focusNode: FocusNode(),
-                controller: pass,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  label: Text(
-                    "Password",
-                    style: TextStyle(color: CupidColors.pinkColor),
-                  ),
-                  floatingLabelAlignment: FloatingLabelAlignment.start,
-                  labelStyle: TextStyle(color: CupidColors.pinkColor),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Your password ?";
-                  }
-                  return null;
-                },
               ),
               const Padding(padding: EdgeInsets.only(top: 20)),
-              TextFormField(
+              SizedBox(
+                height: 56,
+                child: TextFormField(
                   focusNode: FocusNode(),
-                  controller: confirmPass,
+                  controller: pass,
                   obscureText: true,
                   decoration: const InputDecoration(
-                      labelText: "Confirm Password",
-                      floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: TextStyle(color: CupidColors.pinkColor),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
+                    label: Text(
+                      "Password",
+                      style: TextStyle(color: CupidColors.pinkColor),
+                    ),
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
                       ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      )),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Confirm your password!";
+                      return "Your password ?";
                     }
                     return null;
-                  }),
+                  },
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 15)),
+              SizedBox(
+                height: 56,
+                child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: confirmPass,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        labelText: "Confirm Password",
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                        labelStyle: TextStyle(color: CupidColors.pinkColor),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        )),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Confirm your password!";
+                      }
+                      return null;
+                    }),
+              ),
               const Expanded(child: SizedBox()),
               CupidButton(
                   text: 'Continue',
