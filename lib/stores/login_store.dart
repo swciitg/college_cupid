@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:college_cupid/models/personal_info.dart';
+import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/auth_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,11 +14,12 @@ class LoginStore {
     SharedPreferences user = await SharedPreferences.getInstance();
 
     if (user.containsKey('myInfo')) {
+      Map<String, dynamic>? data = await APIService().getPersonalInfo();
       await updateEmail();
       await updateDisplayName();
-      //TODO: fetch user data FROM DATABASE and update in shared prefs
-      await updateUserData();
-      if (user.containsKey('isProfileCompleted')) {
+      if (data != null) {
+        await saveMyInfo(data);
+        await updateUserData();
         isProfileCompleted = true;
       }
       return true;
@@ -37,5 +40,11 @@ class LoginStore {
     SharedPreferences user = await SharedPreferences.getInstance();
 
     userData = jsonDecode((user.getString('myInfo'))!);
+  }
+
+  Future<void> saveMyInfo(Map<String, dynamic> myInfo) async {
+    SharedPreferences user = await SharedPreferences.getInstance();
+    await user.setString('myInfo', jsonEncode(myInfo));
+    await user.setBool('isProfileCompleted', true);
   }
 }

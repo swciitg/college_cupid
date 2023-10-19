@@ -1,4 +1,7 @@
+import 'package:college_cupid/screens/profile/my_profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
+import 'package:college_cupid/splash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../functions/home/nav_icons.dart';
 import './home_tab.dart';
 import '../your_matches/your_matches_tab.dart';
@@ -20,7 +23,7 @@ class _HomeState extends State<Home> {
     const HomeTab(),
     const YourCrushesTab(),
     const YourMatches(),
-    // const ProfileTab(isMine: true),
+    const MyProfileTab(),
   ];
 
   @override
@@ -30,6 +33,23 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              onPressed: () async {
+                NavigatorState nav = Navigator.of(context);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                bool cleared = await prefs.clear();
+                if (cleared) {
+                  nav.pushNamedAndRemoveUntil(
+                      SplashScreen.id, (route) => false);
+                }
+              },
+              icon: const Icon(
+                Icons.logout_rounded,
+                color: CupidColors.pinkColor,
+              ))
+        ],
         title: const Text('CollegeCupid',
             style: TextStyle(
               color: Colors.black,

@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:college_cupid/functions/string_extension.dart';
 import 'package:college_cupid/globals/database_strings.dart';
 import 'package:college_cupid/globals/endpoints.dart';
+import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
+import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../services/auth_helpers.dart';
 
@@ -74,8 +80,19 @@ class _LoginWebviewState extends State<LoginWebview> {
                 await LoginStore().updateDisplayName();
                 await LoginStore().updateEmail();
 
-                nav.pushNamedAndRemoveUntil(
-                    ProfileDetails.id, (route) => false);
+                Map<String, dynamic>? data =
+                    await APIService().getPersonalInfo();
+
+                if (data == null) {
+                  nav.pushNamedAndRemoveUntil(
+                      ProfileDetails.id, (route) => false);
+                } else {
+                  await LoginStore().saveMyInfo(data);
+                  await LoginStore().updateUserData();
+
+                  nav.pushNamedAndRemoveUntil(
+                      SplashScreen.id, (route) => false);
+                }
               }
             }
           },

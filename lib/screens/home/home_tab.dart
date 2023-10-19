@@ -1,5 +1,5 @@
 import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
-import 'package:college_cupid/screens/profile/profile_tab.dart';
+import 'package:college_cupid/screens/profile/user_profile.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/home/profile_card.dart';

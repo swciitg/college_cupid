@@ -146,13 +146,11 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                               const BorderSide(color: CupidColors.titleColor),
                         ),
                         errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.red, width: 1.2),
+                          borderSide: BorderSide(color: Colors.red, width: 1.2),
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                         focusedErrorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.red, width: 1.5),
+                          borderSide: BorderSide(color: Colors.red, width: 1.5),
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                       ),
@@ -197,11 +195,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               String profilePicUrl =
                   await APIService().postMyInfo(widget.image, widget.myInfo);
               widget.myInfo.profilePicUrl = profilePicUrl;
-              SharedPreferences user = await SharedPreferences.getInstance();
-              await user.setString(
-                  'myInfo', jsonEncode(widget.myInfo.toJson()));
+
+              await LoginStore().saveMyInfo(widget.myInfo.toJson());
               await LoginStore().updateUserData();
-              await user.setBool('isProfileCompleted', true);
 
               nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
             }

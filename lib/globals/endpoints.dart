@@ -3,7 +3,7 @@ class Endpoints {
   static const apiSecurityKey = '';
 
   // static const baseUrl = 'http://192.168.0.142:3000';
-  
+
   // static const baseUrl = 'http://10.19.2.38:3000';
   static const oneStopBaseUrl = 'https://swc.iitg.ac.in/onestop/api/v3';
 
@@ -11,6 +11,7 @@ class Endpoints {
   static const postMyInfo = '/user';
   static const addCrush = '/crush/add';
   static const microsoftAuth = '/auth/microsoft';
+  static const getPersonalInfo = '/user/personalInfo';
 
   static getHeader() {
     return {

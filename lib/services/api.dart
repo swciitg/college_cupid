@@ -107,6 +107,20 @@ class APIService {
     }
   }
 
+  Future<Map<String, dynamic>?> getPersonalInfo() async {
+    try {
+      Response res =
+          await dio.get(Endpoints.baseUrl + Endpoints.getPersonalInfo);
+      if (res.statusCode == 200) {
+        return res.data['personalInfo'];
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (error) {
+      return Future.error(error.toString());
+    }
+  }
+
   Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
     try {
       Response res = await dio.put(Endpoints.baseUrl + Endpoints.addCrush,
