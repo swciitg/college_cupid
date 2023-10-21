@@ -1,15 +1,16 @@
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:flutter/cupertino.dart';
 import '../globals/database_strings.dart';
 import '../globals/endpoints.dart';
 import 'package:dio/dio.dart';
 
 class AuthUserHelpers {
   Future<Response<dynamic>> retryRequest(Response response) async {
-    print('RETRYING REQUEST');
+    debugPrint('RETRYING REQUEST');
     RequestOptions requestOptions = response.requestOptions;
     response.requestOptions.headers[BackendHelper.authorization] =
-        "Bearer ${LoginStore.accessToken}";
+    "Bearer ${LoginStore.accessToken}";
     try {
       final options = Options(
           method: requestOptions.method, headers: requestOptions.headers);
@@ -33,7 +34,7 @@ class AuthUserHelpers {
   }
 
   Future<bool> regenerateAccessToken() async {
-    print('REGENERATING ACCESS TOKEN');
+    debugPrint('REGENERATING ACCESS TOKEN');
     String refreshToken = LoginStore.refreshToken!;
     try {
       Dio regenDio = Dio(BaseOptions(
@@ -41,7 +42,7 @@ class AuthUserHelpers {
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5)));
       //  TODO: CHECK IF WORKING
-      Response resp = await regenDio.post("/user/refresh_token",
+      Response resp = await regenDio.post("/auth/refreshToken",
           options: Options(headers: {"authorization": "Bearer $refreshToken"}));
       var data = resp.data!;
       await SharedPrefs.setAccessToken(data[BackendHelper.accessToken]);
