@@ -26,13 +26,12 @@ class _HomeTabState extends State<HomeTab> {
     return FutureBuilder(
         future: APIService().getAllOtherUsers(),
         builder: (context, snapshot) {
-          print(snapshot.data);
           if (snapshot.hasData == false) {
             return const Center(
               child: Text('Loading'),
             );
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Error Fetching Data'));
+            return Center(child: Text(snapshot.error.toString()));
           }
           return Column(
             children: [

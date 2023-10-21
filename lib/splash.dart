@@ -16,11 +16,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    LoginStore().isAuthenticated().then((value) {
+    LoginStore.isAuthenticated().then((value) {
       if (value == true && LoginStore.isProfileCompleted) {
+        print('USER IS AUTHENTICATED');
         Navigator.of(context)
             .pushNamedAndRemoveUntil(Home.id, (route) => false);
       } else {
+        print('USER IS NOT AUTHENTICATED');
         Navigator.of(context)
             .pushNamedAndRemoveUntil(Welcome.id, (route) => false);
       }

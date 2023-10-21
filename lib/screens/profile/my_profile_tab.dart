@@ -14,10 +14,10 @@ class MyProfileTab extends StatefulWidget {
 
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
-  final userInfo = UserInfo.fromJson(LoginStore.userData);
+  final userInfo = UserInfo.fromJson(LoginStore.myInfo);
 
   Widget aboutMe(var h) {
-    print(userInfo.profilePicUrl);
+    debugPrint(userInfo.profilePicUrl);
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(

@@ -4,4 +4,7 @@ class BackendHelper {
   static const authorization = "authorization";
   static const email = "email";
   static const displayName = "displayName";
+  static const privateKey = 'privateKey';
+  static const publicKey = 'publicKey';
+  static const password = 'password';
 }

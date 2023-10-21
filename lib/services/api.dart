@@ -19,13 +19,12 @@ class APIService {
   APIService() {
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (options, handler) async {
-      options.headers["Authorization"] =
-          "Bearer ${await AuthUserHelpers.getAccessToken()}";
+      options.headers["Authorization"] = "Bearer ${LoginStore.accessToken}";
       handler.next(options);
     }, onError: (error, handler) async {
       var response = error.response;
       if (response != null && response.statusCode == 401) {
-        if ((await AuthUserHelpers.getAccessToken()).isEmpty) {
+        if (LoginStore.accessToken!.isEmpty) {
           showSnackBar("Login to continue!!");
         } else {
           bool couldRegenerate =

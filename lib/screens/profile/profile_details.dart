@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/snackbar.dart';
@@ -288,8 +287,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: CupidColors.pinkColor),
+                            borderSide:
+                                const BorderSide(color: CupidColors.pinkColor),
                             borderRadius: BorderRadius.circular(15),
                           )),
                     ),
@@ -371,30 +370,31 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             SizedBox(
               height: 56,
               child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: confirmPass,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      labelText: "Confirm Password",
-                      floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: TextStyle(color: CupidColors.pinkColor),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
+                focusNode: FocusNode(),
+                controller: confirmPass,
+                obscureText: true,
+                decoration: const InputDecoration(
+                    labelText: "Confirm Password",
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      )),),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    )),
+              ),
             ),
             const Expanded(child: SizedBox()),
             CupidButton(
@@ -404,11 +404,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     DiffieHellman df = DiffieHellman();
                     String publicKey = df.publicKey.toString();
                     String privateKey = df.privateKey.toString();
-                    Uint8List encryptedPvtBytes =
-                        Encryption.encryptAES(privateKey, pass.text);
-                    String encryptedPrivateKey = encryptedPvtBytes
-                        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-                        .join('');
+
+                    String encryptedPrivateKey = Encryption.bytesToHexadecimal(
+                        Encryption.encryptAES(privateKey, pass.text));
 
                     PersonalInfo myInfo = PersonalInfo(
                       name: LoginStore.displayName!,
@@ -435,6 +433,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             builder: (context) => AboutYouScreen(
                                   image: image,
                                   myInfo: myInfo,
+                                  password: pass.text,
+                                  privateKey: privateKey,
                                 )));
                   }
                 }),
@@ -445,10 +445,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   bool _validatePasswords() {
-    if(pass.text.isEmpty || confirmPass.text.isEmpty){
+    if (pass.text.isEmpty || confirmPass.text.isEmpty) {
       showSnackBar('Please fill all the details!');
       return false;
-    } else if(confirmPass.text != pass.text){
+    } else if (confirmPass.text != pass.text) {
       showSnackBar('Passwords do not match!');
       return false;
     }

@@ -1,15 +1,15 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import '../globals/database_strings.dart';
 import '../globals/endpoints.dart';
 import 'package:dio/dio.dart';
 
 class AuthUserHelpers {
   Future<Response<dynamic>> retryRequest(Response response) async {
-    // print(response);
-    // print("INSIDE RETRY REQUEST");
+    print('RETRYING REQUEST');
     RequestOptions requestOptions = response.requestOptions;
     response.requestOptions.headers[BackendHelper.authorization] =
-        "Bearer ${await AuthUserHelpers.getAccessToken()}";
+        "Bearer ${LoginStore.accessToken}";
     try {
       final options = Options(
           method: requestOptions.method, headers: requestOptions.headers);
@@ -33,66 +33,23 @@ class AuthUserHelpers {
   }
 
   Future<bool> regenerateAccessToken() async {
-    String refreshToken = await AuthUserHelpers.getRefreshToken();
-    // print("REFRESH TOKEN");
-    // print(refreshToken);
+    print('REGENERATING ACCESS TOKEN');
+    String refreshToken = LoginStore.refreshToken!;
     try {
       Dio regenDio = Dio(BaseOptions(
           baseUrl: Endpoints.baseUrl,
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5)));
+      //  TODO: CHECK IF WORKING
       Response resp = await regenDio.post("/user/refresh_token",
-          options: Options(headers: {
-            'Security-Key': Endpoints.apiSecurityKey,
-            "authorization": "Bearer $refreshToken"
-          }));
+          options: Options(headers: {"authorization": "Bearer $refreshToken"}));
       var data = resp.data!;
-      await AuthUserHelpers.setAccessToken(data[BackendHelper.accessToken]);
+      await SharedPrefs.setAccessToken(data[BackendHelper.accessToken]);
+      await LoginStore.initializeTokens();
       return true;
     } catch (err) {
-      // print(err.toString());
+      print(err.toString());
       return false;
     }
-  }
-
-  static Future<String> getAccessToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.accessToken) ?? " ";
-  }
-
-  static Future<void> setAccessToken(String value) async {
-    // print(value);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.accessToken, value);
-  }
-
-  static Future<String> getRefreshToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.refreshToken) ?? " ";
-  }
-
-  static Future<void> setRefreshToken(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.refreshToken, value);
-  }
-
-  static Future<void> setEmail(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.email, value);
-  }
-
-  static Future<String> getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.email) ?? " ";
-  }
-
-  static Future<void> setDisplayName(String value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.displayName, value);
-  }
-
-  static Future<String> getDisplayName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.displayName) ?? " ";
   }
 }

@@ -1,17 +1,14 @@
-import 'dart:convert';
-
+import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/string_extension.dart';
 import 'package:college_cupid/globals/database_strings.dart';
 import 'package:college_cupid/globals/endpoints.dart';
-import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../../services/auth_helpers.dart';
 
 class LoginWebview extends StatefulWidget {
   static String id = '/loginWebview';
@@ -68,27 +65,40 @@ class _LoginWebviewState extends State<LoginWebview> {
                   BackendHelper.accessToken: accessToken,
                   BackendHelper.refreshToken: refreshToken
                 };
-                print(userTokens);
-                await AuthUserHelpers.setAccessToken(
+                debugPrint(userTokens.toString());
+                await SharedPrefs.setAccessToken(
                     userTokens[BackendHelper.accessToken]);
-                await AuthUserHelpers.setRefreshToken(
+                await SharedPrefs.setRefreshToken(
                     userTokens[BackendHelper.refreshToken]);
 
-                await AuthUserHelpers.setEmail(email);
-                await AuthUserHelpers.setDisplayName(displayName);
+                await SharedPrefs.setEmail(email);
+                await SharedPrefs.setDisplayName(displayName);
 
-                await LoginStore().updateDisplayName();
-                await LoginStore().updateEmail();
+                await LoginStore.initializeDisplayName();
+                await LoginStore.initializeEmail();
+                await LoginStore.initializeTokens();
 
                 Map<String, dynamic>? data =
                     await APIService().getPersonalInfo();
 
                 if (data == null) {
+                  debugPrint('NEW USER');
                   nav.pushNamedAndRemoveUntil(
                       ProfileDetails.id, (route) => false);
                 } else {
-                  await LoginStore().saveMyInfo(data);
-                  await LoginStore().updateUserData();
+                  debugPrint('USER ALREADY EXISTS');
+                  debugPrint('LOGGING IN');
+                  await SharedPrefs.saveMyInfo(data);
+                  await LoginStore.initializeMyInfo();
+
+                  //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
+                  //TODO: INITIALIZE PASSWORD
+                  SharedPrefs.setPassword('value');
+                  SharedPrefs.setPublicKey(LoginStore.myInfo['publicKey']);
+                  SharedPrefs.setPrivateKey(Encryption.decryptAES(
+                      Encryption.hexadecimalToBytes(
+                          LoginStore.myInfo['encryptedPrivateKey']),
+                      await SharedPrefs.getPassword()));
 
                   nav.pushNamedAndRemoveUntil(
                       SplashScreen.id, (route) => false);

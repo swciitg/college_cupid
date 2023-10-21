@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/splash.dart';
@@ -9,14 +9,20 @@ import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AboutYouScreen extends StatefulWidget {
   static String id = 'aboutYou';
   final PersonalInfo myInfo;
+  final String password;
+  final String privateKey;
   final File? image;
 
-  const AboutYouScreen({super.key, required this.image, required this.myInfo});
+  const AboutYouScreen(
+      {super.key,
+      required this.privateKey,
+      required this.password,
+      required this.image,
+      required this.myInfo});
 
   @override
   State<AboutYouScreen> createState() => _AboutYouScreenState();
@@ -196,8 +202,11 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                   await APIService().postMyInfo(widget.image, widget.myInfo);
               widget.myInfo.profilePicUrl = profilePicUrl;
 
-              await LoginStore().saveMyInfo(widget.myInfo.toJson());
-              await LoginStore().updateUserData();
+              await SharedPrefs.setPublicKey(widget.myInfo.publicKey);
+              await SharedPrefs.setPrivateKey(widget.privateKey);
+              await SharedPrefs.setPassword(widget.password);
+              await SharedPrefs.saveMyInfo(widget.myInfo.toJson());
+              await LoginStore.initializeMyInfo();
 
               nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
             }
