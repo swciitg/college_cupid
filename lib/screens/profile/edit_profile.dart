@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:college_cupid/services/image_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/about_you/interest_card.dart';
@@ -17,9 +17,17 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  ImageHelpers imageHelpers = ImageHelpers();
   bool isMale = true;
   File? image;
-  List<String> programs = ['B.Tech', 'B.Sc', 'M.Tech', 'PHd', 'M.Sc', 'M.BA'];
+  List<String> programs = [
+    'B.Tech',
+    'M.Tech',
+    'B.Des',
+    'M.Des',
+    'PhD',
+    'M.Sc',
+  ];
   var selectedValue1 = 'B.Tech';
 
   List<String> year = [
@@ -83,16 +91,26 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> pickImage(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(source: source);
+      final image = await imageHelpers.pickImage(source: source);
       if (image == null) return;
-
-      final imageTemporary = File(image.path);
-      setState(() {
-        this.image = imageTemporary;
-      });
+      await cropImage(image);
     } catch (e) {
       print('Error picking image: $e');
     }
+  }
+
+  Future<void> cropImage(XFile image) async {
+    final croppedImage = await imageHelpers.crop(file: image);
+    if (croppedImage != null) {
+      setState(() {
+        this.image = File(croppedImage.path);
+      });
+    }
+  }
+
+  void onConfirm() async {
+    //TODO: handle on submit
+    Navigator.pop(context);
   }
 
   @override
@@ -140,9 +158,15 @@ class _EditProfileState extends State<EditProfile> {
                     bottom: 0,
                     right: 0,
                     child: Container(
-                        decoration: const BoxDecoration(
-                            color: CupidColors.titleColor,
-                            shape: BoxShape.circle),
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: CupidColors.titleColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: CupidColors.backgroundColor,
+                            width: 3,
+                          ),
+                        ),
                         child: const Padding(
                           padding: EdgeInsets.all(2.0),
                           child: Icon(Icons.camera_alt_outlined,
@@ -313,11 +337,11 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
+              const SizedBox(height: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 5),
                   Text('Bio',
                       style: CupidStyles.headingStyle
                           .copyWith(color: CupidColors.titleColor)),
@@ -376,8 +400,7 @@ class _EditProfileState extends State<EditProfile> {
           child: CupidButton(
             text: "Confirm",
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Home()));
+              onConfirm();
             },
           ),
         ),

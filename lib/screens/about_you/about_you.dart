@@ -115,8 +115,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                // had to keep these in different column
-                // so that padding does cut the boxshadow of selected interests
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.start,
