@@ -33,6 +33,20 @@ class LoginStore {
     }
   }
 
+  static Future<bool> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    isProfileCompleted = false;
+    myInfo.clear();
+    email = null;
+    displayName = null;
+    accessToken = null;
+    refreshToken = null;
+    privateKey = null;
+    publicKey = null;
+    password = null;
+    return prefs.clear();
+  }
+
   static Future<void> initializeStore() async {
     await initializeDisplayName();
     await initializeEmail();

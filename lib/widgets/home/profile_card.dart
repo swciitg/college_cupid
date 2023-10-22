@@ -1,3 +1,4 @@
+import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileCard extends StatelessWidget {
@@ -12,7 +13,15 @@ class ProfileCard extends StatelessWidget {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
+        color: CupidColors.backgroundColor,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+              color: Color.fromRGBO(30, 5, 10, 0.3),
+              offset: Offset(2, 2),
+              blurRadius: 5,
+              spreadRadius: 1)
+        ],
         image: DecorationImage(
             image: profilePicUrl == ''
                 ? const NetworkImage('')
@@ -25,7 +34,7 @@ class ProfileCard extends StatelessWidget {
               BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
           gradient: LinearGradient(
               stops: [0, 0.6, 1],
-              colors: [Colors.transparent, Colors.transparent, Colors.black38],
+              colors: [Colors.transparent, Colors.transparent, Colors.black87],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter),
         ),

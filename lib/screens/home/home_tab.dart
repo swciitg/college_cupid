@@ -46,12 +46,12 @@ class _HomeTabState extends State<HomeTab> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
                         border: Border.all(
-                          color: Colors.pink, // Highlight color
+                          color: CupidColors.titleColor, // Highlight color
                         ),
                         color: CupidColors
                             .backgroundColor, // Background color for the TextField
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         controller: _searchController,
                         decoration: const InputDecoration(
                           hintText: 'Search',
@@ -101,7 +101,7 @@ class _HomeTabState extends State<HomeTab> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProfileTab(
+                                      builder: (context) => UserProfile(
                                             isMine: false,
                                             userInfo: user,
                                           )));
