@@ -58,31 +58,33 @@ class _MyProfileTabState extends State<MyProfileTab> {
                     ],
                   ),
                 ),
-                const Padding(padding: EdgeInsets.only(top: 8)),
+                const SizedBox(height: 8),
                 const Text(
                   'About',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   textAlign: TextAlign.left,
                 ),
-                const Padding(padding: EdgeInsets.only(top: 8)),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: readMore ? 33 : null,
                   child: Text(userInfo.bio, overflow: TextOverflow.clip),
                 ),
-                const Padding(padding: EdgeInsets.only(top: 8)),
-                GestureDetector(
-                  child: Text(
-                    !readMore ? "Show less" : "Read more",
-                    style: const TextStyle(color: CupidColors.navBarIconColor),
-                    textAlign: TextAlign.left,
+                const SizedBox(height: 8),
+                if (userInfo.bio.length > 30)
+                  GestureDetector(
+                    child: Text(
+                      !readMore ? "Show less" : "Read more",
+                      style:
+                          const TextStyle(color: CupidColors.navBarIconColor),
+                      textAlign: TextAlign.left,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        readMore = !readMore;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    setState(() {
-                      readMore = !readMore;
-                    });
-                  },
-                ),
-                const Padding(padding: EdgeInsets.only(top: 8)),
+                const SizedBox(height: 8),
                 if (userInfo.interests.isNotEmpty)
                   ViewInterestsGrid(interests: userInfo.interests)
               ],

@@ -4,6 +4,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
+import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
@@ -20,11 +21,19 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
+  ImageHelpers imageHelpers = ImageHelpers();
   bool isMale = true;
   File? image;
 
   // late UserModel user;
-  List<String> programs = ['B.Tech', 'B.Sc', 'M.Tech', 'PHd', 'M.Sc', 'M.BA'];
+  List<String> programs = [
+    'B.Tech',
+    'M.Tech',
+    'B.Des',
+    'M.Des',
+    'PhD',
+    'M.Sc',
+  ];
   var selectedValue1 = 'B.Tech';
   TextEditingController name = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -47,15 +56,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   Future<void> pickImage(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(source: source);
+      final image = await imageHelpers.pickImage(source: source);
       if (image == null) return;
-
-      final imageTemporary = File(image.path);
-      setState(() {
-        this.image = imageTemporary;
-      });
+      await cropImage(image);
     } catch (e) {
       print('Error picking image: $e');
+    }
+  }
+
+  Future<void> cropImage(XFile image) async {
+    final croppedImage = await imageHelpers.crop(file: image);
+    if (croppedImage != null) {
+      setState(() {
+        this.image = File(croppedImage.path);
+      });
     }
   }
 
@@ -113,16 +127,19 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   bottom: 0,
                   right: 0,
                   child: Container(
-                      decoration: const BoxDecoration(
-                          color: CupidColors.titleColor,
-                          shape: BoxShape.circle),
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: CupidColors.titleColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: CupidColors.backgroundColor,
+                          width: 3,
+                        ),
+                      ),
                       child: const Padding(
                         padding: EdgeInsets.all(2.0),
-                        child: Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Icon(Icons.camera_alt_outlined,
-                              size: 16, color: Colors.white),
-                        ),
+                        child: Icon(Icons.camera_alt_outlined,
+                            color: Colors.white),
                       )))
             ]),
             const Padding(padding: EdgeInsets.only(top: 30)),

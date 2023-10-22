@@ -22,38 +22,36 @@ class _ViewInterestsGridState extends State<ViewInterestsGrid> {
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           textAlign: TextAlign.left,
         ),
-        const Padding(padding: EdgeInsets.only(top: 8)),
-        Container(
-          height: 80,
-          padding: const EdgeInsets.all(8),
-          child: GridView.count(
-            crossAxisCount: 3,
-            childAspectRatio: 4,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            children: widget.interests.map((interest) {
-              return Container(
-                height: 20,
-                decoration: const BoxDecoration(
-                    color: CupidColors.backgroundColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.pink,
-                        spreadRadius: 1,
-                      ),
-                    ]),
-                child: Center(
-                  child: Text(
-                    interest,
-                    style: const TextStyle(
-                      color: Colors.black,
+        const SizedBox(height: 10),
+        GridView.count(
+          crossAxisCount: 3,
+          childAspectRatio: 4,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          shrinkWrap: true,
+          children: widget.interests.map((interest) {
+            return Container(
+              height: 20,
+              decoration: const BoxDecoration(
+                  color: CupidColors.backgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.pink,
+                      spreadRadius: 1,
                     ),
+                  ]),
+              child: Center(
+                child: Text(
+                  interest,
+                  style: const TextStyle(
+                    color: Colors.black,
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }).toList(),
         ),
+        const SizedBox(height: 10),
       ],
     );
   }
