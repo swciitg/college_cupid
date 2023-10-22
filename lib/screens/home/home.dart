@@ -1,7 +1,8 @@
 import 'package:college_cupid/screens/profile/my_profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:college_cupid/stores/login_store.dart';
+import 'package:flutter/services.dart';
 import '../../functions/home/nav_icons.dart';
 import './home_tab.dart';
 import '../your_matches/your_matches_tab.dart';
@@ -31,15 +32,20 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          // Status bar color
+          statusBarColor: CupidColors.backgroundColor,
+          statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+        ),
+        backgroundColor: CupidColors.backgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
               onPressed: () async {
                 NavigatorState nav = Navigator.of(context);
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                bool cleared = await prefs.clear();
+                bool cleared = await LoginStore.logout();
                 if (cleared) {
                   nav.pushNamedAndRemoveUntil(
                       SplashScreen.id, (route) => false);

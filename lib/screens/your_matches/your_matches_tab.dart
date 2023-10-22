@@ -9,7 +9,6 @@ class YourMatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.max,
       children: [
         Align(
           alignment: Alignment.centerLeft,
@@ -23,31 +22,28 @@ class YourMatches extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(
-          height: 30,
-        ),
-        SizedBox(height: 70, child: Image.asset('assets/icons/clock.png')),
-        const SizedBox(height: 25),
-        const Center(
-          child: Countdown(),
-        ),
-        const SizedBox(height: 15),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Please wait till the end of the timer to see your matches',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400),
-              textAlign: TextAlign.center,
-            ),
+        const Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Countdown(),
+              ),
+              SizedBox(height: 15),
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Please wait till the end of the timer to see your matches',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ),
         ),
-        const Spacer(),
-        const Spacer(),
       ],
     );
   }
