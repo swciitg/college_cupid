@@ -1,4 +1,4 @@
-class BackendHelper {
+class DatabaseStrings {
   static const refreshToken = "refreshToken";
   static const accessToken = "accessToken";
   static const authorization = "authorization";
@@ -7,4 +7,6 @@ class BackendHelper {
   static const privateKey = 'privateKey';
   static const publicKey = 'publicKey';
   static const password = 'password';
+  static const myProfile = 'myProfile';
+  static const isProfileCompleted = 'isProfileCompleted';
 }

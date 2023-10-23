@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:college_cupid/models/personal_info.dart';
+import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -16,9 +17,11 @@ class AboutYouScreen extends StatefulWidget {
   final String password;
   final String privateKey;
   final File? image;
+  final UserProfile myProfile;
 
   const AboutYouScreen(
       {super.key,
+      required this.myProfile,
       required this.privateKey,
       required this.password,
       required this.image,
@@ -193,18 +196,21 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
           text: "Confirm",
           onTap: () async {
             if (_cupidFormkey.currentState!.validate()) {
-              widget.myInfo.bio = bioController.text;
-              widget.myInfo.interests = selectedInterests.toList();
+              widget.myProfile.bio = bioController.text;
+              widget.myProfile.interests = selectedInterests.toList();
               NavigatorState nav = Navigator.of(context);
-              String profilePicUrl =
-                  await APIService().postMyInfo(widget.image, widget.myInfo);
-              widget.myInfo.profilePicUrl = profilePicUrl;
+
+              await APIService().postPersonalInfo(widget.myInfo);
+
+              widget.myProfile.profilePicUrl = await APIService()
+                  .postUserProfile(widget.image, widget.myProfile);
+              print(widget.myProfile.profilePicUrl);
 
               await SharedPrefs.setPublicKey(widget.myInfo.publicKey);
               await SharedPrefs.setPrivateKey(widget.privateKey);
               await SharedPrefs.setPassword(widget.password);
-              await SharedPrefs.saveMyInfo(widget.myInfo.toJson());
-              await LoginStore.initializeMyInfo();
+              await SharedPrefs.saveMyProfile(widget.myInfo.toJson());
+              await LoginStore.initializeMyProfile();
 
               nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
             }

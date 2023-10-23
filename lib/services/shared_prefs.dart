@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:college_cupid/globals/database_strings.dart';
+import 'package:college_cupid/shared/database_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs {
@@ -10,83 +10,83 @@ class SharedPrefs {
 
   static Future<String> getAccessToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.accessToken) ?? " ";
+    return prefs.getString(DatabaseStrings.accessToken) ?? " ";
   }
 
   static Future<void> setAccessToken(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.accessToken, value);
+    await prefs.setString(DatabaseStrings.accessToken, value);
   }
 
   static Future<String> getRefreshToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.refreshToken) ?? " ";
+    return prefs.getString(DatabaseStrings.refreshToken) ?? " ";
   }
 
   static Future<void> setRefreshToken(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.refreshToken, value);
+    await prefs.setString(DatabaseStrings.refreshToken, value);
   }
 
   static Future<void> setEmail(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.email, value);
+    await prefs.setString(DatabaseStrings.email, value);
   }
 
   static Future<String> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.email) ?? " ";
+    return prefs.getString(DatabaseStrings.email) ?? " ";
   }
 
   static Future<void> setDisplayName(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.displayName, value);
+    await prefs.setString(DatabaseStrings.displayName, value);
   }
 
   static Future<String> getDisplayName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.displayName) ?? " ";
+    return prefs.getString(DatabaseStrings.displayName) ?? " ";
   }
 
   static Future<void> setPrivateKey(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.privateKey, value);
+    await prefs.setString(DatabaseStrings.privateKey, value);
   }
 
   static Future<String> getPrivateKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.privateKey) ?? " ";
+    return prefs.getString(DatabaseStrings.privateKey) ?? " ";
   }
 
   static Future<void> setPublicKey(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.publicKey, value);
+    await prefs.setString(DatabaseStrings.publicKey, value);
   }
 
   static Future<String> getPublicKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.publicKey) ?? " ";
+    return prefs.getString(DatabaseStrings.publicKey) ?? " ";
   }
 
   static Future<void> setPassword(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(BackendHelper.password, value);
+    await prefs.setString(DatabaseStrings.password, value);
   }
 
   static Future<String> getPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(BackendHelper.password) ?? " ";
+    return prefs.getString(DatabaseStrings.password) ?? " ";
   }
 
-  static Future<void> saveMyInfo(Map<String, dynamic> myInfo) async {
+  static Future<void> saveMyProfile(Map<String, dynamic> myInfo) async {
     SharedPreferences user = await SharedPreferences.getInstance();
-    await user.setString('myInfo', jsonEncode(myInfo));
-    await user.setBool('isProfileCompleted', true);
+    await user.setString(DatabaseStrings.myProfile, jsonEncode(myInfo));
+    await user.setBool(DatabaseStrings.isProfileCompleted, true);
   }
 
-  static Future<Map<String, dynamic>> getMyInfo() async {
+  static Future<Map<String, dynamic>> getMyProfile() async {
     SharedPreferences user = await SharedPreferences.getInstance();
-    String myInfo = user.getString('myInfo')!;
+    String myInfo = user.getString(DatabaseStrings.myProfile)!;
     return jsonDecode(myInfo);
   }
 }

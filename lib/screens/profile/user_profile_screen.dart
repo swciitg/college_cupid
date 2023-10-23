@@ -1,22 +1,23 @@
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
-import 'package:college_cupid/models/user_info.dart';
+import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
 
-class UserProfile extends StatefulWidget {
+class UserProfileScreen extends StatefulWidget {
   final bool isMine;
-  final UserInfo userInfo;
+  final UserProfile userProfile;
 
-  const UserProfile({required this.isMine, required this.userInfo, super.key});
+  const UserProfileScreen(
+      {required this.isMine, required this.userProfile, super.key});
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileScreenState extends State<UserProfileScreen> {
   bool readMore = true;
 
   Widget gridView() {
@@ -26,7 +27,7 @@ class _UserProfileState extends State<UserProfile> {
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       shrinkWrap: true,
-      children: widget.userInfo.interests.map((interest) {
+      children: widget.userProfile.interests.map((interest) {
         return Container(
           // height: 20,
           decoration: const BoxDecoration(
@@ -65,10 +66,10 @@ class _UserProfileState extends State<UserProfile> {
             //TODO: Add the person to My Crushes List
             final df = DiffieHellman();
             String sharedSecret = df
-                .getSecretKey(BigInt.parse(widget.userInfo.publicKey))
+                .getSecretKey(BigInt.parse(widget.userProfile.publicKey))
                 .toString();
             String encryptedCrushEmail = Encryption.bytesToHexadecimal(
-                Encryption.encryptAES(widget.userInfo.email, 'key'));
+                Encryption.encryptAES(widget.userProfile.email, 'key'));
 
             await APIService().addCrush(sharedSecret, encryptedCrushEmail);
           }
@@ -81,7 +82,7 @@ class _UserProfileState extends State<UserProfile> {
       body: SingleChildScrollView(
           child: Stack(
         children: [
-          Positioned(child: Image.network(widget.userInfo.profilePicUrl)),
+          Positioned(child: Image.network(widget.userProfile.profilePicUrl)),
           Column(
             children: [
               SizedBox(
@@ -98,7 +99,7 @@ class _UserProfileState extends State<UserProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.userInfo.name,
+                      widget.userProfile.name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
@@ -107,12 +108,12 @@ class _UserProfileState extends State<UserProfile> {
                       child: Row(
                         children: [
                           Text(
-                            widget.userInfo.email,
+                            widget.userProfile.email,
                             textAlign: TextAlign.left,
                           ),
                           const Expanded(child: SizedBox()),
                           Text(
-                            '${widget.userInfo.program}, ${widget.userInfo.yearOfStudy.toLowerCase()}',
+                            '${widget.userProfile.program}, ${widget.userProfile.yearOfStudy.toLowerCase()}',
                             textAlign: TextAlign.right,
                           )
                         ],
@@ -128,7 +129,7 @@ class _UserProfileState extends State<UserProfile> {
                     const Padding(padding: EdgeInsets.only(top: 8)),
                     SizedBox(
                       height: readMore ? 33 : null,
-                      child: Text(widget.userInfo.bio,
+                      child: Text(widget.userProfile.bio,
                           overflow: TextOverflow.clip),
                     ),
                     const Padding(padding: EdgeInsets.only(top: 8)),

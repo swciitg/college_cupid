@@ -1,7 +1,6 @@
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/string_extension.dart';
-import 'package:college_cupid/globals/database_strings.dart';
-import 'package:college_cupid/globals/endpoints.dart';
+import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
@@ -22,10 +21,12 @@ class LoginWebview extends StatefulWidget {
 class _LoginWebviewState extends State<LoginWebview> {
   late WebViewController controller;
 
-  Future<Object> injectJavascript(
+  Future<String> getElementById(
       WebViewController controller, String elementId) async {
-    return controller.runJavaScriptReturningResult(
+    var element = await controller.runJavaScriptReturningResult(
         "document.querySelector('#$elementId').innerText");
+
+    return element.toString().replaceAll('"', '');
   }
 
   @override
@@ -39,37 +40,20 @@ class _LoginWebviewState extends State<LoginWebview> {
 
             if (url.startsWith(
                 '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
-              var authStatusObject =
-                  await injectJavascript(controller, 'status');
-              String authStatusString =
-                  authStatusObject.toString().replaceAll('"', '');
-              if (authStatusString == 'SUCCESS') {
+              String authStatus = await getElementById(controller, 'status');
+              if (authStatus == 'SUCCESS') {
                 if (!mounted) return;
-                String email = (await injectJavascript(controller, 'email'))
-                    .toString()
-                    .replaceAll('"', '');
+                String email = await getElementById(controller, 'email');
                 String displayName =
-                    (await injectJavascript(controller, 'displayName'))
-                        .toString()
-                        .replaceAll('"', '')
+                    (await getElementById(controller, 'displayName'))
                         .toTitleCase();
                 String accessToken =
-                    (await injectJavascript(controller, 'accessToken'))
-                        .toString()
-                        .replaceAll('"', '');
+                    await getElementById(controller, 'accessToken');
                 String refreshToken =
-                    (await injectJavascript(controller, 'refreshToken'))
-                        .toString()
-                        .replaceAll('"', '');
-                Map userTokens = {
-                  BackendHelper.accessToken: accessToken,
-                  BackendHelper.refreshToken: refreshToken
-                };
-                debugPrint(userTokens.toString());
-                await SharedPrefs.setAccessToken(
-                    userTokens[BackendHelper.accessToken]);
-                await SharedPrefs.setRefreshToken(
-                    userTokens[BackendHelper.refreshToken]);
+                    await getElementById(controller, 'refreshToken');
+
+                await SharedPrefs.setAccessToken(accessToken);
+                await SharedPrefs.setRefreshToken(refreshToken);
 
                 await SharedPrefs.setEmail(email);
                 await SharedPrefs.setDisplayName(displayName);
@@ -78,26 +62,33 @@ class _LoginWebviewState extends State<LoginWebview> {
                 await LoginStore.initializeEmail();
                 await LoginStore.initializeTokens();
 
-                Map<String, dynamic>? data =
+                debugPrint('DATA INITIALIZED');
+
+                Map<String, dynamic>? myProfile =
+                    await APIService().getUserProfile(email);
+                Map<String, dynamic>? myInfo =
                     await APIService().getPersonalInfo();
 
-                if (data == null) {
+                if (myProfile == null) {
                   debugPrint('NEW USER');
                   nav.pushNamedAndRemoveUntil(
                       ProfileDetails.id, (route) => false);
                 } else {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
-                  await SharedPrefs.saveMyInfo(data);
-                  await LoginStore.initializeMyInfo();
+                  await SharedPrefs.saveMyProfile(myProfile);
+                  await LoginStore.initializeMyProfile();
+
+                  String hashedPassword = myInfo!['hashedPassword'];
+                  print(hashedPassword);
 
                   //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
                   //TODO: INITIALIZE PASSWORD
                   SharedPrefs.setPassword('value');
-                  SharedPrefs.setPublicKey(LoginStore.myInfo['publicKey']);
+                  SharedPrefs.setPublicKey(LoginStore.myProfile['publicKey']);
                   SharedPrefs.setPrivateKey(Encryption.decryptAES(
                       Encryption.hexadecimalToBytes(
-                          LoginStore.myInfo['encryptedPrivateKey']),
+                          myInfo['encryptedPrivateKey']),
                       await SharedPrefs.getPassword()));
 
                   nav.pushNamedAndRemoveUntil(

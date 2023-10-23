@@ -3,6 +3,7 @@ import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
+import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -34,7 +35,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     'PhD',
     'M.Sc',
   ];
-  var selectedValue1 = 'B.Tech';
+  var program = 'B.Tech';
   TextEditingController name = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController gender = TextEditingController();
@@ -52,7 +53,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     '5th Year',
     '6th Year'
   ];
-  String selectedValue2 = '1st Year';
+  String yearOfStudy = '1st Year';
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -281,7 +282,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: selectedValue1,
+                      value: program,
                       items: programs.map((String item) {
                         return DropdownMenuItem<String>(
                           value: item,
@@ -290,7 +291,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          selectedValue1 = value!;
+                          program = value!;
                         });
                       },
                       icon: const Icon(
@@ -314,7 +315,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       width: 16), // Add some spacing between dropdowns
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: selectedValue2,
+                      value: yearOfStudy,
                       items: year.map((String item) {
                         return DropdownMenuItem<String>(
                           value: item,
@@ -323,7 +324,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          selectedValue2 = value!;
+                          yearOfStudy = value!;
                         });
                       },
                       icon: const Icon(
@@ -425,30 +426,36 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     String encryptedPrivateKey = Encryption.bytesToHexadecimal(
                         Encryption.encryptAES(privateKey, pass.text));
 
+                    UserProfile myProfile = UserProfile(
+                        name: LoginStore.displayName!,
+                        profilePicUrl: '',
+                        gender: isMale ? 'male' : 'female',
+                        email: LoginStore.email!,
+                        bio: '',
+                        yearOfStudy: yearOfStudy,
+                        program: program,
+                        publicKey: publicKey,
+                        interests: []);
+
                     PersonalInfo myInfo = PersonalInfo(
-                      name: LoginStore.displayName!,
-                      profilePicUrl: '',
-                      gender: isMale ? 'male' : 'female',
                       email: LoginStore.email!,
                       hashedPassword: Encryption.bytesToHexadecimal(
                           Encryption.calculateSHA256(pass.text)),
-                      bio: '',
-                      yearOfStudy: selectedValue2,
-                      program: selectedValue1,
                       encryptedPrivateKey: encryptedPrivateKey,
                       publicKey: publicKey,
-                      interests: [],
                       crushes: [],
                       encryptedCrushes: [],
                       matches: [],
                     );
 
                     print(myInfo.toJson().toString());
+                    print(myProfile.toJson().toString());
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => AboutYouScreen(
                                   image: image,
+                                  myProfile: myProfile,
                                   myInfo: myInfo,
                                   password: pass.text,
                                   privateKey: privateKey,

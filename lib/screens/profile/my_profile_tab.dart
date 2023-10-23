@@ -1,4 +1,4 @@
-import 'package:college_cupid/models/user_info.dart';
+import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/profile/view_interests_grid.dart';
@@ -14,7 +14,7 @@ class MyProfileTab extends StatefulWidget {
 
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
-  final userInfo = UserInfo.fromJson(LoginStore.myInfo);
+  final myProfile = UserProfile.fromJson(LoginStore.myProfile);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            Positioned(child: Image.network(userInfo.profilePicUrl)),
+            Positioned(child: Image.network(myProfile.profilePicUrl)),
             Column(
               children: [
                 SizedBox(
@@ -52,7 +52,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userInfo.name,
+                        myProfile.name,
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 25),
                       ),
@@ -61,12 +61,12 @@ class _MyProfileTabState extends State<MyProfileTab> {
                         child: Row(
                           children: [
                             Text(
-                              userInfo.email,
+                              myProfile.email,
                               textAlign: TextAlign.left,
                             ),
                             const Expanded(child: SizedBox()),
                             Text(
-                              '${userInfo.program}, ${userInfo.yearOfStudy.toLowerCase()}',
+                              '${myProfile.program}, ${myProfile.yearOfStudy.toLowerCase()}',
                               textAlign: TextAlign.right,
                             )
                           ],
@@ -82,10 +82,10 @@ class _MyProfileTabState extends State<MyProfileTab> {
                       const SizedBox(height: 8),
                       SizedBox(
                         height: readMore ? 33 : null,
-                        child: Text(userInfo.bio, overflow: TextOverflow.clip),
+                        child: Text(myProfile.bio, overflow: TextOverflow.clip),
                       ),
                       const SizedBox(height: 8),
-                      if (userInfo.bio.length > 30)
+                      if (myProfile.bio.length > 30)
                         GestureDetector(
                           child: Text(
                             !readMore ? "Show less" : "Read more",
@@ -100,8 +100,8 @@ class _MyProfileTabState extends State<MyProfileTab> {
                           },
                         ),
                       const SizedBox(height: 8),
-                      if (userInfo.interests.isNotEmpty)
-                        ViewInterestsGrid(interests: userInfo.interests)
+                      if (myProfile.interests.isNotEmpty)
+                        ViewInterestsGrid(interests: myProfile.interests)
                     ],
                   ),
                 ),

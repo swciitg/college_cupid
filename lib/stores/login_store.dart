@@ -1,11 +1,12 @@
-import 'package:college_cupid/services/api.dart';
-import 'package:college_cupid/services/shared_prefs.dart';
-import 'package:flutter/cupertino.dart';
+import '../services/api.dart';
+import '../services/shared_prefs.dart';
+import '../shared/database_strings.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginStore {
   static bool isProfileCompleted = false;
-  static Map<String, dynamic> myInfo = {};
+  static Map<String, dynamic> myProfile = {};
   static String? email;
   static String? displayName;
   static String? privateKey;
@@ -17,13 +18,13 @@ class LoginStore {
   static Future<bool> isAuthenticated() async {
     SharedPreferences user = await SharedPreferences.getInstance();
 
-    if (user.containsKey('myInfo')) {
+    if (user.containsKey(DatabaseStrings.myProfile)) {
       debugPrint('USER CONTAINS KEY');
       await initializeStore();
-      Map<String, dynamic>? data = await APIService().getPersonalInfo();
+      Map<String, dynamic>? data = await APIService().getUserProfile(email!);
       if (data != null) {
-        await SharedPrefs.saveMyInfo(data);
-        await initializeMyInfo();
+        await SharedPrefs.saveMyProfile(data);
+        await initializeMyProfile();
         isProfileCompleted = true;
       }
       return true;
@@ -36,7 +37,7 @@ class LoginStore {
   static Future<bool> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isProfileCompleted = false;
-    myInfo.clear();
+    myProfile.clear();
     email = null;
     displayName = null;
     accessToken = null;
@@ -77,7 +78,7 @@ class LoginStore {
     displayName = await SharedPrefs.getDisplayName();
   }
 
-  static Future<void> initializeMyInfo() async {
-    myInfo = await SharedPrefs.getMyInfo();
+  static Future<void> initializeMyProfile() async {
+    myProfile = await SharedPrefs.getMyProfile();
   }
 }

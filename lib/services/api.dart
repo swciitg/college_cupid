@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/models/personal_info.dart';
-import 'package:college_cupid/models/user_info.dart';
-import 'package:college_cupid/stores/login_store.dart';
+import '../functions/snackbar.dart';
+import '../models/personal_info.dart';
+import '../models/user_profile.dart';
+import '../stores/login_store.dart';
 import 'package:dio/dio.dart';
-import '../globals/endpoints.dart';
-import './auth_helpers.dart';
+import 'package:flutter/material.dart';
+import '../shared/endpoints.dart';
+import './backend_helper.dart';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 
@@ -27,12 +28,11 @@ class APIService {
         if (LoginStore.accessToken!.isEmpty) {
           showSnackBar("Login to continue!!");
         } else {
-          bool couldRegenerate =
-              await AuthUserHelpers().regenerateAccessToken();
+          bool couldRegenerate = await BackendHelper().regenerateAccessToken();
           if (couldRegenerate) {
             // retry
             return handler
-                .resolve(await AuthUserHelpers().retryRequest(response));
+                .resolve(await BackendHelper().retryRequest(response));
           } else {
             showSnackBar("Your session has expired!! Login again.");
           }
@@ -46,63 +46,19 @@ class APIService {
     }));
   }
 
-  Future<String> postMyInfo(File? image, PersonalInfo myInfo) async {
-    final userMap = myInfo.toJson();
-    if (image != null) {
-      String fileName = image.path.split('/').last;
-      userMap['dp'] = await MultipartFile.fromFile(
-        image.path,
-        filename: fileName,
-        contentType: MediaType('image', 'png'),
-      );
-    }
-    FormData formData = FormData.fromMap(userMap);
-
+  Future<void> postPersonalInfo(PersonalInfo myInfo) async {
     try {
-      print('sending request');
-      Response res = await dio.post(Endpoints.baseUrl + Endpoints.postMyInfo,
-          data: formData);
+      debugPrint('Posting personal info');
+      Response res =
+          await dio.post(Endpoints.postPersonalInfo, data: jsonEncode(myInfo));
 
       if (res.statusCode == 200) {
-        return res.data['profilePicUrl'] ?? '';
+        return;
       } else {
         return Future.error(res.statusMessage.toString());
       }
     } catch (e) {
       return Future.error(e.toString());
-    }
-  }
-
-  Future<List<UserInfo>> getAllOtherUsers() async {
-    try {
-      Response res = await dio.get(Endpoints.baseUrl + Endpoints.getAllUsers);
-      if (res.statusCode == 200) {
-        final users = res.data['users'];
-        List<UserInfo> usersInfo = [];
-        for (int i = users.length - 1; i >= 0; i--) {
-          List<String> interests = [];
-          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
-            interests.add(users[i]['interests'][j].toString());
-          }
-
-          if (users[i]['email'].toString() == LoginStore.email) continue;
-          usersInfo.add(UserInfo(
-              name: users[i]['name'] as String,
-              profilePicUrl: users[i]['profilePicUrl'] as String,
-              gender: users[i]['gender'] as String,
-              email: users[i]['email'] as String,
-              bio: users[i]['bio'] as String,
-              yearOfStudy: users[i]['yearOfStudy'] as String,
-              program: users[i]['program'] as String,
-              publicKey: users[i]['publicKey'] as String,
-              interests: interests));
-        }
-        return usersInfo;
-      } else {
-        return Future.error(res.statusMessage.toString());
-      }
-    } catch (err) {
-      return Future.error(err.toString());
     }
   }
 
@@ -117,6 +73,70 @@ class APIService {
       }
     } catch (error) {
       return Future.error(error.toString());
+    }
+  }
+
+  Future<String> postUserProfile(File? image, UserProfile userProfile) async {
+    final userProfileMap = userProfile.toJson();
+    if (image != null) {
+      String fileName = image.path.split('/').last;
+      userProfileMap['dp'] = await MultipartFile.fromFile(
+        image.path,
+        filename: fileName,
+        contentType: MediaType('image', 'png'),
+      );
+    }
+    FormData formData = FormData.fromMap(userProfileMap);
+
+    try {
+      debugPrint('Posting user profile');
+      Response res = await dio.post(Endpoints.postUserProfile, data: formData);
+
+      debugPrint(res.data.toString());
+
+      if (res.statusCode == 200) {
+        return res.data['profilePicUrl'] ?? '';
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (error) {
+      return Future.error(error.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserProfile(String email) async {
+    try {
+      Response res = await dio.get('${Endpoints.getUserProfile}/$email');
+      if (res.statusCode == 200) {
+        return res.data['userProfile'];
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (error) {
+      return Future.error(error.toString());
+    }
+  }
+
+  Future<List<UserProfile>> getAllOtherUsers() async {
+    try {
+      Response res = await dio.get(Endpoints.getAllUserProfiles);
+      if (res.statusCode == 200) {
+        final users = res.data['users'];
+        List<UserProfile> userProfiles = [];
+        for (int i = users.length - 1; i >= 0; i--) {
+          List<String> interests = [];
+          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
+            interests.add(users[i]['interests'][j].toString());
+          }
+          if (users[i]['email'].toString() == LoginStore.email) continue;
+          userProfiles.add(UserProfile.fromJson(users[i]));
+        }
+        return userProfiles;
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
     }
   }
 

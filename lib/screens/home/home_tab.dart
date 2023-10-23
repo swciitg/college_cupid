@@ -1,5 +1,5 @@
-import 'package:college_cupid/screens/home/filter_bottom_sheet.dart';
-import 'package:college_cupid/screens/profile/user_profile.dart';
+import 'package:college_cupid/widgets/home/filter_bottom_sheet.dart';
+import 'package:college_cupid/screens/profile/user_profile_screen.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/home/profile_card.dart';
@@ -101,9 +101,9 @@ class _HomeTabState extends State<HomeTab> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => UserProfile(
+                                      builder: (context) => UserProfileScreen(
                                             isMine: false,
-                                            userInfo: user,
+                                            userProfile: user,
                                           )));
                             },
                             child: ProfileCard(

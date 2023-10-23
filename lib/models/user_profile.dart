@@ -1,4 +1,4 @@
-class UserInfo {
+class UserProfile {
   late String name;
   late String profilePicUrl;
   late String gender;
@@ -9,7 +9,7 @@ class UserInfo {
   late String program;
   late List<String> interests;
 
-  UserInfo({
+  UserProfile({
     required this.name,
     required this.profilePicUrl,
     required this.gender,
@@ -21,7 +21,7 @@ class UserInfo {
     required this.interests,
   });
 
-  UserInfo.fromJson(Map<String, dynamic> json) {
+  UserProfile.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     profilePicUrl = json['profilePicUrl'];
     gender = json['gender'];
