@@ -113,15 +113,17 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       print(myInfo.toJson().toString());
       print(myProfile.toJson().toString());
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AboutYouScreen(
-                    image: image,
-                    myProfile: myProfile,
-                    myInfo: myInfo,
-                    password: pass.text,
-                    privateKey: privateKey,
-                  )));
+        context,
+        MaterialPageRoute(
+          builder: (context) => AboutYouScreen(
+            image: image,
+            myProfile: myProfile,
+            myInfo: myInfo,
+            password: pass.text,
+            privateKey: privateKey,
+          ),
+        ),
+      );
     }
   }
 

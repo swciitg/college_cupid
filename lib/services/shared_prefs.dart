@@ -78,15 +78,15 @@ class SharedPrefs {
     return prefs.getString(DatabaseStrings.password) ?? " ";
   }
 
-  static Future<void> saveMyProfile(Map<String, dynamic> myInfo) async {
+  static Future<void> saveMyProfile(Map<String, dynamic> myProfile) async {
     SharedPreferences user = await SharedPreferences.getInstance();
-    await user.setString(DatabaseStrings.myProfile, jsonEncode(myInfo));
+    await user.setString(DatabaseStrings.myProfile, jsonEncode(myProfile));
     await user.setBool(DatabaseStrings.isProfileCompleted, true);
   }
 
   static Future<Map<String, dynamic>> getMyProfile() async {
     SharedPreferences user = await SharedPreferences.getInstance();
-    String myInfo = user.getString(DatabaseStrings.myProfile)!;
-    return jsonDecode(myInfo);
+    String myProfile = user.getString(DatabaseStrings.myProfile)!;
+    return jsonDecode(myProfile);
   }
 }

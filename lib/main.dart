@@ -12,6 +12,8 @@ void main() {
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'CollegeCupid',
         debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
         scaffoldMessengerKey: rootScaffoldMessengerKey,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: CupidColors.titleColor),

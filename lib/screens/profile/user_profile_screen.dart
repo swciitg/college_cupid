@@ -19,6 +19,8 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   bool readMore = true;
+  final defaultPicUrl =
+      "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
 
   Widget gridView() {
     return GridView.count(
@@ -27,12 +29,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: widget.userProfile.interests.map((interest) {
         return Container(
           // height: 20,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               color: CupidColors.backgroundColor,
-              boxShadow: [
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.pink,
                   spreadRadius: 1,
@@ -82,7 +86,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: SingleChildScrollView(
           child: Stack(
         children: [
-          Positioned(child: Image.network(widget.userProfile.profilePicUrl)),
+          Positioned(
+              child: Image.network(widget.userProfile.profilePicUrl.isNotEmpty
+                  ? widget.userProfile.profilePicUrl
+                  : defaultPicUrl)),
           Column(
             children: [
               SizedBox(
@@ -133,19 +140,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           overflow: TextOverflow.clip),
                     ),
                     const Padding(padding: EdgeInsets.only(top: 8)),
-                    GestureDetector(
-                      child: Text(
-                        !readMore ? "Show less" : "Read more",
-                        style:
-                            const TextStyle(color: CupidColors.navBarIconColor),
-                        textAlign: TextAlign.left,
+                    if (widget.userProfile.bio.length > 30)
+                      GestureDetector(
+                        child: Text(
+                          !readMore ? "Show less" : "Read more",
+                          style: const TextStyle(
+                              color: CupidColors.navBarIconColor),
+                          textAlign: TextAlign.left,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            readMore = !readMore;
+                          });
+                        },
                       ),
-                      onTap: () {
-                        setState(() {
-                          readMore = !readMore;
-                        });
-                      },
-                    ),
                     const Padding(padding: EdgeInsets.only(top: 8)),
                     const Text(
                       "Interests",

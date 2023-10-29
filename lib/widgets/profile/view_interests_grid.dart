@@ -29,12 +29,14 @@ class _ViewInterestsGridState extends State<ViewInterestsGrid> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           children: widget.interests.map((interest) {
             return Container(
               height: 20,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
                   color: CupidColors.backgroundColor,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.pink,
                       spreadRadius: 1,

@@ -53,6 +53,7 @@ class APIService {
           await dio.post(Endpoints.postPersonalInfo, data: jsonEncode(myInfo));
 
       if (res.statusCode == 200) {
+        print("posted personal info");
         return;
       } else {
         return Future.error(res.statusMessage.toString());
@@ -95,6 +96,8 @@ class APIService {
       debugPrint(res.data.toString());
 
       if (res.statusCode == 200) {
+        print("posted user profile");
+        print("profilePicUrl : ${res.data['profilePicUrl']}");
         return res.data['profilePicUrl'] ?? '';
       } else {
         return Future.error(res.statusMessage.toString());

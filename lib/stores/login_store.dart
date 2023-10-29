@@ -81,4 +81,9 @@ class LoginStore {
   static Future<void> initializeMyProfile() async {
     myProfile = await SharedPrefs.getMyProfile();
   }
+
+  static Future<void> updateMyProfile(Map<String, dynamic> myProfileMap) async {
+    await SharedPrefs.saveMyProfile(myProfileMap);
+    myProfile = await SharedPrefs.getMyProfile();
+  }
 }

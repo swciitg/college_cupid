@@ -14,17 +14,30 @@ class MyProfileTab extends StatefulWidget {
 
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
-  final myProfile = UserProfile.fromJson(LoginStore.myProfile);
+  var myProfile = UserProfile.fromJson(LoginStore.myProfile);
   final defaultPicUrl =
       "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
+
+  void editProfile() async {
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const EditProfile()));
+    setState(() {
+      myProfile = UserProfile.fromJson(LoginStore.myProfile);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var safeArea = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EditProfile()));
+          editProfile();
         },
         backgroundColor: CupidColors.pinkColor,
         child: const Icon(
