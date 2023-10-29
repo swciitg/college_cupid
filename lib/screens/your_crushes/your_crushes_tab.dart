@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../../shared/colors.dart';
-import 'package:hex/hex.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+
 
 class YourCrushesTab extends StatefulWidget {
   YourCrushesTab({super.key});
@@ -20,41 +20,33 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
   List crushes = [];
   Future<List<Map<String, dynamic>>?>? crushInfo;
   bool isLoading = true;
+
+
   Future<void> getCrush() async {
-  final baseurl = Endpoints.baseUrl;
-  final endpoint = Endpoints.getCrush;
+    final baseurl = Endpoints.baseUrl;
+    final endpoint = Endpoints.getCrush;
 
-  final dio = Dio();
-  try {
-    final response = await dio.get('$baseurl$endpoint');
+    final dio = Dio();
+    try {
+      final response = await dio.get('$baseurl$endpoint');
 
-    if (response.statusCode == 200) {
-      crushes = response.data;
-      print(crushes);
-    } else {
-      print('Request Failed with status: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        crushes = response.data;
+        print(crushes);
+      } else {
+        print('Request Failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-  } catch (e) {
-    print('Error fetching data: $e');
-  } finally {
-    setState(() {
-      isLoading = false;
-    });
   }
-}
 
 
-
-    List<int> decryptAES(Uint8List encryptedText, String key) {
-      final keyUint8List = Uint8List.fromList(utf8.encode(key));
-      final encrypter = encrypt.Encrypter(encrypt.AES(encrypt.Key(Uint8List(16)..setAll(0, keyUint8List))));
-
-      final decrypted = encrypter.decrypt(encrypt.Encrypted(encryptedText));
-      return utf8.encode(decrypted);
-    }
-
-
-      Future<List<Map<String, dynamic>>?> getUserInfo() async {
+Future<List<Map<String, dynamic>>?> getUserInfo() async {
   try {
     Dio dio = Dio();
     dio.options.baseUrl = Endpoints.baseUrl;
@@ -62,11 +54,13 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
     List<Map<String, dynamic>> userInfoList = [];
 
     for (String encryptedEmail in crushes) {
-      final encryptedEmailBytes = Uint8List.fromList(HEX.decode(encryptedEmail));
-      final decryptedEmailBytes = decryptAES(encryptedEmailBytes, 'key');
-      final email = utf8.decode(decryptedEmailBytes);
+      final encryptedEmailBytes = Encryption.hexadecimalToBytes(encryptedEmail);
+      final decryptedEmail = Encryption.decryptAES(encryptedEmailBytes, 'key'); 
+      // final decryptedEmailBytes = Uint8List.fromList(utf8.encode(decryptedEmail)); 
 
-      String endpoint = '/user/email/$email';
+      // String email = utf8.decode(decryptedEmailBytes); 
+
+      String endpoint = '/user/email/$decryptedEmail';
       Response response = await dio.get(endpoint);
 
       if (response.statusCode == 200) {
@@ -74,7 +68,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
 
         userInfoList.add(userInfo);
       } else {
-        print('Request for $email failed with status: ${response.statusCode}');
+        print('Request for $decryptedEmail failed with status: ${response.statusCode}');
       }
     }
 
@@ -86,14 +80,14 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
 }
 
 
-   @override
+
+  @override
   void initState() {
     super.initState();
     getCrush().then((_) {
       setState(() {
         isLoading = false;
         crushInfo = getUserInfo();
-        
       });
     });
   }
@@ -124,8 +118,8 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     fontFamily: 'Sk-Modernist')),
           ),
           isLoading
-              ? Center(child: CircularProgressIndicator()): 
-              Expanded(
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(
                   child: crushes.length > 0
                       ? ListView.builder(
                           itemCount: crushes.length,
@@ -134,12 +128,14 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                               return FutureBuilder<List<Map<String, dynamic>>?>(
                                 future: crushInfo!,
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData) {
-                                    return Text('No Crushes as of now\nGet Rolling !!!!');
+                                    return Text(
+                                        'No Crushes as of now\nGet Rolling !!!!');
                                   } else {
                                     final info = snapshot.data![index];
                                     return CrushInfo(info);
@@ -147,21 +143,24 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                                 },
                               );
                             } else {
-                              return SizedBox(); 
+                              return SizedBox();
                             }
-                          }
-                        )
+                          })
                       : Center(
                           child: Container(
                             width: double.maxFinite,
                             margin: EdgeInsets.all(30),
                             decoration: BoxDecoration(
-                              color: Colors.yellow,
-                              borderRadius: BorderRadius.all(Radius.circular(20))
-                            ),
+                                color: Colors.yellow,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
                             height: 200,
                             padding: EdgeInsets.all(10),
-                            child: Center(child: Text("No crushes as of now !!!!",style: TextStyle(fontSize: 20),)),
+                            child: Center(
+                                child: Text(
+                              "No crushes as of now !!!!",
+                              style: TextStyle(fontSize: 20),
+                            )),
                           ),
                         ),
                 ),
