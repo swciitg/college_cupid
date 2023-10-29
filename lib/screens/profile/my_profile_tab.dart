@@ -15,7 +15,8 @@ class MyProfileTab extends StatefulWidget {
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
   final myProfile = UserProfile.fromJson(LoginStore.myProfile);
-
+  final defaultPicUrl =
+      "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
   @override
   Widget build(BuildContext context) {
     var safeArea = MediaQuery.of(context).size;
@@ -35,7 +36,11 @@ class _MyProfileTabState extends State<MyProfileTab> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            Positioned(child: Image.network(myProfile.profilePicUrl)),
+            Positioned(
+              child: Image.network(myProfile.profilePicUrl.isNotEmpty
+                  ? myProfile.profilePicUrl
+                  : defaultPicUrl),
+            ),
             Column(
               children: [
                 SizedBox(

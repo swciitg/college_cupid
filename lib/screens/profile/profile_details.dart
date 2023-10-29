@@ -74,6 +74,57 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     }
   }
 
+  void onSubmit() {
+    if (image == null) {
+      showSnackBar(
+          " Please pick your profile picture. You can change it later.");
+      return;
+    }
+    if (_validatePasswords()) {
+      DiffieHellman df = DiffieHellman();
+      String publicKey = df.publicKey.toString();
+      String privateKey = df.privateKey.toString();
+
+      String encryptedPrivateKey = Encryption.bytesToHexadecimal(
+          Encryption.encryptAES(privateKey, pass.text));
+
+      UserProfile myProfile = UserProfile(
+          name: LoginStore.displayName!,
+          profilePicUrl: '',
+          gender: isMale ? 'male' : 'female',
+          email: LoginStore.email!,
+          bio: '',
+          yearOfStudy: yearOfStudy,
+          program: program,
+          publicKey: publicKey,
+          interests: []);
+
+      PersonalInfo myInfo = PersonalInfo(
+        email: LoginStore.email!,
+        hashedPassword: Encryption.bytesToHexadecimal(
+            Encryption.calculateSHA256(pass.text)),
+        encryptedPrivateKey: encryptedPrivateKey,
+        publicKey: publicKey,
+        crushes: [],
+        encryptedCrushes: [],
+        matches: [],
+      );
+
+      print(myInfo.toJson().toString());
+      print(myProfile.toJson().toString());
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AboutYouScreen(
+                    image: image,
+                    myProfile: myProfile,
+                    myInfo: myInfo,
+                    password: pass.text,
+                    privateKey: privateKey,
+                  )));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -415,53 +466,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               ),
             ),
             const Expanded(child: SizedBox()),
-            CupidButton(
-                text: 'Continue',
-                onTap: () {
-                  if (_validatePasswords()) {
-                    DiffieHellman df = DiffieHellman();
-                    String publicKey = df.publicKey.toString();
-                    String privateKey = df.privateKey.toString();
-
-                    String encryptedPrivateKey = Encryption.bytesToHexadecimal(
-                        Encryption.encryptAES(privateKey, pass.text));
-
-                    UserProfile myProfile = UserProfile(
-                        name: LoginStore.displayName!,
-                        profilePicUrl: '',
-                        gender: isMale ? 'male' : 'female',
-                        email: LoginStore.email!,
-                        bio: '',
-                        yearOfStudy: yearOfStudy,
-                        program: program,
-                        publicKey: publicKey,
-                        interests: []);
-
-                    PersonalInfo myInfo = PersonalInfo(
-                      email: LoginStore.email!,
-                      hashedPassword: Encryption.bytesToHexadecimal(
-                          Encryption.calculateSHA256(pass.text)),
-                      encryptedPrivateKey: encryptedPrivateKey,
-                      publicKey: publicKey,
-                      crushes: [],
-                      encryptedCrushes: [],
-                      matches: [],
-                    );
-
-                    print(myInfo.toJson().toString());
-                    print(myProfile.toJson().toString());
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AboutYouScreen(
-                                  image: image,
-                                  myProfile: myProfile,
-                                  myInfo: myInfo,
-                                  password: pass.text,
-                                  privateKey: privateKey,
-                                )));
-                  }
-                }),
+            CupidButton(text: 'Continue', onTap: onSubmit),
           ],
         ),
       ),
