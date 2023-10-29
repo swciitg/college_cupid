@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:college_cupid/functions/encryption.dart';
+
 import '../functions/snackbar.dart';
 import '../models/personal_info.dart';
 import '../models/user_profile.dart';
@@ -73,6 +75,63 @@ class APIService {
       }
     } catch (error) {
       return Future.error(error.toString());
+    }
+  }
+  
+    Future<List<dynamic>> getCrush() async {
+    final baseurl = Endpoints.baseUrl;
+    final endpoint = Endpoints.getCrush;
+
+    final dio = Dio();
+    try {
+      final response = await dio.get('$baseurl$endpoint');
+
+      if (response.statusCode == 200) {
+        List<dynamic> crushes = response.data;
+        return crushes;
+      } else {
+        print('Request Failed with status: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
+    }
+  }
+
+   Future<List<Map<String, dynamic>>?> getUserInfo(List<dynamic>? crushes) async {
+    try {
+      Dio dio = Dio();
+      dio.options.baseUrl = Endpoints.baseUrl;
+
+      List<Map<String, dynamic>> userInfoList = [];
+
+      for (String encryptedEmail in crushes!) {
+        final encryptedEmailBytes =
+            Encryption.hexadecimalToBytes(encryptedEmail);
+        final decryptedEmail =
+            Encryption.decryptAES(encryptedEmailBytes, 'key');
+        // final decryptedEmailBytes = Uint8List.fromList(utf8.encode(decryptedEmail));
+
+        // String email = utf8.decode(decryptedEmailBytes);
+
+        String endpoint = '/user/email/$decryptedEmail';
+        Response response = await dio.get(endpoint);
+
+        if (response.statusCode == 200) {
+          Map<String, dynamic> userInfo = response.data;
+
+          userInfoList.add(userInfo);
+        } else {
+          print(
+              'Request for $decryptedEmail failed with status: ${response.statusCode}');
+        }
+      }
+
+      return userInfoList.isEmpty ? null : userInfoList;
+    } catch (e) {
+      print('Error: $e');
+      return null;
     }
   }
 
