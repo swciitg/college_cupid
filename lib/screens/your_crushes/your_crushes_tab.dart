@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
@@ -9,7 +10,6 @@ import 'dart:convert';
 import '../../shared/colors.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
-
 class YourCrushesTab extends StatefulWidget {
   YourCrushesTab({super.key});
   @override
@@ -17,80 +17,24 @@ class YourCrushesTab extends StatefulWidget {
 }
 
 class _YourCrushesTabState extends State<YourCrushesTab> {
-  List crushes = [];
+  late List<dynamic> crushes;
   Future<List<Map<String, dynamic>>?>? crushInfo;
   bool isLoading = true;
 
-
-  Future<void> getCrush() async {
-    final baseurl = Endpoints.baseUrl;
-    final endpoint = Endpoints.getCrush;
-
-    final dio = Dio();
-    try {
-      final response = await dio.get('$baseurl$endpoint');
-
-      if (response.statusCode == 200) {
-        crushes = response.data;
-        print(crushes);
-      } else {
-        print('Request Failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching data: $e');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-
-Future<List<Map<String, dynamic>>?> getUserInfo() async {
-  try {
-    Dio dio = Dio();
-    dio.options.baseUrl = Endpoints.baseUrl;
-
-    List<Map<String, dynamic>> userInfoList = [];
-
-    for (String encryptedEmail in crushes) {
-      final encryptedEmailBytes = Encryption.hexadecimalToBytes(encryptedEmail);
-      final decryptedEmail = Encryption.decryptAES(encryptedEmailBytes, 'key'); 
-      // final decryptedEmailBytes = Uint8List.fromList(utf8.encode(decryptedEmail)); 
-
-      // String email = utf8.decode(decryptedEmailBytes); 
-
-      String endpoint = '/user/email/$decryptedEmail';
-      Response response = await dio.get(endpoint);
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> userInfo = response.data;
-
-        userInfoList.add(userInfo);
-      } else {
-        print('Request for $decryptedEmail failed with status: ${response.statusCode}');
-      }
-    }
-
-    return userInfoList.isEmpty ? null : userInfoList;
-  } catch (e) {
-    print('Error: $e');
-    return null;
-  }
+ @override
+void initState() {
+  super.initState();
+  loadCrushes();
 }
 
+Future<void> loadCrushes() async {
+  final crushData = await APIService().getCrush();
+  setState(() {
+    crushes = crushData;
+    isLoading = false;
+  });
+}
 
-
-  @override
-  void initState() {
-    super.initState();
-    getCrush().then((_) {
-      setState(() {
-        isLoading = false;
-        crushInfo = getUserInfo();
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +69,8 @@ Future<List<Map<String, dynamic>>?> getUserInfo() async {
                           itemCount: crushes.length,
                           itemBuilder: (BuildContext context, int index) {
                             if (crushInfo != null) {
-                              return FutureBuilder<List<Map<String, dynamic>>?>(
-                                future: crushInfo!,
+                              return  FutureBuilder(
+                                future: APIService().getUserInfo(crushes),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
