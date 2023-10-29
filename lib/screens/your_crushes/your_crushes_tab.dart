@@ -11,23 +11,6 @@ class YourCrushesTab extends StatefulWidget {
 }
 
 class _YourCrushesTabState extends State<YourCrushesTab> {
-  late List<dynamic> crushes;
-  Future<List<Map<String, dynamic>>?>? crushInfo;
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    loadCrushes();
-  }
-
-  Future<void> loadCrushes() async {
-    final crushData = await APIService().getCrush();
-    setState(() {
-      crushes = crushData;
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +37,16 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     color: CupidColors.grayColor,
                     fontFamily: 'Sk-Modernist')),
           ),
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Expanded(
+          Expanded(
                   child: FutureBuilder(
-                          future: APIService().getUserInfo(crushes),
+                           future: (() async {
+                              final crushList = await APIService().getCrush();
+                              return APIService().getUserInfo(crushList);
+                            })(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else if (!snapshot.hasData) {
@@ -74,7 +58,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                               );
                             } else {
                               return ListView.builder(
-                                  itemCount: crushes.length,
+                                  itemCount: snapshot.data!.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     final info = snapshot.data![index];
