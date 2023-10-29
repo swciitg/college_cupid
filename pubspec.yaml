@@ -52,6 +52,8 @@ dependencies:
   provider: ^6.0.5
   mobx: ^2.2.0
   image_cropper: ^5.0.0
+  encrypt: ^5.0.3
+  hex: ^0.2.0
 
 dev_dependencies:
   flutter_test:

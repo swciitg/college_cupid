@@ -15,6 +15,7 @@ class Endpoints {
   static const updateUserProfile = '/user/profile';
 
   static const addCrush = '/crush/add';
+  static const getCrush = '/crush';
 
   static getHeader() {
     return {
