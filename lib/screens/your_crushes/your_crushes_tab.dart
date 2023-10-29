@@ -1,3 +1,4 @@
+import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
@@ -5,13 +6,13 @@ import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
 
 class YourCrushesTab extends StatefulWidget {
-  YourCrushesTab({super.key});
+  const YourCrushesTab({super.key});
+
   @override
   State<YourCrushesTab> createState() => _YourCrushesTabState();
 }
 
 class _YourCrushesTabState extends State<YourCrushesTab> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,36 +39,32 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     fontFamily: 'Sk-Modernist')),
           ),
           Expanded(
-                  child: FutureBuilder(
-                           future: (() async {
-                              final crushList = await APIService().getCrush();
-                              return APIService().getUserInfo(crushList);
-                            })(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (!snapshot.hasData) {
-                              return Container(
-                                child: Center(
-                                  child: Text(
-                                      'No Crushes as of now\nGet Rolling !!!!'),
-                                ),
-                              );
-                            } else {
-                              return ListView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final info = snapshot.data![index];
-                                    return CrushInfo(info);
-                                      });
-                            }
-                          },
-                        )
-                ),
+              child: FutureBuilder(
+            future: APIService().getCrush(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData) {
+                return const Center(
+                  child: Text('No Crushes as of now\nGet Rolling !!!!'),
+                );
+              } else {
+                return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CrushInfo(
+                        email: Encryption.decryptAES(
+                                Encryption.hexadecimalToBytes(
+                                    snapshot.data![index].toString()),
+                                'key')
+                            .replaceAll('0', ''),
+                      );
+                    });
+              }
+            },
+          )),
         ],
       ),
     );
