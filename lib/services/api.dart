@@ -76,6 +76,21 @@ class APIService {
     }
   }
 
+  Future<List> getCrush() async {
+    try {
+      Response res = await dio.get(Endpoints.getCrush);
+      if (res.statusCode == 200) {
+        return res.data['encryptedCrushes'];
+      } else {
+        print('Request Failed with status: ${res.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
+    }
+  }
+
   Future<String> postUserProfile(File? image, UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
     if (image != null) {

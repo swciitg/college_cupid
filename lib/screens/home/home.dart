@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   int index = 0;
   List<Widget> tabs = [
     const HomeTab(),
-    const YourCrushesTab(),
+    YourCrushesTab(),
     const YourMatches(),
     const MyProfileTab(),
   ];
