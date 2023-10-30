@@ -1,5 +1,6 @@
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/widgets/global/loader.dart';
 import 'package:flutter/material.dart';
 
 class CupidButton extends StatelessWidget {
@@ -10,6 +11,7 @@ class CupidButton extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final Color? backgroundColor;
   final TextStyle? style;
+  final bool? loading;
   const CupidButton({
     super.key,
     required this.text,
@@ -19,6 +21,7 @@ class CupidButton extends StatelessWidget {
     this.borderRadius,
     this.backgroundColor,
     this.style,
+    this.loading = false,
   });
 
   @override
@@ -34,14 +37,16 @@ class CupidButton extends StatelessWidget {
           borderRadius: borderRadius ?? BorderRadius.circular(20),
         ),
         child: Center(
-          child: Text(
-            text,
-            style: style ??
-                CupidStyles.headingStyle.copyWith(
-                  color: CupidColors.backgroundColor,
-                  fontSize: 16,
+          child: loading!
+              ? customLoader
+              : Text(
+                  text,
+                  style: style ??
+                      CupidStyles.headingStyle.copyWith(
+                        color: CupidColors.backgroundColor,
+                        fontSize: 16,
+                      ),
                 ),
-          ),
         ),
       ),
     );

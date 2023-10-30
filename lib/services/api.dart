@@ -119,6 +119,37 @@ class APIService {
     }
   }
 
+  Future<String> updateUserProfile(File? image, UserProfile userProfile) async {
+    final userProfileMap = userProfile.toJson();
+    if (image != null) {
+      print("image path: ${image.path}");
+      String fileName = image.path.split('/').last;
+      userProfileMap['dp'] = await MultipartFile.fromFile(
+        image.path,
+        filename: fileName,
+        contentType: MediaType('image', 'png'),
+      );
+    }
+    userProfileMap.remove('profilePicUrl');
+    FormData formData = FormData.fromMap(userProfileMap);
+    print(userProfileMap);
+
+    try {
+      Response res = await dio.put(Endpoints.updateUserProfile, data: formData);
+
+      debugPrint(res.data.toString());
+
+      if (res.statusCode == 200) {
+        print("profilePicUrl : ${res.data['profilePicUrl']}");
+        return res.data['profilePicUrl'] ?? '';
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (error) {
+      return Future.error(error.toString());
+    }
+  }
+
   Future<Map<String, dynamic>?> getUserProfile(String email) async {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');

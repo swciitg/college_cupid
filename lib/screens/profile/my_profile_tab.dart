@@ -14,7 +14,20 @@ class MyProfileTab extends StatefulWidget {
 
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
-  final myProfile = UserProfile.fromJson(LoginStore.myProfile);
+  var myProfile = UserProfile.fromJson(LoginStore.myProfile);
+
+  void editProfile() async {
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const EditProfile()));
+    setState(() {
+      myProfile = UserProfile.fromJson(LoginStore.myProfile);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +35,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EditProfile()));
+          editProfile();
         },
         backgroundColor: CupidColors.pinkColor,
         child: const Icon(
@@ -35,7 +47,9 @@ class _MyProfileTabState extends State<MyProfileTab> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            Positioned(child: Image.network(myProfile.profilePicUrl)),
+            Positioned(
+              child: Image.network(myProfile.profilePicUrl),
+            ),
             Column(
               children: [
                 SizedBox(

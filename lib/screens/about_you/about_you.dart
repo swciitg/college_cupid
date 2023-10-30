@@ -73,7 +73,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
       child: GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 140 / 50,
-        // as in figma design
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         shrinkWrap: true,
@@ -204,12 +203,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
 
               widget.myProfile.profilePicUrl = await APIService()
                   .postUserProfile(widget.image, widget.myProfile);
+              print("updated user profile url");
               print(widget.myProfile.profilePicUrl);
 
               await SharedPrefs.setPublicKey(widget.myInfo.publicKey);
               await SharedPrefs.setPrivateKey(widget.privateKey);
               await SharedPrefs.setPassword(widget.password);
-              await SharedPrefs.saveMyProfile(widget.myInfo.toJson());
+              await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
               await LoginStore.initializeMyProfile();
 
               nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
