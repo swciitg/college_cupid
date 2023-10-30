@@ -130,7 +130,9 @@ class APIService {
         contentType: MediaType('image', 'png'),
       );
     }
+    userProfileMap.remove('profilePicUrl');
     FormData formData = FormData.fromMap(userProfileMap);
+    print(userProfileMap);
 
     try {
       Response res = await dio.put(Endpoints.updateUserProfile, data: formData);
