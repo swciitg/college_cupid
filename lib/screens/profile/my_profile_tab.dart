@@ -15,8 +15,6 @@ class MyProfileTab extends StatefulWidget {
 class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
   var myProfile = UserProfile.fromJson(LoginStore.myProfile);
-  final defaultPicUrl =
-      "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
 
   void editProfile() async {
     await Navigator.push(
@@ -50,9 +48,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
         child: Stack(
           children: [
             Positioned(
-              child: Image.network(myProfile.profilePicUrl.isNotEmpty
-                  ? myProfile.profilePicUrl
-                  : defaultPicUrl),
+              child: Image.network(myProfile.profilePicUrl),
             ),
             Column(
               children: [

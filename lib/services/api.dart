@@ -53,7 +53,6 @@ class APIService {
           await dio.post(Endpoints.postPersonalInfo, data: jsonEncode(myInfo));
 
       if (res.statusCode == 200) {
-        print("posted personal info");
         return;
       } else {
         return Future.error(res.statusMessage.toString());
@@ -96,7 +95,34 @@ class APIService {
       debugPrint(res.data.toString());
 
       if (res.statusCode == 200) {
-        print("posted user profile");
+        return res.data['profilePicUrl'] ?? '';
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (error) {
+      return Future.error(error.toString());
+    }
+  }
+
+  Future<String> updateUserProfile(File? image, UserProfile userProfile) async {
+    final userProfileMap = userProfile.toJson();
+    if (image != null) {
+      print("image path: ${image.path}");
+      String fileName = image.path.split('/').last;
+      userProfileMap['dp'] = await MultipartFile.fromFile(
+        image.path,
+        filename: fileName,
+        contentType: MediaType('image', 'png'),
+      );
+    }
+    FormData formData = FormData.fromMap(userProfileMap);
+
+    try {
+      Response res = await dio.put(Endpoints.updateUserProfile, data: formData);
+
+      debugPrint(res.data.toString());
+
+      if (res.statusCode == 200) {
         print("profilePicUrl : ${res.data['profilePicUrl']}");
         return res.data['profilePicUrl'] ?? '';
       } else {

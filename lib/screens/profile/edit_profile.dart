@@ -31,6 +31,7 @@ class _EditProfileState extends State<EditProfile> {
   bool isMale = true;
   File? image;
   late TextEditingController nameController;
+  late TextEditingController emailController;
   late TextEditingController bioController;
   bool loading = false;
   List<String> programs = [
@@ -158,11 +159,8 @@ class _EditProfileState extends State<EditProfile> {
       );
 
       updatedProfile.profilePicUrl =
-          await APIService().postUserProfile(image, updatedProfile);
+          await APIService().updateUserProfile(image, updatedProfile);
 
-      final dummy = await APIService().getUserProfile(LoginStore.email!);
-      print("edited profile after posting");
-      print(dummy);
       await LoginStore.updateMyProfile(updatedProfile.toJson());
       setState(() {
         loading = false;
@@ -181,8 +179,10 @@ class _EditProfileState extends State<EditProfile> {
   void initState() {
     nameController = TextEditingController();
     bioController = TextEditingController();
+    emailController = TextEditingController();
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
+    emailController.text = myProfile.email;
     isMale = myProfile.gender == 'male' ? true : false;
     program = myProfile.program;
     yearOfStudy = myProfile.yearOfStudy;
@@ -268,6 +268,31 @@ class _EditProfileState extends State<EditProfile> {
                   focusNode: FocusNode(),
                   decoration: const InputDecoration(
                     labelText: "Name",
+                    floatingLabelAlignment: FloatingLabelAlignment.start,
+                    labelStyle: TextStyle(color: CupidColors.pinkColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    ),
+                    enabled: false,
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                TextField(
+                  controller: emailController,
+                  focusNode: FocusNode(),
+                  decoration: const InputDecoration(
+                    labelText: "Email",
                     floatingLabelAlignment: FloatingLabelAlignment.start,
                     labelStyle: TextStyle(color: CupidColors.pinkColor),
                     focusedBorder: OutlineInputBorder(
