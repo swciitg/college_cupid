@@ -47,9 +47,9 @@ class _MyProfileTabState extends State<MyProfileTab> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            Positioned(
-              child: Image.network(myProfile.profilePicUrl),
-            ),
+            // Positioned(
+            //   child: Image.network(myProfile.profilePicUrl),
+            // ),
             Column(
               children: [
                 SizedBox(

@@ -129,23 +129,6 @@ class _EditProfileState extends State<EditProfile> {
       });
       DiffieHellman df = DiffieHellman();
       String publicKey = df.publicKey.toString();
-      String privateKey = df.privateKey.toString();
-      final pass = await SharedPrefs.getPassword();
-      String encryptedPrivateKey = Encryption.bytesToHexadecimal(
-          Encryption.encryptAES(privateKey, pass));
-
-      PersonalInfo myInfo = PersonalInfo(
-        email: LoginStore.email!,
-        hashedPassword:
-            Encryption.bytesToHexadecimal(Encryption.calculateSHA256(pass)),
-        encryptedPrivateKey: encryptedPrivateKey,
-        publicKey: publicKey,
-        crushes: [],
-        encryptedCrushes: [],
-        matches: [],
-      );
-
-      await APIService().postPersonalInfo(myInfo);
       UserProfile updatedProfile = UserProfile(
         name: LoginStore.displayName!,
         profilePicUrl: '',
@@ -160,12 +143,20 @@ class _EditProfileState extends State<EditProfile> {
 
       updatedProfile.profilePicUrl =
           await APIService().updateUserProfile(image, updatedProfile);
+      final updatedProfileMap =
+          await APIService().getUserProfile(LoginStore.email!);
 
-      await LoginStore.updateMyProfile(updatedProfile.toJson());
+      if (updatedProfileMap != null) {
+        print(updatedProfileMap);
+        await LoginStore.updateMyProfile(updatedProfileMap);
+        showSnackBar("Profile updated Successfully");
+      } else {
+        showSnackBar(
+            "Profile couldn't update locally. Kindly update again later!");
+      }
       setState(() {
         loading = false;
       });
-      showSnackBar("Profile updated Successfully");
       navigatorKey.currentState!.pop(updatedProfile);
     } catch (e) {
       setState(() {
