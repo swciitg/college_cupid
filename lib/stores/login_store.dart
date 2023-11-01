@@ -9,8 +9,8 @@ class LoginStore {
   static Map<String, dynamic> myProfile = {};
   static String? email;
   static String? displayName;
-  static String? privateKey;
-  static String? publicKey;
+  static String? dhPrivateKey;
+  static String? dhPublicKey;
   static String? accessToken;
   static String? refreshToken;
   static String? password;
@@ -26,6 +26,9 @@ class LoginStore {
         await SharedPrefs.saveMyProfile(data);
         await initializeMyProfile();
         isProfileCompleted = true;
+      } else {
+        await SharedPrefs.clearPrefs();
+        return false;
       }
       return true;
     } else {
@@ -42,8 +45,8 @@ class LoginStore {
     displayName = null;
     accessToken = null;
     refreshToken = null;
-    privateKey = null;
-    publicKey = null;
+    dhPrivateKey = null;
+    dhPublicKey = null;
     password = null;
     return prefs.clear();
   }
@@ -62,8 +65,8 @@ class LoginStore {
   }
 
   static Future<void> initializeKeys() async {
-    privateKey = await SharedPrefs.getPrivateKey();
-    publicKey = await SharedPrefs.getPublicKey();
+    dhPrivateKey = await SharedPrefs.getDHPrivateKey();
+    dhPublicKey = await SharedPrefs.getDHPublicKey();
   }
 
   static Future<void> initializePassword() async {

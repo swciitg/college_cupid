@@ -48,24 +48,24 @@ class SharedPrefs {
     return prefs.getString(DatabaseStrings.displayName) ?? " ";
   }
 
-  static Future<void> setPrivateKey(String value) async {
+  static Future<void> setDHPrivateKey(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(DatabaseStrings.privateKey, value);
+    await prefs.setString(DatabaseStrings.dhPrivateKey, value);
   }
 
-  static Future<String> getPrivateKey() async {
+  static Future<String> getDHPrivateKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.privateKey) ?? " ";
+    return prefs.getString(DatabaseStrings.dhPrivateKey) ?? " ";
   }
 
-  static Future<void> setPublicKey(String value) async {
+  static Future<void> setDHPublicKey(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(DatabaseStrings.publicKey, value);
+    await prefs.setString(DatabaseStrings.dhPublicKey, value);
   }
 
-  static Future<String> getPublicKey() async {
+  static Future<String> getDHPublicKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.publicKey) ?? " ";
+    return prefs.getString(DatabaseStrings.dhPublicKey) ?? " ";
   }
 
   static Future<void> setPassword(String value) async {

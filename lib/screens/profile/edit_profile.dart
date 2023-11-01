@@ -127,8 +127,6 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = true;
       });
-      DiffieHellman df = DiffieHellman();
-      String publicKey = df.publicKey.toString();
       UserProfile updatedProfile = UserProfile(
         name: LoginStore.displayName!,
         profilePicUrl: '',
@@ -137,7 +135,7 @@ class _EditProfileState extends State<EditProfile> {
         bio: bioController.text,
         yearOfStudy: yearOfStudy,
         program: program,
-        publicKey: publicKey,
+        publicKey: LoginStore.dhPublicKey!,
         interests: selectedInterests.toList(),
       );
 

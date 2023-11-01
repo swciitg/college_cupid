@@ -7,6 +7,7 @@ import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/diffie_hellman_constants.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
@@ -81,9 +82,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       return;
     }
     if (_validatePasswords()) {
-      DiffieHellman df = DiffieHellman();
-      String publicKey = df.publicKey.toString();
-      String privateKey = df.privateKey.toString();
+      KeyPair keyPair = DiffieHellman.generateKeyPair();
+
+      String publicKey = keyPair.publicKey.toString();
+      String privateKey = keyPair.privateKey.toString();
 
       String encryptedPrivateKey = Encryption.bytesToHexadecimal(
           Encryption.encryptAES(privateKey, pass.text));

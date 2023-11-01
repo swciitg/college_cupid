@@ -3,6 +3,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
 
@@ -68,9 +69,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 MaterialPageRoute(builder: (context) => const EditProfile()));
           } else {
             //TODO: Add the person to My Crushes List
-            final df = DiffieHellman();
-            String sharedSecret = df
-                .getSecretKey(BigInt.parse(widget.userProfile.publicKey))
+            String sharedSecret = DiffieHellman.generateSharedSecret(
+                    otherPublicKey: BigInt.parse(widget.userProfile.publicKey),
+                    myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
                 .toString();
             String encryptedCrushEmail = Encryption.bytesToHexadecimal(
                 Encryption.encryptAES(widget.userProfile.email, 'key'));

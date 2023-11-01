@@ -206,8 +206,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               print("updated user profile url");
               print(widget.myProfile.profilePicUrl);
 
-              await SharedPrefs.setPublicKey(widget.myInfo.publicKey);
-              await SharedPrefs.setPrivateKey(widget.privateKey);
+              await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
+              await SharedPrefs.setDHPrivateKey(widget.privateKey);
               await SharedPrefs.setPassword(widget.password);
               await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
               await LoginStore.initializeMyProfile();

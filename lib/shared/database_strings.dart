@@ -4,8 +4,8 @@ class DatabaseStrings {
   static const authorization = "authorization";
   static const email = "email";
   static const displayName = "displayName";
-  static const privateKey = 'privateKey';
-  static const publicKey = 'publicKey';
+  static const dhPrivateKey = 'dhPrivateKey';
+  static const dhPublicKey = 'dhPublicKey';
   static const password = 'password';
   static const myProfile = 'myProfile';
   static const isProfileCompleted = 'isProfileCompleted';

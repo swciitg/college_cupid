@@ -1,16 +1,14 @@
-import 'package:diffie_hellman/diffie_hellman.dart';
+import 'package:college_cupid/shared/diffie_hellman_constants.dart';
 
 class DiffieHellman {
-  final DhPkcs3Engine _dhEngine = DhPkcs3Engine.fromGroup(5);
-  late BigInt privateKey, publicKey;
-
-  DiffieHellman() {
-    DhKeyPair keyPair = _dhEngine.generateKeyPair();
-    privateKey = keyPair.privateKey;
-    publicKey = keyPair.publicKey;
+  static KeyPair generateKeyPair() {
+    BigInt privateKey = BigInt.parse(generateRandomBits(1024), radix: 2);
+    BigInt publicKey = generator.modPow(privateKey, primeNumber);
+    return KeyPair(privateKey: privateKey, publicKey: publicKey);
   }
 
-  BigInt getSecretKey(BigInt otherPublicKey) {
-    return _dhEngine.computeSecretKey(otherPublicKey);
+  static BigInt generateSharedSecret(
+      {required BigInt myPrivateKey, required BigInt otherPublicKey}) {
+    return otherPublicKey.modPow(myPrivateKey, primeNumber);
   }
 }

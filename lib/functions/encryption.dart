@@ -41,7 +41,7 @@ class Encryption {
 
     var crypt = AesCrypt();
     crypt.aesSetParams(keyBytes, iv, AesMode.cbc);
-    List<int> paddedText = utf8.encode(plainText.padLeft(128, '0'));
+    List<int> paddedText = utf8.encode(plainText.padLeft(512, '0'));
 
     Uint8List srcData = Uint8List.fromList(paddedText);
     Uint8List encrypted = crypt.aesEncrypt(srcData);
