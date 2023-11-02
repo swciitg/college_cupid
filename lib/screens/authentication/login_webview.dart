@@ -84,12 +84,14 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
                   //TODO: INITIALIZE PASSWORD
-                  SharedPrefs.setPassword('value');
+                  SharedPrefs.setPassword('key');
                   SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
-                  SharedPrefs.setDHPrivateKey(Encryption.decryptAES(
-                      Encryption.hexadecimalToBytes(
-                          myInfo['encryptedPrivateKey']),
-                      await SharedPrefs.getPassword()));
+                  SharedPrefs.setDHPrivateKey(BigInt.parse(
+                          Encryption.decryptAES(
+                              encryptedText: Encryption.hexadecimalToBytes(
+                                  myInfo['encryptedPrivateKey']),
+                              key: await SharedPrefs.getPassword()))
+                      .toString());
 
                   nav.pushNamedAndRemoveUntil(
                       SplashScreen.id, (route) => false);

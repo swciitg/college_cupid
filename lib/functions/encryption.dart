@@ -31,7 +31,8 @@ class Encryption {
     return md5Digest;
   }
 
-  static Uint8List encryptAES(String plainText, String key) {
+  static Uint8List encryptAES(
+      {required String plainText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     Uint8List keyBytes2 = calculateSHA256(key);
     print(key);
@@ -48,7 +49,8 @@ class Encryption {
     return encrypted;
   }
 
-  static String decryptAES(Uint8List encryptedText, String key) {
+  static String decryptAES(
+      {required Uint8List encryptedText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     Uint8List iv = Uint8List(16);
 

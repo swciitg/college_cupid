@@ -25,6 +25,8 @@ class LoginStore {
       if (data != null) {
         await SharedPrefs.saveMyProfile(data);
         await initializeMyProfile();
+        print(password);
+        print(dhPrivateKey);
         isProfileCompleted = true;
       } else {
         await SharedPrefs.clearPrefs();

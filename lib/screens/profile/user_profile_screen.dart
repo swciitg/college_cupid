@@ -21,7 +21,8 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   bool readMore = true;
   final defaultPicUrl =
-      "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
+      'https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jp'
+      'g?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*';
 
   Widget gridView() {
     return GridView.count(
@@ -68,13 +69,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const EditProfile()));
           } else {
+            print(widget.userProfile.publicKey);
+            print(LoginStore.dhPrivateKey);
             //TODO: Add the person to My Crushes List
             String sharedSecret = DiffieHellman.generateSharedSecret(
                     otherPublicKey: BigInt.parse(widget.userProfile.publicKey),
                     myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
                 .toString();
             String encryptedCrushEmail = Encryption.bytesToHexadecimal(
-                Encryption.encryptAES(widget.userProfile.email, 'key'));
+                Encryption.encryptAES(
+                    plainText: widget.userProfile.email, key: 'key'));
 
             await APIService().addCrush(sharedSecret, encryptedCrushEmail);
           }

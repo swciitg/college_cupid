@@ -86,9 +86,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       String publicKey = keyPair.publicKey.toString();
       String privateKey = keyPair.privateKey.toString();
+      print(privateKey);
 
       String encryptedPrivateKey = Encryption.bytesToHexadecimal(
-          Encryption.encryptAES(privateKey, pass.text));
+          Encryption.encryptAES(plainText: privateKey, key: pass.text));
+
+      print(encryptedPrivateKey);
 
       UserProfile myProfile = UserProfile(
           name: LoginStore.displayName!,
