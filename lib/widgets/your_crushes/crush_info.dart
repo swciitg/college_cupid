@@ -83,8 +83,8 @@ class CrushInfo extends StatelessWidget {
                 ),
                 const Expanded(child: SizedBox()),
                 GestureDetector(
-                  onTap: () {
-                    APIService().removeCrush(index);
+                  onTap: () async {
+                   await APIService().removeCrush(index);
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 24.54, top: 24.54),
