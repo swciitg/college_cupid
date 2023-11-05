@@ -61,6 +61,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                                     snapshot.data![index].toString()),
                                 key: LoginStore.password!)
                             .replaceAll('0', ''),
+                        index :index,    
                       );
                     });
               }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class CrushInfo extends StatelessWidget {
   final String email;
-
-  const CrushInfo({required this.email, super.key});
+  final int index;
+  const CrushInfo({required this.email,required this.index, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +82,18 @@ class CrushInfo extends StatelessWidget {
                   ),
                 ),
                 const Expanded(child: SizedBox()),
-                Container(
-                  margin: const EdgeInsets.only(right: 24.54, top: 24.54),
-                  child: const Image(
-                      image: AssetImage('assets/images/close_image.png'),
-                      fit: BoxFit.cover,
-                      width: 17,
-                      height: 17),
+                GestureDetector(
+                  onTap: () {
+                    APIService().removeCrush(index);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 24.54, top: 24.54),
+                    child: const Image(
+                        image: AssetImage('assets/images/close_image.png'),
+                        fit: BoxFit.cover,
+                        width: 17,
+                        height: 17),
+                  ),
                 )
               ],
             ),

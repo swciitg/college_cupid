@@ -186,6 +186,22 @@ class APIService {
     }
   }
 
+  Future<void> removeCrush(int index) async {
+    try {
+      Response res =
+          await dio.delete(Endpoints.baseUrl + Endpoints.removeCrush,
+          queryParameters: {'index' : index},
+          );
+          if (res.statusCode == 200) {
+        return;
+      } else {
+        Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
   Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
     try {
       Response res = await dio.put(Endpoints.baseUrl + Endpoints.addCrush,
