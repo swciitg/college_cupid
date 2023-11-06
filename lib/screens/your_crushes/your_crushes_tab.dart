@@ -1,9 +1,11 @@
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/crush_list_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../shared/colors.dart';
 
 class YourCrushesTab extends StatefulWidget {
@@ -14,6 +16,8 @@ class YourCrushesTab extends StatefulWidget {
 }
 
 class _YourCrushesTabState extends State<YourCrushesTab> {
+  final crushListStore = CrushListStore();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,29 +45,37 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
           ),
           Expanded(
               child: FutureBuilder(
-            future: APIService().getCrush(),
+            future: crushListStore.getCrushes(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData) {
-                return const Center(
-                  child: Text('No Crushes as of now\nGet Rolling !!!!'),
-                );
               } else {
-                return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return CrushInfo(
-                        email: Encryption.decryptAES(
-                                encryptedText: Encryption.hexadecimalToBytes(
-                                    snapshot.data![index].toString()),
-                                key: LoginStore.password!)
-                            .replaceAll('0', ''),
-                        index :index,    
+                return Observer(
+                  builder: (context) {
+                    if (crushListStore.crushList.isEmpty) {
+                      return const Center(
+                        child: Text('No Crushes as of now\nGet Rolling !!!!'),
                       );
-                    });
+                    }
+                    return ListView.builder(
+                        itemCount: crushListStore.crushList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return CrushInfo(
+                            crushListStore: crushListStore,
+                            email: Encryption.decryptAES(
+                                    encryptedText:
+                                        Encryption.hexadecimalToBytes(
+                                            crushListStore.crushList[index]
+                                                .toString()),
+                                    key: LoginStore.password!)
+                                .replaceAll('0', ''),
+                            index: index,
+                          );
+                        });
+                  },
+                );
               }
             },
           )),

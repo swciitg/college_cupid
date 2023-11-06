@@ -1,11 +1,18 @@
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/stores/crush_list_store.dart';
 import 'package:flutter/material.dart';
 
 class CrushInfo extends StatelessWidget {
   final String email;
   final int index;
-  const CrushInfo({required this.email,required this.index, super.key});
+  final CrushListStore crushListStore;
+
+  const CrushInfo(
+      {required this.crushListStore,
+      required this.email,
+      required this.index,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +20,7 @@ class CrushInfo extends StatelessWidget {
     return FutureBuilder(
       future: APIService().getUserProfile(email),
       builder: (context, snapshot) {
-        if (snapshot.hasData == false) {
-          return const Center(
-            child: Text('error'),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -84,7 +87,8 @@ class CrushInfo extends StatelessWidget {
                 const Expanded(child: SizedBox()),
                 GestureDetector(
                   onTap: () async {
-                   await APIService().removeCrush(index);
+                    await crushListStore.removeCrush(index);
+                    // await APIService().removeCrush(index);
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 24.54, top: 24.54),
