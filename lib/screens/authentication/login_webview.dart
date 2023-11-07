@@ -1,4 +1,5 @@
 import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/functions/string_extension.dart';
 import 'package:college_cupid/screens/authentication/welcome.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -34,7 +35,7 @@ class _LoginWebviewState extends State<LoginWebview> {
     return element.toString().replaceAll('"', '');
   }
 
-  Future<void> showPasswordInputDialog() async {
+  Future<void> showPasswordInputDialog(String hashedPassword) async {
     TextEditingController passwordController = TextEditingController();
     await showDialog(
       context: context,
@@ -46,15 +47,6 @@ class _LoginWebviewState extends State<LoginWebview> {
             obscureText: true,
           ),
           actions: <Widget>[
-            CupidButton(
-              backgroundColor: CupidColors.pinkColor,
-              text: "Cancel",
-              onTap: () {
-                password = "";
-                Navigator.of(context).pop();
-                // Navigator.popUntil(context, (route) => false);
-              },
-            ),
             Padding(padding: EdgeInsets.only(top: 20)),
             CupidButton(
               backgroundColor: CupidColors.pinkColor,
@@ -62,7 +54,7 @@ class _LoginWebviewState extends State<LoginWebview> {
               onTap: () {
                 String enteredPassword = passwordController.text;
                 password = enteredPassword;
-
+                checkPasswordAndShowDialog(hashedPassword);
                 Navigator.of(context).pop();
               },
             ),
@@ -70,6 +62,20 @@ class _LoginWebviewState extends State<LoginWebview> {
         );
       },
     );
+  }
+
+  Future<void> checkPasswordAndShowDialog(String hashedPassword) async {
+    print(hashedPassword);
+    hashPassword = Encryption.calculateSHA256(password);
+
+    if (hashPassword == hashedPassword) {
+      return;
+    } else {
+      print("Password is incorrect.");
+
+      showSnackBar("Password is incorrect");
+      await showPasswordInputDialog(hashedPassword);
+    }
   }
 
   @override
@@ -122,20 +128,11 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   String hashedPassword = myInfo!['hashedPassword'];
                   print(hashedPassword);
-                  await showPasswordInputDialog();
+                  await showPasswordInputDialog(hashedPassword);
                   print("HI");
                   hashPassword = Encryption.calculateSHA256(password);
                   //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
                   //TODO: INITIALIZE PASSWORD
-                  while (hashedPassword != hashPassword && password!="") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        duration: Duration(seconds: 1),
-                        content: Text('The password is incorrect'),
-                      ),
-                    );
-                    await showPasswordInputDialog();
-                  }
                   if (hashPassword == hashedPassword) {
                     SharedPrefs.setPassword(password);
                     print("Password is correct. Logging in.");
