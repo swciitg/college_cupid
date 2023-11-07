@@ -11,6 +11,7 @@ import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
+import 'package:slide_countdown/slide_countdown.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
@@ -24,8 +25,6 @@ class LoginWebview extends StatefulWidget {
 
 class _LoginWebviewState extends State<LoginWebview> {
   late WebViewController controller;
-  var password;
-  var hashPassword;
 
   Future<String> getElementById(
       WebViewController controller, String elementId) async {
@@ -35,47 +34,45 @@ class _LoginWebviewState extends State<LoginWebview> {
     return element.toString().replaceAll('"', '');
   }
 
-  Future<void> showPasswordInputDialog(String hashedPassword) async {
+  Future<String> getPasswordFromUser(String hashedPassword) async {
     TextEditingController passwordController = TextEditingController();
+    String password = '';
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Enter Password"),
+          title: const Text("Enter Password"),
           content: TextField(
             controller: passwordController,
             obscureText: true,
           ),
           actions: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 20)),
             CupidButton(
               backgroundColor: CupidColors.pinkColor,
               text: "Continue",
               onTap: () {
-                String enteredPassword = passwordController.text;
-                password = enteredPassword;
-                checkPasswordAndShowDialog(hashedPassword);
-                Navigator.of(context).pop();
+                bool matched =
+                    verifyPassword(hashedPassword, passwordController.text);
+                if (matched) {
+                  Navigator.of(context).pop();
+                } else {
+                  showSnackBar('Incorrect Password');
+                  passwordController.clear();
+                }
               },
             ),
           ],
         );
       },
     );
+    return passwordController.text;
   }
 
-  Future<void> checkPasswordAndShowDialog(String hashedPassword) async {
-    print(hashedPassword);
-    hashPassword = Encryption.calculateSHA256(password);
-
-    if (hashPassword == hashedPassword) {
-      return;
-    } else {
-      print("Password is incorrect.");
-
-      showSnackBar("Password is incorrect");
-      await showPasswordInputDialog(hashedPassword);
-    }
+  bool verifyPassword(String hashedPassword, String enteredPassword) {
+    return hashedPassword ==
+        Encryption.bytesToHexadecimal(
+            Encryption.calculateSHA256(enteredPassword));
   }
 
   @override
@@ -128,32 +125,21 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   String hashedPassword = myInfo!['hashedPassword'];
                   print(hashedPassword);
-                  await showPasswordInputDialog(hashedPassword);
-                  print("HI");
-                  hashPassword = Encryption.calculateSHA256(password);
-                  //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
-                  //TODO: INITIALIZE PASSWORD
-                  if (hashPassword == hashedPassword) {
-                    SharedPrefs.setPassword(password);
-                    print("Password is correct. Logging in.");
-                    await SharedPrefs.saveMyProfile(myProfile);
-                    await LoginStore.initializeMyProfile();
-                    SharedPrefs.setDHPublicKey(
-                        LoginStore.myProfile['publicKey']);
-                    SharedPrefs.setDHPrivateKey(BigInt.parse(
-                            Encryption.decryptAES(
-                                encryptedText: Encryption.hexadecimalToBytes(
-                                    myInfo['encryptedPrivateKey']),
-                                key: await SharedPrefs.getPassword()))
-                        .toString());
+                  String password = await getPasswordFromUser(hashedPassword);
+                  SharedPrefs.setPassword(password);
+                  print("Password is correct. Logging in.");
+                  await SharedPrefs.saveMyProfile(myProfile);
+                  await LoginStore.initializeMyProfile();
+                  SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
+                  SharedPrefs.setDHPrivateKey(BigInt.parse(
+                          Encryption.decryptAES(
+                              encryptedText: Encryption.hexadecimalToBytes(
+                                  myInfo['encryptedPrivateKey']),
+                              key: await SharedPrefs.getPassword()))
+                      .toString());
 
-                    nav.pushNamedAndRemoveUntil(
-                        SplashScreen.id, (route) => false);
-                  } else {
-                    print("User wants to leave.");
-
-                    nav.pushNamedAndRemoveUntil(Welcome.id, (route) => false);
-                  }
+                  nav.pushNamedAndRemoveUntil(
+                      SplashScreen.id, (route) => false);
                 }
               }
             }
