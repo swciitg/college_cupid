@@ -1,11 +1,13 @@
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/string_extension.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -20,6 +22,8 @@ class LoginWebview extends StatefulWidget {
 
 class _LoginWebviewState extends State<LoginWebview> {
   late WebViewController controller;
+  var password;
+  var hashPassword;
 
   Future<String> getElementById(
       WebViewController controller, String elementId) async {
@@ -27,6 +31,44 @@ class _LoginWebviewState extends State<LoginWebview> {
         "document.querySelector('#$elementId').innerText");
 
     return element.toString().replaceAll('"', '');
+  }
+
+  Future<void> showPasswordInputDialog() async {
+    TextEditingController passwordController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Enter Password"),
+          
+          content: TextField(
+            controller: passwordController,
+            obscureText: true, 
+          ),
+          actions: <Widget>[
+            CupidButton(
+              backgroundColor: CupidColors.pinkColor,
+              
+              text: "Cancel",
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            Padding(padding: EdgeInsets.only(top: 20)),
+            CupidButton(
+              backgroundColor: CupidColors.pinkColor,
+              text: "Continue",
+              onTap: () {
+                String enteredPassword = passwordController.text;
+                password = enteredPassword;
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -81,10 +123,15 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   String hashedPassword = myInfo!['hashedPassword'];
                   print(hashedPassword);
-
+                  await showPasswordInputDialog();
+                  print("HI");
+                  hashPassword = Encryption.calculateSHA256(password);
                   //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
                   //TODO: INITIALIZE PASSWORD
-                  SharedPrefs.setPassword('key');
+                  hashPassword == hashedPassword
+                      ? SharedPrefs.setPassword(password)
+                      : SharedPrefs.setPassword('key');
+                  print("Bye");
                   SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
                           Encryption.decryptAES(
