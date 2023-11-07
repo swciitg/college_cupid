@@ -1,5 +1,6 @@
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/string_extension.dart';
+import 'package:college_cupid/screens/authentication/welcome.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
@@ -40,18 +41,18 @@ class _LoginWebviewState extends State<LoginWebview> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Enter Password"),
-          
           content: TextField(
             controller: passwordController,
-            obscureText: true, 
+            obscureText: true,
           ),
           actions: <Widget>[
             CupidButton(
               backgroundColor: CupidColors.pinkColor,
-              
               text: "Cancel",
               onTap: () {
+                password = "";
                 Navigator.of(context).pop();
+                // Navigator.popUntil(context, (route) => false);
               },
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
@@ -61,7 +62,7 @@ class _LoginWebviewState extends State<LoginWebview> {
               onTap: () {
                 String enteredPassword = passwordController.text;
                 password = enteredPassword;
-                setState(() {});
+
                 Navigator.of(context).pop();
               },
             ),
@@ -118,8 +119,6 @@ class _LoginWebviewState extends State<LoginWebview> {
                 } else {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
-                  await SharedPrefs.saveMyProfile(myProfile);
-                  await LoginStore.initializeMyProfile();
 
                   String hashedPassword = myInfo!['hashedPassword'];
                   print(hashedPassword);
@@ -128,20 +127,36 @@ class _LoginWebviewState extends State<LoginWebview> {
                   hashPassword = Encryption.calculateSHA256(password);
                   //TODO: ADD A POPUP FOR PASSWORD VERIFICATION
                   //TODO: INITIALIZE PASSWORD
-                  hashPassword == hashedPassword
-                      ? SharedPrefs.setPassword(password)
-                      : SharedPrefs.setPassword('key');
-                  print("Bye");
-                  SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
-                  SharedPrefs.setDHPrivateKey(BigInt.parse(
-                          Encryption.decryptAES(
-                              encryptedText: Encryption.hexadecimalToBytes(
-                                  myInfo['encryptedPrivateKey']),
-                              key: await SharedPrefs.getPassword()))
-                      .toString());
+                  while (hashedPassword != hashPassword && password!="") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        duration: Duration(seconds: 1),
+                        content: Text('The password is incorrect'),
+                      ),
+                    );
+                    await showPasswordInputDialog();
+                  }
+                  if (hashPassword == hashedPassword) {
+                    SharedPrefs.setPassword(password);
+                    print("Password is correct. Logging in.");
+                    await SharedPrefs.saveMyProfile(myProfile);
+                    await LoginStore.initializeMyProfile();
+                    SharedPrefs.setDHPublicKey(
+                        LoginStore.myProfile['publicKey']);
+                    SharedPrefs.setDHPrivateKey(BigInt.parse(
+                            Encryption.decryptAES(
+                                encryptedText: Encryption.hexadecimalToBytes(
+                                    myInfo['encryptedPrivateKey']),
+                                key: await SharedPrefs.getPassword()))
+                        .toString());
 
-                  nav.pushNamedAndRemoveUntil(
-                      SplashScreen.id, (route) => false);
+                    nav.pushNamedAndRemoveUntil(
+                        SplashScreen.id, (route) => false);
+                  } else {
+                    print("User wants to leave.");
+
+                    nav.pushNamedAndRemoveUntil(Welcome.id, (route) => false);
+                  }
                 }
               }
             }
