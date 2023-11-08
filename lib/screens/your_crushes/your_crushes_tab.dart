@@ -62,6 +62,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     return ListView.builder(
                         itemCount: crushListStore.crushList.length,
                         itemBuilder: (BuildContext context, int index) {
+                          print('PASSWORD: ${LoginStore.password}');
                           return CrushInfo(
                             crushListStore: crushListStore,
                             email: Encryption.decryptAES(

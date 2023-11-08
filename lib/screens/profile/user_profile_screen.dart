@@ -78,7 +78,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 .toString();
             String encryptedCrushEmail = Encryption.bytesToHexadecimal(
                 Encryption.encryptAES(
-                    plainText: widget.userProfile.email, key: 'key'));
+                    plainText: widget.userProfile.email,
+                    key: LoginStore.password!));
 
             await APIService().addCrush(sharedSecret, encryptedCrushEmail);
           }
