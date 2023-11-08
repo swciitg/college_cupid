@@ -80,7 +80,23 @@ class APIService {
     try {
       Response res = await dio.get(Endpoints.getCrush);
       if (res.statusCode == 200) {
+        print(res.data);
         return res.data['encryptedCrushes'];
+      } else {
+        print('Request Failed with status: ${res.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
+    }
+  }
+
+  Future<List> getMatches() async {
+    try {
+      Response res = await dio.get(Endpoints.getMatch);
+      if (res.statusCode == 200) {
+        return res.data['matches'];
       } else {
         print('Request Failed with status: ${res.statusCode}');
         return [];
@@ -154,6 +170,7 @@ class APIService {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');
       if (res.statusCode == 200) {
+        print(res.data);
         return res.data['userProfile'];
       } else {
         return Future.error(res.statusMessage.toString());

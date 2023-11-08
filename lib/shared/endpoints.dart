@@ -17,6 +17,7 @@ class Endpoints {
   static const addCrush = '/crush/add';
   static const getCrush = '/crush';
   static const removeCrush = '/crush/remove';
+  static const getMatch = '/match';
 
   static getHeader() {
     return {
