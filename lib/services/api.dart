@@ -96,6 +96,7 @@ class APIService {
     try {
       Response res = await dio.get(Endpoints.getMatch);
       if (res.statusCode == 200) {
+        print(res.data);
         return res.data['matches'];
       } else {
         print('Request Failed with status: ${res.statusCode}');

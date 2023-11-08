@@ -4,9 +4,8 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/crush_list_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
+import 'package:college_cupid/widgets/your_matches/match_info.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/your_matches/countdown.dart';
 
 class YourMatches extends StatefulWidget {
   const YourMatches({super.key});
@@ -27,21 +26,12 @@ class _YourMatchesState extends State<YourMatches> {
         children: [
           Container(
             margin: const EdgeInsets.only(top: 11),
-            child: Text('Your Matches',
-                style: CupidStyles.headingStyle
-                    .copyWith(color: CupidColors.titleColor)),
+            child: Text(
+              'Your Matches',
+              style: CupidStyles.headingStyle
+                  .copyWith(color: CupidColors.titleColor),
+            ),
           ),
-          // Container(
-          //   margin: const EdgeInsets.only(top: 10),
-          //   child: const Text(
-          //       'You can select a maximum of 5 crushes at a time.',
-          //       style: TextStyle(
-          //           fontSize: 14,
-          //           fontWeight: FontWeight.w400,
-          //           height: 1.5,
-          //           color: CupidColors.grayColor,
-          //           fontFamily: 'Sk-Modernist')),
-          // ),
           Expanded(
             child: FutureBuilder(
               future: APIService().getMatches(),
@@ -55,20 +45,30 @@ class _YourMatchesState extends State<YourMatches> {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData) {
                   return const Center(
-                    child: Text('No Matches as of now\nGet Rolling !!!!'),
+                    child: Text(
+                      'No Matches as of now\nGood Luck !!!!',
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 } else {
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No Matches as of now\nGood Luck !!!!',
+                        textAlign: TextAlign.center,
+                        style: CupidStyles.lightTextStyle,
+                      ),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return CrushInfo(
-                        crushListStore: crushListStore,
+                      return MatchInfo(
                         email: Encryption.decryptAES(
                                 encryptedText: Encryption.hexadecimalToBytes(
                                     snapshot.data![index].toString()),
                                 key: LoginStore.password!)
                             .replaceAll('0', ''),
-                        index: index,
                       );
                     },
                   );
