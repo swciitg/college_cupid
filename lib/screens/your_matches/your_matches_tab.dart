@@ -2,6 +2,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/crush_list_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class YourMatches extends StatefulWidget {
 }
 
 class _YourMatchesState extends State<YourMatches> {
+  final crushListStore = CrushListStore();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,6 +62,7 @@ class _YourMatchesState extends State<YourMatches> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return CrushInfo(
+                        crushListStore: crushListStore,
                         email: Encryption.decryptAES(
                                 encryptedText: Encryption.hexadecimalToBytes(
                                     snapshot.data![index].toString()),
