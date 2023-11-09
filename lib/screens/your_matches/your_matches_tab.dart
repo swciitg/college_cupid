@@ -62,11 +62,7 @@ class _YourMatchesState extends State<YourMatches> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return MatchInfo(
-                        email: Encryption.decryptAES(
-                                encryptedText: Encryption.hexadecimalToBytes(
-                                    snapshot.data![index].toString()),
-                                key: LoginStore.password!)
-                            .replaceAll('0', ''),
+                        email: snapshot.data![index],
                       );
                     },
                   );
