@@ -1,5 +1,4 @@
 import 'package:college_cupid/functions/encryption.dart';
-import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/crush_list_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -56,7 +55,11 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                   builder: (context) {
                     if (crushListStore.crushList.isEmpty) {
                       return const Center(
-                        child: Text('No Crushes as of now\nGet Rolling !!!!'),
+                        child: Text(
+                          'No Crushes as of now\nGet Rolling !!!!',
+                          textAlign: TextAlign.center,
+                          style: CupidStyles.lightTextStyle,
+                        ),
                       );
                     }
                     return ListView.builder(
