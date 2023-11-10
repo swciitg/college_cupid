@@ -52,6 +52,7 @@ dependencies:
   image_cropper: ^5.0.0
   mobx: ^2.2.1
   flutter_mobx: ^2.1.1
+  cached_network_image: ^3.3.0
 
 
 dev_dependencies:
@@ -80,16 +81,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/profile_photo.png
-    - assets/images/close_image.png
-    - assets/icons/acc.png
-    - assets/icons/slides.png
-    - assets/icons/phone.png
-    - assets/icons/likelike(1).png
-    - assets/icons/couple.jpg
-    - assets/icons/clock.png
-    - assets/icons/crush.png
-    - assets/icons/filter.png
+    - assets/images/
+    - assets/icons/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/crush_list_store.dart';
@@ -16,27 +17,26 @@ class CrushInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(email);
-    return FutureBuilder(
-      future: APIService().getUserProfile(email),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text(snapshot.error.toString()));
-        } else {
-          return Container(
-            margin: const EdgeInsets.only(top: 32),
-            height: 66,
-            width: 295,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1, color: CupidColors.pinkColor),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      margin: const EdgeInsets.only(top: 32),
+      height: 66,
+      width: 295,
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: CupidColors.pinkColor),
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+      ),
+      child: FutureBuilder(
+        future: APIService().getUserProfile(email),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          } else {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ClipRRect(
@@ -44,14 +44,12 @@ class CrushInfo extends StatelessWidget {
                       left: Radius.circular(19), right: Radius.zero),
                   // Image border
                   child: SizedBox.fromSize(
-                    child: Image(
-                        image: snapshot.data!['profilePicUrl']
-                                .toString()
-                                .startsWith('https://')
-                            ? NetworkImage(
-                                snapshot.data!['profilePicUrl'].toString())
-                            : const NetworkImage(
-                                'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png'),
+                    child: CachedNetworkImage(
+                        imageUrl: snapshot.data!['profilePicUrl'].toString(),
+                        progressIndicatorBuilder: (context, url, progress) =>
+                            CircularProgressIndicator(
+                              value: progress.progress,
+                            ),
                         fit: BoxFit.cover,
                         width: 64,
                         height: 66),
@@ -61,24 +59,22 @@ class CrushInfo extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 9),
-                        child: Text(snapshot.data!['name'],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                height: 1.5,
-                                color: CupidColors.blackColor,
-                                fontFamily: 'Sk-Modernist')),
+                      Text(snapshot.data!['name'],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: CupidColors.blackColor,
+                              fontFamily: 'Sk-Modernist')),
+                      const SizedBox(
+                        height: 5,
                       ),
                       Text(
                           "${snapshot.data!['program']} - ${snapshot.data!['yearOfStudy']}",
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              height: 1.5,
                               color: CupidColors.blackColor,
                               fontFamily: 'Sk-Modernist')),
                     ],
@@ -91,19 +87,19 @@ class CrushInfo extends StatelessWidget {
                     // await APIService().removeCrush(index);
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(right: 24.54, top: 24.54),
+                    margin: const EdgeInsets.only(right: 10),
                     child: const Image(
                         image: AssetImage('assets/images/close_image.png'),
                         fit: BoxFit.cover,
-                        width: 17,
-                        height: 17),
+                        width: 20,
+                        height: 20),
                   ),
                 )
               ],
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }

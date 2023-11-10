@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user_profile.dart';
@@ -93,9 +94,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           child: Stack(
         children: [
           Positioned(
-              child: Image.network(widget.userProfile.profilePicUrl.isNotEmpty
-                  ? widget.userProfile.profilePicUrl
-                  : defaultPicUrl)),
+              child: CachedNetworkImage(
+            imageUrl: widget.userProfile.profilePicUrl,
+            progressIndicatorBuilder: (context, url, progress) =>
+                CircularProgressIndicator(
+              value: progress.progress,
+            ),
+          )),
           Column(
             children: [
               SizedBox(

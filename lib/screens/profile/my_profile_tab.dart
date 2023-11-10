@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -37,7 +38,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
         onPressed: () {
           editProfile();
         },
-        backgroundColor: CupidColors.pinkColor,
+        backgroundColor: CupidColors.titleColor,
         child: const Icon(
           Icons.edit,
           color: Colors.white,
@@ -48,7 +49,13 @@ class _MyProfileTabState extends State<MyProfileTab> {
         child: Stack(
           children: [
             Positioned(
-              child: Image.network(myProfile.profilePicUrl),
+              child: CachedNetworkImage(
+                imageUrl: myProfile.profilePicUrl,
+                progressIndicatorBuilder: (context, url, progress) =>
+                    CircularProgressIndicator(
+                  value: progress.progress,
+                ),
+              ),
             ),
             Column(
               children: [

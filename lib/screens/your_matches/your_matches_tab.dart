@@ -1,8 +1,6 @@
-import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/your_matches/match_info.dart';
 import 'package:flutter/material.dart';
 
@@ -22,13 +20,10 @@ class _YourMatchesState extends State<YourMatches> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 11),
-            child: Text(
-              'Your Matches',
-              style: CupidStyles.headingStyle
-                  .copyWith(color: CupidColors.titleColor),
-            ),
+          Text(
+            'Your Matches',
+            style: CupidStyles.headingStyle
+                .copyWith(color: CupidColors.titleColor),
           ),
           Expanded(
             child: FutureBuilder(

@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class ProfileCard extends StatelessWidget {
   final String profilePicUrl;
@@ -23,9 +25,7 @@ class ProfileCard extends StatelessWidget {
               spreadRadius: 1)
         ],
         image: DecorationImage(
-            image: profilePicUrl == ''
-                ? const NetworkImage('')
-                : NetworkImage(profilePicUrl),
+            image: CachedNetworkImageProvider(profilePicUrl),
             fit: BoxFit.cover),
       ),
       child: Container(

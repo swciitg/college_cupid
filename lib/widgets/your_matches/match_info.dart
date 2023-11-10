@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -9,26 +10,26 @@ class MatchInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: APIService().getUserProfile(email),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text(snapshot.error.toString()));
-        } else {
-          return Container(
-            margin: const EdgeInsets.only(top: 32),
-            height: 66,
-            width: 295,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1, color: CupidColors.pinkColor),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      margin: const EdgeInsets.only(top: 32),
+      height: 66,
+      width: 295,
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: CupidColors.pinkColor),
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+      ),
+      child: FutureBuilder(
+        future: APIService().getUserProfile(email),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          } else {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ClipRRect(
@@ -37,19 +38,15 @@ class MatchInfo extends StatelessWidget {
                     right: Radius.zero,
                   ),
                   child: SizedBox.fromSize(
-                    child: Image(
-                      image: snapshot.data!['profilePicUrl']
-                              .toString()
-                              .startsWith('https://')
-                          ? NetworkImage(
-                              snapshot.data!['profilePicUrl'].toString(),
-                            )
-                          : const NetworkImage(
-                              'https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png'),
-                      fit: BoxFit.cover,
-                      width: 64,
-                      height: 66,
-                    ),
+                    child: CachedNetworkImage(
+                        imageUrl: snapshot.data!['profilePicUrl'].toString(),
+                        progressIndicatorBuilder: (context, url, progress) =>
+                            CircularProgressIndicator(
+                              value: progress.progress,
+                            ),
+                        fit: BoxFit.cover,
+                        width: 64,
+                        height: 66),
                   ),
                 ),
                 Container(
@@ -65,18 +62,19 @@ class MatchInfo extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            height: 1.5,
                             color: CupidColors.blackColor,
                             fontFamily: 'Sk-Modernist',
                           ),
                         ),
+                      ),
+                      const SizedBox(
+                        height: 5,
                       ),
                       Text(
                         "${snapshot.data!['program']} - ${snapshot.data!['yearOfStudy']}",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          height: 1.5,
                           color: CupidColors.blackColor,
                           fontFamily: 'Sk-Modernist',
                         ),
@@ -86,10 +84,10 @@ class MatchInfo extends StatelessWidget {
                 ),
                 const Expanded(child: SizedBox()),
               ],
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }

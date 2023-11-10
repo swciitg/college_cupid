@@ -19,48 +19,70 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int index = 0;
   List<Widget> tabs = [
     const HomeTab(),
-    YourCrushesTab(),
+    const YourCrushesTab(),
     const YourMatches(),
     const MyProfileTab(),
   ];
+
+  int _selectedIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
-      appBar: AppBar(
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          // Status bar color
-          statusBarColor: CupidColors.backgroundColor,
-          statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            // Status bar color
+            statusBarColor: CupidColors.backgroundColor,
+            statusBarIconBrightness: Brightness.dark,
+            // For Android (dark icons)
+            statusBarBrightness: Brightness.light, // For iOS (dark icons)
+          ),
+          backgroundColor: CupidColors.backgroundColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  NavigatorState nav = Navigator.of(context);
+                  bool cleared = await LoginStore.logout();
+                  if (cleared) {
+                    nav.pushNamedAndRemoveUntil(
+                        SplashScreen.id, (route) => false);
+                  }
+                },
+                icon: const Icon(
+                  Icons.logout_rounded,
+                  color: CupidColors.pinkColor,
+                ))
+          ],
+          title: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('CollegeCupid',
+                style: TextStyle(
+                  fontFamily: 'SedgwickAve',
+                  color: CupidColors.titleColor,
+                  fontSize: 32,
+                )),
+          ),
         ),
-        backgroundColor: CupidColors.backgroundColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              onPressed: () async {
-                NavigatorState nav = Navigator.of(context);
-                bool cleared = await LoginStore.logout();
-                if (cleared) {
-                  nav.pushNamedAndRemoveUntil(
-                      SplashScreen.id, (route) => false);
-                }
-              },
-              icon: const Icon(
-                Icons.logout_rounded,
-                color: CupidColors.pinkColor,
-              ))
-        ],
-        title: const Text('CollegeCupid',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 28,
-            )),
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
@@ -78,16 +100,34 @@ class _HomeState extends State<Home> {
         ),
         child: NavigationBar(
           elevation: 4,
+          // showSelectedLabels: false,
+          // selectedItemColor: CupidColors.titleColor,
+          // onTap: _onItemTapped,
           backgroundColor: CupidColors.navBarBackgroundColor,
-          selectedIndex: index,
+          selectedIndex: _selectedIndex,
           onDestinationSelected: (i) => setState(() {
-            index = i;
+            if ((i - _selectedIndex).abs() != 1) {
+              _pageController.jumpToPage(i);
+            } else {
+              _pageController.animateToPage(i,
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeIn);
+            }
+            _selectedIndex = i;
           }),
           destinations: navIcons,
         ),
       ),
-      body: SafeArea(
-        child: tabs[index],
+      body: SizedBox.expand(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: tabs,
+        ),
       ),
     );
   }

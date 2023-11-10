@@ -37,7 +37,7 @@ class _WelcomeState extends State<Welcome> {
               SizedBox(
                 height: 400,
                 width: 400,
-                child: Image.asset('assets/icons/couple.jpg'),
+                child: Image.asset('assets/images/couple.jpg'),
               ),
               const Spacer(),
               const Text(

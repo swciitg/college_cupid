@@ -1,10 +1,10 @@
-import 'package:college_cupid/functions/encryption.dart';
-import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/crush_list_store.dart';
-import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/your_crushes/crush_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import '../../functions/encryption.dart';
+import '../../shared/styles.dart';
+import '../../stores/crush_list_store.dart';
+import '../../stores/login_store.dart';
+import '../../widgets/your_crushes/crush_info.dart';
 import '../../shared/colors.dart';
 
 class YourCrushesTab extends StatefulWidget {
@@ -19,18 +19,15 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 30, right: 30),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 11),
-            child: Text('Your Crushes',
-                style: CupidStyles.headingStyle
-                    .copyWith(color: CupidColors.titleColor)),
-          ),
+          Text('Your Crushes',
+              style: CupidStyles.headingStyle
+                  .copyWith(color: CupidColors.titleColor)),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: const Text(
