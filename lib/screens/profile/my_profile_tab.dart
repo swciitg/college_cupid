@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
+import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/profile/view_interests_grid.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +52,14 @@ class _MyProfileTabState extends State<MyProfileTab> {
             Positioned(
               child: CachedNetworkImage(
                 imageUrl: myProfile.profilePicUrl,
-                progressIndicatorBuilder: (context, url, progress) =>
-                    CircularProgressIndicator(
-                  value: progress.progress,
+                cacheManager: customCacheManager,
+                progressIndicatorBuilder: (context, url, progress) => SizedBox(
+                  height: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
+                    ),
+                  ),
                 ),
               ),
             ),
