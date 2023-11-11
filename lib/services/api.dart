@@ -64,8 +64,7 @@ class APIService {
 
   Future<Map<String, dynamic>?> getPersonalInfo() async {
     try {
-      Response res =
-          await dio.get(Endpoints.baseUrl + Endpoints.getPersonalInfo);
+      Response res = await dio.get(Endpoints.getPersonalInfo);
       if (res.statusCode == 200) {
         return res.data['personalInfo'];
       } else {
@@ -181,6 +180,31 @@ class APIService {
     }
   }
 
+  Future<List<UserProfile>> getAllSearchedUserProfiles(
+      String searchQuery) async {
+    try {
+      Response res = await dio.get(Endpoints.getAllSearchedUserProfiles,
+          queryParameters: {'name': searchQuery});
+      if (res.statusCode == 200) {
+        final users = res.data['users'];
+        List<UserProfile> userProfiles = [];
+        for (int i = users.length - 1; i >= 0; i--) {
+          List<String> interests = [];
+          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
+            interests.add(users[i]['interests'][j].toString());
+          }
+          if (users[i]['email'].toString() == LoginStore.email) continue;
+          userProfiles.add(UserProfile.fromJson(users[i]));
+        }
+        return userProfiles;
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
   Future<List<UserProfile>> getAllOtherUsers() async {
     try {
       Response res = await dio.get(Endpoints.getAllUserProfiles);
@@ -222,7 +246,7 @@ class APIService {
 
   Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
     try {
-      Response res = await dio.put(Endpoints.baseUrl + Endpoints.addCrush,
+      Response res = await dio.put(Endpoints.addCrush,
           data: jsonEncode({
             'sharedSecret': sharedSecret,
             'encryptedCrushEmail': encryptedCrushEmail

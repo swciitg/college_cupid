@@ -1,3 +1,4 @@
+import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/widgets/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/screens/profile/user_profile_screen.dart';
 import 'package:college_cupid/services/api.dart';
@@ -17,6 +18,9 @@ class _HomeTabState extends State<HomeTab> {
   final defaultPicUrl =
       "https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*";
 
+  Future<List<UserProfile>> getUserProfilesFuture =
+      APIService().getAllOtherUsers();
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -26,11 +30,11 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: APIService().getAllOtherUsers(),
+        future: getUserProfilesFuture,
         builder: (context, snapshot) {
           if (snapshot.hasData == false) {
             return const Center(
-              child: Text('Loading'),
+              child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
@@ -41,20 +45,26 @@ class _HomeTabState extends State<HomeTab> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
                 child: Stack(
-                  alignment: Alignment
-                      .centerRight, // Align the clear button to the right
+                  alignment: Alignment.centerRight,
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
                         border: Border.all(
-                          color: CupidColors.titleColor, // Highlight color
+                          color: CupidColors.titleColor,
                         ),
-                        color: CupidColors
-                            .backgroundColor, // Background color for the TextField
+                        color: CupidColors.backgroundColor,
                       ),
                       child: TextFormField(
                         controller: _searchController,
+                        onChanged: (value) {
+                          if (mounted) {
+                            setState(() {
+                              getUserProfilesFuture = APIService()
+                                  .getAllSearchedUserProfiles(value);
+                            });
+                          }
+                        },
                         decoration: const InputDecoration(
                           hintText: 'Search',
                           prefixIcon: Icon(Icons.search),
