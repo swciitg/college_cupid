@@ -253,6 +253,7 @@ class APIService {
           }));
 
       if (res.statusCode == 200) {
+        showSnackBar(res.data['message']);
         return;
       } else {
         Future.error(res.statusMessage.toString());

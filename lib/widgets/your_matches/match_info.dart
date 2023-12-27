@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/screens/profile/user_profile_screen.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/globals.dart';
@@ -29,65 +31,80 @@ class MatchInfo extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(19),
-                    right: Radius.zero,
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserProfileScreen(
+                            isMine: false,
+                            userProfile:
+                                UserProfile.fromJson(snapshot.data!))));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.horizontal(
+                      left: Radius.circular(19),
+                      right: Radius.zero,
+                    ),
+                    child: SizedBox.fromSize(
+                      child: CachedNetworkImage(
+                          imageUrl: snapshot.data!['profilePicUrl'].toString(),
+                          cacheManager: customCacheManager,
+                          progressIndicatorBuilder: (context, url, progress) =>
+                              Center(
+                                child: CircularProgressIndicator(
+                                  value: progress.progress,
+                                ),
+                              ),
+                          fit: BoxFit.cover,
+                          width: 64,
+                          height: 66),
+                    ),
                   ),
-                  child: SizedBox.fromSize(
-                    child: CachedNetworkImage(
-                        imageUrl: snapshot.data!['profilePicUrl'].toString(),
-                        cacheManager: customCacheManager,
-                        progressIndicatorBuilder: (context, url, progress) =>
-                            Center(
-                              child: CircularProgressIndicator(
-                                value: progress.progress,
+                  Container(
+                    margin: const EdgeInsets.only(left: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 9),
+                            child: Text(
+                              snapshot.data!['name'],
+                              style: const TextStyle(
+                                fontSize: 16,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold,
+                                color: CupidColors.blackColor,
+                                fontFamily: 'Sk-Modernist',
                               ),
                             ),
-                        fit: BoxFit.cover,
-                        width: 64,
-                        height: 66),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 9),
-                        child: Text(
-                          snapshot.data!['name'],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "${snapshot.data!['program']} - ${snapshot.data!['yearOfStudy']}",
                           style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                             color: CupidColors.blackColor,
                             fontFamily: 'Sk-Modernist',
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "${snapshot.data!['program']} - ${snapshot.data!['yearOfStudy']}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: CupidColors.blackColor,
-                          fontFamily: 'Sk-Modernist',
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const Expanded(child: SizedBox()),
-              ],
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
             );
           }
         },

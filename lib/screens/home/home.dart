@@ -1,6 +1,5 @@
 import 'package:college_cupid/screens/profile/my_profile_tab.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
-import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/services.dart';

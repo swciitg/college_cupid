@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/widgets/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/screens/profile/user_profile_screen.dart';
@@ -20,6 +22,8 @@ class _HomeTabState extends State<HomeTab> {
 
   Future<List<UserProfile>> getUserProfilesFuture =
       APIService().getAllOtherUsers();
+
+  Timer? timer;
 
   @override
   void dispose() {
@@ -57,13 +61,26 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       child: TextFormField(
                         controller: _searchController,
-                        onChanged: (value) {
+                        textInputAction: TextInputAction.search,
+                        onFieldSubmitted: (value) {
                           if (mounted) {
                             setState(() {
                               getUserProfilesFuture = APIService()
                                   .getAllSearchedUserProfiles(value);
                             });
                           }
+                        },
+                        onChanged: (value) {
+                          if (timer != null) timer!.cancel();
+                          timer = Timer(const Duration(seconds: 1), () {
+                            print('timer');
+                            if (mounted) {
+                              setState(() {
+                                getUserProfilesFuture = APIService()
+                                    .getAllSearchedUserProfiles(value);
+                              });
+                            }
+                          });
                         },
                         decoration: const InputDecoration(
                           hintText: 'Search',
@@ -76,7 +93,7 @@ class _HomeTabState extends State<HomeTab> {
                     IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
-                        // Handle the clear button press
+                        _searchController.clear();
                       },
                     ),
                   ],
