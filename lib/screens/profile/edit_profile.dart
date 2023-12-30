@@ -33,6 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController bioController;
+  late TextEditingController yearOfJoinController;
   bool loading = false;
   List<String> programs = [
     'B.Tech',
@@ -43,16 +44,6 @@ class _EditProfileState extends State<EditProfile> {
     'M.Sc',
   ];
   var program = 'B.Tech';
-
-  List<String> year = [
-    '1st Year',
-    '2nd Year',
-    '3rd Year',
-    '4th Year',
-    '5th Year',
-    '6th Year'
-  ];
-  var yearOfStudy = '1st Year';
 
   Map<String, IconData> interests = {
     "Photography": Icons.camera_alt_outlined,
@@ -133,7 +124,7 @@ class _EditProfileState extends State<EditProfile> {
         gender: isMale ? 'male' : 'female',
         email: LoginStore.email!,
         bio: bioController.text,
-        yearOfStudy: yearOfStudy,
+        yearOfJoin: LoginStore.yearOfJoin!,
         program: program,
         publicKey: LoginStore.dhPublicKey!,
         interests: selectedInterests.toList(),
@@ -174,7 +165,8 @@ class _EditProfileState extends State<EditProfile> {
     emailController.text = myProfile.email;
     isMale = myProfile.gender == 'male' ? true : false;
     program = myProfile.program;
-    yearOfStudy = myProfile.yearOfStudy;
+    yearOfJoinController = TextEditingController();
+    yearOfJoinController.text = myProfile.yearOfJoin.toString();
     selectedInterests = myProfile.interests.toSet();
     super.initState();
   }
@@ -410,30 +402,14 @@ class _EditProfileState extends State<EditProfile> {
                     const SizedBox(width: 16),
                     // Add some spacing between dropdowns
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: yearOfStudy,
-                        items: year.map((String item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            yearOfStudy = value!;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                        ),
+                      child: TextFormField(
+                        controller: yearOfJoinController,
+                        enabled: false,
                         decoration: InputDecoration(
-                            labelText: "Year",
+                            labelText: "Year of joining",
                             labelStyle:
                                 const TextStyle(color: CupidColors.pinkColor),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            enabledBorder: OutlineInputBorder(
+                            disabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
                                   color: CupidColors.pinkColor),
                               borderRadius: BorderRadius.circular(15),

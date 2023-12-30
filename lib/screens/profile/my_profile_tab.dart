@@ -93,7 +93,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
                             ),
                             const Expanded(child: SizedBox()),
                             Text(
-                              '${myProfile.program}, ${myProfile.yearOfStudy.toLowerCase()}',
+                              '${myProfile.program}, ${myProfile.yearOfJoin}',
                               textAlign: TextAlign.right,
                             )
                           ],

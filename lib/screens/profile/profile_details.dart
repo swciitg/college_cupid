@@ -40,21 +40,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   TextEditingController name = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController gender = TextEditingController();
+  TextEditingController yearOfJoinController = TextEditingController();
 
   // late TextEditingController program;
   // late TextEditingController year;
   TextEditingController pass = TextEditingController();
   TextEditingController confirmPass = TextEditingController();
 
-  List<String> year = [
-    '1st Year',
-    '2nd Year',
-    '3rd Year',
-    '4th Year',
-    '5th Year',
-    '6th Year'
-  ];
-  String yearOfStudy = '1st Year';
+  // List<int> year = [16, 17, 18, 19, 20, 21, 22, 23];
+  // int yearOfJoin = 16;
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -99,7 +93,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           gender: isMale ? 'male' : 'female',
           email: LoginStore.email!,
           bio: '',
-          yearOfStudy: yearOfStudy,
+          yearOfJoin: LoginStore.yearOfJoin!,
           program: program,
           publicKey: publicKey,
           interests: []);
@@ -138,6 +132,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
+    yearOfJoinController.text = LoginStore.yearOfJoin!.toString();
     gender.text = 'male';
   }
 
@@ -220,46 +215,28 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                   enabled: false,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Your name please!";
-                  }
-                  return null;
-                },
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 15)),
             SizedBox(
               height: 56,
               child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: emailController,
-                  enabled: false,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
+                focusNode: FocusNode(),
+                controller: emailController,
+                enabled: false,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                  labelStyle: TextStyle(color: CupidColors.pinkColor),
+                  disabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Your name please!";
-                    }
-                    return null;
-                  }),
+                ),
+              ),
             ),
             const Padding(padding: EdgeInsets.only(top: 15)),
             Container(
@@ -372,30 +349,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   const SizedBox(
                       width: 16), // Add some spacing between dropdowns
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: yearOfStudy,
-                      items: year.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          yearOfStudy = value!;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                      ),
+                    child: TextFormField(
+                      enabled: false,
+                      controller: yearOfJoinController,
                       decoration: InputDecoration(
-                        labelText: "Year",
+                        labelText: "Year of joining",
                         labelStyle:
                             const TextStyle(color: CupidColors.pinkColor),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        enabledBorder: OutlineInputBorder(
+                        disabledBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: CupidColors.pinkColor),
                           borderRadius: BorderRadius.circular(15),

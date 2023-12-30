@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/home/selection_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
@@ -64,8 +67,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     });
   }
 
-  void applyFilter() {
-    final selectedGender = intoGirls ? "Girls" : "Boys";
+  void applyFilter(FilterStore filterStore) {
+    final selectedGender = intoGirls ? "female" : "male";
+    filterStore.setFilters({'gender': selectedGender});
     print("selected gender: $selectedGender");
     print("program: $program");
     print("year: $year");
@@ -84,110 +88,115 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(40).copyWith(top: 0),
-      decoration: const BoxDecoration(
-        color: CupidColors.backgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 5),
-          Center(
-            child: Container(
-              width: 40,
-              height: 3,
-              decoration: BoxDecoration(
-                  color: Colors.grey, borderRadius: BorderRadius.circular(3)),
+    final filterStore = context.read<FilterStore>();
+    return Observer(
+      builder: (_) => Container(
+        padding: const EdgeInsets.all(40).copyWith(top: 0),
+        decoration: const BoxDecoration(
+          color: CupidColors.backgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 5),
+            Center(
+              child: Container(
+                width: 40,
+                height: 3,
+                decoration: BoxDecoration(
+                    color: Colors.grey, borderRadius: BorderRadius.circular(3)),
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: Stack(
-              children: [
-                const Center(
-                  child: Text('Filters', style: CupidStyles.headingStyle),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: GestureDetector(
-                    onTap: clearFilter,
-                    child: Text(
-                      "Clear",
-                      style: CupidStyles.headingStyle.copyWith(
-                        color: CupidColors.pinkColor,
-                        fontSize: 16,
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  const Center(
+                    child: Text('Filters', style: CupidStyles.headingStyle),
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: GestureDetector(
+                      onTap: clearFilter,
+                      child: Text(
+                        "Clear",
+                        style: CupidStyles.headingStyle.copyWith(
+                          color: CupidColors.pinkColor,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Interested in',
+              style: CupidStyles.headingStyle.copyWith(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                SelectionButton(
+                  onTap: () => selectedGenderChange("Girls"),
+                  label: "Girls",
+                  borderRadius: const BorderRadius.horizontal(
+                    left: Radius.circular(
+                      15,
+                    ),
                   ),
-                )
+                  isSelected: intoGirls,
+                ),
+                SelectionButton(
+                  onTap: () => selectedGenderChange("Boys"),
+                  label: "Boys",
+                  borderRadius: const BorderRadius.horizontal(
+                    right: Radius.circular(
+                      15,
+                    ),
+                  ),
+                  isSelected: !intoGirls,
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Interested in',
-            style: CupidStyles.headingStyle.copyWith(fontSize: 16),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              SelectionButton(
-                onTap: () => selectedGenderChange("Girls"),
-                label: "Girls",
-                borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(
-                    15,
-                  ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                CustomDropDown(
+                  items: programs,
+                  label: 'Programs',
+                  value: program,
+                  onChanged: changeProgram,
+                  validator: (value) {},
+                  icon: dropDownIcon,
                 ),
-                isSelected: intoGirls,
-              ),
-              SelectionButton(
-                onTap: () => selectedGenderChange("Boys"),
-                label: "Boys",
-                borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(
-                    15,
-                  ),
+                const SizedBox(width: 20),
+                CustomDropDown(
+                  items: yearOfStudy.sublist(0, noOfYears[program]),
+                  label: "Year of study ",
+                  value: year,
+                  onChanged: changeYear,
+                  validator: (value) {},
+                  icon: dropDownIcon,
                 ),
-                isSelected: !intoGirls,
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          Row(
-            children: [
-              CustomDropDown(
-                items: programs,
-                label: 'Programs',
-                value: program,
-                onChanged: changeProgram,
-                validator: (value) {},
-                icon: dropDownIcon,
-              ),
-              const SizedBox(width: 20),
-              CustomDropDown(
-                items: yearOfStudy.sublist(0, noOfYears[program]),
-                label: "Year of study ",
-                value: year,
-                onChanged: changeYear,
-                validator: (value) {},
-                icon: dropDownIcon,
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          CupidButton(
-            text: "Apply",
-            onTap: applyFilter,
-            backgroundColor: CupidColors.pinkColor,
-          )
-        ],
+              ],
+            ),
+            const SizedBox(height: 30),
+            CupidButton(
+              text: "Apply",
+              onTap: () {
+                applyFilter(filterStore);
+              },
+              backgroundColor: CupidColors.pinkColor,
+            )
+          ],
+        ),
       ),
     );
   }

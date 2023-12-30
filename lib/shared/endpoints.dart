@@ -8,7 +8,8 @@ class Endpoints {
   static const getPersonalInfo = '/user/personalInfo';
   static const postUserProfile = '/user/profile';
   static const getUserProfile = '/user/profile/email'; // + '/${email}'
-  static const getAllUserProfiles = '/user/profile/all';
+  static const getPaginatedUserProfiles =
+      '/user/profile/page'; // + '/${pageNumber}'
   static const updateUserProfile = '/user/profile';
 
   static const addCrush = '/crush/add';

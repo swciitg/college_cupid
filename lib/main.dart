@@ -1,5 +1,6 @@
 import 'package:college_cupid/routes.dart';
 import 'package:college_cupid/splash.dart';
+import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:provider/provider.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [Provider<LoginStore>(create: (_) => LoginStore())],
+      providers: [Provider<FilterStore>(create: (_) => FilterStore())],
       child: MaterialApp(
         title: 'CollegeCupid',
         debugShowCheckedModeBanner: false,

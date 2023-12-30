@@ -14,6 +14,7 @@ class LoginStore {
   static String? accessToken;
   static String? refreshToken;
   static String? password;
+  static int? yearOfJoin;
 
   static Future<bool> isAuthenticated() async {
     SharedPreferences user = await SharedPreferences.getInstance();
@@ -50,6 +51,7 @@ class LoginStore {
     dhPrivateKey = null;
     dhPublicKey = null;
     password = null;
+    yearOfJoin = null;
     return prefs.clear();
   }
 
@@ -58,7 +60,12 @@ class LoginStore {
     await initializeEmail();
     await initializeTokens();
     await initializeKeys();
+    await initializeYearOfJoin();
     await initializePassword();
+  }
+
+  static Future<void> initializeYearOfJoin() async {
+    yearOfJoin = await SharedPrefs.getYearOfJoin();
   }
 
   static Future<void> initializeTokens() async {

@@ -5,7 +5,7 @@ class UserProfile {
   late String email;
   late String publicKey;
   late String bio;
-  late String yearOfStudy;
+  late int yearOfJoin;
   late String program;
   late List<String> interests;
 
@@ -15,7 +15,7 @@ class UserProfile {
     required this.gender,
     required this.email,
     required this.bio,
-    required this.yearOfStudy,
+    required this.yearOfJoin,
     required this.program,
     required this.publicKey,
     required this.interests,
@@ -27,7 +27,7 @@ class UserProfile {
     gender = json['gender'];
     email = json['email'];
     bio = json['bio'];
-    yearOfStudy = json['yearOfStudy'];
+    yearOfJoin = json['yearOfJoin'];
     program = json['program'];
     publicKey = json['publicKey'];
     interests = json['interests'].cast<String>();
@@ -40,7 +40,7 @@ class UserProfile {
     data['gender'] = gender;
     data['email'] = email;
     data['bio'] = bio;
-    data['yearOfStudy'] = yearOfStudy;
+    data['yearOfJoin'] = yearOfJoin;
     data['program'] = program;
     data['publicKey'] = publicKey;
     data['interests'] = interests;

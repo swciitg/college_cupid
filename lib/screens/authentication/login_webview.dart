@@ -93,6 +93,9 @@ class _LoginWebviewState extends State<LoginWebview> {
                 String displayName =
                     (await getElementById(controller, 'displayName'))
                         .toTitleCase();
+                int yearOfJoin = int.parse(
+                    (await getElementById(controller, 'rollNumber'))
+                        .substring(0, 2));
                 String accessToken =
                     await getElementById(controller, 'accessToken');
                 String refreshToken =
@@ -103,10 +106,12 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                 await SharedPrefs.setEmail(email);
                 await SharedPrefs.setDisplayName(displayName);
+                await SharedPrefs.setYearOfJoin(yearOfJoin);
 
                 await LoginStore.initializeDisplayName();
                 await LoginStore.initializeEmail();
                 await LoginStore.initializeTokens();
+                await LoginStore.initializeYearOfJoin();
 
                 debugPrint('DATA INITIALIZED');
 

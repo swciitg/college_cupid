@@ -131,7 +131,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           ),
                           const Expanded(child: SizedBox()),
                           Text(
-                            '${widget.userProfile.program}, ${widget.userProfile.yearOfStudy.toLowerCase()}',
+                            '${widget.userProfile.program}, ${widget.userProfile.yearOfJoin}',
                             textAlign: TextAlign.right,
                           )
                         ],

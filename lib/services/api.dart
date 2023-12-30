@@ -205,20 +205,27 @@ class APIService {
     }
   }
 
-  Future<List<UserProfile>> getAllOtherUsers() async {
+  Future<List<UserProfile>> getPaginatedUsers(
+      int pageNumber, Map<String, dynamic>? filterQuery) async {
+    print('PAGENUMBER = $pageNumber');
     try {
-      Response res = await dio.get(Endpoints.getAllUserProfiles);
+      Response res = await dio.get(
+          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+          queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];
         List<UserProfile> userProfiles = [];
-        for (int i = users.length - 1; i >= 0; i--) {
-          List<String> interests = [];
-          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
-            interests.add(users[i]['interests'][j].toString());
-          }
-          if (users[i]['email'].toString() == LoginStore.email) continue;
-          userProfiles.add(UserProfile.fromJson(users[i]));
-        }
+        // for (int i = users.length - 1; i >= 0; i--) {
+        //   List<String> interests = [];
+        //   for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
+        //     interests.add(users[i]['interests'][j].toString());
+        //   }
+        //   if (users[i]['email'].toString() == LoginStore.email) continue;
+        //   userProfiles.add(UserProfile.fromJson(users[i]));
+        // }
+        users.forEach((user) {
+          userProfiles.add(UserProfile.fromJson(user));
+        });
         return userProfiles;
       } else {
         return Future.error(res.statusMessage.toString());

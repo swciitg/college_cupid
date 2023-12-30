@@ -78,6 +78,16 @@ class SharedPrefs {
     return prefs.getString(DatabaseStrings.password) ?? " ";
   }
 
+  static Future<void> setYearOfJoin(int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(DatabaseStrings.yearOfJoin, value);
+  }
+
+  static Future<int> getYearOfJoin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(DatabaseStrings.yearOfJoin)!;
+  }
+
   static Future<void> saveMyProfile(Map<String, dynamic> myProfile) async {
     SharedPreferences user = await SharedPreferences.getInstance();
     await user.setString(DatabaseStrings.myProfile, jsonEncode(myProfile));
