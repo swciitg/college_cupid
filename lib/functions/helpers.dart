@@ -8,3 +8,7 @@ extension StringExtension on String {
       .map((str) => str.capitalize())
       .join(' ');
 }
+
+int getYearOfJoinFromRollNumber(String rollNumber) {
+  return int.parse(rollNumber.substring(0, 2));
+}

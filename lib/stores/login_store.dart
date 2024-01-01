@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginStore {
   static bool isProfileCompleted = false;
+  static bool isPasswordSaved = false;
   static Map<String, dynamic> myProfile = {};
   static String? email;
   static String? displayName;
@@ -14,7 +15,7 @@ class LoginStore {
   static String? accessToken;
   static String? refreshToken;
   static String? password;
-  static int? yearOfJoin;
+  static String? rollNumber;
 
   static Future<bool> isAuthenticated() async {
     SharedPreferences user = await SharedPreferences.getInstance();
@@ -22,12 +23,11 @@ class LoginStore {
     if (user.containsKey(DatabaseStrings.myProfile)) {
       debugPrint('USER CONTAINS KEY');
       await initializeStore();
+      if ((password ?? "").isNotEmpty) isPasswordSaved = true;
       Map<String, dynamic>? data = await APIService().getUserProfile(email!);
       if (data != null) {
         await SharedPrefs.saveMyProfile(data);
         await initializeMyProfile();
-        print(password);
-        print(dhPrivateKey);
         isProfileCompleted = true;
       } else {
         await SharedPrefs.clearPrefs();
@@ -43,6 +43,7 @@ class LoginStore {
   static Future<bool> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isProfileCompleted = false;
+    isPasswordSaved = false;
     myProfile.clear();
     email = null;
     displayName = null;
@@ -51,7 +52,7 @@ class LoginStore {
     dhPrivateKey = null;
     dhPublicKey = null;
     password = null;
-    yearOfJoin = null;
+    rollNumber = null;
     return prefs.clear();
   }
 
@@ -60,12 +61,12 @@ class LoginStore {
     await initializeEmail();
     await initializeTokens();
     await initializeKeys();
-    await initializeYearOfJoin();
+    await initializeRollNumber();
     await initializePassword();
   }
 
-  static Future<void> initializeYearOfJoin() async {
-    yearOfJoin = await SharedPrefs.getYearOfJoin();
+  static Future<void> initializeRollNumber() async {
+    rollNumber = await SharedPrefs.getRollNumber();
   }
 
   static Future<void> initializeTokens() async {

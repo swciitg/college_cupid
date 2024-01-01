@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/main.dart';
 import 'package:college_cupid/models/personal_info.dart';
@@ -124,7 +125,7 @@ class _EditProfileState extends State<EditProfile> {
         gender: isMale ? 'male' : 'female',
         email: LoginStore.email!,
         bio: bioController.text,
-        yearOfJoin: LoginStore.yearOfJoin!,
+        yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
         program: program,
         publicKey: LoginStore.dhPublicKey!,
         interests: selectedInterests.toList(),
@@ -166,7 +167,7 @@ class _EditProfileState extends State<EditProfile> {
     isMale = myProfile.gender == 'male' ? true : false;
     program = myProfile.program;
     yearOfJoinController = TextEditingController();
-    yearOfJoinController.text = myProfile.yearOfJoin.toString();
+    yearOfJoinController.text = '20${myProfile.yearOfJoin}';
     selectedInterests = myProfile.interests.toSet();
     super.initState();
   }

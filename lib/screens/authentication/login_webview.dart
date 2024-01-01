@@ -1,6 +1,6 @@
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/functions/string_extension.dart';
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/screens/authentication/welcome.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/endpoints.dart';
@@ -36,33 +36,54 @@ class _LoginWebviewState extends State<LoginWebview> {
 
   Future<String> getPasswordFromUser(String hashedPassword) async {
     TextEditingController passwordController = TextEditingController();
-    String password = '';
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Enter Password"),
-          content: TextField(
-            controller: passwordController,
-            obscureText: true,
-          ),
-          actions: <Widget>[
-            const Padding(padding: EdgeInsets.only(top: 20)),
-            CupidButton(
-              backgroundColor: CupidColors.pinkColor,
-              text: "Continue",
-              onTap: () {
-                bool matched =
-                    verifyPassword(hashedPassword, passwordController.text);
-                if (matched) {
-                  Navigator.of(context).pop();
-                } else {
-                  showSnackBar('Incorrect Password');
-                  passwordController.clear();
-                }
-              },
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: const Text("Enter Password"),
+            content: TextFormField(
+              decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: CupidColors.pinkColor, width: 1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  )),
+              controller: passwordController,
+              obscureText: true,
             ),
-          ],
+            actions: <Widget>[
+              // const Padding(padding: EdgeInsets.only(top: 20)),
+              CupidButton(
+                backgroundColor: CupidColors.pinkColor,
+                text: "Continue",
+                onTap: () {
+                  bool matched =
+                      verifyPassword(hashedPassword, passwordController.text);
+                  if (matched) {
+                    Navigator.of(context).pop();
+                  } else {
+                    showSnackBar('Incorrect Password');
+                    passwordController.clear();
+                  }
+                },
+              ),
+            ],
+          ),
         );
       },
     );
@@ -80,7 +101,8 @@ class _LoginWebviewState extends State<LoginWebview> {
     super.initState();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(NavigationDelegate(
+      ..setNavigationDelegate(
+        NavigationDelegate(
           onPageFinished: (String url) async {
             NavigatorState nav = Navigator.of(context);
 
@@ -93,9 +115,8 @@ class _LoginWebviewState extends State<LoginWebview> {
                 String displayName =
                     (await getElementById(controller, 'displayName'))
                         .toTitleCase();
-                int yearOfJoin = int.parse(
-                    (await getElementById(controller, 'rollNumber'))
-                        .substring(0, 2));
+                String rollNumber =
+                    await getElementById(controller, 'rollNumber');
                 String accessToken =
                     await getElementById(controller, 'accessToken');
                 String refreshToken =
@@ -106,12 +127,12 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                 await SharedPrefs.setEmail(email);
                 await SharedPrefs.setDisplayName(displayName);
-                await SharedPrefs.setYearOfJoin(yearOfJoin);
+                await SharedPrefs.setRollNumber(rollNumber);
 
                 await LoginStore.initializeDisplayName();
                 await LoginStore.initializeEmail();
                 await LoginStore.initializeTokens();
-                await LoginStore.initializeYearOfJoin();
+                await LoginStore.initializeRollNumber();
 
                 debugPrint('DATA INITIALIZED');
 
@@ -120,7 +141,7 @@ class _LoginWebviewState extends State<LoginWebview> {
                 Map<String, dynamic>? myInfo =
                     await APIService().getPersonalInfo();
 
-                if (myProfile == null) {
+                if (myProfile == null || myInfo == null) {
                   debugPrint('NEW USER');
                   nav.pushNamedAndRemoveUntil(
                       ProfileDetails.id, (route) => false);
@@ -128,19 +149,23 @@ class _LoginWebviewState extends State<LoginWebview> {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
 
-                  String hashedPassword = myInfo!['hashedPassword'];
-                  print(hashedPassword);
+                  String hashedPassword = myInfo['hashedPassword'];
                   String password = await getPasswordFromUser(hashedPassword);
-                  SharedPrefs.setPassword(password);
-                  print("Password is correct. Logging in.");
+                  if (password.isEmpty) {
+                    nav.pushNamedAndRemoveUntil(
+                        SplashScreen.id, (route) => false);
+                  }
+
+                  await SharedPrefs.setPassword(password);
                   await SharedPrefs.saveMyProfile(myProfile);
                   await LoginStore.initializeMyProfile();
+
                   SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
                           Encryption.decryptAES(
                               encryptedText: Encryption.hexadecimalToBytes(
                                   myInfo['encryptedPrivateKey']),
-                              key: await SharedPrefs.getPassword()))
+                              key: (await SharedPrefs.getPassword())!))
                       .toString());
 
                   nav.pushNamedAndRemoveUntil(
@@ -149,7 +174,8 @@ class _LoginWebviewState extends State<LoginWebview> {
               }
             }
           },
-          onPageStarted: (String url) {}))
+        ),
+      )
       ..loadRequest(Uri.parse('${Endpoints.baseUrl}/auth/microsoft'));
   }
 

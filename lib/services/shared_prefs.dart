@@ -8,9 +8,9 @@ class SharedPrefs {
     await prefs.clear();
   }
 
-  static Future<String> getAccessToken() async {
+  static Future<String?> getAccessToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.accessToken) ?? " ";
+    return prefs.getString(DatabaseStrings.accessToken);
   }
 
   static Future<void> setAccessToken(String value) async {
@@ -18,9 +18,9 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.accessToken, value);
   }
 
-  static Future<String> getRefreshToken() async {
+  static Future<String?> getRefreshToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.refreshToken) ?? " ";
+    return prefs.getString(DatabaseStrings.refreshToken);
   }
 
   static Future<void> setRefreshToken(String value) async {
@@ -33,9 +33,9 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.email, value);
   }
 
-  static Future<String> getEmail() async {
+  static Future<String?> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.email) ?? " ";
+    return prefs.getString(DatabaseStrings.email);
   }
 
   static Future<void> setDisplayName(String value) async {
@@ -43,9 +43,9 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.displayName, value);
   }
 
-  static Future<String> getDisplayName() async {
+  static Future<String?> getDisplayName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.displayName) ?? " ";
+    return prefs.getString(DatabaseStrings.displayName);
   }
 
   static Future<void> setDHPrivateKey(String value) async {
@@ -53,9 +53,9 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.dhPrivateKey, value);
   }
 
-  static Future<String> getDHPrivateKey() async {
+  static Future<String?> getDHPrivateKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.dhPrivateKey) ?? " ";
+    return prefs.getString(DatabaseStrings.dhPrivateKey);
   }
 
   static Future<void> setDHPublicKey(String value) async {
@@ -63,9 +63,9 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.dhPublicKey, value);
   }
 
-  static Future<String> getDHPublicKey() async {
+  static Future<String?> getDHPublicKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.dhPublicKey) ?? " ";
+    return prefs.getString(DatabaseStrings.dhPublicKey);
   }
 
   static Future<void> setPassword(String value) async {
@@ -73,19 +73,19 @@ class SharedPrefs {
     await prefs.setString(DatabaseStrings.password, value);
   }
 
-  static Future<String> getPassword() async {
+  static Future<String?> getPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.password) ?? " ";
+    return prefs.getString(DatabaseStrings.password);
   }
 
-  static Future<void> setYearOfJoin(int value) async {
+  static Future<void> setRollNumber(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(DatabaseStrings.yearOfJoin, value);
+    await prefs.setString(DatabaseStrings.rollNumber, value);
   }
 
-  static Future<int> getYearOfJoin() async {
+  static Future<String?> getRollNumber() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(DatabaseStrings.yearOfJoin)!;
+    return prefs.getString(DatabaseStrings.rollNumber);
   }
 
   static Future<void> saveMyProfile(Map<String, dynamic> myProfile) async {

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
@@ -93,7 +94,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           gender: isMale ? 'male' : 'female',
           email: LoginStore.email!,
           bio: '',
-          yearOfJoin: LoginStore.yearOfJoin!,
+          yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
           program: program,
           publicKey: publicKey,
           interests: []);
@@ -132,7 +133,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
-    yearOfJoinController.text = LoginStore.yearOfJoin!.toString();
+    yearOfJoinController.text =
+        '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
     gender.text = 'male';
   }
 

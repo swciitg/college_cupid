@@ -9,5 +9,5 @@ class DatabaseStrings {
   static const password = 'password';
   static const myProfile = 'myProfile';
   static const isProfileCompleted = 'isProfileCompleted';
-  static const yearOfJoin = 'yearOfJoin';
+  static const rollNumber = 'rollNumber';
 }
