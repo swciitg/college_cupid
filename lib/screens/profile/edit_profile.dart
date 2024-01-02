@@ -1,15 +1,13 @@
 import 'dart:io';
-import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/main.dart';
-import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
-import 'package:college_cupid/services/shared_prefs.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -29,22 +27,14 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final myProfile = UserProfile.fromJson(LoginStore.myProfile);
   ImageHelpers imageHelpers = ImageHelpers();
-  bool isMale = true;
+  late Gender gender;
   File? image;
-  late TextEditingController nameController;
-  late TextEditingController emailController;
-  late TextEditingController bioController;
-  late TextEditingController yearOfJoinController;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController yearOfJoinController = TextEditingController();
+  final TextEditingController programController = TextEditingController();
+  final TextEditingController bioController = TextEditingController();
   bool loading = false;
-  List<String> programs = [
-    'B.Tech',
-    'M.Tech',
-    'B.Des',
-    'M.Des',
-    'PhD',
-    'M.Sc',
-  ];
-  var program = 'B.Tech';
 
   Map<String, IconData> interests = {
     "Photography": Icons.camera_alt_outlined,
@@ -77,7 +67,6 @@ class _EditProfileState extends State<EditProfile> {
     return GridView.count(
       crossAxisCount: 2,
       childAspectRatio: 140 / 53,
-      // as in figma design
       crossAxisSpacing: 20,
       mainAxisSpacing: 10,
       shrinkWrap: true,
@@ -122,11 +111,11 @@ class _EditProfileState extends State<EditProfile> {
       UserProfile updatedProfile = UserProfile(
         name: LoginStore.displayName!,
         profilePicUrl: '',
-        gender: isMale ? 'male' : 'female',
+        gender: gender.databaseString,
         email: LoginStore.email!,
         bio: bioController.text,
         yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-        program: program,
+        program: programController.text,
         publicKey: LoginStore.dhPublicKey!,
         interests: selectedInterests.toList(),
       );
@@ -158,16 +147,15 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    nameController = TextEditingController();
-    bioController = TextEditingController();
-    emailController = TextEditingController();
+    gender = Gender.values
+        .firstWhere((element) => element.databaseString == myProfile.gender);
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
     emailController.text = myProfile.email;
-    isMale = myProfile.gender == 'male' ? true : false;
-    program = myProfile.program;
-    yearOfJoinController = TextEditingController();
     yearOfJoinController.text = '20${myProfile.yearOfJoin}';
+    programController.text = Program.values
+        .firstWhere((element) => element.databaseString == myProfile.program)
+        .displayString;
     selectedInterests = myProfile.interests.toSet();
     super.initState();
   }
@@ -245,55 +233,11 @@ class _EditProfileState extends State<EditProfile> {
                           )))
                 ]),
                 const Padding(padding: EdgeInsets.only(top: 30)),
-                TextField(
-                  controller: nameController,
-                  focusNode: FocusNode(),
-                  decoration: const InputDecoration(
-                    labelText: "Name",
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    enabled: false,
-                  ),
-                ),
+                DisabledTextField(
+                    controller: nameController, labelText: "Name"),
                 const Padding(padding: EdgeInsets.only(top: 15)),
-                TextField(
-                  controller: emailController,
-                  focusNode: FocusNode(),
-                  decoration: const InputDecoration(
-                    labelText: "Email",
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    enabled: false,
-                  ),
-                ),
+                DisabledTextField(
+                    controller: emailController, labelText: "Email"),
                 const Padding(padding: EdgeInsets.only(top: 15)),
                 Container(
                   height: 56,
@@ -306,7 +250,7 @@ class _EditProfileState extends State<EditProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         const Text(
-                          'Select Gender ',
+                          'Select Gender',
                           style: TextStyle(
                             color: CupidColors.pinkColor,
                           ),
@@ -314,13 +258,13 @@ class _EditProfileState extends State<EditProfile> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              isMale = true;
+                              gender = Gender.male;
                             });
                           },
                           child: Container(
                             margin: const EdgeInsets.only(top: 8, bottom: 8),
                             decoration: BoxDecoration(
-                                color: isMale
+                                color: gender == Gender.male
                                     ? CupidColors.titleColor
                                     : CupidColors.backgroundColor,
                                 borderRadius: BorderRadius.circular(10)),
@@ -328,9 +272,9 @@ class _EditProfileState extends State<EditProfile> {
                                 child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Text(
-                                "Male",
+                                Gender.male.displayString,
                                 style: TextStyle(
-                                    color: isMale
+                                    color: gender == Gender.male
                                         ? Colors.white
                                         : CupidColors.titleColor),
                               ),
@@ -340,13 +284,13 @@ class _EditProfileState extends State<EditProfile> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              isMale = false;
+                              gender = Gender.female;
                             });
                           },
                           child: Container(
                             margin: const EdgeInsets.only(top: 8, bottom: 8),
                             decoration: BoxDecoration(
-                                color: !isMale
+                                color: gender == Gender.female
                                     ? CupidColors.titleColor
                                     : CupidColors.backgroundColor,
                                 borderRadius: BorderRadius.circular(10)),
@@ -354,9 +298,9 @@ class _EditProfileState extends State<EditProfile> {
                                 child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Text(
-                                "Female",
+                                Gender.female.displayString,
                                 style: TextStyle(
-                                    color: !isMale
+                                    color: gender == Gender.female
                                         ? Colors.white
                                         : CupidColors.titleColor),
                               ),
@@ -370,51 +314,17 @@ class _EditProfileState extends State<EditProfile> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: program,
-                        items: programs.map((String item) {
-                          return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(item),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            program = value!;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                        ),
-                        decoration: InputDecoration(
-                            labelText: "Program",
-                            labelStyle:
-                                const TextStyle(color: CupidColors.pinkColor),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: CupidColors.pinkColor),
-                              borderRadius: BorderRadius.circular(15),
-                            )),
+                      child: DisabledTextField(
+                        controller: programController,
+                        labelText: "Program",
                       ),
                     ),
                     const SizedBox(width: 16),
                     // Add some spacing between dropdowns
                     Expanded(
-                      child: TextFormField(
+                      child: DisabledTextField(
                         controller: yearOfJoinController,
-                        enabled: false,
-                        decoration: InputDecoration(
-                            labelText: "Year of joining",
-                            labelStyle:
-                                const TextStyle(color: CupidColors.pinkColor),
-                            disabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: CupidColors.pinkColor),
-                              borderRadius: BorderRadius.circular(15),
-                            )),
+                        labelText: "Year of joining",
                       ),
                     ),
                   ],

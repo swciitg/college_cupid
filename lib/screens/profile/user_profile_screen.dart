@@ -4,6 +4,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
@@ -131,7 +132,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           ),
                           const Expanded(child: SizedBox()),
                           Text(
-                            '${widget.userProfile.program}, ${widget.userProfile.yearOfJoin}',
+                            "${Program.values.firstWhere((p) => p.databaseString == widget.userProfile.program).displayString} '${widget.userProfile.yearOfJoin}",
                             textAlign: TextAlign.right,
                           )
                         ],

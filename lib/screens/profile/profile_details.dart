@@ -9,8 +9,10 @@ import 'package:college_cupid/screens/about_you/about_you.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
+import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -25,31 +27,15 @@ class ProfileDetails extends StatefulWidget {
 
 class _ProfileDetailsState extends State<ProfileDetails> {
   ImageHelpers imageHelpers = ImageHelpers();
-  bool isMale = true;
+  Gender gender = Gender.male;
   File? image;
 
-  // late UserModel user;
-  List<String> programs = [
-    'B.Tech',
-    'M.Tech',
-    'B.Des',
-    'M.Des',
-    'PhD',
-    'M.Sc',
-  ];
-  var program = 'B.Tech';
-  TextEditingController name = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController gender = TextEditingController();
-  TextEditingController yearOfJoinController = TextEditingController();
-
-  // late TextEditingController program;
-  // late TextEditingController year;
-  TextEditingController pass = TextEditingController();
-  TextEditingController confirmPass = TextEditingController();
-
-  // List<int> year = [16, 17, 18, 19, 20, 21, 22, 23];
-  // int yearOfJoin = 16;
+  final TextEditingController name = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController yearOfJoinController = TextEditingController();
+  final TextEditingController programController = TextEditingController();
+  final TextEditingController pass = TextEditingController();
+  final TextEditingController confirmPass = TextEditingController();
 
   Future<void> pickImage(ImageSource source) async {
     try {
@@ -81,21 +67,19 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       String publicKey = keyPair.publicKey.toString();
       String privateKey = keyPair.privateKey.toString();
-      print(privateKey);
 
       String encryptedPrivateKey = Encryption.bytesToHexadecimal(
           Encryption.encryptAES(plainText: privateKey, key: pass.text));
 
-      print(encryptedPrivateKey);
-
       UserProfile myProfile = UserProfile(
           name: LoginStore.displayName!,
           profilePicUrl: '',
-          gender: isMale ? 'male' : 'female',
+          gender: gender.databaseString,
           email: LoginStore.email!,
           bio: '',
           yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-          program: program,
+          program:
+              getProgramFromRollNumber(LoginStore.rollNumber!).databaseString!,
           publicKey: publicKey,
           interests: []);
 
@@ -110,8 +94,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         matches: [],
       );
 
-      print(myInfo.toJson().toString());
-      print(myProfile.toJson().toString());
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -135,7 +117,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     emailController.text = LoginStore.email!;
     yearOfJoinController.text =
         '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
-    gender.text = 'male';
+    programController.text =
+        getProgramFromRollNumber(LoginStore.rollNumber!).displayString;
   }
 
   @override
@@ -252,7 +235,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     const Text(
-                      'Select Gender ',
+                      'Select Gender',
                       style: TextStyle(
                         color: CupidColors.pinkColor,
                       ),
@@ -260,13 +243,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          isMale = true;
+                          gender = Gender.male;
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: isMale
+                            color: gender == Gender.male
                                 ? CupidColors.titleColor
                                 : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
@@ -274,9 +257,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Text(
-                            "Male",
+                            Gender.male.displayString,
                             style: TextStyle(
-                                color: isMale
+                                color: gender == Gender.male
                                     ? CupidColors.whiteColor
                                     : CupidColors.titleColor),
                           ),
@@ -286,13 +269,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          isMale = false;
+                          gender = Gender.female;
                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(top: 8, bottom: 8),
                         decoration: BoxDecoration(
-                            color: !isMale
+                            color: gender == Gender.female
                                 ? CupidColors.titleColor
                                 : CupidColors.backgroundColor,
                             borderRadius: BorderRadius.circular(10)),
@@ -300,9 +283,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Text(
-                            "Female",
+                            Gender.female.displayString,
                             style: TextStyle(
-                                color: !isMale
+                                color: gender == Gender.female
                                     ? CupidColors.whiteColor
                                     : CupidColors.titleColor),
                           ),
@@ -318,52 +301,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: program,
-                      items: programs.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          program = value!;
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                      ),
-                      decoration: InputDecoration(
-                          labelText: "Program",
-                          labelStyle:
-                              const TextStyle(color: CupidColors.pinkColor),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: CupidColors.pinkColor),
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                    ),
-                  ),
+                      child: DisabledTextField(
+                    controller: programController,
+                    labelText: "Program",
+                  )),
                   const SizedBox(
                       width: 16), // Add some spacing between dropdowns
                   Expanded(
-                    child: TextFormField(
-                      enabled: false,
+                    child: DisabledTextField(
                       controller: yearOfJoinController,
-                      decoration: InputDecoration(
-                        labelText: "Year of joining",
-                        labelStyle:
-                            const TextStyle(color: CupidColors.pinkColor),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: CupidColors.pinkColor),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
+                      labelText: "Year of joining",
                     ),
                   ),
                 ],

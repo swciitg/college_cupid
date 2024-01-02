@@ -37,11 +37,9 @@ class APIService {
             showSnackBar("Your session has expired!! Login again.");
           }
         }
-      } else if (response != null && response.statusCode == 403) {
-        //TODO: Resolve authorization errors
-        //showSnackBar("Access not allowed in guest mode");
-      } else if (response != null && response.statusCode == 400) {}
-      // admin user with expired tokens
+      } else if (response != null) {
+        showSnackBar("Some error occurred, please try again later!");
+      }
       return handler.next(error);
     }));
   }
@@ -79,15 +77,12 @@ class APIService {
     try {
       Response res = await dio.get(Endpoints.getCrush);
       if (res.statusCode == 200) {
-        print(res.data);
         return res.data['encryptedCrushes'];
       } else {
-        print('Request Failed with status: ${res.statusCode}');
-        return [];
+        return Future.error(res.statusMessage.toString());
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      return [];
+      return Future.error(e.toString());
     }
   }
 
@@ -98,12 +93,10 @@ class APIService {
         print(res.data);
         return res.data['matches'];
       } else {
-        print('Request Failed with status: ${res.statusCode}');
-        return [];
+        return Future.error(res.statusMessage.toString());
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      return [];
+      return Future.error(e.toString());
     }
   }
 
@@ -138,7 +131,6 @@ class APIService {
   Future<String> updateUserProfile(File? image, UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
     if (image != null) {
-      print("image path: ${image.path}");
       String fileName = image.path.split('/').last;
       userProfileMap['dp'] = await MultipartFile.fromFile(
         image.path,
@@ -148,16 +140,11 @@ class APIService {
     }
     userProfileMap.remove('profilePicUrl');
     FormData formData = FormData.fromMap(userProfileMap);
-    print(userProfileMap);
-
     try {
       Response res = await dio.put(Endpoints.updateUserProfile, data: formData);
 
-      debugPrint(res.data.toString());
-
       if (res.statusCode == 200) {
-        print("profilePicUrl : ${res.data['profilePicUrl']}");
-        return res.data['profilePicUrl'] ?? '';
+        return res.data['profilePicUrl'];
       } else {
         return Future.error(res.statusMessage.toString());
       }
@@ -170,7 +157,6 @@ class APIService {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');
       if (res.statusCode == 200) {
-        print(res.data);
         return res.data['userProfile'];
       } else {
         return Future.error(res.statusMessage.toString());
@@ -208,21 +194,17 @@ class APIService {
   Future<List<UserProfile>> getPaginatedUsers(
       int pageNumber, Map<String, dynamic>? filterQuery) async {
     print('PAGENUMBER = $pageNumber');
+    for (var key in filterQuery!.keys.toList()) {
+      if (filterQuery[key] == null) filterQuery.remove(key);
+    }
     try {
       Response res = await dio.get(
           '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
+        print(res.data);
         final users = res.data['users'];
         List<UserProfile> userProfiles = [];
-        // for (int i = users.length - 1; i >= 0; i--) {
-        //   List<String> interests = [];
-        //   for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
-        //     interests.add(users[i]['interests'][j].toString());
-        //   }
-        //   if (users[i]['email'].toString() == LoginStore.email) continue;
-        //   userProfiles.add(UserProfile.fromJson(users[i]));
-        // }
         users.forEach((user) {
           userProfiles.add(UserProfile.fromJson(user));
         });

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/profile/view_interests_grid.dart';
@@ -93,7 +94,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
                             ),
                             const Expanded(child: SizedBox()),
                             Text(
-                              '${myProfile.program}, ${myProfile.yearOfJoin}',
+                              "${Program.values.firstWhere((p) => p.databaseString == myProfile.program).displayString} '${myProfile.yearOfJoin}",
                               textAlign: TextAlign.right,
                             )
                           ],

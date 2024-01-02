@@ -1,7 +1,10 @@
 import 'dart:math';
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/home/selection_button.dart';
@@ -17,65 +20,8 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  bool intoGirls = true;
-  List<String> programs = ["B.tech", "M.tech", "B.Des", "M.Des", "MSc", "PhD"];
-  List<String> yearOfStudy = ["First", "Second", "Third", "Fourth", "Fifth"];
-
-  // TODO: change this accordingly
-  Map<String, int> noOfYears = {
-    "B.tech": 4,
-    "M.tech": 2,
-    "B.Des": 4,
-    "M.Des": 2,
-    "MSc": 3,
-    "PhD": 5,
-  };
-
-  String? program = "B.tech";
-  String? year = "First";
-
-  void selectedGenderChange(String gender) {
-    setState(() {
-      // won't change selection if clicked on selection again
-      if (gender == "Boys" && !intoGirls) {
-        return;
-      } else if (gender == "Girls" && intoGirls) {
-        return;
-      } else {
-        intoGirls = !intoGirls;
-      }
-    });
-  }
-
-  void changeProgram(String? value) {
-    setState(() {
-      program = value ?? "B.tech";
-    });
-  }
-
-  void changeYear(String? value) {
-    setState(() {
-      year = value ?? "First";
-    });
-  }
-
-  void clearFilter() {
-    setState(() {
-      intoGirls = true;
-      program = "B.tech";
-      year = "First";
-    });
-  }
-
-  void applyFilter(FilterStore filterStore) {
-    final selectedGender = intoGirls ? "female" : "male";
-    filterStore.setFilters({'gender': selectedGender});
-    print("selected gender: $selectedGender");
-    print("program: $program");
-    print("year: $year");
-    Navigator.pop(context);
-    // TODO: implement actual filter function
-  }
+  List<Program> programs = Program.values;
+  Map<String, int?> yearOfJoinMap = getYearOfJoinMap();
 
   final dropDownIcon = Transform.rotate(
     angle: pi / 2,
@@ -89,8 +35,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final filterStore = context.read<FilterStore>();
-    return Observer(
-      builder: (_) => Container(
+
+    return Observer(builder: (_) {
+      return Container(
         padding: const EdgeInsets.all(40).copyWith(top: 0),
         decoration: const BoxDecoration(
           color: CupidColors.backgroundColor,
@@ -122,7 +69,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     right: 0,
                     bottom: 0,
                     child: GestureDetector(
-                      onTap: clearFilter,
+                      onTap: () {
+                        filterStore.clearFilters();
+                      },
                       child: Text(
                         "Clear",
                         style: CupidStyles.headingStyle.copyWith(
@@ -144,24 +93,39 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             Row(
               children: [
                 SelectionButton(
-                  onTap: () => selectedGenderChange("Girls"),
-                  label: "Girls",
+                  onTap: () {
+                    filterStore.setInterestedInGender(InterestedInGender.girls);
+                  },
+                  label: InterestedInGender.girls.displayString,
                   borderRadius: const BorderRadius.horizontal(
                     left: Radius.circular(
                       15,
                     ),
                   ),
-                  isSelected: intoGirls,
+                  isSelected: filterStore.interestedInGender ==
+                      InterestedInGender.girls,
                 ),
                 SelectionButton(
-                  onTap: () => selectedGenderChange("Boys"),
-                  label: "Boys",
+                  onTap: () {
+                    filterStore.setInterestedInGender(InterestedInGender.boys);
+                  },
+                  label: InterestedInGender.boys.displayString,
+                  borderRadius: const BorderRadius.all(Radius.zero),
+                  isSelected:
+                      filterStore.interestedInGender == InterestedInGender.boys,
+                ),
+                SelectionButton(
+                  onTap: () {
+                    filterStore.setInterestedInGender(InterestedInGender.both);
+                  },
+                  label: InterestedInGender.both.displayString,
                   borderRadius: const BorderRadius.horizontal(
                     right: Radius.circular(
                       15,
                     ),
                   ),
-                  isSelected: !intoGirls,
+                  isSelected:
+                      filterStore.interestedInGender == InterestedInGender.both,
                 ),
               ],
             ),
@@ -169,19 +133,27 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             Row(
               children: [
                 CustomDropDown(
-                  items: programs,
+                  items: programs.map((e) => e.displayString).toList(),
                   label: 'Programs',
-                  value: program,
-                  onChanged: changeProgram,
+                  value: filterStore.program.displayString,
+                  onChanged: (selectedProgram) {
+                    filterStore.setProgram(Program.values
+                        .firstWhere((p) => p.displayString == selectedProgram));
+                  },
                   validator: (value) {},
                   icon: dropDownIcon,
                 ),
                 const SizedBox(width: 20),
                 CustomDropDown(
-                  items: yearOfStudy.sublist(0, noOfYears[program]),
-                  label: "Year of study ",
-                  value: year,
-                  onChanged: changeYear,
+                  items: yearOfJoinMap.keys
+                      .toList()
+                      .sublist(0, (filterStore.program.numberOfYears ?? 0) + 1),
+                  label: "Year of join",
+                  value: yearOfJoinMap.keys.firstWhere(
+                      (key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
+                  onChanged: (selectedYear) {
+                    filterStore.setYearOfJoin(yearOfJoinMap[selectedYear]);
+                  },
                   validator: (value) {},
                   icon: dropDownIcon,
                 ),
@@ -191,13 +163,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             CupidButton(
               text: "Apply",
               onTap: () {
-                applyFilter(filterStore);
+                Navigator.pop(context);
               },
               backgroundColor: CupidColors.pinkColor,
             )
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

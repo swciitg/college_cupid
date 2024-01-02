@@ -117,8 +117,11 @@ class _HomeTabState extends State<HomeTab> {
             ],
           ),
           FutureBuilder(
-            future:
-                APIService().getPaginatedUsers(pageNumber, filterStore.filters),
+            future: APIService().getPaginatedUsers(pageNumber, {
+              'gender': filterStore.interestedInGender.databaseString,
+              'program': filterStore.program.databaseString,
+              'yearOfJoin': filterStore.yearOfJoin
+            }),
             builder: (context, snapshot) {
               if (snapshot.hasData == false) {
                 return const Center(
@@ -137,8 +140,12 @@ class _HomeTabState extends State<HomeTab> {
                         '*******************${pages.length}**********************');
                     if (pages.length - value <= 4) {
                       pageNumber++;
-                      final List<UserProfile> users = await APIService()
-                          .getPaginatedUsers(pageNumber, filterStore.filters);
+                      final List<UserProfile> users =
+                          await APIService().getPaginatedUsers(pageNumber, {
+                        'gender': filterStore.interestedInGender.databaseString,
+                        'program': filterStore.program.databaseString,
+                        'yearOfJoin': filterStore.yearOfJoin
+                      });
                       if (users.length < 10) isLastPage = true;
                       for (UserProfile user in users) {
                         pages.add(ProfileCard(user: user));
