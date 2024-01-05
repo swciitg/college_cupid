@@ -1,17 +1,15 @@
 import 'package:college_cupid/functions/encryption.dart';
-import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/functions/helpers.dart';
-import 'package:college_cupid/screens/authentication/welcome.dart';
-import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/screens/profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/splash.dart';
+import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/global/cupid_button.dart';
+import 'package:college_cupid/widgets/authentication/password_alert_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:slide_countdown/slide_countdown.dart';
+import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
@@ -35,66 +33,18 @@ class _LoginWebviewState extends State<LoginWebview> {
   }
 
   Future<String> getPasswordFromUser(String hashedPassword) async {
-    TextEditingController passwordController = TextEditingController();
+    final commonStore = context.read<CommonStore>();
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: const Text("Enter Password"),
-            content: TextFormField(
-              decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  )),
-              controller: passwordController,
-              obscureText: true,
-            ),
-            actions: <Widget>[
-              // const Padding(padding: EdgeInsets.only(top: 20)),
-              CupidButton(
-                backgroundColor: CupidColors.pinkColor,
-                text: "Continue",
-                onTap: () {
-                  bool matched =
-                      verifyPassword(hashedPassword, passwordController.text);
-                  if (matched) {
-                    Navigator.of(context).pop();
-                  } else {
-                    showSnackBar('Incorrect Password');
-                    passwordController.clear();
-                  }
-                },
-              ),
-            ],
-          ),
-        );
+        return PasswordAlertDialog(hashedPassword: hashedPassword);
       },
     );
-    return passwordController.text;
+    return commonStore.password;
   }
 
-  bool verifyPassword(String hashedPassword, String enteredPassword) {
-    return hashedPassword ==
-        Encryption.bytesToHexadecimal(
-            Encryption.calculateSHA256(enteredPassword));
-  }
+
 
   @override
   void initState() {
@@ -103,6 +53,9 @@ class _LoginWebviewState extends State<LoginWebview> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onWebResourceError: (error) {
+            print("******************ERROR******************");
+          },
           onPageFinished: (String url) async {
             NavigatorState nav = Navigator.of(context);
 
@@ -151,6 +104,7 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   String hashedPassword = myInfo['hashedPassword'];
                   String password = await getPasswordFromUser(hashedPassword);
+
                   if (password.isEmpty) {
                     nav.pushNamedAndRemoveUntil(
                         SplashScreen.id, (route) => false);
