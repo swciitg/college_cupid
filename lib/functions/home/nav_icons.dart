@@ -20,7 +20,7 @@ List<NavigationDestination> navIcons = [
   const NavigationDestination(
     // icon: Image.asset('assets/icons/phone.png'), label: 'recent calls '),
     icon: Icon(
-      Icons.family_restroom_rounded,
+      Icons.dangerous,
       size: 30,
     ),
     label: 'Your Matches',
