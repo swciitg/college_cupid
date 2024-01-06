@@ -4,7 +4,9 @@ import 'package:college_cupid/screens/profile/edit_profile.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/view_interests_grid.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import '../../shared/colors.dart';
 
@@ -34,7 +36,6 @@ class _MyProfileTabState extends State<MyProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    print('**********HIIIIII***************');
     var safeArea = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -43,7 +44,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
         },
         backgroundColor: CupidColors.titleColor,
         child: const Icon(
-          Icons.edit,
+          FluentIcons.edit_12_filled,
           color: Colors.white,
         ),
       ),
@@ -57,11 +58,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
                 cacheManager: customCacheManager,
                 progressIndicatorBuilder: (context, url, progress) => SizedBox(
                   height: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      value: progress.progress,
-                    ),
-                  ),
+                  child: const CustomLoader(),
                 ),
               ),
             ),

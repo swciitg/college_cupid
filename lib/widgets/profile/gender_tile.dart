@@ -22,8 +22,9 @@ class GenderTile extends StatelessWidget {
         child: Text(
           gender.displayString,
           style: TextStyle(
-              color:
-                  isSelected ? CupidColors.whiteColor : CupidColors.titleColor),
+              color: isSelected
+                  ? CupidColors.offWhiteColor
+                  : CupidColors.titleColor),
         ),
       )),
     );

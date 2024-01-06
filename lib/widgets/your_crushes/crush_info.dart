@@ -6,6 +6,7 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/stores/crush_list_store.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
 
 class CrushInfo extends StatelessWidget {
@@ -33,9 +34,7 @@ class CrushInfo extends StatelessWidget {
         future: APIService().getUserProfile(email),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const CustomLoader();
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else {
@@ -62,11 +61,7 @@ class CrushInfo extends StatelessWidget {
                           imageUrl: snapshot.data!['profilePicUrl'].toString(),
                           cacheManager: customCacheManager,
                           progressIndicatorBuilder: (context, url, progress) =>
-                              Center(
-                                child: CircularProgressIndicator(
-                                  value: progress.progress,
-                                ),
-                              ),
+                              const CustomLoader(),
                           fit: BoxFit.cover,
                           width: 64,
                           height: 66),
@@ -105,15 +100,13 @@ class CrushInfo extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       await crushListStore.removeCrush(index);
-                      // await APIService().removeCrush(index);
                     },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 10),
-                      child: const Image(
-                          image: AssetImage('assets/images/close_image.png'),
-                          fit: BoxFit.cover,
-                          width: 20,
-                          height: 20),
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Icon(
+                        Icons.close,
+                        color: CupidColors.pinkColor,
+                      ),
                     ),
                   )
                 ],

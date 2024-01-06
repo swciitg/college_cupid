@@ -5,6 +5,7 @@ import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
 
 class MatchInfo extends StatelessWidget {
@@ -26,21 +27,21 @@ class MatchInfo extends StatelessWidget {
         future: APIService().getUserProfile(email),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const CustomLoader();
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else {
             return GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserProfileScreen(
-                            isMine: false,
-                            userProfile:
-                                UserProfile.fromJson(snapshot.data!))));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserProfileScreen(
+                      isMine: false,
+                      userProfile: UserProfile.fromJson(snapshot.data!),
+                    ),
+                  ),
+                );
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

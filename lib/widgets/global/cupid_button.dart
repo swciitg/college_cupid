@@ -1,6 +1,6 @@
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/widgets/global/loader.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
 
 class CupidButton extends StatelessWidget {
@@ -12,6 +12,7 @@ class CupidButton extends StatelessWidget {
   final Color? backgroundColor;
   final TextStyle? style;
   final bool? loading;
+
   const CupidButton({
     super.key,
     required this.text,
@@ -38,7 +39,7 @@ class CupidButton extends StatelessWidget {
         ),
         child: Center(
           child: loading!
-              ? customLoader
+              ? const CustomLoader()
               : Text(
                   text,
                   style: style ??

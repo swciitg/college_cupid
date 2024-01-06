@@ -98,7 +98,7 @@ class CustomDropDown extends StatelessWidget {
                 ),
           ),
         ),
-        dropdownColor: CupidColors.whiteColor,
+        dropdownColor: CupidColors.offWhiteColor,
         isDense: true,
         icon: icon ??
             const Icon(

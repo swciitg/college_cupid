@@ -29,7 +29,7 @@ class ImageHelpers {
           toolbarColor: CupidColors.pinkColor,
           toolbarTitle: 'Edit Image',
           statusBarColor: CupidColors.pinkColor,
-          toolbarWidgetColor: CupidColors.whiteColor,
+          toolbarWidgetColor: CupidColors.offWhiteColor,
           hideBottomControls: false,
           activeControlsWidgetColor: CupidColors.pinkColor,
           initAspectRatio: CropAspectRatioPreset.original,

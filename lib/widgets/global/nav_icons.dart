@@ -1,34 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 List<NavigationDestination> navIcons = [
   const NavigationDestination(
-    //icon: Image.asset('assets/icons/slides.png'), label: 'slides'),
     icon: Icon(
-      Icons.search_rounded,
+      FluentIcons.search_48_filled,
       size: 30,
     ),
     label: 'Select Crushes',
   ),
   const NavigationDestination(
-    //icon: Image.asset('assets/icons/likelike(1).png'), label: 'check likes'),
     icon: Icon(
-      Icons.favorite,
+      FluentIcons.heart_48_filled,
       size: 30,
     ),
     label: 'Your Crushes',
   ),
   const NavigationDestination(
-    // icon: Image.asset('assets/icons/phone.png'), label: 'recent calls '),
     icon: Icon(
-      Icons.dangerous,
+      FluentIcons.people_48_filled,
       size: 30,
     ),
     label: 'Your Matches',
   ),
   const NavigationDestination(
-    //icon: Image.asset('assets/icons/acc.png'), label: 'your account'),
     icon: Icon(
-      Icons.person_rounded,
+      FluentIcons.person_48_filled,
       size: 30,
     ),
     label: 'Profile',

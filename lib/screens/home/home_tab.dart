@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/stores/filter_store.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/home/profile_card.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -90,18 +92,36 @@ class _HomeTabState extends State<HomeTab> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('Filters'),
-                IconButton(
-                  icon: Image.asset('assets/icons/filter.png', height: 32),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (_) {
-                          return const FilterBottomSheet();
-                        });
-                  },
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
+                  child: GestureDetector(
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: CupidColors.pinkishGreyColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Center(
+                            child: Icon(
+                              FluentIcons.filter_20_filled,
+                              size: 20,
+                              color: CupidColors.pinkColor,
+                            ),
+                          ),
+                        )),
+                    onTap: () {
+                      showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          context: context,
+                          builder: (_) {
+                            return const FilterBottomSheet();
+                          });
+                    },
+                  ),
                 ),
               ],
             ),
@@ -114,7 +134,7 @@ class _HomeTabState extends State<HomeTab> {
               }),
               builder: (context, snapshot) {
                 if (snapshot.hasData == false) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const CustomLoader();
                 } else if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 }

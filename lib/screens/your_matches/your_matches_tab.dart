@@ -32,7 +32,7 @@ class _YourMatchesState extends State<YourMatches> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                       child: CircularProgressIndicator(
-                    color: CupidColors.secondaryColor,
+                    color: CupidColors.pinkColor,
                   ));
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');

@@ -10,6 +10,7 @@ class SelectionButton extends StatelessWidget {
   final BoxBorder? border;
   final bool isSelected;
   final VoidCallback? onTap;
+
   const SelectionButton({
     super.key,
     required this.label,
@@ -41,7 +42,7 @@ class SelectionButton extends StatelessWidget {
               style: isSelected
                   ? CupidStyles.normalTextStyle.copyWith(
                       fontSize: 14,
-                      color: CupidColors.whiteColor,
+                      color: CupidColors.offWhiteColor,
                       fontWeight: FontWeight.bold,
                     )
                   : CupidStyles.normalTextStyle.copyWith(

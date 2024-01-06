@@ -1,3 +1,4 @@
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../functions/encryption.dart';
@@ -44,7 +45,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
             future: crushListStore.getCrushes(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const CustomLoader();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
