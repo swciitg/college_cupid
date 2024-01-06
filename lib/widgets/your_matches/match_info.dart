@@ -3,6 +3,7 @@ import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/user_profile_screen.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
 
@@ -91,7 +92,7 @@ class MatchInfo extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          "${snapshot.data!['program']} - ${snapshot.data!['yearOfStudy']}",
+                          "${Program.values.firstWhere((p) => p.databaseString == snapshot.data!['program']).displayString} '${snapshot.data!['yearOfJoin']}",
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,

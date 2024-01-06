@@ -65,6 +65,15 @@ class LoginStore {
     await initializePassword();
   }
 
+  static Future<void> initializeOutlookInfo() async {
+    Map<String, String> info = await SharedPrefs.getOutlookInfo();
+    LoginStore.accessToken = info[DatabaseStrings.accessToken];
+    LoginStore.refreshToken = info[DatabaseStrings.refreshToken];
+    LoginStore.email = info[DatabaseStrings.email];
+    LoginStore.rollNumber = info[DatabaseStrings.rollNumber];
+    LoginStore.displayName = info[DatabaseStrings.displayName];
+  }
+
   static Future<void> initializeRollNumber() async {
     rollNumber = await SharedPrefs.getRollNumber();
   }

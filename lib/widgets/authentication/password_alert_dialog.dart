@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class PasswordAlertDialog extends StatefulWidget {
   final String hashedPassword;
+
   const PasswordAlertDialog({required this.hashedPassword, super.key});
 
   @override
@@ -27,55 +28,54 @@ class _PasswordAlertDialogState extends State<PasswordAlertDialog> {
   @override
   Widget build(BuildContext context) {
     final commonStore = context.read<CommonStore>();
-    return Observer(
-      builder: (_) {
-        return PopScope(
-          canPop: false,
-          child: AlertDialog(
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: const Text("Enter Password"),
-            content: TextFormField(
-              decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                    BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
+    return Observer(builder: (_) {
+      return PopScope(
+        canPop: false,
+        child: AlertDialog(
+          surfaceTintColor: CupidColors.backgroundColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text("Enter Password"),
+          content: TextFormField(
+            decoration: const InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
                   ),
-                  border: OutlineInputBorder(
-                    borderSide:
-                    BorderSide(color: CupidColors.pinkColor, width: 1),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  )),
-              controller: passwordController,
-              obscureText: true,
-            ),
-            actions: <Widget>[
-              // const Padding(padding: EdgeInsets.only(top: 20)),
-              CupidButton(
-                backgroundColor: CupidColors.pinkColor,
-                text: "Continue",
-                onTap: () {
-                  bool matched =
-                  verifyPassword(widget.hashedPassword, passwordController.text);
-                  if (matched) {
-                    commonStore.setPassword(passwordController.text);
-                    Navigator.of(context).pop();
-                  } else {
-                    showSnackBar('Incorrect Password');
-                    passwordController.clear();
-                  }
-                },
-              ),
-            ],
+                ),
+                border: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: CupidColors.pinkColor, width: 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                )),
+            controller: passwordController,
+            obscureText: true,
           ),
-        );
-      }
-    );
+          actions: <Widget>[
+            // const Padding(padding: EdgeInsets.only(top: 20)),
+            CupidButton(
+              backgroundColor: CupidColors.pinkColor,
+              text: "Continue",
+              onTap: () {
+                bool matched = verifyPassword(
+                    widget.hashedPassword, passwordController.text);
+                if (matched) {
+                  commonStore.setPassword(passwordController.text);
+                  Navigator.of(context).pop();
+                } else {
+                  showSnackBar('Incorrect Password');
+                  passwordController.clear();
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

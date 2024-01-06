@@ -19,7 +19,7 @@ class _MyProfileTabState extends State<MyProfileTab> {
   bool readMore = true;
   var myProfile = UserProfile.fromJson(LoginStore.myProfile);
 
-  void editProfile() async {
+  Future<void> editProfile() async {
     await Navigator.push(
         context, MaterialPageRoute(builder: (context) => const EditProfile()));
     setState(() {
@@ -34,11 +34,12 @@ class _MyProfileTabState extends State<MyProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    print('**********HIIIIII***************');
     var safeArea = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          editProfile();
+        onPressed: () async {
+          await editProfile();
         },
         backgroundColor: CupidColors.titleColor,
         child: const Icon(

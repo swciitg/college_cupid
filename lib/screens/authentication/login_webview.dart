@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/shared/endpoints.dart';
@@ -10,6 +12,7 @@ import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/authentication/password_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
@@ -44,8 +47,6 @@ class _LoginWebviewState extends State<LoginWebview> {
     return commonStore.password;
   }
 
-
-
   @override
   void initState() {
     super.initState();
@@ -53,9 +54,6 @@ class _LoginWebviewState extends State<LoginWebview> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onWebResourceError: (error) {
-            print("******************ERROR******************");
-          },
           onPageFinished: (String url) async {
             NavigatorState nav = Navigator.of(context);
 
@@ -64,28 +62,29 @@ class _LoginWebviewState extends State<LoginWebview> {
               String authStatus = await getElementById(controller, 'status');
               if (authStatus == 'SUCCESS') {
                 if (!mounted) return;
-                String email = await getElementById(controller, 'email');
+                String outlookInfoString =
+                    (await getElementById(controller, 'outlookInfo'))
+                        .replaceAll("\\", '"');
+                print(outlookInfoString);
+
+                Map<String, dynamic> outlookInfo =
+                    jsonDecode(outlookInfoString);
+
                 String displayName =
-                    (await getElementById(controller, 'displayName'))
-                        .toTitleCase();
-                String rollNumber =
-                    await getElementById(controller, 'rollNumber');
-                String accessToken =
-                    await getElementById(controller, 'accessToken');
-                String refreshToken =
-                    await getElementById(controller, 'refreshToken');
+                    outlookInfo['displayName']!.toString().toTitleCase();
+                String rollNumber = outlookInfo['rollNumber']!;
+                String accessToken = outlookInfo['accessToken']!;
+                String refreshToken = outlookInfo['refreshToken']!;
+                String email = outlookInfo['email']!;
 
-                await SharedPrefs.setAccessToken(accessToken);
-                await SharedPrefs.setRefreshToken(refreshToken);
+                await SharedPrefs.setOutlookInfo(
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                    email: email,
+                    displayName: displayName,
+                    rollNumber: rollNumber);
 
-                await SharedPrefs.setEmail(email);
-                await SharedPrefs.setDisplayName(displayName);
-                await SharedPrefs.setRollNumber(rollNumber);
-
-                await LoginStore.initializeDisplayName();
-                await LoginStore.initializeEmail();
-                await LoginStore.initializeTokens();
-                await LoginStore.initializeRollNumber();
+                await LoginStore.initializeOutlookInfo();
 
                 debugPrint('DATA INITIALIZED');
 
@@ -93,6 +92,8 @@ class _LoginWebviewState extends State<LoginWebview> {
                     await APIService().getUserProfile(email);
                 Map<String, dynamic>? myInfo =
                     await APIService().getPersonalInfo();
+
+                await WebViewCookieManager().clearCookies();
 
                 if (myProfile == null || myInfo == null) {
                   debugPrint('NEW USER');
@@ -105,7 +106,9 @@ class _LoginWebviewState extends State<LoginWebview> {
                   String hashedPassword = myInfo['hashedPassword'];
                   String password = await getPasswordFromUser(hashedPassword);
 
-                  if (password.isEmpty) {
+                  if (hashedPassword !=
+                      Encryption.bytesToHexadecimal(
+                          Encryption.calculateSHA256(password))) {
                     nav.pushNamedAndRemoveUntil(
                         SplashScreen.id, (route) => false);
                   }
@@ -113,13 +116,14 @@ class _LoginWebviewState extends State<LoginWebview> {
                   await SharedPrefs.setPassword(password);
                   await SharedPrefs.saveMyProfile(myProfile);
                   await LoginStore.initializeMyProfile();
+                  LoginStore.password = password;
 
                   SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
                           Encryption.decryptAES(
                               encryptedText: Encryption.hexadecimalToBytes(
                                   myInfo['encryptedPrivateKey']),
-                              key: (await SharedPrefs.getPassword())!))
+                              key: LoginStore.password!))
                       .toString());
 
                   nav.pushNamedAndRemoveUntil(

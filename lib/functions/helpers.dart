@@ -15,7 +15,6 @@ Map<String, int?> getYearOfJoinMap() {
   Map<String, int?> map = {"Select": null};
   int currentYear = DateTime.now().toLocal().year;
   for (int i = 0; i < 10; i++) {
-    // map.add((currentYear - i).toString());
     map[(currentYear - i).toString()] = (currentYear - i) % 100;
   }
   return map;
@@ -25,7 +24,9 @@ int getYearOfJoinFromRollNumber(String rollNumber) {
   return int.parse(rollNumber.substring(0, 2));
 }
 
-Program getProgramFromRollNumber(String rollNumber) {
+List<Program> getProgramListFromRollNumber(String rollNumber) {
   int code = int.parse(rollNumber.substring(2, 3));
-  return Program.values.firstWhere((element) => element.rollNumberCode == code);
+  return Program.values
+      .where((element) => element.rollNumberCode == code)
+      .toList();
 }

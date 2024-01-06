@@ -7,7 +7,9 @@ import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
+import 'package:college_cupid/widgets/profile/gender_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -29,6 +31,10 @@ class _EditProfileState extends State<EditProfile> {
   ImageHelpers imageHelpers = ImageHelpers();
   late Gender gender;
   File? image;
+
+  List<Program> programs = [Program.none];
+  late Program myProgram;
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController yearOfJoinController = TextEditingController();
@@ -104,6 +110,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void onConfirm() async {
+    if (myProgram == Program.none) {
+      showSnackBar("Please select your program!");
+      return;
+    }
     try {
       setState(() {
         loading = true;
@@ -115,7 +125,7 @@ class _EditProfileState extends State<EditProfile> {
         email: LoginStore.email!,
         bio: bioController.text,
         yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-        program: programController.text,
+        program: myProgram.databaseString!,
         publicKey: LoginStore.dhPublicKey!,
         interests: selectedInterests.toList(),
       );
@@ -141,22 +151,23 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         loading = false;
       });
-      showSnackBar("Some error occured!");
+      showSnackBar("Some error occurred!");
     }
   }
 
   @override
   void initState() {
+    myProgram = Program.values
+        .firstWhere((element) => element.databaseString == myProfile.program);
     gender = Gender.values
         .firstWhere((element) => element.databaseString == myProfile.gender);
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
     emailController.text = myProfile.email;
     yearOfJoinController.text = '20${myProfile.yearOfJoin}';
-    programController.text = Program.values
-        .firstWhere((element) => element.databaseString == myProfile.program)
-        .displayString;
+    programController.text = myProgram.displayString;
     selectedInterests = myProfile.interests.toSet();
+    programs.addAll(getProgramListFromRollNumber(LoginStore.rollNumber!));
     super.initState();
   }
 
@@ -261,25 +272,9 @@ class _EditProfileState extends State<EditProfile> {
                               gender = Gender.male;
                             });
                           },
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: gender == Gender.male
-                                    ? CupidColors.titleColor
-                                    : CupidColors.backgroundColor,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Center(
-                                child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                Gender.male.displayString,
-                                style: TextStyle(
-                                    color: gender == Gender.male
-                                        ? Colors.white
-                                        : CupidColors.titleColor),
-                              ),
-                            )),
-                          ),
+                          child: GenderTile(
+                              gender: Gender.male,
+                              isSelected: Gender.male == gender),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -287,25 +282,9 @@ class _EditProfileState extends State<EditProfile> {
                               gender = Gender.female;
                             });
                           },
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: gender == Gender.female
-                                    ? CupidColors.titleColor
-                                    : CupidColors.backgroundColor,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Center(
-                                child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                Gender.female.displayString,
-                                style: TextStyle(
-                                    color: gender == Gender.female
-                                        ? Colors.white
-                                        : CupidColors.titleColor),
-                              ),
-                            )),
-                          ),
+                          child: GenderTile(
+                              gender: Gender.female,
+                              isSelected: Gender.female == gender),
                         )
                       ]),
                 ),
@@ -313,11 +292,20 @@ class _EditProfileState extends State<EditProfile> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                      child: DisabledTextField(
-                        controller: programController,
-                        labelText: "Program",
-                      ),
+                    CustomDropDown(
+                      items: programs.map((e) => e.displayString).toList(),
+                      label: "Program",
+                      value: myProgram.displayString,
+                      validator: (value) {},
+                      onChanged: (value) {
+                        if (mounted) {
+                          setState(() {
+                            myProgram = Program.values.firstWhere(
+                                (element) => element.displayString == value);
+                            programController.text = myProgram.displayString;
+                          });
+                        }
+                      },
                     ),
                     const SizedBox(width: 16),
                     // Add some spacing between dropdowns

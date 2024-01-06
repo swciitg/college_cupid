@@ -99,4 +99,36 @@ class SharedPrefs {
     String myProfile = user.getString(DatabaseStrings.myProfile)!;
     return jsonDecode(myProfile);
   }
+
+  static Future<void> setOutlookInfo(
+      {required String accessToken,
+      required String refreshToken,
+      required String email,
+      required String displayName,
+      required String rollNumber}) async {
+    SharedPreferences user = await SharedPreferences.getInstance();
+    await user.setString(DatabaseStrings.accessToken, accessToken);
+    await user.setString(DatabaseStrings.refreshToken, refreshToken);
+
+    await user.setString(DatabaseStrings.email, email);
+    await user.setString(DatabaseStrings.displayName, displayName);
+    await user.setString(DatabaseStrings.rollNumber, rollNumber);
+  }
+
+  static Future<Map<String, String>> getOutlookInfo() async {
+    SharedPreferences user = await SharedPreferences.getInstance();
+    Map<String, String> info = {};
+    info[DatabaseStrings.accessToken] =
+        user.getString(DatabaseStrings.accessToken) ?? '';
+    info[DatabaseStrings.refreshToken] =
+        user.getString(DatabaseStrings.refreshToken) ?? '';
+
+    info[DatabaseStrings.email] = user.getString(DatabaseStrings.email) ?? '';
+    info[DatabaseStrings.displayName] =
+        user.getString(DatabaseStrings.displayName) ?? '';
+    info[DatabaseStrings.rollNumber] =
+        user.getString(DatabaseStrings.rollNumber) ?? '';
+
+    return info;
+  }
 }

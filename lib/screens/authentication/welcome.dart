@@ -1,4 +1,6 @@
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/screens/authentication/login_webview.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 
@@ -14,58 +16,40 @@ class Welcome extends StatefulWidget {
 class _WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SizedBox(
-        width: double.infinity,
-        child: Container(
-          margin: const EdgeInsets.all(40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-              const Spacer(),
-              const Text(
-                'CollegeCupid',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-              const Spacer(),
-              SizedBox(
-                height: 400,
-                width: 400,
-                child: Image.asset('assets/images/couple.jpg'),
-              ),
-              const Spacer(),
-              const Text(
-                'Sign up to continue',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              const Spacer(),
-              CupidButton(
-                text: 'Continue with Outlook',
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, LoginWebview.id
-                      // PageTransition(
-                      //   child: const ProfileDetails(),
-                      //   type: PageTransitionType.rightToLeftWithFade,
-                      //   curve: Curves.decelerate,
-                      // ),
-                      );
-                },
-                height: 50,
-              ),
-              const Spacer(),
-            ],
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'CollegeCupid',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'SedgwickAve',
+              fontWeight: FontWeight.bold,
+              color: CupidColors.titleColor,
+              fontSize: 44,
+            ),
           ),
-        ),
+          SizedBox(
+            width: 0.8 * screenWidth,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Image.asset('assets/images/couple.jpg'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: CupidButton(
+              text: 'Continue with Outlook',
+              onTap: () {
+                Navigator.pushReplacementNamed(context, LoginWebview.id);
+              },
+              height: 50,
+            ),
+          ),
+        ],
       ),
     );
   }

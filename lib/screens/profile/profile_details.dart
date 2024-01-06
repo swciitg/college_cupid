@@ -10,9 +10,13 @@ import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/authentication/logout_button.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
+import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
+import 'package:college_cupid/widgets/profile/gender_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -29,6 +33,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   ImageHelpers imageHelpers = ImageHelpers();
   Gender gender = Gender.male;
   File? image;
+
+  List<Program> programs = [Program.none];
+  Program myProgram = Program.none;
 
   final TextEditingController name = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -59,7 +66,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   void onSubmit() {
     if (image == null) {
       showSnackBar(
-          " Please pick your profile picture. You can change it later.");
+          "Please pick your profile picture. You can change it later.");
+      return;
+    }
+    if (myProgram == Program.none) {
+      showSnackBar("Please select your program!");
       return;
     }
     if (_validatePasswords()) {
@@ -78,8 +89,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           email: LoginStore.email!,
           bio: '',
           yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-          program:
-              getProgramFromRollNumber(LoginStore.rollNumber!).databaseString!,
+          program: myProgram.databaseString!,
           publicKey: publicKey,
           interests: []);
 
@@ -112,13 +122,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   @override
   void initState() {
     super.initState();
+    programs.addAll(getProgramListFromRollNumber(LoginStore.rollNumber!));
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
     yearOfJoinController.text =
         '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
-    programController.text =
-        getProgramFromRollNumber(LoginStore.rollNumber!).displayString;
+    programController.text = myProgram.displayString;
   }
 
   @override
@@ -129,6 +139,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        systemOverlayStyle: CupidStyles.statusBarStyle,
+        actions: const [LogoutButton()],
         title: const Text('Profile Details',
             textAlign: TextAlign.start,
             style: TextStyle(
@@ -246,24 +258,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           gender = Gender.male;
                         });
                       },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: gender == Gender.male
-                                ? CupidColors.titleColor
-                                : CupidColors.backgroundColor,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            Gender.male.displayString,
-                            style: TextStyle(
-                                color: gender == Gender.male
-                                    ? CupidColors.whiteColor
-                                    : CupidColors.titleColor),
-                          ),
-                        )),
+                      child: GenderTile(
+                        gender: Gender.male,
+                        isSelected: gender == Gender.male,
                       ),
                     ),
                     GestureDetector(
@@ -272,25 +269,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           gender = Gender.female;
                         });
                       },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: gender == Gender.female
-                                ? CupidColors.titleColor
-                                : CupidColors.backgroundColor,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            Gender.female.displayString,
-                            style: TextStyle(
-                                color: gender == Gender.female
-                                    ? CupidColors.whiteColor
-                                    : CupidColors.titleColor),
-                          ),
-                        )),
-                      ),
+                      child: GenderTile(
+                          gender: Gender.female,
+                          isSelected: gender == Gender.female),
                     )
                   ]),
             ),
@@ -300,11 +281,26 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Expanded(
-                      child: DisabledTextField(
-                    controller: programController,
-                    labelText: "Program",
-                  )),
+                  CustomDropDown(
+                    items: programs.map((e) => e.displayString).toList(),
+                    label: "Program",
+                    value: Program.none.displayString,
+                    validator: (value) {},
+                    onChanged: (value) {
+                      if (mounted) {
+                        setState(() {
+                          myProgram = Program.values.firstWhere(
+                              (element) => element.displayString == value);
+                          programController.text = myProgram.displayString;
+                        });
+                      }
+                    },
+                  ),
+                  // Expanded(
+                  //     child: DisabledTextField(
+                  //   controller: programController,
+                  //   labelText: "Program",
+                  // )),
                   const SizedBox(
                       width: 16), // Add some spacing between dropdowns
                   Expanded(

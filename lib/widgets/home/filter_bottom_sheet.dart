@@ -147,7 +147,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 CustomDropDown(
                   items: yearOfJoinMap.keys
                       .toList()
-                      .sublist(0, (filterStore.program.numberOfYears ?? 0) + 1),
+                      .sublist(0, (filterStore.program.numberOfYears ?? 0) + 2),
                   label: "Year of join",
                   value: yearOfJoinMap.keys.firstWhere(
                       (key) => yearOfJoinMap[key] == filterStore.yearOfJoin),

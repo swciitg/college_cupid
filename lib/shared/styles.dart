@@ -1,7 +1,15 @@
+import 'package:flutter/services.dart';
+
 import './colors.dart';
 import 'package:flutter/material.dart';
 
 class CupidStyles {
+  static const statusBarStyle = SystemUiOverlayStyle(
+    statusBarColor: CupidColors.backgroundColor,
+    statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light,
+  );
+
   static const countdownStyle = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w700,
