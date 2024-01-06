@@ -26,7 +26,6 @@ class ProfileCard extends StatelessWidget {
       child: Container(
         margin:
             EdgeInsets.fromLTRB(0.05 * screenWidth, 10, 0.05 * screenWidth, 20),
-        // height: 450,
         width: 0.95 * screenWidth,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(

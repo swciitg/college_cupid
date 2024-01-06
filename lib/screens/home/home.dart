@@ -52,6 +52,7 @@ class _HomeState extends State<Home> {
           elevation: 0,
           automaticallyImplyLeading: false,
           actions: const [LogoutButton()],
+          centerTitle: false,
           title: const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text('CollegeCupid',

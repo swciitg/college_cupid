@@ -12,7 +12,6 @@ import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/authentication/password_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
@@ -31,8 +30,11 @@ class _LoginWebviewState extends State<LoginWebview> {
       WebViewController controller, String elementId) async {
     var element = await controller.runJavaScriptReturningResult(
         "document.querySelector('#$elementId').innerText");
-
-    return element.toString().replaceAll('"', '');
+    String newString = element.toString();
+    if(element.toString().startsWith('"')){
+      newString = element.toString().substring(1, element.toString().length - 1);
+    }
+    return newString.replaceAll('\\', '');
   }
 
   Future<String> getPasswordFromUser(String hashedPassword) async {

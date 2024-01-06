@@ -142,12 +142,11 @@ class _HomeTabState extends State<HomeTab> {
                     snapshot.data!.map((e) => ProfileCard(user: e)).toList();
                 isLastPage = snapshot.data!.length < 10;
                 return SizedBox(
-                  height: 0.7 * screenHeight,
+                  height: screenHeight*0.65,
                   child: PageView(
                     allowImplicitScrolling: false,
                     onPageChanged: (value) async {
                       if (isLastPage) return;
-                      print('PAGES LENGTH = ${pages.length}');
                       if (pages.length - value <= 4) {
                         filterStore.setPageNumber(filterStore.pageNumber + 1);
                         final List<UserProfile> users = await APIService()
@@ -158,7 +157,6 @@ class _HomeTabState extends State<HomeTab> {
                           'yearOfJoin': filterStore.yearOfJoin,
                           'name': filterStore.name
                         });
-                        print('USERS LENGTH = ${users.length}');
                         if (users.length < 10) isLastPage = true;
                         for (UserProfile user in users) {
                           pages.add(ProfileCard(user: user));
