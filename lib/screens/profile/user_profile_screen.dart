@@ -73,7 +73,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           } else {
             print(widget.userProfile.publicKey);
             print(LoginStore.dhPrivateKey);
-            //TODO: Add the person to My Crushes List
             String sharedSecret = DiffieHellman.generateSharedSecret(
                     otherPublicKey: BigInt.parse(widget.userProfile.publicKey),
                     myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
@@ -89,6 +88,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         child: const Icon(
           Icons.favorite,
           size: 30,
+          color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(

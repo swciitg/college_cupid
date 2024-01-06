@@ -18,7 +18,6 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  int pageNumber = 0;
   bool isLastPage = false;
 
   List<ProfileCard> pages = [];
@@ -26,15 +25,6 @@ class _HomeTabState extends State<HomeTab> {
   final _pageController = PageController();
   final TextEditingController _searchController = TextEditingController();
   Timer? timer;
-
-  Future<dynamic> showFilterSheet(BuildContext context) {
-    return showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: context,
-        builder: (context) {
-          return const FilterBottomSheet();
-        });
-  }
 
   @override
   void dispose() {
@@ -46,11 +36,9 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     final filterStore = context.read<FilterStore>();
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Observer(
-      builder: (_) => RefreshIndicator(
-        onRefresh: () async {
-          print("*******************REFRESH***************");
-        },
+      builder: (_) => SingleChildScrollView(
         child: Column(
           children: [
             Padding(
@@ -71,23 +59,17 @@ class _HomeTabState extends State<HomeTab> {
                       controller: _searchController,
                       textInputAction: TextInputAction.search,
                       onFieldSubmitted: (value) {
-                        // if (mounted) {
-                        //   setState(() {
-                        //     getUserProfilesFuture = APIService()
-                        //         .getAllSearchedUserProfiles(value);
-                        //   });
-                        // }
+                        if (mounted) {
+                          filterStore.setName(_searchController.text);
+                        }
                       },
                       onChanged: (value) {
                         if (timer != null) timer!.cancel();
                         timer = Timer(const Duration(seconds: 1), () {
-                          // print('timer');
-                          // if (mounted) {
-                          //   setState(() {
-                          //     getUserProfilesFuture = APIService()
-                          //         .getAllSearchedUserProfiles(value);
-                          //   });
-                          // }
+                          print('timer');
+                          if (mounted) {
+                            filterStore.setName(value);
+                          }
                         });
                       },
                       decoration: const InputDecoration(
@@ -109,47 +91,54 @@ class _HomeTabState extends State<HomeTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Text('Filter'),
+                const Text('Filters'),
                 IconButton(
                   icon: Image.asset('assets/icons/filter.png', height: 32),
                   onPressed: () {
-                    showFilterSheet(context);
+                    showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (_) {
+                          return const FilterBottomSheet();
+                        });
                   },
                 ),
               ],
             ),
             FutureBuilder(
-              future: APIService().getPaginatedUsers(pageNumber, {
+              future: APIService().getPaginatedUsers(filterStore.pageNumber, {
                 'gender': filterStore.interestedInGender.databaseString,
                 'program': filterStore.program.databaseString,
-                'yearOfJoin': filterStore.yearOfJoin
+                'yearOfJoin': filterStore.yearOfJoin,
+                'name': filterStore.name,
               }),
               builder: (context, snapshot) {
                 if (snapshot.hasData == false) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 }
                 pages =
                     snapshot.data!.map((e) => ProfileCard(user: e)).toList();
-                return Expanded(
+                isLastPage = snapshot.data!.length < 10;
+                return SizedBox(
+                  height: 0.7 * screenHeight,
                   child: PageView(
                     allowImplicitScrolling: false,
                     onPageChanged: (value) async {
                       if (isLastPage) return;
-                      print(
-                          '*******************${pages.length}**********************');
+                      print('PAGES LENGTH = ${pages.length}');
                       if (pages.length - value <= 4) {
-                        pageNumber++;
-                        final List<UserProfile> users =
-                            await APIService().getPaginatedUsers(pageNumber, {
+                        filterStore.setPageNumber(filterStore.pageNumber + 1);
+                        final List<UserProfile> users = await APIService()
+                            .getPaginatedUsers(filterStore.pageNumber, {
                           'gender':
                               filterStore.interestedInGender.databaseString,
                           'program': filterStore.program.databaseString,
-                          'yearOfJoin': filterStore.yearOfJoin
+                          'yearOfJoin': filterStore.yearOfJoin,
+                          'name': filterStore.name
                         });
+                        print('USERS LENGTH = ${users.length}');
                         if (users.length < 10) isLastPage = true;
                         for (UserProfile user in users) {
                           pages.add(ProfileCard(user: user));

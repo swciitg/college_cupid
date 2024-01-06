@@ -202,7 +202,6 @@ class APIService {
           '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
-        print(res.data);
         final users = res.data['users'];
         List<UserProfile> userProfiles = [];
         users.forEach((user) {

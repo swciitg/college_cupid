@@ -41,6 +41,37 @@ mixin _$FilterStore on _FilterStore, Store {
     });
   }
 
+  late final _$pageNumberAtom =
+      Atom(name: '_FilterStore.pageNumber', context: context);
+
+  @override
+  int get pageNumber {
+    _$pageNumberAtom.reportRead();
+    return super.pageNumber;
+  }
+
+  @override
+  set pageNumber(int value) {
+    _$pageNumberAtom.reportWrite(value, super.pageNumber, () {
+      super.pageNumber = value;
+    });
+  }
+
+  late final _$nameAtom = Atom(name: '_FilterStore.name', context: context);
+
+  @override
+  String get name {
+    _$nameAtom.reportRead();
+    return super.name;
+  }
+
+  @override
+  set name(String value) {
+    _$nameAtom.reportWrite(value, super.name, () {
+      super.name = value;
+    });
+  }
+
   late final _$programAtom =
       Atom(name: '_FilterStore.program', context: context);
 
@@ -66,6 +97,28 @@ mixin _$FilterStore on _FilterStore, Store {
         name: '_FilterStore.setYearOfJoin');
     try {
       return super.setYearOfJoin(year);
+    } finally {
+      _$_FilterStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setPageNumber(int value) {
+    final _$actionInfo = _$_FilterStoreActionController.startAction(
+        name: '_FilterStore.setPageNumber');
+    try {
+      return super.setPageNumber(value);
+    } finally {
+      _$_FilterStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setName(String value) {
+    final _$actionInfo = _$_FilterStoreActionController.startAction(
+        name: '_FilterStore.setName');
+    try {
+      return super.setName(value);
     } finally {
       _$_FilterStoreActionController.endAction(_$actionInfo);
     }
@@ -123,6 +176,8 @@ mixin _$FilterStore on _FilterStore, Store {
     return '''
 interestedInGender: ${interestedInGender},
 yearOfJoin: ${yearOfJoin},
+pageNumber: ${pageNumber},
+name: ${name},
 program: ${program}
     ''';
   }
