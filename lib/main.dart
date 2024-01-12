@@ -2,6 +2,7 @@ import 'package:college_cupid/routes.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/filter_store.dart';
+import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:provider/provider.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FilterStore>(create: (_) => FilterStore()),
-        Provider<CommonStore>(create: (_) => CommonStore())
+        Provider<CommonStore>(create: (_) => CommonStore()),
+        Provider<PageViewStore>(create: (_) => PageViewStore()),
       ],
       child: MaterialApp(
         title: 'CollegeCupid',

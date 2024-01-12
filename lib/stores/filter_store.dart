@@ -13,9 +13,6 @@ abstract class _FilterStore with Store {
   int? yearOfJoin;
 
   @observable
-  int pageNumber = 0;
-
-  @observable
   String name = '';
 
   @observable
@@ -24,24 +21,16 @@ abstract class _FilterStore with Store {
   @action
   void setYearOfJoin(int? year) {
     yearOfJoin = year;
-    setPageNumber(0);
-  }
-
-  @action
-  void setPageNumber(int value) {
-    pageNumber = 0;
   }
 
   @action
   void setName(String value) {
     name = value;
-    setPageNumber(0);
   }
 
   @action
   void setProgram(Program p) {
     program = p;
-    setPageNumber(0);
   }
 
   @action
@@ -51,7 +40,6 @@ abstract class _FilterStore with Store {
 
   @action
   void clearFilters() {
-    setPageNumber(0);
     program = Program.none;
     yearOfJoin = null;
     interestedInGender = InterestedInGender.both;
@@ -65,6 +53,5 @@ abstract class _FilterStore with Store {
     interestedInGender = gender;
     yearOfJoin = year;
     program = p;
-    setPageNumber(0);
   }
 }

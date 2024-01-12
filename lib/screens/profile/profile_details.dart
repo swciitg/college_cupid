@@ -148,7 +148,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         forceMaterialTransparency: true,
       ),
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
+        // physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.all(25).copyWith(bottom: 0),
@@ -291,11 +292,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         }
                       },
                     ),
-                    // Expanded(
-                    //     child: DisabledTextField(
-                    //   controller: programController,
-                    //   labelText: "Program",
-                    // )),
                     const SizedBox(width: 16), // Add some spacing between dropdowns
                     Expanded(
                       child: DisabledTextField(
@@ -366,6 +362,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       )),
                 ),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),

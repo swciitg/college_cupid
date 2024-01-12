@@ -67,7 +67,6 @@ class _LoginWebviewState extends State<LoginWebview> {
                 String outlookInfoString =
                     (await getElementById(controller, 'outlookInfo'))
                         .replaceAll("\\", '"');
-                print(outlookInfoString);
 
                 Map<String, dynamic> outlookInfo =
                     jsonDecode(outlookInfoString);

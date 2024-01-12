@@ -4,7 +4,6 @@ import '../models/personal_info.dart';
 import '../models/user_profile.dart';
 import '../stores/login_store.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import '../shared/endpoints.dart';
 import './backend_helper.dart';
 import 'dart:io';
@@ -46,7 +45,6 @@ class APIService {
 
   Future<void> postPersonalInfo(PersonalInfo myInfo) async {
     try {
-      debugPrint('Posting personal info');
       Response res =
           await dio.post(Endpoints.postPersonalInfo, data: jsonEncode(myInfo));
 
@@ -90,7 +88,6 @@ class APIService {
     try {
       Response res = await dio.get(Endpoints.getMatch);
       if (res.statusCode == 200) {
-        print(res.data);
         return res.data['matches'];
       } else {
         return Future.error(res.statusMessage.toString());
@@ -113,10 +110,7 @@ class APIService {
     FormData formData = FormData.fromMap(userProfileMap);
 
     try {
-      debugPrint('Posting user profile');
       Response res = await dio.post(Endpoints.postUserProfile, data: formData);
-
-      debugPrint(res.data.toString());
 
       if (res.statusCode == 200) {
         return res.data['profilePicUrl'] ?? '';
@@ -163,31 +157,6 @@ class APIService {
       }
     } catch (error) {
       return Future.error(error.toString());
-    }
-  }
-
-  Future<List<UserProfile>> getAllSearchedUserProfiles(
-      String searchQuery) async {
-    try {
-      Response res = await dio.get(Endpoints.getAllSearchedUserProfiles,
-          queryParameters: {'name': searchQuery});
-      if (res.statusCode == 200) {
-        final users = res.data['users'];
-        List<UserProfile> userProfiles = [];
-        for (int i = users.length - 1; i >= 0; i--) {
-          List<String> interests = [];
-          for (int j = 0; j < (users[i]['interests'] as List).length; j++) {
-            interests.add(users[i]['interests'][j].toString());
-          }
-          if (users[i]['email'].toString() == LoginStore.email) continue;
-          userProfiles.add(UserProfile.fromJson(users[i]));
-        }
-        return userProfiles;
-      } else {
-        return Future.error(res.statusMessage.toString());
-      }
-    } catch (err) {
-      return Future.error(err.toString());
     }
   }
 
