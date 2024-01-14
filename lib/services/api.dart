@@ -162,7 +162,6 @@ class APIService {
 
   Future<List<UserProfile>> getPaginatedUsers(
       int pageNumber, Map<String, dynamic>? filterQuery) async {
-    print('PAGENUMBER = $pageNumber');
     for (var key in filterQuery!.keys.toList()) {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }

@@ -83,6 +83,17 @@ mixin _$PageViewStore on _PageViewStore, Store {
   }
 
   @override
+  void setHomeTabProfiles(List<UserProfile> value) {
+    final _$actionInfo = _$_PageViewStoreActionController.startAction(
+        name: '_PageViewStore.setHomeTabProfiles');
+    try {
+      return super.setHomeTabProfiles(value);
+    } finally {
+      _$_PageViewStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setPageNumber(int value) {
     final _$actionInfo = _$_PageViewStoreActionController.startAction(
         name: '_PageViewStore.setPageNumber');

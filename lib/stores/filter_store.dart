@@ -39,6 +39,14 @@ abstract class _FilterStore with Store {
   }
 
   @action
+  void resetStore() {
+    name = '';
+    program = Program.none;
+    yearOfJoin = null;
+    interestedInGender = InterestedInGender.both;
+  }
+
+  @action
   void clearFilters() {
     program = Program.none;
     yearOfJoin = null;

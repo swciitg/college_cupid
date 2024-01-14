@@ -165,8 +165,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             CupidButton(
               text: "Apply",
               onTap: () {
-                pageViewStore.resetStore();
-                print(pageViewStore.homeTabProfileList.length);
                 Navigator.pop(context);
               },
               backgroundColor: CupidColors.pinkColor,

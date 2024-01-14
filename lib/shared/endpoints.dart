@@ -1,6 +1,6 @@
 class Endpoints {
   static const baseUrl = 'https://swc.iitg.ac.in/collegeCupid';
-  static const apiSecurityKey = '';
+  static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
 
   static const microsoftAuth = '/auth/microsoft';
 
@@ -23,7 +23,7 @@ class Endpoints {
   static getHeader() {
     return {
       'Content-Type': 'application/json',
-      // 'security-key': Endpoints.apiSecurityKey
+      'security-key': Endpoints.apiSecurityKey
     };
   }
 }

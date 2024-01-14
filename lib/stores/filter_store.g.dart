@@ -120,6 +120,17 @@ mixin _$FilterStore on _FilterStore, Store {
   }
 
   @override
+  void resetStore() {
+    final _$actionInfo = _$_FilterStoreActionController.startAction(
+        name: '_FilterStore.resetStore');
+    try {
+      return super.resetStore();
+    } finally {
+      _$_FilterStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clearFilters() {
     final _$actionInfo = _$_FilterStoreActionController.startAction(
         name: '_FilterStore.clearFilters');
