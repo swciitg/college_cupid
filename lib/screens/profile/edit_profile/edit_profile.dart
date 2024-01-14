@@ -15,7 +15,6 @@ import 'package:college_cupid/widgets/profile/gender_tile.dart';
 import 'package:college_cupid/widgets/profile/interests/display_only_interest_list.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';

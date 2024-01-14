@@ -37,7 +37,6 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     filterStore = context.read<FilterStore>();
     pageViewStore = context.read<PageViewStore>();
-    final double screenHeight = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
       child: Column(
         children: [

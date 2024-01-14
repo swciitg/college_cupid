@@ -1,7 +1,6 @@
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/authentication/logout_button.dart';
