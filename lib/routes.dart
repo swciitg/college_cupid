@@ -1,7 +1,7 @@
 import 'package:college_cupid/screens/authentication/login_webview.dart';
 import 'package:college_cupid/screens/authentication/welcome.dart';
 import 'package:college_cupid/screens/home/home.dart';
-import 'package:college_cupid/screens/profile/profile_details.dart';
+import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:flutter/cupertino.dart';
 

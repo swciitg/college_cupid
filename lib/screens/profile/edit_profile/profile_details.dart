@@ -5,7 +5,7 @@ import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
-import 'package:college_cupid/screens/about_you/about_you.dart';
+import 'package:college_cupid/screens/profile/edit_profile/about_you.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
@@ -65,7 +65,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   void onSubmit() {
     if (image == null) {
-      showSnackBar("Please pick your profile picture. You can change it later.");
+      showSnackBar(
+          "Please pick your profile picture. You can change it later.");
       return;
     }
     if (myProgram == Program.none) {
@@ -94,7 +95,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       PersonalInfo myInfo = PersonalInfo(
         email: LoginStore.email!,
-        hashedPassword: Encryption.bytesToHexadecimal(Encryption.calculateSHA256(pass.text)),
+        hashedPassword: Encryption.bytesToHexadecimal(
+            Encryption.calculateSHA256(pass.text)),
         encryptedPrivateKey: encryptedPrivateKey,
         publicKey: publicKey,
         crushes: [],
@@ -124,7 +126,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
-    yearOfJoinController.text = '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
+    yearOfJoinController.text =
+        '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
     programController.text = myProgram.displayString;
   }
 
@@ -192,7 +195,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         ),
                         child: const Padding(
                           padding: EdgeInsets.all(2.0),
-                          child: Icon(Icons.camera_alt_outlined, color: Colors.white),
+                          child: Icon(Icons.camera_alt_outlined,
+                              color: Colors.white),
                         )))
               ]),
               const Padding(padding: EdgeInsets.only(top: 30)),
@@ -206,7 +210,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     floatingLabelAlignment: FloatingLabelAlignment.start,
                     labelStyle: TextStyle(color: CupidColors.pinkColor),
                     disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15),
                       ),
@@ -227,7 +232,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     floatingLabelAlignment: FloatingLabelAlignment.start,
                     labelStyle: TextStyle(color: CupidColors.pinkColor),
                     disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15),
                       ),
@@ -243,33 +249,37 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       color: CupidColors.pinkColor,
                     ),
                     borderRadius: BorderRadius.circular(15)),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  const Text(
-                    'Select Gender',
-                    style: TextStyle(
-                      color: CupidColors.pinkColor,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        gender = Gender.male;
-                      });
-                    },
-                    child: GenderTile(
-                      gender: Gender.male,
-                      isSelected: gender == Gender.male,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        gender = Gender.female;
-                      });
-                    },
-                    child: GenderTile(gender: Gender.female, isSelected: gender == Gender.female),
-                  )
-                ]),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        'Select Gender',
+                        style: TextStyle(
+                          color: CupidColors.pinkColor,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            gender = Gender.male;
+                          });
+                        },
+                        child: GenderTile(
+                          gender: Gender.male,
+                          isSelected: gender == Gender.male,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            gender = Gender.female;
+                          });
+                        },
+                        child: GenderTile(
+                            gender: Gender.female,
+                            isSelected: gender == Gender.female),
+                      )
+                    ]),
               ),
               const Padding(padding: EdgeInsets.only(top: 15)),
               SizedBox(
@@ -285,14 +295,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       onChanged: (value) {
                         if (mounted) {
                           setState(() {
-                            myProgram = Program.values
-                                .firstWhere((element) => element.displayString == value);
+                            myProgram = Program.values.firstWhere(
+                                (element) => element.displayString == value);
                             programController.text = myProgram.displayString;
                           });
                         }
                       },
                     ),
-                    const SizedBox(width: 16), // Add some spacing between dropdowns
+                    const SizedBox(width: 16),
+                    // Add some spacing between dropdowns
                     Expanded(
                       child: DisabledTextField(
                         controller: yearOfJoinController,
@@ -317,19 +328,22 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     floatingLabelAlignment: FloatingLabelAlignment.start,
                     labelStyle: TextStyle(color: CupidColors.pinkColor),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15),
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                      borderSide:
+                          BorderSide(color: CupidColors.pinkColor, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                   ),
@@ -347,17 +361,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       floatingLabelAlignment: FloatingLabelAlignment.start,
                       labelStyle: TextStyle(color: CupidColors.pinkColor),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       )),
                 ),

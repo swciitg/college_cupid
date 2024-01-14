@@ -7,7 +7,7 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/about_you/interest_card.dart';
+import 'package:college_cupid/widgets/profile/interests/display_interest_card.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
 
@@ -79,11 +79,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         physics: const NeverScrollableScrollPhysics(),
         children: interests.entries
             .map(
-              (interest) => InterestCard(
-                icon: interest.value,
+              (interest) => DisplayInterestCard(
                 text: interest.key,
-                isSelected: selectedInterests.contains(interest.key),
-                onTap: () => interestSelected(interest.key),
               ),
             )
             .toList(),

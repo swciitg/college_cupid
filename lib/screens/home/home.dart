@@ -1,4 +1,7 @@
-import 'package:college_cupid/screens/profile/my_profile_tab.dart';
+import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
+import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/authentication/logout_button.dart';
@@ -22,7 +25,8 @@ class _HomeState extends State<Home> {
     const HomeTab(),
     const YourCrushesTab(),
     const YourMatches(),
-    const MyProfileTab(),
+    UserProfileScreen(
+        isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
   ];
 
   int _selectedIndex = 0;
@@ -43,12 +47,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
           systemOverlayStyle: CupidStyles.statusBarStyle,
-          backgroundColor: CupidColors.backgroundColor,
+          backgroundColor: Colors.white,
           elevation: 0,
           automaticallyImplyLeading: false,
           actions: const [LogoutButton()],
@@ -64,6 +67,7 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+      backgroundColor: Colors.white,
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           indicatorColor: Colors.pink.shade50,

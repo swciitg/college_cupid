@@ -52,7 +52,6 @@ class _HomeTabState extends State<HomeTab> {
                     border: Border.all(
                       color: CupidColors.titleColor,
                     ),
-                    color: CupidColors.backgroundColor,
                   ),
                   child: TextFormField(
                     controller: _searchController,
@@ -95,7 +94,7 @@ class _HomeTabState extends State<HomeTab> {
                 child: GestureDetector(
                   child: Container(
                       decoration: BoxDecoration(
-                        color: CupidColors.pinkishGreyColor,
+                        color: CupidColors.backgroundColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Padding(

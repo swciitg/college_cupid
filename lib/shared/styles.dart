@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CupidStyles {
   static const statusBarStyle = SystemUiOverlayStyle(
-    statusBarColor: CupidColors.backgroundColor,
+    statusBarColor: Colors.white,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
   );

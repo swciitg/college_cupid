@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/shared/endpoints.dart';
-import 'package:college_cupid/screens/profile/profile_details.dart';
+import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/splash.dart';
@@ -31,8 +31,9 @@ class _LoginWebviewState extends State<LoginWebview> {
     var element = await controller.runJavaScriptReturningResult(
         "document.querySelector('#$elementId').innerText");
     String newString = element.toString();
-    if(element.toString().startsWith('"')){
-      newString = element.toString().substring(1, element.toString().length - 1);
+    if (element.toString().startsWith('"')) {
+      newString =
+          element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }

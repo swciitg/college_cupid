@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
-import 'package:college_cupid/screens/profile/user_profile_screen.dart';
+import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
