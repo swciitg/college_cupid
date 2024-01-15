@@ -13,10 +13,10 @@ import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/authentication/logout_button.dart';
-import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
 import 'package:college_cupid/widgets/profile/gender_tile.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -65,7 +65,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   void onSubmit() {
     if (image == null) {
-      showSnackBar("Please pick your profile picture. You can change it later.");
+      showSnackBar(
+          "Please pick your profile picture. You can change it later.");
       return;
     }
     if (myProgram == Program.none) {
@@ -94,7 +95,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       PersonalInfo myInfo = PersonalInfo(
         email: LoginStore.email!,
-        hashedPassword: Encryption.bytesToHexadecimal(Encryption.calculateSHA256(pass.text)),
+        hashedPassword: Encryption.bytesToHexadecimal(
+            Encryption.calculateSHA256(pass.text)),
         encryptedPrivateKey: encryptedPrivateKey,
         publicKey: publicKey,
         crushes: [],
@@ -124,7 +126,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
-    yearOfJoinController.text = '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
+    yearOfJoinController.text =
+        '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
     programController.text = myProgram.displayString;
   }
 
@@ -135,9 +138,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: CupidColors.backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
           systemOverlayStyle: CupidStyles.statusBarStyle,
           actions: const [LogoutButton()],
@@ -196,7 +199,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           ),
                           child: const Padding(
                             padding: EdgeInsets.all(2.0),
-                            child: Icon(Icons.camera_alt_outlined, color: Colors.white),
+                            child: Icon(Icons.camera_alt_outlined,
+                                color: Colors.white),
                           )))
                 ]),
                 const Padding(padding: EdgeInsets.only(top: 30)),
@@ -210,7 +214,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       floatingLabelAlignment: FloatingLabelAlignment.start,
                       labelStyle: TextStyle(color: CupidColors.pinkColor),
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
@@ -231,7 +236,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       floatingLabelAlignment: FloatingLabelAlignment.start,
                       labelStyle: TextStyle(color: CupidColors.pinkColor),
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
@@ -247,33 +253,37 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         color: CupidColors.pinkColor,
                       ),
                       borderRadius: BorderRadius.circular(15)),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                    const Text(
-                      'Select Gender',
-                      style: TextStyle(
-                        color: CupidColors.pinkColor,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          gender = Gender.male;
-                        });
-                      },
-                      child: GenderTile(
-                        gender: Gender.male,
-                        isSelected: gender == Gender.male,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          gender = Gender.female;
-                        });
-                      },
-                      child: GenderTile(gender: Gender.female, isSelected: gender == Gender.female),
-                    )
-                  ]),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          'Select Gender',
+                          style: TextStyle(
+                            color: CupidColors.pinkColor,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              gender = Gender.male;
+                            });
+                          },
+                          child: GenderTile(
+                            gender: Gender.male,
+                            isSelected: gender == Gender.male,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              gender = Gender.female;
+                            });
+                          },
+                          child: GenderTile(
+                              gender: Gender.female,
+                              isSelected: gender == Gender.female),
+                        )
+                      ]),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 15)),
                 SizedBox(
@@ -289,8 +299,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         onChanged: (value) {
                           if (mounted) {
                             setState(() {
-                              myProgram = Program.values
-                                  .firstWhere((element) => element.displayString == value);
+                              myProgram = Program.values.firstWhere(
+                                  (element) => element.displayString == value);
                               programController.text = myProgram.displayString;
                             });
                           }
@@ -322,19 +332,22 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       floatingLabelAlignment: FloatingLabelAlignment.start,
                       labelStyle: TextStyle(color: CupidColors.pinkColor),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide:
+                            BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                     ),
@@ -352,17 +365,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         floatingLabelAlignment: FloatingLabelAlignment.start,
                         labelStyle: TextStyle(color: CupidColors.pinkColor),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
                           borderRadius: BorderRadius.all(
                             Radius.circular(15),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderSide: BorderSide(
+                              color: CupidColors.pinkColor, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         )),
                   ),
@@ -372,9 +388,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             ),
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16).copyWith(top: 0),
-          child: CupidButton(text: 'Continue', onTap: onSubmit),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: CupidColors.titleColor,
+          onPressed: onSubmit,
+          child: const Icon(
+            FluentIcons.chevron_right_32_regular,
+            color: Colors.white,
+          ),
         ),
       ),
     );

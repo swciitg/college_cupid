@@ -23,7 +23,7 @@ class DisplayInterests extends StatelessWidget {
                       height: 10,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Text(
                         key,
                         style: const TextStyle(
@@ -33,7 +33,7 @@ class DisplayInterests extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 0),
                       child: SelectableInterestList(
                         allInterests: interestsMap[key]!,
                         selectedInterests: interestStore.selectedInterests,

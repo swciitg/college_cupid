@@ -41,6 +41,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                       Stack(
                         children: [
                           Container(
+                            width: MediaQuery.of(context).size.width,
                             foregroundDecoration: const BoxDecoration(
                               gradient: LinearGradient(
                                   colors: [Colors.transparent, Colors.black],
@@ -48,6 +49,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                                   end: Alignment.bottomCenter),
                             ),
                             child: CachedNetworkImage(
+                              fit: BoxFit.cover,
                               imageUrl: widget.userProfile.profilePicUrl,
                               cacheManager: customCacheManager,
                               progressIndicatorBuilder:

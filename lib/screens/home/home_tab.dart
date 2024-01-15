@@ -77,7 +77,6 @@ class _HomeTabState extends State<HomeTab> {
                   onPressed: () {
                     _searchController.clear();
                     filterStore.setName('');
-                    pageViewStore.resetStore();
                   },
                 ),
               ],

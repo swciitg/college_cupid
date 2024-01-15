@@ -10,6 +10,7 @@ import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/disabled_text_field.dart';
 import 'package:college_cupid/widgets/profile/gender_tile.dart';
 import 'package:college_cupid/widgets/profile/interests/display_only_interest_list.dart';
@@ -18,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatefulWidget {
@@ -68,8 +68,10 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    myProgram = Program.values.firstWhere((element) => element.databaseString == myProfile.program);
-    gender = Gender.values.firstWhere((element) => element.databaseString == myProfile.gender);
+    myProgram = Program.values
+        .firstWhere((element) => element.databaseString == myProfile.program);
+    gender = Gender.values
+        .firstWhere((element) => element.databaseString == myProfile.gender);
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
     emailController.text = myProfile.email;
@@ -88,261 +90,278 @@ class _EditProfileState extends State<EditProfile> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: SafeArea(
-        child: Scaffold(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          systemOverlayStyle: CupidStyles.statusBarStyle,
+          foregroundColor: CupidColors.titleColor,
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            foregroundColor: CupidColors.titleColor,
-            backgroundColor: Colors.white,
-            scrolledUnderElevation: 0,
-            elevation: 0,
-            title: const Text("Edit Profile",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 28,
-                )),
-            forceMaterialTransparency: true,
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Column(
-                children: [
-                  Stack(children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          pickImage(ImageSource.gallery);
-                        });
-                      },
-                      child: image != null
-                          ? ClipOval(
-                              child: Image.file(
-                                image!,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : myProfile.profilePicUrl.isNotEmpty
-                              ? ClipOval(
-                                  child: Image.network(
-                                    myProfile.profilePicUrl,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : ClipOval(
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    color: CupidColors.titleColor,
-                                  ),
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          title: const Text("Edit Profile",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 28,
+              )),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: CupidColors.titleColor,
+
+          onPressed: () async {
+            if (loading) return;
+
+            if (myProgram == Program.none) {
+              showSnackBar("Please select your program!");
+              return;
+            }
+            try {
+              setState(() {
+                loading = true;
+              });
+              UserProfile updatedProfile = UserProfile(
+                name: LoginStore.displayName!,
+                profilePicUrl: '',
+                gender: gender.databaseString,
+                email: LoginStore.email!,
+                bio: bioController.text,
+                yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
+                program: myProgram.databaseString!,
+                publicKey: LoginStore.dhPublicKey!,
+                interests: interestStore.selectedInterests,
+              );
+
+              updatedProfile.profilePicUrl =
+                  await APIService().updateUserProfile(image, updatedProfile);
+              final updatedProfileMap =
+                  await APIService().getUserProfile(LoginStore.email!);
+
+              if (updatedProfileMap != null) {
+                await LoginStore.updateMyProfile(updatedProfileMap);
+                showSnackBar("Profile updated Successfully");
+              } else {
+                showSnackBar(
+                    "Profile couldn't update locally. Kindly update again later!");
+              }
+              setState(() {
+                loading = false;
+              });
+              navigatorKey.currentState!.pop(updatedProfile);
+            } catch (e) {
+              setState(() {
+                loading = false;
+              });
+              showSnackBar("Some error occurred!");
+            }
+          },
+          child: loading
+              ? const CustomLoader(
+                  color: Colors.white,
+                )
+              : const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Column(
+              children: [
+                Stack(children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        pickImage(ImageSource.gallery);
+                      });
+                    },
+                    child: image != null
+                        ? ClipOval(
+                            child: Image.file(
+                              image!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : myProfile.profilePicUrl.isNotEmpty
+                            ? ClipOval(
+                                child: Image.network(
+                                  myProfile.profilePicUrl,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
                                 ),
-                    ),
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: CupidColors.titleColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
+                              )
+                            : ClipOval(
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: CupidColors.titleColor,
+                                ),
                               ),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(2.0),
-                              child: Icon(Icons.camera_alt_outlined, color: Colors.white),
-                            )))
-                  ]),
-                  const Padding(padding: EdgeInsets.only(top: 30)),
-                  DisabledTextField(controller: nameController, labelText: "Name"),
-                  const Padding(padding: EdgeInsets.only(top: 15)),
-                  DisabledTextField(controller: emailController, labelText: "Email"),
-                  const Padding(padding: EdgeInsets.only(top: 15)),
-                  Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: CupidColors.pinkColor,
-                        ),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                      const Text(
-                        'Select Gender',
-                        style: TextStyle(
-                          color: CupidColors.pinkColor,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            gender = Gender.male;
-                          });
-                        },
-                        child: GenderTile(gender: Gender.male, isSelected: Gender.male == gender),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            gender = Gender.female;
-                          });
-                        },
-                        child:
-                            GenderTile(gender: Gender.female, isSelected: Gender.female == gender),
-                      )
-                    ]),
                   ),
-                  const Padding(padding: EdgeInsets.only(top: 15)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      CustomDropDown(
-                        items: programs.map((e) => e.displayString).toList(),
-                        label: "Program",
-                        value: myProgram.displayString,
-                        validator: (value) {},
-                        onChanged: (value) {
-                          if (mounted) {
+                  Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: CupidColors.titleColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 3,
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: Icon(Icons.camera_alt_outlined,
+                                color: Colors.white),
+                          )))
+                ]),
+                const Padding(padding: EdgeInsets.only(top: 30)),
+                DisabledTextField(
+                    controller: nameController, labelText: "Name"),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                DisabledTextField(
+                    controller: emailController, labelText: "Email"),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: CupidColors.pinkColor,
+                      ),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          'Select Gender',
+                          style: TextStyle(
+                            color: CupidColors.pinkColor,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
                             setState(() {
-                              myProgram = Program.values
-                                  .firstWhere((element) => element.displayString == value);
-                              programController.text = myProgram.displayString;
+                              gender = Gender.male;
                             });
-                          }
-                        },
+                          },
+                          child: GenderTile(
+                              gender: Gender.male,
+                              isSelected: Gender.male == gender),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              gender = Gender.female;
+                            });
+                          },
+                          child: GenderTile(
+                              gender: Gender.female,
+                              isSelected: Gender.female == gender),
+                        )
+                      ]),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CustomDropDown(
+                      items: programs.map((e) => e.displayString).toList(),
+                      label: "Program",
+                      value: myProgram.displayString,
+                      validator: (value) {},
+                      onChanged: (value) {
+                        if (mounted) {
+                          setState(() {
+                            myProgram = Program.values.firstWhere(
+                                (element) => element.displayString == value);
+                            programController.text = myProgram.displayString;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    // Add some spacing between dropdowns
+                    Expanded(
+                      child: DisabledTextField(
+                        controller: yearOfJoinController,
+                        labelText: "Year of joining",
                       ),
-                      const SizedBox(width: 16),
-                      // Add some spacing between dropdowns
-                      Expanded(
-                        child: DisabledTextField(
-                          controller: yearOfJoinController,
-                          labelText: "Year of joining",
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Bio',
+                        style: CupidStyles.headingStyle
+                            .copyWith(color: CupidColors.titleColor)),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Write a brief description about yourself to attract people to your profile.',
+                      softWrap: true,
+                      style: CupidStyles.lightTextStyle,
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: bioController,
+                      maxLines: 5,
+                      style: CupidStyles.normalTextStyle,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 20),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: const BorderSide(
+                            width: 1.2,
+                            color: CupidColors.secondaryColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide:
+                              const BorderSide(color: CupidColors.titleColor),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('Bio',
-                          style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor)),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Write a brief description about yourself to attract people to your profile.',
-                        softWrap: true,
-                        style: CupidStyles.lightTextStyle,
-                      ),
-                      const SizedBox(height: 20),
-                      TextField(
-                        controller: bioController,
-                        maxLines: 5,
-                        style: CupidStyles.normalTextStyle,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              width: 1.2,
-                              color: CupidColors.secondaryColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: CupidColors.titleColor),
-                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Your Interests",
+                          style: CupidStyles.headingStyle
+                              .copyWith(color: CupidColors.titleColor),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Your Interests",
-                            style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor),
-                          ),
-                          IconButton(
-                              padding: const EdgeInsets.all(15),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SelectInterestsScreen(),
-                                    ));
-                              },
-                              icon: const Icon(
-                                FluentIcons.chevron_right_24_regular,
-                                color: CupidColors.grayColor,
-                              ))
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                    ],
-                  ),
-                  DisplayOnlyInterestList(
-                    interests: interestStore.selectedInterests,
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-          bottomNavigationBar: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-              child: CupidButton(
-                text: "Confirm",
-                loading: loading,
-                onTap: () async {
-                  if (myProgram == Program.none) {
-                    showSnackBar("Please select your program!");
-                    return;
-                  }
-                  try {
-                    setState(() {
-                      loading = true;
-                    });
-                    UserProfile updatedProfile = UserProfile(
-                      name: LoginStore.displayName!,
-                      profilePicUrl: '',
-                      gender: gender.databaseString,
-                      email: LoginStore.email!,
-                      bio: bioController.text,
-                      yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-                      program: myProgram.databaseString!,
-                      publicKey: LoginStore.dhPublicKey!,
-                      interests: interestStore.selectedInterests,
-                    );
-
-                    updatedProfile.profilePicUrl =
-                        await APIService().updateUserProfile(image, updatedProfile);
-                    final updatedProfileMap = await APIService().getUserProfile(LoginStore.email!);
-
-                    if (updatedProfileMap != null) {
-                      await LoginStore.updateMyProfile(updatedProfileMap);
-                      showSnackBar("Profile updated Successfully");
-                    } else {
-                      showSnackBar("Profile couldn't update locally. Kindly update again later!");
-                    }
-                    setState(() {
-                      loading = false;
-                    });
-                    navigatorKey.currentState!.pop(updatedProfile);
-                  } catch (e) {
-                    setState(() {
-                      loading = false;
-                    });
-                    showSnackBar("Some error occurred!");
-                  }
-                },
-              ),
+                        IconButton(
+                            padding: const EdgeInsets.all(15),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SelectInterestsScreen(),
+                                  ));
+                            },
+                            icon: const Icon(
+                              FluentIcons.chevron_right_24_regular,
+                              color: CupidColors.grayColor,
+                            ))
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                  ],
+                ),
+                DisplayOnlyInterestList(
+                  interests: interestStore.selectedInterests,
+                ),
+                const SizedBox(height: 100),
+              ],
             ),
           ),
         ),

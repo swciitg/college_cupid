@@ -1,6 +1,5 @@
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/profile/interests/display_interests.dart';
 import 'package:flutter/material.dart';
 
@@ -32,16 +31,12 @@ class _SelectInterestsScreenState extends State<SelectInterestsScreen> {
               fontSize: 28,
             )),
       ),
-      bottomNavigationBar: SizedBox(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 15, 10, 20),
-          child: CupidButton(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            text: 'Continue',
-          ),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        backgroundColor: CupidColors.titleColor,
+        child: const Icon(Icons.check, color: Colors.white,),
       ),
       body: const SingleChildScrollView(
         child: Column(
