@@ -24,8 +24,7 @@ class _HomeState extends State<Home> {
     const HomeTab(),
     const YourCrushesTab(),
     const YourMatches(),
-    UserProfileScreen(
-        isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
+    UserProfileScreen(isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
   ];
 
   int _selectedIndex = 0;
@@ -45,69 +44,73 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          systemOverlayStyle: CupidStyles.statusBarStyle,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: const [LogoutButton()],
-          centerTitle: false,
-          title: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('CollegeCupid',
-                style: TextStyle(
-                  fontFamily: 'SedgwickAve',
-                  color: CupidColors.titleColor,
-                  fontSize: 32,
-                )),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: AppBar(
+            systemOverlayStyle: CupidStyles.statusBarStyle,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            actions: const [LogoutButton()],
+            centerTitle: false,
+            title: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('CollegeCupid',
+                  style: TextStyle(
+                    fontFamily: 'SedgwickAve',
+                    color: CupidColors.titleColor,
+                    fontSize: 32,
+                  )),
+            ),
           ),
         ),
-      ),
-      backgroundColor: Colors.white,
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          indicatorColor: Colors.pink.shade50,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          height: 60,
-          elevation: 4,
-          shadowColor: Colors.black,
-          surfaceTintColor: CupidColors.navBarBackgroundColor,
-          iconTheme: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.selected)) {
-              return const IconThemeData(color: CupidColors.navBarIconColor);
-            } else {
-              return const IconThemeData(color: Colors.grey);
-            }
-          }),
+        backgroundColor: Colors.white,
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            indicatorColor: Colors.pink.shade50,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+            height: 60,
+            elevation: 4,
+            shadowColor: Colors.black,
+            surfaceTintColor: CupidColors.navBarBackgroundColor,
+            iconTheme: MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.selected)) {
+                return const IconThemeData(color: CupidColors.navBarIconColor);
+              } else {
+                return const IconThemeData(color: Colors.grey);
+              }
+            }),
+          ),
+          child: NavigationBar(
+            backgroundColor: CupidColors.navBarBackgroundColor,
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (i) => setState(() {
+              if ((i - _selectedIndex).abs() != 1) {
+                _pageController.jumpToPage(i);
+              } else {
+                _pageController.animateToPage(i,
+                    duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+              }
+              _selectedIndex = i;
+            }),
+            destinations: navIcons,
+          ),
         ),
-        child: NavigationBar(
-          backgroundColor: CupidColors.navBarBackgroundColor,
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() {
-            if ((i - _selectedIndex).abs() != 1) {
-              _pageController.jumpToPage(i);
-            } else {
-              _pageController.animateToPage(i,
-                  duration: const Duration(milliseconds: 150),
-                  curve: Curves.easeIn);
-            }
-            _selectedIndex = i;
-          }),
-          destinations: navIcons,
-        ),
-      ),
-      body: SizedBox.expand(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          children: tabs,
+        body: SizedBox.expand(
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            children: tabs,
+          ),
         ),
       ),
     );
