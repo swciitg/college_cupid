@@ -15,6 +15,7 @@ class ProfileCard extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
+        FocusScope.of(context).unfocus();
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -24,8 +25,7 @@ class ProfileCard extends StatelessWidget {
                     )));
       },
       child: Container(
-        margin:
-            EdgeInsets.fromLTRB(0.05 * screenWidth, 10, 0.05 * screenWidth, 20),
+        margin: EdgeInsets.fromLTRB(0.05 * screenWidth, 10, 0.05 * screenWidth, 20),
         width: 0.95 * screenWidth,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -39,26 +39,20 @@ class ProfileCard extends StatelessWidget {
                 spreadRadius: 1)
           ],
           image: DecorationImage(
-              image: CachedNetworkImageProvider(user.profilePicUrl,
-                  cacheManager: customCacheManager),
+              image:
+                  CachedNetworkImageProvider(user.profilePicUrl, cacheManager: customCacheManager),
               fit: BoxFit.cover),
         ),
         child: Container(
           decoration: const BoxDecoration(
-            borderRadius:
-                BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
-            gradient: LinearGradient(stops: [
-              0,
-              0.6,
-              1
-            ], colors: [
-              Colors.transparent,
-              Colors.transparent,
-              Colors.black87
-            ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+            borderRadius: BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
+            gradient: LinearGradient(
+                stops: [0, 0.6, 1],
+                colors: [Colors.transparent, Colors.transparent, Colors.black87],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter),
           ),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Expanded(child: SizedBox()),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
@@ -68,9 +62,7 @@ class ProfileCard extends StatelessWidget {
                   user.name,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25),
+                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
                 ),
               ),
             )

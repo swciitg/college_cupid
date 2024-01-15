@@ -65,8 +65,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   void onSubmit() {
     if (image == null) {
-      showSnackBar(
-          "Please pick your profile picture. You can change it later.");
+      showSnackBar("Please pick your profile picture. You can change it later.");
       return;
     }
     if (myProgram == Program.none) {
@@ -95,8 +94,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       PersonalInfo myInfo = PersonalInfo(
         email: LoginStore.email!,
-        hashedPassword: Encryption.bytesToHexadecimal(
-            Encryption.calculateSHA256(pass.text)),
+        hashedPassword: Encryption.bytesToHexadecimal(Encryption.calculateSHA256(pass.text)),
         encryptedPrivateKey: encryptedPrivateKey,
         publicKey: publicKey,
         crushes: [],
@@ -126,267 +124,258 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
-    yearOfJoinController.text =
-        '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
+    yearOfJoinController.text = '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
     programController.text = myProgram.displayString;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: CupidStyles.statusBarStyle,
-        actions: const [LogoutButton()],
-        title: const Text(
-          'Profile Details',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 28,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: CupidColors.backgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: CupidStyles.statusBarStyle,
+          actions: const [LogoutButton()],
+          title: const Text(
+            'Profile Details',
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 28,
+            ),
           ),
+          forceMaterialTransparency: true,
         ),
-        forceMaterialTransparency: true,
-      ),
-      body: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        // physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(25).copyWith(bottom: 0),
-          child: Column(
-            children: [
-              Stack(children: [
-                GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        pickImage(ImageSource.gallery);
-                      });
-                    },
-                    child: image != null
-                        ? ClipOval(
-                            child: Image.file(
-                            image!,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ))
-                        : ClipOval(
-                            child: Container(
+        body: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          // physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: const EdgeInsets.all(25).copyWith(bottom: 0),
+            child: Column(
+              children: [
+                Stack(children: [
+                  GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          pickImage(ImageSource.gallery);
+                        });
+                      },
+                      child: image != null
+                          ? ClipOval(
+                              child: Image.file(
+                              image!,
                               width: 100,
                               height: 100,
-                              color: CupidColors.titleColor,
+                              fit: BoxFit.cover,
+                            ))
+                          : ClipOval(
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                color: CupidColors.titleColor,
+                              ),
+                            )),
+                  Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: CupidColors.titleColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: CupidColors.backgroundColor,
+                              width: 3,
                             ),
-                          )),
-                Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: CupidColors.titleColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: CupidColors.backgroundColor,
-                            width: 3,
                           ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: Icon(Icons.camera_alt_outlined, color: Colors.white),
+                          )))
+                ]),
+                const Padding(padding: EdgeInsets.only(top: 30)),
+                SizedBox(
+                  height: 56,
+                  child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: name,
+                    decoration: const InputDecoration(
+                      labelText: "Name",
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      labelStyle: TextStyle(color: CupidColors.pinkColor),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(2.0),
-                          child: Icon(Icons.camera_alt_outlined,
-                              color: Colors.white),
-                        )))
-              ]),
-              const Padding(padding: EdgeInsets.only(top: 30)),
-              SizedBox(
-                height: 56,
-                child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: name,
-                  decoration: const InputDecoration(
-                    labelText: "Name",
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
                       ),
+                      enabled: false,
                     ),
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                SizedBox(
+                  height: 56,
+                  child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: emailController,
                     enabled: false,
-                  ),
-                ),
-              ),
-              const Padding(padding: EdgeInsets.only(top: 15)),
-              SizedBox(
-                height: 56,
-                child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: emailController,
-                  enabled: false,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      labelStyle: TextStyle(color: CupidColors.pinkColor),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const Padding(padding: EdgeInsets.only(top: 15)),
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                      color: CupidColors.pinkColor,
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: CupidColors.pinkColor,
+                      ),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                    const Text(
+                      'Select Gender',
+                      style: TextStyle(
+                        color: CupidColors.pinkColor,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(15)),
-                child: Row(
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          gender = Gender.male;
+                        });
+                      },
+                      child: GenderTile(
+                        gender: Gender.male,
+                        isSelected: gender == Gender.male,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          gender = Gender.female;
+                        });
+                      },
+                      child: GenderTile(gender: Gender.female, isSelected: gender == Gender.female),
+                    )
+                  ]),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                SizedBox(
+                  height: 56,
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Text(
-                        'Select Gender',
-                        style: TextStyle(
-                          color: CupidColors.pinkColor,
+                      CustomDropDown(
+                        items: programs.map((e) => e.displayString).toList(),
+                        label: "Program",
+                        value: Program.none.displayString,
+                        validator: (value) {},
+                        onChanged: (value) {
+                          if (mounted) {
+                            setState(() {
+                              myProgram = Program.values
+                                  .firstWhere((element) => element.displayString == value);
+                              programController.text = myProgram.displayString;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      // Add some spacing between dropdowns
+                      Expanded(
+                        child: DisabledTextField(
+                          controller: yearOfJoinController,
+                          labelText: "Year of joining",
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            gender = Gender.male;
-                          });
-                        },
-                        child: GenderTile(
-                          gender: Gender.male,
-                          isSelected: gender == Gender.male,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            gender = Gender.female;
-                          });
-                        },
-                        child: GenderTile(
-                            gender: Gender.female,
-                            isSelected: gender == Gender.female),
-                      )
-                    ]),
-              ),
-              const Padding(padding: EdgeInsets.only(top: 15)),
-              SizedBox(
-                height: 56,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    CustomDropDown(
-                      items: programs.map((e) => e.displayString).toList(),
-                      label: "Program",
-                      value: Program.none.displayString,
-                      validator: (value) {},
-                      onChanged: (value) {
-                        if (mounted) {
-                          setState(() {
-                            myProgram = Program.values.firstWhere(
-                                (element) => element.displayString == value);
-                            programController.text = myProgram.displayString;
-                          });
-                        }
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    // Add some spacing between dropdowns
-                    Expanded(
-                      child: DisabledTextField(
-                        controller: yearOfJoinController,
-                        labelText: "Year of joining",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(padding: EdgeInsets.only(top: 20)),
-              SizedBox(
-                height: 56,
-                child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: pass,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    label: Text(
-                      "Password",
-                      style: TextStyle(color: CupidColors.pinkColor),
-                    ),
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    labelStyle: TextStyle(color: CupidColors.pinkColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: CupidColors.pinkColor, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                    ),
+                    ],
                   ),
                 ),
-              ),
-              const Padding(padding: EdgeInsets.only(top: 15)),
-              SizedBox(
-                height: 56,
-                child: TextFormField(
-                  focusNode: FocusNode(),
-                  controller: confirmPass,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      labelText: "Confirm Password",
+                const Padding(padding: EdgeInsets.only(top: 20)),
+                SizedBox(
+                  height: 56,
+                  child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: pass,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      label: Text(
+                        "Password",
+                        style: TextStyle(color: CupidColors.pinkColor),
+                      ),
                       floatingLabelAlignment: FloatingLabelAlignment.start,
                       labelStyle: TextStyle(color: CupidColors.pinkColor),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
+                        borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
                         borderRadius: BorderRadius.all(Radius.circular(15)),
-                      )),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
-            ],
+                const Padding(padding: EdgeInsets.only(top: 15)),
+                SizedBox(
+                  height: 56,
+                  child: TextFormField(
+                    focusNode: FocusNode(),
+                    controller: confirmPass,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        labelText: "Confirm Password",
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                        labelStyle: TextStyle(color: CupidColors.pinkColor),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        )),
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16).copyWith(top: 0),
-        child: CupidButton(text: 'Continue', onTap: onSubmit),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16).copyWith(top: 0),
+          child: CupidButton(text: 'Continue', onTap: onSubmit),
+        ),
       ),
     );
   }
