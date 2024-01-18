@@ -6,6 +6,7 @@ import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/profile/display_profile_info.dart';
+import 'package:college_cupid/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/colors.dart';
@@ -39,6 +40,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           : PreferredSize(
               preferredSize: const Size.fromHeight(60),
               child: AppBar(
+                actions: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      color: CupidColors.pinkColor,
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) => ProfileOptionsBottomSheet(
+                          userEmail: widget.userProfile.email,
+                        ),
+                      );
+                    },
+                  ),
+                ],
                 systemOverlayStyle: CupidStyles.statusBarStyle,
                 backgroundColor: Colors.white,
                 elevation: 0,

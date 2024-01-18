@@ -1,9 +1,13 @@
+import 'package:college_cupid/functions/launchers.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/authentication/logout_button.dart';
+import 'package:college_cupid/widgets/global/app_title.dart';
+import 'package:college_cupid/widgets/global/cupid_text_button.dart';
 import '../../widgets/global/nav_icons.dart';
 import './home_tab.dart';
 import '../your_matches/your_matches_tab.dart';
@@ -24,7 +28,8 @@ class _HomeState extends State<Home> {
     const HomeTab(),
     const YourCrushesTab(),
     const YourMatches(),
-    UserProfileScreen(isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
+    UserProfileScreen(
+        isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
   ];
 
   int _selectedIndex = 0;
@@ -44,29 +49,63 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        endDrawer: Container(
+          color: CupidColors.backgroundColor,
+          width: screenWidth * 0.65,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      const AppTitle(),
+                      const Divider(),
+                      CupidTextButton(text: 'Report a user', onPressed: () {}),
+                      CupidTextButton(
+                          text: 'Terms of use',
+                          onPressed: () async {
+                            try {
+                              await launchURL(
+                                host: 'swc.iitg.ac.in',
+                                path: '/collegeCupid/terms',
+                              );
+                            } catch (e) {
+                              showSnackBar(e.toString());
+                            }
+                          }),
+                      CupidTextButton(
+                          text: 'About us',
+                          onPressed: () async {
+                            try {
+                              await launchURL(host: 'swc.iitg.ac.in');
+                            } catch (e) {
+                              showSnackBar(e.toString());
+                            }
+                          }),
+                    ],
+                  ),
+                ),
+                const LogoutButton(),
+              ],
+            ),
+          ),
+        ),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: AppBar(
+            foregroundColor: CupidColors.pinkColor,
             systemOverlayStyle: CupidStyles.statusBarStyle,
             backgroundColor: Colors.white,
             elevation: 0,
             automaticallyImplyLeading: false,
-            actions: const [LogoutButton()],
             centerTitle: false,
-            title: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('CollegeCupid',
-                  style: TextStyle(
-                    fontFamily: 'SedgwickAve',
-                    color: CupidColors.titleColor,
-                    fontSize: 32,
-                  )),
-            ),
+            title: const AppTitle(),
           ),
         ),
         backgroundColor: Colors.white,
@@ -94,7 +133,8 @@ class _HomeState extends State<Home> {
                 _pageController.jumpToPage(i);
               } else {
                 _pageController.animateToPage(i,
-                    duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeIn);
               }
               _selectedIndex = i;
             }),

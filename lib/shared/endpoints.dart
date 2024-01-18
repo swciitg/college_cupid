@@ -1,5 +1,6 @@
 class Endpoints {
   static const baseUrl = 'https://swc.iitg.ac.in/collegeCupid';
+  static const apiUrl = 'https://swc.iitg.ac.in/collegeCupid/api/v1';
   static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
 
   static const microsoftAuth = '/auth/microsoft';

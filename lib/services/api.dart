@@ -11,7 +11,7 @@ import 'package:http_parser/http_parser.dart';
 
 class APIService {
   final dio = Dio(BaseOptions(
-      baseUrl: Endpoints.baseUrl,
+      baseUrl: Endpoints.apiUrl,
       connectTimeout: const Duration(seconds: 35),
       receiveTimeout: const Duration(seconds: 15),
       headers: Endpoints.getHeader()));

@@ -1,5 +1,6 @@
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:college_cupid/widgets/home/profile_card.dart';
@@ -38,6 +39,15 @@ class _ProfileViewState extends State<ProfileView> {
 
     pageViewStore.setHomeTabProfiles(widget.userProfiles);
     pageViewStore.setIsLastPage(widget.userProfiles.length < 10);
+
+    if (widget.userProfiles.isEmpty) {
+      return const Center(
+        child: Text(
+          'No users as of now...',
+          style: CupidStyles.lightTextStyle,
+        ),
+      );
+    }
 
     return Observer(builder: (nestedContext) {
       return SizedBox(

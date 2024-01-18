@@ -3,6 +3,7 @@ import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/globals.dart';
+import 'package:college_cupid/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
 class ProfileCard extends StatelessWidget {
@@ -14,6 +15,14 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
+      onLongPress: () {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          builder: (context) =>
+              ProfileOptionsBottomSheet(userEmail: user.email),
+        );
+      },
       onTap: () {
         FocusScope.of(context).unfocus();
         Navigator.push(
@@ -25,7 +34,8 @@ class ProfileCard extends StatelessWidget {
                     )));
       },
       child: Container(
-        margin: EdgeInsets.fromLTRB(0.05 * screenWidth, 10, 0.05 * screenWidth, 20),
+        margin:
+            EdgeInsets.fromLTRB(0.05 * screenWidth, 10, 0.05 * screenWidth, 20),
         width: 0.95 * screenWidth,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -39,20 +49,26 @@ class ProfileCard extends StatelessWidget {
                 spreadRadius: 1)
           ],
           image: DecorationImage(
-              image:
-                  CachedNetworkImageProvider(user.profilePicUrl, cacheManager: customCacheManager),
+              image: CachedNetworkImageProvider(user.profilePicUrl,
+                  cacheManager: customCacheManager),
               fit: BoxFit.cover),
         ),
         child: Container(
           decoration: const BoxDecoration(
-            borderRadius: BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
-            gradient: LinearGradient(
-                stops: [0, 0.6, 1],
-                colors: [Colors.transparent, Colors.transparent, Colors.black87],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter),
+            borderRadius:
+                BorderRadiusDirectional.vertical(bottom: Radius.circular(20)),
+            gradient: LinearGradient(stops: [
+              0,
+              0.6,
+              1
+            ], colors: [
+              Colors.transparent,
+              Colors.transparent,
+              Colors.black87
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Expanded(child: SizedBox()),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
@@ -62,7 +78,9 @@ class ProfileCard extends StatelessWidget {
                   user.name,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25),
                 ),
               ),
             )

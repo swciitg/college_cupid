@@ -4,6 +4,12 @@ import './colors.dart';
 import 'package:flutter/material.dart';
 
 class CupidStyles {
+  static const textButtonStyle = TextStyle(
+    fontFamily: 'Sk-Modernist',
+    fontSize: 18,
+    color: CupidColors.grayColor
+  );
+
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
     statusBarIconBrightness: Brightness.dark,
