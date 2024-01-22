@@ -24,7 +24,7 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Reason for reporting'),
+      title: Text('Reason for reporting ${widget.userEmail}'),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.white,
@@ -55,6 +55,10 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
             onTap: () async {
               try {
                 final nav = Navigator.of(context);
+                if(reportingReasonController.text.isEmpty){
+                  showSnackBar("Field cannot be empty!");
+                  return;
+                }
                 await APIService().reportAndBlockUser(widget.userEmail,
                     reportingReasonController.text);
                 nav.pop();

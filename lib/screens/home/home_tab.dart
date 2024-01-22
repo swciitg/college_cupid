@@ -107,7 +107,7 @@ class _HomeTabState extends State<HomeTab> {
                       )),
                   onTap: () {
                     showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: Colors.white,
                         context: context,
                         builder: (_) {
                           return const FilterBottomSheet();

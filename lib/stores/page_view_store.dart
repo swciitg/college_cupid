@@ -27,6 +27,11 @@ abstract class _PageViewStore with Store {
   }
 
   @action
+  void removeHomeTabProfile(String email){
+    homeTabProfileList.removeWhere((element) => element.email == email);
+  }
+
+  @action
   void setHomeTabProfiles(List<UserProfile> value) {
     homeTabProfileList = ObservableList<UserProfile>();
     homeTabProfileList.addAll(value);

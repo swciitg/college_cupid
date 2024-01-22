@@ -15,7 +15,7 @@ class DrawerWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      color: CupidColors.backgroundColor,
+      color: Colors.white,
       width: screenWidth * 0.65,
       child: SafeArea(
         child: Column(
@@ -25,10 +25,13 @@ class DrawerWidget extends StatelessWidget {
                 children: [
                   const AppTitle(),
                   const Divider(),
-                  CupidTextButton(text: 'Blocked Users', onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(BlockedUserListScreen.id);
-                  }),
+                  CupidTextButton(
+                      text: 'Blocked Users',
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .pushNamed(BlockedUserListScreen.id);
+                      }),
                   CupidTextButton(
                       text: 'Terms of use',
                       onPressed: () async {
@@ -55,7 +58,9 @@ class DrawerWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Image.asset('assets/images/SWC_Logo_black.png'),
+              child: Image.asset(
+                'assets/images/SWC_Logo_black.png',
+              ),
             ),
             const Padding(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),

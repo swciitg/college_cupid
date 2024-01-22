@@ -83,6 +83,17 @@ mixin _$PageViewStore on _PageViewStore, Store {
   }
 
   @override
+  void removeHomeTabProfile(String email) {
+    final _$actionInfo = _$_PageViewStoreActionController.startAction(
+        name: '_PageViewStore.removeHomeTabProfile');
+    try {
+      return super.removeHomeTabProfile(email);
+    } finally {
+      _$_PageViewStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setHomeTabProfiles(List<UserProfile> value) {
     final _$actionInfo = _$_PageViewStoreActionController.startAction(
         name: '_PageViewStore.setHomeTabProfiles');

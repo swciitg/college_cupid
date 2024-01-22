@@ -1,8 +1,10 @@
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:college_cupid/widgets/global/report_user_alert_dialog.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileOptionsBottomSheet extends StatefulWidget {
   final String userEmail;
@@ -16,6 +18,7 @@ class ProfileOptionsBottomSheet extends StatefulWidget {
 class _ProfileOptionsBottomSheetState extends State<ProfileOptionsBottomSheet> {
   @override
   Widget build(BuildContext context) {
+    final pageViewStore = context.read<PageViewStore>();
     return Padding(
       padding: const EdgeInsets.all(25),
       child: Container(
@@ -31,11 +34,14 @@ class _ProfileOptionsBottomSheetState extends State<ProfileOptionsBottomSheet> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  showDialog(
+                  final nav = Navigator.of(context);
+                  await showDialog(
                     context: context,
                     builder: (context) =>
                         ReportUserAlertDialog(userEmail: widget.userEmail),
-                  ).then((value) => Navigator.of(context).pop());
+                  );
+                  nav.pop();
+                  pageViewStore.removeHomeTabProfile(widget.userEmail);
                 },
                 child: const Row(
                   crossAxisAlignment: CrossAxisAlignment.center,

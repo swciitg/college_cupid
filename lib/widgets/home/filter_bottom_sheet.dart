@@ -39,7 +39,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       return Container(
         padding: const EdgeInsets.all(40).copyWith(top: 0),
         decoration: const BoxDecoration(
-          color: CupidColors.backgroundColor,
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: Column(

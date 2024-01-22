@@ -32,7 +32,7 @@ class SelectionButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? CupidColors.pinkColor
-                : CupidColors.backgroundColor,
+                : Colors.white,
             borderRadius: borderRadius ?? BorderRadius.circular(15),
             border: border ?? Border.all(color: CupidColors.pinkColor),
           ),
