@@ -19,7 +19,9 @@ class Endpoints {
 
   static const getMatch = '/match';
 
-  static const getAllSearchedUserProfiles = '/search/user';
+  static const reportUser = '/report/add';
+  static const getBlockedUsers = '/report/blockedUsers';
+  static const unblockUser = '/report/unblock';
 
   static getHeader() {
     return {

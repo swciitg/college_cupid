@@ -39,7 +39,7 @@ class _YourMatchesState extends State<YourMatches> {
                 } else if (!snapshot.hasData) {
                   return const Center(
                     child: Text(
-                      'No Matches as of now\nGood Luck !!!!',
+                      'No Matches as of now\nGood Luck!!!',
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -47,7 +47,7 @@ class _YourMatchesState extends State<YourMatches> {
                   if (snapshot.data!.isEmpty) {
                     return const Center(
                       child: Text(
-                        'No Matches as of now\nGood Luck !!!!',
+                        'No Matches as of now\nGood Luck!!!',
                         textAlign: TextAlign.center,
                         style: CupidStyles.lightTextStyle,
                       ),

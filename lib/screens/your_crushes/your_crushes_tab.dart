@@ -54,7 +54,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     if (crushListStore.crushList.isEmpty) {
                       return const Center(
                         child: Text(
-                          'No Crushes as of now\nGet Rolling !!!!',
+                          'No Crushes as of now\nGet Rolling!!!',
                           textAlign: TextAlign.center,
                           style: CupidStyles.lightTextStyle,
                         ),
@@ -63,7 +63,6 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                     return ListView.builder(
                         itemCount: crushListStore.crushList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          print('PASSWORD: ${LoginStore.password}');
                           return CrushInfo(
                             crushListStore: crushListStore,
                             email: Encryption.decryptAES(

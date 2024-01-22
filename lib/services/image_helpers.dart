@@ -1,4 +1,5 @@
 import 'package:college_cupid/shared/colors.dart';
+import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -22,16 +23,15 @@ class ImageHelpers {
     return await _imageCropper.cropImage(
       sourcePath: file.path,
       cropStyle: cropStyle,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
-          backgroundColor: CupidColors.backgroundColor,
-          toolbarColor: CupidColors.pinkColor,
+          backgroundColor: Colors.black,
+          toolbarColor: Colors.black,
           toolbarTitle: 'Edit Image',
-          statusBarColor: CupidColors.pinkColor,
+          statusBarColor: Colors.black,
           toolbarWidgetColor: CupidColors.offWhiteColor,
           hideBottomControls: false,
-          activeControlsWidgetColor: CupidColors.pinkColor,
+          activeControlsWidgetColor: CupidColors.titleColor,
           initAspectRatio: CropAspectRatioPreset.original,
         ),
         IOSUiSettings(

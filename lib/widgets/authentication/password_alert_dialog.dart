@@ -32,7 +32,7 @@ class _PasswordAlertDialogState extends State<PasswordAlertDialog> {
       return PopScope(
         canPop: false,
         child: AlertDialog(
-          surfaceTintColor: CupidColors.backgroundColor,
+          surfaceTintColor: Colors.white,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text("Enter Password"),

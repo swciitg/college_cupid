@@ -49,6 +49,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     onPressed: () {
                       showModalBottomSheet(
                         backgroundColor: Colors.transparent,
+                        elevation: 0,
                         context: context,
                         builder: (context) => ProfileOptionsBottomSheet(
                           userEmail: widget.userProfile.email,

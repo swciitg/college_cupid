@@ -4,7 +4,6 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
-import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
 import 'package:college_cupid/widgets/home/selection_button.dart';
@@ -35,7 +34,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final filterStore = context.read<FilterStore>();
-    final pageViewStore = context.read<PageViewStore>();
 
     return Observer(builder: (_) {
       return Container(
@@ -72,7 +70,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     child: GestureDetector(
                       onTap: () {
                         filterStore.clearFilters();
-                        pageViewStore.resetStore();
                       },
                       child: Text(
                         "Clear",

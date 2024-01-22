@@ -1,5 +1,6 @@
 import 'package:college_cupid/screens/authentication/login_webview.dart';
 import 'package:college_cupid/screens/authentication/welcome.dart';
+import 'package:college_cupid/screens/blocked_users/blocked_user_list_screen.dart';
 import 'package:college_cupid/screens/home/home.dart';
 import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/splash.dart';
@@ -11,5 +12,6 @@ final Map<String, WidgetBuilder> routes = {
   Welcome.id: (context) => const Welcome(),
   LoginWebview.id: (context) => const LoginWebview(),
   Home.id: (context) => const Home(),
+  BlockedUserListScreen.id: (context) => const BlockedUserListScreen(),
   // AboutYouScreen.id: (context) => const AboutYouScreen(image: image, user: user)
 };

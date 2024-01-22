@@ -19,6 +19,7 @@ class ProfileCard extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
+          elevation: 0,
           builder: (context) =>
               ProfileOptionsBottomSheet(userEmail: user.email),
         );

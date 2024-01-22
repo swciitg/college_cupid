@@ -42,6 +42,21 @@ class APIService {
       return handler.next(error);
     }));
   }
+  
+  Future<void> reportAndBlockUser(String userEmail, String reasonForReporting)async{
+    try{
+      Response res = await dio.post(Endpoints.reportUser, data: jsonEncode(
+          {'reportedEmail': userEmail, 'reasonForReporting': reasonForReporting}));
+
+      if(res.statusCode == 200){
+        return;
+      }else{
+        return Future.error(res.statusMessage.toString());
+      }
+    }catch(e){
+      return Future.error(e.toString());
+    }
+  }
 
   Future<void> postPersonalInfo(PersonalInfo myInfo) async {
     try {
@@ -71,6 +86,36 @@ class APIService {
     }
   }
 
+  Future<List> getBlockedUsers()async{
+    try{
+      Response res = await dio.get(Endpoints.getBlockedUsers);
+      if (res.statusCode == 200) {
+        return res.data['blockedUsers'];
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    }catch(e){
+      return Future.error(e.toString());
+    }
+  }
+
+  Future<void> unblockUser(int index) async {
+    try {
+      Response res = await dio.delete(
+        Endpoints.unblockUser,
+        queryParameters: {'index': index},
+      );
+      if (res.statusCode == 200) {
+        showSnackBar(res.data['message']);
+        return;
+      } else {
+        Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
   Future<List> getCrushes() async {
     try {
       Response res = await dio.get(Endpoints.getCrush);
@@ -81,6 +126,22 @@ class APIService {
       }
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  Future<void> removeCrush(int index) async {
+    try {
+      Response res = await dio.delete(
+        Endpoints.removeCrush,
+        queryParameters: {'index': index},
+      );
+      if (res.statusCode == 200) {
+        return;
+      } else {
+        Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      return Future.error(err.toString());
     }
   }
 
@@ -178,22 +239,6 @@ class APIService {
         return userProfiles;
       } else {
         return Future.error(res.statusMessage.toString());
-      }
-    } catch (err) {
-      return Future.error(err.toString());
-    }
-  }
-
-  Future<void> removeCrush(int index) async {
-    try {
-      Response res = await dio.delete(
-        Endpoints.baseUrl + Endpoints.removeCrush,
-        queryParameters: {'index': index},
-      );
-      if (res.statusCode == 200) {
-        return;
-      } else {
-        Future.error(res.statusMessage.toString());
       }
     } catch (err) {
       return Future.error(err.toString());

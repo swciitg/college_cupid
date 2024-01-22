@@ -1,13 +1,10 @@
-import 'package:college_cupid/functions/launchers.dart';
-import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/widgets/authentication/logout_button.dart';
 import 'package:college_cupid/widgets/global/app_title.dart';
-import 'package:college_cupid/widgets/global/cupid_text_button.dart';
+import 'package:college_cupid/widgets/home/drawer_widget.dart';
 import '../../widgets/global/nav_icons.dart';
 import './home_tab.dart';
 import '../your_matches/your_matches_tab.dart';
@@ -49,53 +46,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        endDrawer: Container(
-          color: CupidColors.backgroundColor,
-          width: screenWidth * 0.65,
-          child: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      const AppTitle(),
-                      const Divider(),
-                      CupidTextButton(text: 'Report a user', onPressed: () {}),
-                      CupidTextButton(
-                          text: 'Terms of use',
-                          onPressed: () async {
-                            try {
-                              await launchURL(
-                                host: 'swc.iitg.ac.in',
-                                path: '/collegeCupid/terms',
-                              );
-                            } catch (e) {
-                              showSnackBar(e.toString());
-                            }
-                          }),
-                      CupidTextButton(
-                          text: 'About us',
-                          onPressed: () async {
-                            try {
-                              await launchURL(host: 'swc.iitg.ac.in');
-                            } catch (e) {
-                              showSnackBar(e.toString());
-                            }
-                          }),
-                    ],
-                  ),
-                ),
-                const LogoutButton(),
-              ],
-            ),
-          ),
-        ),
+        endDrawer: const DrawerWidget(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: AppBar(
