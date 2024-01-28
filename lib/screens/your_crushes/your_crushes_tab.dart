@@ -47,7 +47,12 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CustomLoader();
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return const Center(
+                  child: Text(
+                    'Some error occurred\nPlease try again!',
+                    textAlign: TextAlign.center,
+                  ),
+                );
               } else {
                 return Observer(
                   builder: (context) {

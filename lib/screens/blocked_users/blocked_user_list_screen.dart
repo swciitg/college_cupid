@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 class BlockedUserListScreen extends StatefulWidget {
   static String id = '/blockedUserListScreen';
+
   const BlockedUserListScreen({super.key});
 
   @override
@@ -48,7 +49,10 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                   return const CustomLoader();
                 } else if (snapshot.hasError) {
                   return const Center(
-                      child: Text('There was an error!\nPlease try again'));
+                      child: Text(
+                    'There was an error!\nPlease try again',
+                    textAlign: TextAlign.center,
+                  ));
                 } else {
                   return Observer(
                     builder: (context) {

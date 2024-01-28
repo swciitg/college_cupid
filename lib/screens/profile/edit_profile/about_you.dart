@@ -45,7 +45,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
     super.initState();
   }
 
-  final _cupidFormkey = GlobalKey<FormState>();
+  final _cupidFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
           forceMaterialTransparency: true,
         ),
         body: Form(
-          key: _cupidFormkey,
+          key: _cupidFormKey,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -98,36 +98,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                         controller: bioController,
                         maxLines: 5,
                         style: CupidStyles.normalTextStyle,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
+                        decoration:
+                            CupidStyles.textFieldInputDecoration.copyWith(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              width: 1.2,
-                              color: CupidColors.secondaryColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                                const BorderSide(color: CupidColors.titleColor),
-                          ),
-                          errorBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.red, width: 1.2),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          focusedErrorBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.red, width: 1.5),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.trim().isEmpty) {
                             return "Please enter your bio";
                           }
                           return null;
@@ -142,13 +119,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                             .copyWith(color: CupidColors.titleColor),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
-                      child: Text(
-                        "Select a few of your interests and let everyone know what you’re passionate about.",
-                        style: CupidStyles.lightTextStyle,
-                      ),
-                    ),
                     const DisplayInterests(),
                     const SizedBox(height: 20),
                   ],
@@ -161,8 +131,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: CupidColors.titleColor,
           onPressed: () async {
-            if (_cupidFormkey.currentState!.validate()) {
-              widget.myProfile.bio = bioController.text;
+            if (_cupidFormKey.currentState!.validate()) {
+              widget.myProfile.bio = bioController.text.trim();
               widget.myProfile.interests
                   .addAll(interestStore.selectedInterests);
               NavigatorState nav = Navigator.of(context);
@@ -171,8 +141,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
 
               widget.myProfile.profilePicUrl = await APIService()
                   .postUserProfile(widget.image, widget.myProfile);
-              print("updated user profile url");
-              print(widget.myProfile.profilePicUrl);
 
               await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
               await SharedPrefs.setDHPrivateKey(widget.privateKey);

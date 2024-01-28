@@ -7,21 +7,17 @@ class CrushListStore = _CrushListStore with _$CrushListStore;
 
 abstract class _CrushListStore with Store {
   @observable
-  List crushList = [];
+  ObservableList<String> crushList = ObservableList();
 
   @action
   Future<void> getCrushes() async {
-    crushList = await APIService().getCrushes();
+    crushList = ObservableList();
+    crushList.addAll(await APIService().getCrushes());
   }
 
   @action
   Future<void> removeCrush(int index) async {
-    await APIService().removeCrush(index);
-    await getCrushes();
-  }
-
-  @action
-  void setCrushes(List value) {
-    crushList = value;
+    bool success = await APIService().removeCrush(index);
+    if (success) crushList.removeAt(index);
   }
 }

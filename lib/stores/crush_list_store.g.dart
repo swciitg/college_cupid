@@ -13,13 +13,13 @@ mixin _$CrushListStore on _CrushListStore, Store {
       Atom(name: '_CrushListStore.crushList', context: context);
 
   @override
-  List<dynamic> get crushList {
+  ObservableList<String> get crushList {
     _$crushListAtom.reportRead();
     return super.crushList;
   }
 
   @override
-  set crushList(List<dynamic> value) {
+  set crushList(ObservableList<String> value) {
     _$crushListAtom.reportWrite(value, super.crushList, () {
       super.crushList = value;
     });
@@ -39,20 +39,6 @@ mixin _$CrushListStore on _CrushListStore, Store {
   @override
   Future<void> removeCrush(int index) {
     return _$removeCrushAsyncAction.run(() => super.removeCrush(index));
-  }
-
-  late final _$_CrushListStoreActionController =
-      ActionController(name: '_CrushListStore', context: context);
-
-  @override
-  void setCrushes(List<dynamic> value) {
-    final _$actionInfo = _$_CrushListStoreActionController.startAction(
-        name: '_CrushListStore.setCrushes');
-    try {
-      return super.setCrushes(value);
-    } finally {
-      _$_CrushListStoreActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

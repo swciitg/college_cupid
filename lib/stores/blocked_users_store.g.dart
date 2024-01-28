@@ -13,13 +13,13 @@ mixin _$BlockedUsersStore on _BlockedUsersStore, Store {
       Atom(name: '_BlockedUsersStore.blockedUserList', context: context);
 
   @override
-  List<dynamic> get blockedUserList {
+  ObservableList<String> get blockedUserList {
     _$blockedUserListAtom.reportRead();
     return super.blockedUserList;
   }
 
   @override
-  set blockedUserList(List<dynamic> value) {
+  set blockedUserList(ObservableList<String> value) {
     _$blockedUserListAtom.reportWrite(value, super.blockedUserList, () {
       super.blockedUserList = value;
     });
@@ -39,20 +39,6 @@ mixin _$BlockedUsersStore on _BlockedUsersStore, Store {
   @override
   Future<void> unblockUser(int index) {
     return _$unblockUserAsyncAction.run(() => super.unblockUser(index));
-  }
-
-  late final _$_BlockedUsersStoreActionController =
-      ActionController(name: '_BlockedUsersStore', context: context);
-
-  @override
-  void setBlockedUsers(List<dynamic> value) {
-    final _$actionInfo = _$_BlockedUsersStoreActionController.startAction(
-        name: '_BlockedUsersStore.setBlockedUsers');
-    try {
-      return super.setBlockedUsers(value);
-    } finally {
-      _$_BlockedUsersStoreActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

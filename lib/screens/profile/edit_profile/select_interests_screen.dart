@@ -18,8 +18,6 @@ class _SelectInterestsScreenState extends State<SelectInterestsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1), child: Divider()),
         systemOverlayStyle: CupidStyles.statusBarStyle,
         foregroundColor: CupidColors.titleColor,
         backgroundColor: Colors.white,
@@ -36,22 +34,13 @@ class _SelectInterestsScreenState extends State<SelectInterestsScreen> {
           Navigator.pop(context);
         },
         backgroundColor: CupidColors.titleColor,
-        child: const Icon(Icons.check, color: Colors.white,),
+        child: const Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
       ),
       body: const SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Text(
-                "Select a few of your interests and let everyone know what you’re passionate about.",
-                style: CupidStyles.lightTextStyle,
-              ),
-            ),
-            SizedBox(height: 20),
-            DisplayInterests(),
-          ],
-        ),
+        child: DisplayInterests(),
       ),
     );
   }
