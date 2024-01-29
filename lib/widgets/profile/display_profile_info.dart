@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
-import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
-import 'package:college_cupid/widgets/profile/icon_label_text.dart';
 import 'package:college_cupid/widgets/profile/interests/display_only_interest_list.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:college_cupid/widgets/profile/user_info.dart';
 import 'package:flutter/material.dart';
+
 import '../../shared/colors.dart';
 
 class DisplayProfileInfo extends StatefulWidget {
@@ -21,10 +20,6 @@ class DisplayProfileInfo extends StatefulWidget {
 class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
   @override
   Widget build(BuildContext context) {
-    Program myProgram = Program.values
-        .firstWhere((p) => p.databaseString == widget.userProfile.program);
-    String programAndYearDisplayString =
-        "${myProgram.displayString} '${widget.userProfile.yearOfJoin}";
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -40,51 +35,41 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                     children: [
                       Stack(
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            foregroundDecoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [Colors.transparent, Colors.black],
-                                  begin: Alignment.center,
-                                  end: Alignment.bottomCenter),
-                            ),
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: widget.userProfile.profilePicUrl,
-                              cacheManager: customCacheManager,
-                              progressIndicatorBuilder:
-                                  (context, url, progress) => SizedBox(
-                                height: MediaQuery.of(context).size.width,
-                                child: const CustomLoader(),
+                          Hero(
+                            tag: 'profilePic',
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(20),
+                                bottom: Radius.zero,
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                foregroundDecoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black
+                                      ],
+                                      begin: Alignment.center,
+                                      end: Alignment.bottomCenter),
+                                ),
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: widget.userProfile.profilePicUrl,
+                                  cacheManager: customCacheManager,
+                                  progressIndicatorBuilder:
+                                      (context, url, progress) => SizedBox(
+                                    height: MediaQuery.of(context).size.width,
+                                    child: const CustomLoader(),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                           Positioned(
                             bottom: 10,
                             left: 25,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  child: Text(
-                                    widget.userProfile.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                                IconLabelText(
-                                    text: widget.userProfile.email,
-                                    icon: FluentIcons.mail_32_filled),
-                                IconLabelText(
-                                    text: programAndYearDisplayString,
-                                    icon: FluentIcons.hat_graduation_12_filled)
-                              ],
-                            ),
+                            child: UserInfo(userProfile: widget.userProfile),
                           ),
                         ],
                       ),
