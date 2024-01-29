@@ -1,10 +1,11 @@
 import 'dart:async';
+
+import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/home/filter_bottom_sheet.dart';
-import 'package:college_cupid/services/api.dart';
-import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/home/profile_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';

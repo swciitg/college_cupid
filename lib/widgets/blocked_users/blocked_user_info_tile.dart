@@ -52,19 +52,24 @@ class BlockedUserInfoTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(19), right: Radius.zero),
-                    // Image border
-                    child: SizedBox.fromSize(
-                      child: CachedNetworkImage(
-                          imageUrl: snapshot.data!['profilePicUrl'].toString(),
-                          cacheManager: customCacheManager,
-                          progressIndicatorBuilder: (context, url, progress) =>
-                              const CustomLoader(),
-                          fit: BoxFit.cover,
-                          width: 64,
-                          height: 66),
+                  Hero(
+                    tag: 'profilePic',
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(19), right: Radius.zero),
+                      // Image border
+                      child: SizedBox.fromSize(
+                        child: CachedNetworkImage(
+                            imageUrl:
+                                snapshot.data!['profilePicUrl'].toString(),
+                            cacheManager: customCacheManager,
+                            progressIndicatorBuilder:
+                                (context, url, progress) =>
+                                    const CustomLoader(),
+                            fit: BoxFit.cover,
+                            width: 64,
+                            height: 66),
+                      ),
                     ),
                   ),
                   Padding(

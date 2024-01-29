@@ -47,24 +47,28 @@ class MatchInfo extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(19),
-                      right: Radius.zero,
-                    ),
-                    child: SizedBox.fromSize(
-                      child: CachedNetworkImage(
-                          imageUrl: snapshot.data!['profilePicUrl'].toString(),
-                          cacheManager: customCacheManager,
-                          progressIndicatorBuilder: (context, url, progress) =>
-                              Center(
-                                child: CircularProgressIndicator(
-                                  value: progress.progress,
-                                ),
-                              ),
-                          fit: BoxFit.cover,
-                          width: 64,
-                          height: 66),
+                  Hero(
+                    tag: 'profilePic',
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(19),
+                        right: Radius.zero,
+                      ),
+                      child: SizedBox.fromSize(
+                        child: CachedNetworkImage(
+                            imageUrl:
+                                snapshot.data!['profilePicUrl'].toString(),
+                            cacheManager: customCacheManager,
+                            progressIndicatorBuilder:
+                                (context, url, progress) => Center(
+                                      child: CircularProgressIndicator(
+                                        value: progress.progress,
+                                      ),
+                                    ),
+                            fit: BoxFit.cover,
+                            width: 64,
+                            height: 66),
+                      ),
                     ),
                   ),
                   Container(

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/main.dart';
@@ -6,7 +7,9 @@ import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile/select_interests_screen.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/custom_drop_down.dart';
@@ -17,8 +20,6 @@ import 'package:college_cupid/widgets/profile/interests/display_only_interest_li
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/styles.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatefulWidget {
@@ -171,37 +172,40 @@ class _EditProfileState extends State<EditProfile> {
               child: Column(
                 children: [
                   Stack(children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          pickImage(ImageSource.gallery);
-                        });
-                      },
-                      child: image != null
-                          ? ClipOval(
-                              child: Image.file(
-                                image!,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : myProfile.profilePicUrl.isNotEmpty
-                              ? ClipOval(
-                                  child: Image.network(
-                                    myProfile.profilePicUrl,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : ClipOval(
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    color: CupidColors.titleColor,
-                                  ),
+                    Hero(
+                      tag: 'profilePic',
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            pickImage(ImageSource.gallery);
+                          });
+                        },
+                        child: image != null
+                            ? ClipOval(
+                                child: Image.file(
+                                  image!,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
                                 ),
+                              )
+                            : myProfile.profilePicUrl.isNotEmpty
+                                ? ClipOval(
+                                    child: Image.network(
+                                      myProfile.profilePicUrl,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipOval(
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      color: CupidColors.titleColor,
+                                    ),
+                                  ),
+                      ),
                     ),
                     Positioned(
                         bottom: 0,
