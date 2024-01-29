@@ -20,108 +20,105 @@ class DisplayProfileInfo extends StatefulWidget {
 class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Flex(
-          direction: Axis.vertical,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          Hero(
-                            tag: 'profilePic',
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(20),
-                                bottom: Radius.zero,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Flex(
+        direction: Axis.vertical,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Hero(
+                          tag: 'profilePic',
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(20),
+                              bottom: Radius.zero,
+                            ),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              foregroundDecoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [Colors.transparent, Colors.black],
+                                    begin: Alignment.center,
+                                    end: Alignment.bottomCenter),
                               ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                foregroundDecoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black
-                                      ],
-                                      begin: Alignment.center,
-                                      end: Alignment.bottomCenter),
-                                ),
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: widget.userProfile.profilePicUrl,
-                                  cacheManager: customCacheManager,
-                                  progressIndicatorBuilder:
-                                      (context, url, progress) => SizedBox(
-                                    height: MediaQuery.of(context).size.width,
-                                    child: const CustomLoader(),
-                                  ),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: widget.userProfile.profilePicUrl,
+                                cacheManager: customCacheManager,
+                                progressIndicatorBuilder:
+                                    (context, url, progress) => SizedBox(
+                                  height: MediaQuery.of(context).size.width,
+                                  child: const CustomLoader(),
                                 ),
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 10,
-                            left: 25,
-                            child: UserInfo(userProfile: widget.userProfile),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 20),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(20)),
-                          color: CupidColors.backgroundColor,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'About me',
-                              style: TextStyle(
-                                  fontSize: 18, color: CupidColors.grayColor),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              widget.userProfile.bio,
-                              overflow: TextOverflow.clip,
-                              style: const TextStyle(
-                                  color: CupidColors.blackColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 20),
-                            if (widget.userProfile.interests.isNotEmpty)
-                              const Text(
+                        Positioned(
+                          bottom: 10,
+                          left: 25,
+                          child: UserInfo(userProfile: widget.userProfile),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      decoration: const BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(bottom: Radius.circular(20)),
+                        color: CupidColors.backgroundColor,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'About me',
+                            style: TextStyle(
+                                fontSize: 18, color: CupidColors.grayColor),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            widget.userProfile.bio,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(
+                                color: CupidColors.blackColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 20),
+                          if (widget.userProfile.interests.isNotEmpty)
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(
                                 "Interested in",
                                 style: TextStyle(
                                     color: CupidColors.grayColor, fontSize: 18),
                                 textAlign: TextAlign.left,
                               ),
-                            DisplayOnlyInterestList(
-                              interests: widget.userProfile.interests,
                             ),
-                          ],
-                        ),
+                          DisplayOnlyInterestList(
+                            interests: widget.userProfile.interests,
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

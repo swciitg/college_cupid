@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 class ReportUserAlertDialog extends StatefulWidget {
   final String userEmail;
+
   const ReportUserAlertDialog({required this.userEmail, super.key});
 
   @override
@@ -24,25 +25,23 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Reason for reporting ${widget.userEmail}'),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        'Reason for reporting ${widget.userEmail}',
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       content: TextFormField(
         decoration: const InputDecoration(
-            contentPadding:
-            EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: CupidColors.pinkColor, width: 1),
+              borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
               borderRadius: BorderRadius.all(
                 Radius.circular(15),
               ),
             ),
             border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: CupidColors.pinkColor, width: 1),
+              borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
               borderRadius: BorderRadius.all(
                 Radius.circular(15),
               ),
@@ -55,12 +54,12 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
             onTap: () async {
               try {
                 final nav = Navigator.of(context);
-                if(reportingReasonController.text.isEmpty){
+                if (reportingReasonController.text.isEmpty) {
                   showSnackBar("Field cannot be empty!");
                   return;
                 }
-                await APIService().reportAndBlockUser(widget.userEmail,
-                    reportingReasonController.text);
+                await APIService().reportAndBlockUser(
+                    widget.userEmail, reportingReasonController.text);
                 nav.pop();
                 showSnackBar('Reported and Blocked ${widget.userEmail}');
               } catch (e) {
