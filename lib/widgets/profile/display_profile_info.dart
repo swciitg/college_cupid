@@ -45,7 +45,6 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                               constraints: const BoxConstraints(
                                 minHeight: 250,
                               ),
-                              color: Colors.black,
                               foregroundDecoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                     colors: [Colors.transparent, Colors.black],

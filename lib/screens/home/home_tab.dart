@@ -57,13 +57,12 @@ class _HomeTabState extends State<HomeTab> {
                     controller: _searchController,
                     textInputAction: TextInputAction.search,
                     onFieldSubmitted: (value) {
-                      filterStore.setName(_searchController.text);
+                      filterStore.setName(value);
                     },
                     onChanged: (value) {
                       if (timer != null) timer!.cancel();
                       timer = Timer(const Duration(seconds: 1), () {
                         filterStore.setName(value);
-                        pageViewStore.resetStore();
                       });
                     },
                     decoration: const InputDecoration(
