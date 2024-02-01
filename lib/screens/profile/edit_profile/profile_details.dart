@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
@@ -6,6 +7,7 @@ import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile/about_you.dart';
+import 'package:college_cupid/screens/profile/edit_profile/crop_image_screen.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
@@ -43,25 +45,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   final TextEditingController programController = TextEditingController();
   final TextEditingController pass = TextEditingController();
   final TextEditingController confirmPass = TextEditingController();
-
-  Future<void> pickImage(ImageSource source) async {
-    try {
-      final image = await imageHelpers.pickImage(source: source);
-      if (image == null) return;
-      await cropImage(image);
-    } catch (e) {
-      print('Error picking image: $e');
-    }
-  }
-
-  Future<void> cropImage(XFile image) async {
-    final croppedImage = await imageHelpers.crop(file: image);
-    if (croppedImage != null) {
-      setState(() {
-        this.image = File(croppedImage.path);
-      });
-    }
-  }
 
   void onSubmit() {
     if (image == null) {
@@ -139,6 +122,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: CupidColors.titleColor,
+          onPressed: onSubmit,
+          child: const Icon(
+            FluentIcons.chevron_right_32_regular,
+            color: Colors.white,
+          ),
+        ),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -162,64 +153,65 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             padding: const EdgeInsets.all(25).copyWith(bottom: 0),
             child: Column(
               children: [
-                Stack(children: [
-                  GestureDetector(
-                      onTap: () {
+                Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final nav = Navigator.of(context);
+                        final value = await imageHelpers.pickImage(
+                            source: ImageSource.gallery);
+
+                        if (value == null) return;
+
+                        Image pickedImage =
+                            await ImageHelpers.xFileToImage(xFile: value);
+                        final croppedImage =
+                            await nav.push<File>(MaterialPageRoute(
+                          builder: (context) =>
+                              CropImageScreen(image: pickedImage),
+                        ));
+
                         setState(() {
-                          pickImage(ImageSource.gallery);
+                          image = croppedImage;
                         });
                       },
                       child: image != null
-                          ? ClipOval(
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
                               child: Image.file(
-                              image!,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ))
-                          : ClipOval(
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                color: CupidColors.titleColor,
+                                image!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
                               ),
-                            )),
-                  Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: CupidColors.titleColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: CupidColors.backgroundColor,
-                              width: 3,
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 150,
+                                height: 150,
+                                color: CupidColors.titleColor,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: Icon(Icons.camera_alt_outlined,
-                                color: Colors.white),
-                          )))
-                ]),
+                    ),
+                  ],
+                ),
                 const Padding(padding: EdgeInsets.only(top: 30)),
                 SizedBox(
                   height: 56,
                   child: TextFormField(
                     focusNode: FocusNode(),
                     controller: name,
-                    decoration: const InputDecoration(
+                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: "Name",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: TextStyle(color: CupidColors.pinkColor),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
+                      labelStyle: const TextStyle(color: CupidColors.pinkColor),
                       enabled: false,
                     ),
                   ),
@@ -231,17 +223,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     focusNode: FocusNode(),
                     controller: emailController,
                     enabled: false,
-                    decoration: const InputDecoration(
+                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: 'Email',
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: TextStyle(color: CupidColors.pinkColor),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
+                      labelStyle: const TextStyle(color: CupidColors.pinkColor),
                     ),
                   ),
                 ),
@@ -324,32 +309,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     focusNode: FocusNode(),
                     controller: pass,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      label: Text(
-                        "Password",
-                        style: TextStyle(color: CupidColors.pinkColor),
-                      ),
+                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                      labelText: "Password",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: TextStyle(color: CupidColors.pinkColor),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: CupidColors.pinkColor, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
+                      labelStyle: const TextStyle(color: CupidColors.pinkColor),
                     ),
                   ),
                 ),
@@ -360,40 +323,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     focusNode: FocusNode(),
                     controller: confirmPass,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                        labelText: "Confirm Password",
-                        floatingLabelAlignment: FloatingLabelAlignment.start,
-                        labelStyle: TextStyle(color: CupidColors.pinkColor),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: CupidColors.pinkColor, width: 1),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: CupidColors.pinkColor, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: CupidColors.pinkColor, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        )),
+                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                      labelText: "Confirm Password",
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      labelStyle: const TextStyle(color: CupidColors.pinkColor),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
               ],
             ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: CupidColors.titleColor,
-          onPressed: onSubmit,
-          child: const Icon(
-            FluentIcons.chevron_right_32_regular,
-            color: Colors.white,
           ),
         ),
       ),

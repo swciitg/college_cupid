@@ -23,11 +23,8 @@ class _SelectInterestsScreenState extends State<SelectInterestsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: const Text("Select Interests",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 28,
-            )),
+        title:
+            const Text("Select Interests", style: CupidStyles.pageHeadingStyle),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

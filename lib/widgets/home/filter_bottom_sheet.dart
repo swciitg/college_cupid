@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
@@ -146,7 +147,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 CustomDropDown(
                   items: yearOfJoinMap.keys
                       .toList()
-                      .sublist(0, (filterStore.program.numberOfYears ?? 0) + 2),
+                      .sublist(0, (filterStore.program.numberOfYears ?? 4) + 2),
                   label: "Year of join",
                   value: yearOfJoinMap.keys.firstWhere(
                       (key) => yearOfJoinMap[key] == filterStore.yearOfJoin),

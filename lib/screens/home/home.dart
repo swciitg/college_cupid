@@ -1,15 +1,18 @@
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
-import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/widgets/global/app_title.dart';
 import 'package:college_cupid/widgets/home/drawer_widget.dart';
-import '../../widgets/global/nav_icons.dart';
-import './home_tab.dart';
-import '../your_matches/your_matches_tab.dart';
-import '../../shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+
+import '../../shared/colors.dart';
+import '../../widgets/global/nav_icons.dart';
+import '../your_matches/your_matches_tab.dart';
+import './home_tab.dart';
 
 class Home extends StatefulWidget {
   static String id = '/home';
@@ -21,14 +24,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Widget> tabs = [
-    const HomeTab(),
-    const YourCrushesTab(),
-    const YourMatches(),
-    UserProfileScreen(
-        isMine: true, userProfile: UserProfile.fromJson(LoginStore.myProfile)),
-  ];
-
   int _selectedIndex = 0;
   late PageController _pageController;
 
@@ -46,6 +41,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final commonStore = context.read<CommonStore>();
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -98,15 +95,25 @@ class _HomeState extends State<Home> {
           ),
         ),
         body: SizedBox.expand(
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            children: tabs,
-          ),
+          child: Observer(builder: (_) {
+            return PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              children: [
+                const HomeTab(),
+                const YourCrushesTab(),
+                const YourMatches(),
+                UserProfileScreen(
+                  isMine: true,
+                  userProfile: UserProfile.fromJson(commonStore.myProfile),
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );

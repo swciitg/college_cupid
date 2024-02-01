@@ -4,11 +4,13 @@ import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile/edit_profile.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:college_cupid/widgets/profile/display_profile_info.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../shared/colors.dart';
 
@@ -83,7 +85,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   builder: (context) => const EditProfile(),
                 )).then((value) {
               setState(() {
-                profile = UserProfile.fromJson(LoginStore.myProfile);
+                profile =
+                    UserProfile.fromJson(context.read<CommonStore>().myProfile);
               });
             });
           } else {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:college_cupid/shared/enums.dart';
 
 extension StringExtension on String {
@@ -9,6 +11,14 @@ extension StringExtension on String {
       .split(' ')
       .map((str) => str.capitalize())
       .join(' ');
+}
+
+String generateRandomString({required int length}) {
+  const chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random rnd = Random();
+  return String.fromCharCodes(Iterable.generate(
+      length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
 }
 
 Map<String, int?> getYearOfJoinMap() {

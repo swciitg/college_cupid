@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import './colors.dart';
-import 'package:flutter/material.dart';
 
 class CupidStyles {
   static const textFieldInputDecoration = InputDecoration(
@@ -25,6 +25,12 @@ class CupidStyles {
     focusedErrorBorder: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.red, width: 1.5),
       borderRadius: BorderRadius.all(Radius.circular(20)),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+      borderRadius: BorderRadius.all(
+        Radius.circular(15),
+      ),
     ),
   );
 
@@ -53,8 +59,7 @@ class CupidStyles {
   );
   static const pageHeadingStyle = TextStyle(
     fontFamily: 'Sk-Modernist',
-    fontSize: 34,
-    fontWeight: FontWeight.bold,
+    fontSize: 30,
     color: CupidColors.normalTextColor,
   );
   static const lightTextStyle = TextStyle(

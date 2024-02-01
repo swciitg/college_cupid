@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
-import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
+import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -25,6 +25,7 @@ class LoginWebview extends StatefulWidget {
 
 class _LoginWebviewState extends State<LoginWebview> {
   late WebViewController controller;
+  late CommonStore commonStore;
 
   Future<String> getElementById(
       WebViewController controller, String elementId) async {
@@ -53,6 +54,7 @@ class _LoginWebviewState extends State<LoginWebview> {
   @override
   void initState() {
     super.initState();
+    commonStore = context.read<CommonStore>();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -117,10 +119,11 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                   await SharedPrefs.setPassword(password);
                   await SharedPrefs.saveMyProfile(myProfile);
-                  await LoginStore.initializeMyProfile();
+                  await commonStore.initializeProfile();
                   LoginStore.password = password;
 
-                  SharedPrefs.setDHPublicKey(LoginStore.myProfile['publicKey']);
+                  SharedPrefs.setDHPublicKey(
+                      commonStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
                           Encryption.decryptAES(
                               encryptedText: Encryption.hexadecimalToBytes(

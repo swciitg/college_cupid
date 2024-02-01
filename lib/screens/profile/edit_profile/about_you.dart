@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/services/api.dart';
@@ -6,8 +8,8 @@ import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/splash.dart';
+import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/interest_store.dart';
-import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/profile/interests/display_interests.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +51,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final commonStore = context.read<CommonStore>();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -57,17 +60,46 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: CupidColors.titleColor,
-            ),
-          ),
-          title: const Text("About You", style: CupidStyles.pageHeadingStyle),
+          foregroundColor: CupidColors.titleColor,
+          title: const Text("About you", style: CupidStyles.pageHeadingStyle),
           elevation: 0,
           forceMaterialTransparency: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: CupidColors.titleColor,
+          onPressed: () async {
+            if (_cupidFormKey.currentState!.validate()) {
+              if (interestStore.selectedInterests.length < 5) {
+                showSnackBar("Select at least 5 interests!");
+                return;
+              }
+              if (interestStore.selectedInterests.length > 20) {
+                showSnackBar("You cannot select more than 20 interests!");
+                return;
+              }
+              widget.myProfile.bio = bioController.text.trim();
+              widget.myProfile.interests
+                  .addAll(interestStore.selectedInterests);
+              NavigatorState nav = Navigator.of(context);
+
+              await APIService().postPersonalInfo(widget.myInfo);
+
+              widget.myProfile.profilePicUrl = await APIService()
+                  .postUserProfile(widget.image, widget.myProfile);
+
+              await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
+              await SharedPrefs.setDHPrivateKey(widget.privateKey);
+              await SharedPrefs.setPassword(widget.password);
+              await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
+              await commonStore.initializeProfile();
+
+              nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+            }
+          },
+          child: const Icon(
+            FluentIcons.chevron_right_32_regular,
+            color: Colors.white,
+          ),
         ),
         body: Form(
           key: _cupidFormKey,
@@ -79,13 +111,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
                       child: Text('Bio',
                           style: CupidStyles.headingStyle
                               .copyWith(color: CupidColors.titleColor)),
                     ),
                     const Padding(
-                      padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                       child: Text(
                         'Write a brief description about yourself to attract people to your profile.',
                         softWrap: true,
@@ -93,7 +125,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
                         controller: bioController,
                         maxLines: 5,
@@ -112,7 +144,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 5),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Text(
                         "Your Interests",
                         style: CupidStyles.headingStyle
@@ -126,34 +158,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 const SizedBox(height: 20),
               ],
             ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: CupidColors.titleColor,
-          onPressed: () async {
-            if (_cupidFormKey.currentState!.validate()) {
-              widget.myProfile.bio = bioController.text.trim();
-              widget.myProfile.interests
-                  .addAll(interestStore.selectedInterests);
-              NavigatorState nav = Navigator.of(context);
-
-              await APIService().postPersonalInfo(widget.myInfo);
-
-              widget.myProfile.profilePicUrl = await APIService()
-                  .postUserProfile(widget.image, widget.myProfile);
-
-              await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
-              await SharedPrefs.setDHPrivateKey(widget.privateKey);
-              await SharedPrefs.setPassword(widget.password);
-              await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
-              await LoginStore.initializeMyProfile();
-
-              nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
-            }
-          },
-          child: const Icon(
-            FluentIcons.chevron_right_32_regular,
-            color: Colors.white,
           ),
         ),
       ),

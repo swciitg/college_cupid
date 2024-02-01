@@ -25,6 +25,38 @@ mixin _$CommonStore on _CommonStore, Store {
     });
   }
 
+  late final _$myProfileAtom =
+      Atom(name: '_CommonStore.myProfile', context: context);
+
+  @override
+  ObservableMap<String, dynamic> get myProfile {
+    _$myProfileAtom.reportRead();
+    return super.myProfile;
+  }
+
+  @override
+  set myProfile(ObservableMap<String, dynamic> value) {
+    _$myProfileAtom.reportWrite(value, super.myProfile, () {
+      super.myProfile = value;
+    });
+  }
+
+  late final _$updateMyProfileAsyncAction =
+      AsyncAction('_CommonStore.updateMyProfile', context: context);
+
+  @override
+  Future<void> updateMyProfile(Map<String, dynamic> map) {
+    return _$updateMyProfileAsyncAction.run(() => super.updateMyProfile(map));
+  }
+
+  late final _$initializeProfileAsyncAction =
+      AsyncAction('_CommonStore.initializeProfile', context: context);
+
+  @override
+  Future<void> initializeProfile() {
+    return _$initializeProfileAsyncAction.run(() => super.initializeProfile());
+  }
+
   late final _$_CommonStoreActionController =
       ActionController(name: '_CommonStore', context: context);
 
@@ -42,7 +74,8 @@ mixin _$CommonStore on _CommonStore, Store {
   @override
   String toString() {
     return '''
-password: ${password}
+password: ${password},
+myProfile: ${myProfile}
     ''';
   }
 }

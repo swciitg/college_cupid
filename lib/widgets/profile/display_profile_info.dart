@@ -42,6 +42,10 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                             ),
                             child: Container(
                               width: MediaQuery.of(context).size.width,
+                              constraints: const BoxConstraints(
+                                minHeight: 250,
+                              ),
+                              color: Colors.black,
                               foregroundDecoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                     colors: [Colors.transparent, Colors.black],
@@ -49,7 +53,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                                     end: Alignment.bottomCenter),
                               ),
                               child: CachedNetworkImage(
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 imageUrl: widget.userProfile.profilePicUrl,
                                 cacheManager: customCacheManager,
                                 progressIndicatorBuilder:

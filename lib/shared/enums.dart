@@ -1,5 +1,4 @@
 enum Program {
-  // TODO: change this accordingly
   none("Select", null, null, null),
   bTech("B.Tech", "BTECH", 0, 4),
   bDes("B.Des", "BDES", 0, 4),

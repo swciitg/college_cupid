@@ -1,15 +1,16 @@
-import 'package:college_cupid/shared/colors.dart';
+import 'dart:io';
+import 'dart:ui' as ui;
+
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ImageHelpers {
   final ImagePicker _imagePicker;
-  final ImageCropper _imageCropper;
 
-  ImageHelpers({ImagePicker? imagePicker, ImageCropper? imageCropper})
-      : _imagePicker = imagePicker ?? ImagePicker(),
-        _imageCropper = imageCropper ?? ImageCropper();
+  ImageHelpers({ImagePicker? imagePicker})
+      : _imagePicker = imagePicker ?? ImagePicker();
 
   Future<XFile?> pickImage(
       {ImageSource source = ImageSource.gallery,
@@ -18,30 +19,24 @@ class ImageHelpers {
         source: source, imageQuality: imageQuality);
   }
 
-  Future<CroppedFile?> crop(
-      {required XFile file, CropStyle cropStyle = CropStyle.rectangle}) async {
-    return await _imageCropper.cropImage(
-      sourcePath: file.path,
-      cropStyle: cropStyle,
-      uiSettings: [
-        AndroidUiSettings(
-          backgroundColor: Colors.black,
-          toolbarColor: Colors.black,
-          toolbarTitle: 'Edit Image',
-          statusBarColor: Colors.black,
-          toolbarWidgetColor: CupidColors.offWhiteColor,
-          hideBottomControls: false,
-          activeControlsWidgetColor: CupidColors.titleColor,
-          initAspectRatio: CropAspectRatioPreset.original,
-        ),
-        IOSUiSettings(
-          title: 'Edit Image',
-          cancelButtonTitle: 'Cancel',
-          doneButtonTitle: 'Done',
-          aspectRatioLockDimensionSwapEnabled: false,
-          resetButtonHidden: false,
-        )
-      ],
-    );
+  static Future<Image> xFileToImage({required XFile xFile}) async {
+    final tempDir = await getTemporaryDirectory();
+    String fileName = generateRandomString(length: 20);
+    File file = await File('${tempDir.path}/$fileName.png').create();
+    file.writeAsBytesSync(await xFile.readAsBytes());
+
+    return Image.file(file);
+  }
+
+  static Future<File> imageToFile({required ui.Image image}) async {
+    final data = await image.toByteData(format: ui.ImageByteFormat.png);
+    final bytes = data!.buffer.asUint8List();
+    final tempDir = await getTemporaryDirectory();
+    final String path = generateRandomString(length: 20);
+    File file = await File('${tempDir.path}/$path.png').create();
+
+    file.writeAsBytesSync(bytes);
+
+    return file;
   }
 }

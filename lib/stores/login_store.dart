@@ -1,13 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../services/api.dart';
 import '../services/shared_prefs.dart';
 import '../shared/database_strings.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginStore {
   static bool isProfileCompleted = false;
   static bool isPasswordSaved = false;
-  static Map<String, dynamic> myProfile = {};
+  
   static String? email;
   static String? displayName;
   static String? dhPrivateKey;
@@ -27,10 +28,10 @@ class LoginStore {
       Map<String, dynamic>? data = await APIService().getUserProfile(email!);
       if (data != null) {
         await SharedPrefs.saveMyProfile(data);
-        await initializeMyProfile();
+        // await initializeMyProfile();
         isProfileCompleted = true;
       } else {
-        await SharedPrefs.clearPrefs();
+        await logout();
         return false;
       }
       return true;
@@ -44,7 +45,7 @@ class LoginStore {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isProfileCompleted = false;
     isPasswordSaved = false;
-    myProfile.clear();
+    // myProfile.clear();
     email = null;
     displayName = null;
     accessToken = null;
@@ -98,14 +99,5 @@ class LoginStore {
 
   static Future<void> initializeDisplayName() async {
     displayName = await SharedPrefs.getDisplayName();
-  }
-
-  static Future<void> initializeMyProfile() async {
-    myProfile = await SharedPrefs.getMyProfile();
-  }
-
-  static Future<void> updateMyProfile(Map<String, dynamic> myProfileMap) async {
-    await SharedPrefs.saveMyProfile(myProfileMap);
-    myProfile = await SharedPrefs.getMyProfile();
   }
 }
