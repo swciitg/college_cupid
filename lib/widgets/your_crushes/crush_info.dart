@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/services/auth_free_api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
@@ -105,6 +106,7 @@ class CrushInfo extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       await crushListStore.removeCrush(index);
+                      await AuthFreeAPIService().decreaseCount(email);
                     },
                     child: const Padding(
                       padding: EdgeInsets.only(right: 8),

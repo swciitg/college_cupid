@@ -3,6 +3,7 @@ import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user_profile.dart';
 import 'package:college_cupid/screens/profile/edit_profile/edit_profile.dart';
 import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/services/auth_free_api.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -99,6 +100,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     plainText: profile.email, key: LoginStore.password!));
 
             await APIService().addCrush(sharedSecret, encryptedCrushEmail);
+            await AuthFreeAPIService().increaseCount(profile.email);
           }
         },
         child: Icon(

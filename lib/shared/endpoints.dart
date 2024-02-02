@@ -16,12 +16,16 @@ class Endpoints {
   static const addCrush = '/crush/add';
   static const getCrush = '/crush';
   static const removeCrush = '/crush/remove';
+  static const increaseCrushesCount = '/crush/increaseCount';
+  static const decreaseCrushesCount = '/crush/decreaseCount';
 
   static const getMatch = '/match';
 
   static const reportUser = '/report/add';
   static const getBlockedUsers = '/report/blockedUsers';
   static const unblockUser = '/report/unblock';
+
+  static  const regenerateToken = '/auth/refreshToken';
 
   static getHeader() {
     return {

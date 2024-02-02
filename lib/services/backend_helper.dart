@@ -42,7 +42,7 @@ class BackendHelper {
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5)));
       //  TODO: CHECK IF WORKING
-      Response resp = await regenDio.post("/auth/refreshToken",
+      Response resp = await regenDio.post(Endpoints.apiUrl+Endpoints.regenerateToken,
           options: Options(headers: {"authorization": "Bearer $refreshToken"}));
       var data = resp.data!;
       await SharedPrefs.setAccessToken(data[DatabaseStrings.accessToken]);
