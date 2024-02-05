@@ -10,6 +10,7 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/interest_store.dart';
+import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/interests/display_interests.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class AboutYouScreen extends StatefulWidget {
 class _AboutYouScreenState extends State<AboutYouScreen> {
   late TextEditingController bioController;
   late InterestStore interestStore;
+  bool loading = false;
 
   @override
   void initState() {
@@ -77,6 +79,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 showSnackBar("You cannot select more than 20 interests!");
                 return;
               }
+              setState(() {
+                loading = true;
+              });
               widget.myProfile.bio = bioController.text.trim();
               widget.myProfile.interests
                   .addAll(interestStore.selectedInterests);
@@ -92,14 +97,18 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               await SharedPrefs.setPassword(widget.password);
               await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
               await commonStore.initializeProfile();
-
+              setState(() {
+                loading = false;
+              });
               nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
             }
           },
-          child: const Icon(
-            FluentIcons.chevron_right_32_regular,
-            color: Colors.white,
-          ),
+          child: loading
+              ? const CustomLoader(color: Colors.white,)
+              : const Icon(
+                  FluentIcons.chevron_right_32_regular,
+                  color: Colors.white,
+                ),
         ),
         body: Form(
           key: _cupidFormKey,

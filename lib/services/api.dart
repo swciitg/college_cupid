@@ -142,6 +142,7 @@ class APIService {
         queryParameters: {'index': index},
       );
       if (res.statusCode == 200) {
+        if (res.data['success'] == false) showSnackBar(res.data['message']);
         return res.data['success'];
       } else {
         return Future.error(res.statusMessage.toString());
@@ -250,9 +251,6 @@ class APIService {
       return Future.error(err.toString());
     }
   }
-
-
-
 
   Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
     try {
