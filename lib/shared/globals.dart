@@ -10,7 +10,14 @@ Map<String, List<String>> interestsMap = {
     "🏀 Basketball",
     "🏏 Cricket",
     "⛳ Golf",
-    "👯‍♂️ Zumba"
+    "🏃 Athletics",
+    "♟️ Chess",
+    "🏑 Hockey",
+    "🏋️‍♀️ weightlifting",
+    "🏓 TT",
+    "🏊 swimming",
+    "🏐 Volleyball",
+    "🏸 Squash"
   ],
   'Creativity': [
     "🎨 Art",
@@ -29,7 +36,8 @@ Map<String, List<String>> interestsMap = {
     "🎭 Theatre",
     "🕺🏻 Nightclubs",
     "🎤 Karaoke",
-    "🏛️ Museums & Galleries"
+    "🏛️ Museums & Galleries",
+    "🍸 Pubs"
   ],
   "Staying in": [
     "🎮 Video games",
@@ -88,5 +96,5 @@ Map<String, List<String>> interestsMap = {
     "⛺ Hiking trips",
     "🛣️ Road trips"
   ],
-  "Pets": ["🐶 Dogs", "😺 Cats", "🐦 Birds", "🐠 Fish", "🐢 Turtles"]
+  "Pets": ["🐶 Dogs", "😺 Cats", "🐦 Birds", "🐠 Fish"]
 };
