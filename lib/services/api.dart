@@ -1,13 +1,16 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:http_parser/http_parser.dart';
+
 import '../functions/snackbar.dart';
 import '../models/personal_info.dart';
 import '../models/user_profile.dart';
-import '../stores/login_store.dart';
-import 'package:dio/dio.dart';
 import '../shared/endpoints.dart';
+import '../stores/login_store.dart';
 import './backend_helper.dart';
-import 'dart:io';
-import 'package:http_parser/http_parser.dart';
 
 class APIService {
   final dio = Dio(BaseOptions(
@@ -29,10 +32,11 @@ class APIService {
         } else {
           bool couldRegenerate = await BackendHelper().regenerateAccessToken();
           if (couldRegenerate) {
-            // retry
+            debugPrint('RETRYING REQUEST');
             return handler
                 .resolve(await BackendHelper().retryRequest(response));
           } else {
+            await LoginStore.logout();
             showSnackBar("Your session has expired!! Login again.");
           }
         }
@@ -121,15 +125,15 @@ class APIService {
     }
   }
 
-  Future<int> getCrushesCount()async{
-    try{
+  Future<int> getCrushesCount() async {
+    try {
       Response res = await dio.get(Endpoints.getCrushesCount);
-      if(res.statusCode==200){
+      if (res.statusCode == 200) {
         return res.data['crushesCount'];
-      }else{
+      } else {
         return Future.error(res.statusMessage.toString());
       }
-    }catch(err){
+    } catch (err) {
       return Future.error(err.toString());
     }
   }
