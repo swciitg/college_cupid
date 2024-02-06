@@ -10,7 +10,8 @@ Map<String, List<String>> interestsMap = {
     "🏀 Basketball",
     "🏏 Cricket",
     "⛳ Golf",
-    "👯‍♂️ Zumba"
+    "🏐 Volleyball",
+    "🏸 Badminton",
   ],
   'Creativity': [
     "🎨 Art",
