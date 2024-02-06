@@ -121,6 +121,19 @@ class APIService {
     }
   }
 
+  Future<int> getCrushesCount()async{
+    try{
+      Response res = await dio.get(Endpoints.getCrushesCount);
+      if(res.statusCode==200){
+        return res.data['crushesCount'];
+      }else{
+        return Future.error(res.statusMessage.toString());
+      }
+    }catch(err){
+      return Future.error(err.toString());
+    }
+  }
+
   Future<List<String>> getCrushes() async {
     try {
       Response res = await dio.get(Endpoints.getCrush);

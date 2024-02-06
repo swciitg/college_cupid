@@ -16,6 +16,7 @@ class Endpoints {
   static const addCrush = '/crush/add';
   static const getCrush = '/crush';
   static const removeCrush = '/crush/remove';
+  static const getCrushesCount = '/crush/getCount';
   static const increaseCrushesCount = '/crush/increaseCount';
   static const decreaseCrushesCount = '/crush/decreaseCount';
 

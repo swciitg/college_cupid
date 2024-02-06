@@ -25,6 +25,30 @@ class _YourMatchesState extends State<YourMatches> {
             style: CupidStyles.headingStyle
                 .copyWith(color: CupidColors.titleColor),
           ),
+          FutureBuilder(
+              future: APIService().getCrushesCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox();
+                } else if (snapshot.hasError || snapshot.hasData == false) {
+                  return const Center(
+                    child: Text(
+                      'Some error occurred while displaying crushes count!',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+                String text = 'You have got ${snapshot.data} admirers!';
+                if (snapshot.data! == 1) {
+                  text = 'You have got an admirer!';
+                }
+                if (snapshot.data! == 0) {
+                  text = 'Your admirer has not registered yet :(';
+                }
+                return Text(text,
+                    style: CupidStyles.headingStyle
+                        .copyWith(color: CupidColors.titleColor, fontSize: 16));
+              }),
           Expanded(
             child: FutureBuilder(
               future: APIService().getMatches(),
@@ -41,6 +65,7 @@ class _YourMatchesState extends State<YourMatches> {
                     child: Text(
                       'No Matches as of now\nGood Luck!!!',
                       textAlign: TextAlign.center,
+                      style: CupidStyles.lightTextStyle,
                     ),
                   );
                 } else {

@@ -83,8 +83,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 loading = true;
               });
               widget.myProfile.bio = bioController.text.trim();
-              widget.myProfile.interests
-                  .addAll(interestStore.selectedInterests);
+              widget.myProfile.interests = interestStore.selectedInterests.map((element) => element).toList();
               NavigatorState nav = Navigator.of(context);
 
               await APIService().postPersonalInfo(widget.myInfo);
