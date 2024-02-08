@@ -99,8 +99,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 Encryption.encryptAES(
                     plainText: profile.email, key: LoginStore.password!));
 
-            await APIService().addCrush(sharedSecret, encryptedCrushEmail);
-            await AuthFreeAPIService().increaseCount(profile.email);
+            bool success =
+                await APIService().addCrush(sharedSecret, encryptedCrushEmail);
+            if (success) {
+              await AuthFreeAPIService().increaseCount(profile.email);
+            }
           }
         },
         child: Icon(

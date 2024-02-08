@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/main.dart';
@@ -10,6 +11,7 @@ import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/interest_store.dart';
@@ -198,13 +200,22 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 )
                               : myProfile.profilePicUrl.isNotEmpty
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image.network(
-                                        myProfile.profilePicUrl,
-                                        width: 150,
-                                        height: 150,
-                                        fit: BoxFit.cover,
+                                  ? SizedBox(
+                                      width: 150,
+                                      height: 150,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: myProfile.profilePicUrl,
+                                          cacheManager: customCacheManager,
+                                          progressIndicatorBuilder:
+                                              (context, url, progress) =>
+                                                  Container(
+                                            color: CupidColors.titleColor,
+                                            child: const CustomLoader(color: Colors.white,),
+                                          ),
+                                        ),
                                       ),
                                     )
                                   : ClipOval(

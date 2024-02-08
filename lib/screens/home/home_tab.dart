@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
@@ -129,7 +130,12 @@ class _HomeTabState extends State<HomeTab> {
               }),
               builder: (futureBuilderContext, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
+                  return const Center(
+                      child: Text(
+                    'Some Error Occurred!\nPlease try again!',
+                    textAlign: TextAlign.center,
+                    style: CupidStyles.lightTextStyle,
+                  ));
                 } else if (snapshot.hasData) {
                   return ProfileView(
                     pageController: _pageController,

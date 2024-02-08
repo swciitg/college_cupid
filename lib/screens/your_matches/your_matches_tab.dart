@@ -33,8 +33,9 @@ class _YourMatchesState extends State<YourMatches> {
                 } else if (snapshot.hasError || snapshot.hasData == false) {
                   return const Center(
                     child: Text(
-                      'Some error occurred while displaying crushes count!',
+                      'Some error occurred!',
                       textAlign: TextAlign.center,
+                      style: CupidStyles.lightTextStyle,
                     ),
                   );
                 }
@@ -59,7 +60,13 @@ class _YourMatchesState extends State<YourMatches> {
                     color: CupidColors.pinkColor,
                   ));
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return const Center(
+                    child: Text(
+                      'Please try again later!',
+                      textAlign: TextAlign.center,
+                      style: CupidStyles.lightTextStyle,
+                    ),
+                  );
                 } else if (!snapshot.hasData) {
                   return const Center(
                     child: Text(

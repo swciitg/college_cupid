@@ -67,6 +67,7 @@ Map<String, List<String>> interestsMap = {
   ],
   "Music": [
     "🎵 Hip hop",
+    "🎵 Pop",
     "🎵 Rock",
     "🎵 Electronic",
     "🎵 R&B",

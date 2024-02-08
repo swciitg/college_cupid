@@ -51,6 +51,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                   child: Text(
                     'Some error occurred\nPlease try again!',
                     textAlign: TextAlign.center,
+                    style: CupidStyles.lightTextStyle,
                   ),
                 );
               } else {

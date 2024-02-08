@@ -54,7 +54,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                               child: CachedNetworkImage(
                                 fit: BoxFit.contain,
                                 imageUrl: widget.userProfile.profilePicUrl,
-                                cacheManager: customCacheManager,
+                                // cacheManager: customCacheManager,
                                 progressIndicatorBuilder:
                                     (context, url, progress) => SizedBox(
                                   height: MediaQuery.of(context).size.width,

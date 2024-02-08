@@ -269,7 +269,7 @@ class APIService {
     }
   }
 
-  Future<void> addCrush(String sharedSecret, String encryptedCrushEmail) async {
+  Future<bool> addCrush(String sharedSecret, String encryptedCrushEmail) async {
     try {
       Response res = await dio.put(Endpoints.addCrush,
           data: jsonEncode({
@@ -279,9 +279,9 @@ class APIService {
 
       if (res.statusCode == 200) {
         showSnackBar(res.data['message']);
-        return;
+        return res.data['success'] as bool;
       } else {
-        Future.error(res.statusMessage.toString());
+        return Future.error(res.statusMessage.toString());
       }
     } catch (err) {
       return Future.error(err.toString());

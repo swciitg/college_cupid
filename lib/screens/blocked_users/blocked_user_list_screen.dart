@@ -50,8 +50,9 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                 } else if (snapshot.hasError) {
                   return const Center(
                       child: Text(
-                    'There was an error!\nPlease try again',
-                    textAlign: TextAlign.center,
+                    'Some error occurred!\nPlease try again later!',
+                        textAlign: TextAlign.center,
+                        style: CupidStyles.lightTextStyle,
                   ));
                 } else {
                   return Observer(
@@ -59,7 +60,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                       if (blockedUsersStore.blockedUserList.isEmpty) {
                         return const Center(
                           child: Text(
-                            'No Blocked Users as of now',
+                            'No Blocked Users as of now!',
                             textAlign: TextAlign.center,
                             style: CupidStyles.lightTextStyle,
                           ),
