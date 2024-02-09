@@ -1,12 +1,13 @@
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import '../../functions/encryption.dart';
+import '../../shared/colors.dart';
 import '../../shared/styles.dart';
 import '../../stores/crush_list_store.dart';
 import '../../stores/login_store.dart';
 import '../../widgets/your_crushes/crush_info.dart';
-import '../../shared/colors.dart';
 
 class YourCrushesTab extends StatefulWidget {
   const YourCrushesTab({super.key});
@@ -77,7 +78,7 @@ class _YourCrushesTabState extends State<YourCrushesTab> {
                                             crushListStore.crushList[index]
                                                 .toString()),
                                     key: LoginStore.password!)
-                                .replaceAll('0', ''),
+                                .replaceAll(RegExp(r'^0+(?=.)'), ''),
                             index: index,
                           );
                         });
