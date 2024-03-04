@@ -1,13 +1,12 @@
-import 'package:college_cupid/screens/authentication/welcome.dart';
-import 'package:college_cupid/screens/home/home.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/widgets/global/app_title.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
-  static String id = '/';
-
   const SplashScreen({super.key});
 
   @override
@@ -23,19 +22,24 @@ class _SplashScreenState extends State<SplashScreen> {
           LoginStore.isProfileCompleted &&
           LoginStore.isPasswordSaved) {
         debugPrint('USER IS AUTHENTICATED');
-        final nav = Navigator.of(context);
+        final goRouter = GoRouter.of(context);
         await context.read<CommonStore>().initializeProfile();
-        nav.pushNamedAndRemoveUntil(Home.id, (route) => false);
+        goRouter.goNamed(AppRoutes.home.name);
       } else {
         debugPrint('USER IS NOT AUTHENTICATED');
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(Welcome.id, (route) => false);
+        context.goNamed(AppRoutes.welcome.name);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return const Scaffold(
+      body: Center(
+        child: AppTitle(
+          fontSize: 40,
+        ),
+      ),
+    );
   }
 }

@@ -1,13 +1,12 @@
 import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/screens/authentication/login_webview.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Welcome extends StatefulWidget {
-  static String id = '/welcome';
-
   const Welcome({super.key});
 
   @override
@@ -71,7 +70,7 @@ class _WelcomeState extends State<Welcome> {
                 child: CupidButton(
                   text: 'Continue with Outlook',
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, LoginWebview.id);
+                    context.goNamed(AppRoutes.loginWebview.name);
                   },
                   height: 50,
                 ),

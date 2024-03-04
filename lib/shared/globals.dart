@@ -97,5 +97,13 @@ Map<String, List<String>> interestsMap = {
     "⛺ Hiking trips",
     "🛣️ Road trips"
   ],
-  "Pets": ["🐶 Dogs", "😺 Cats", "🐦 Birds", "🐠 Fish"]
+  "Pets": [
+    "🐶 Dogs",
+    "😺 Cats",
+    "🐦 Birds",
+    "🐠 Fishes",
+    "🐇 Rabbits",
+    "🐢 Turtles",
+    "🐍 Snakes"
+  ]
 };

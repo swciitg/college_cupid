@@ -1,7 +1,8 @@
-import 'package:college_cupid/splash.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/global/cupid_text_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
@@ -10,10 +11,10 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupidTextButton(
       onPressed: () async {
-        NavigatorState nav = Navigator.of(context);
+        final goRouter = GoRouter.of(context);
         bool cleared = await LoginStore.logout();
         if (cleared) {
-          nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+          goRouter.goNamed(AppRoutes.splash.name);
         }
       },
       text: 'Logout',

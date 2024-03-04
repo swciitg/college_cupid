@@ -1,11 +1,11 @@
 import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/screens/blocked_users/blocked_user_list_screen.dart';
-import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/widgets/authentication/logout_button.dart';
 import 'package:college_cupid/widgets/global/app_title.dart';
 import 'package:college_cupid/widgets/global/cupid_text_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -28,9 +28,8 @@ class DrawerWidget extends StatelessWidget {
                   CupidTextButton(
                       text: 'Blocked Users',
                       onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .pushNamed(BlockedUserListScreen.id);
+                        context.pop();
+                        context.pushNamed(AppRoutes.blockedUserListScreen.name);
                       }),
                   CupidTextButton(
                       text: 'Terms of use',

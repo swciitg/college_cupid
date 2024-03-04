@@ -9,8 +9,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
 class BlockedUserListScreen extends StatefulWidget {
-  static String id = '/blockedUserListScreen';
-
   const BlockedUserListScreen({super.key});
 
   @override
@@ -51,8 +49,8 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                   return const Center(
                       child: Text(
                     'Some error occurred!\nPlease try again later!',
-                        textAlign: TextAlign.center,
-                        style: CupidStyles.lightTextStyle,
+                    textAlign: TextAlign.center,
+                    style: CupidStyles.lightTextStyle,
                   ));
                 } else {
                   return Observer(

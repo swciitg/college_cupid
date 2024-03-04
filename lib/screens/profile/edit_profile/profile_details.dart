@@ -23,8 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileDetails extends StatefulWidget {
-  static String id = '/profileDetails';
-
   const ProfileDetails({super.key});
 
   @override

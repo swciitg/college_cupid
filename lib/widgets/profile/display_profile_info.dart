@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
-import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/interests/display_only_interest_list.dart';
 import 'package:college_cupid/widgets/profile/user_info.dart';

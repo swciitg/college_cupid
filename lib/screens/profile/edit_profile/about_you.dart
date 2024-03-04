@@ -3,17 +3,18 @@ import 'dart:io';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/interests/display_interests.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AboutYouScreen extends StatefulWidget {
@@ -83,8 +84,10 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 loading = true;
               });
               widget.myProfile.bio = bioController.text.trim();
-              widget.myProfile.interests = interestStore.selectedInterests.map((element) => element).toList();
-              NavigatorState nav = Navigator.of(context);
+              widget.myProfile.interests = interestStore.selectedInterests
+                  .map((element) => element)
+                  .toList();
+              final goRouter = GoRouter.of(context);
 
               await APIService().postPersonalInfo(widget.myInfo);
 
@@ -99,11 +102,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
               setState(() {
                 loading = false;
               });
-              nav.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+              goRouter.goNamed(AppRoutes.splash.name);
             }
           },
           child: loading
-              ? const CustomLoader(color: Colors.white,)
+              ? const CustomLoader(
+                  color: Colors.white,
+                )
               : const Icon(
                   FluentIcons.chevron_right_32_regular,
                   color: Colors.white,

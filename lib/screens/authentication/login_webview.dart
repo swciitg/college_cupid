@@ -2,21 +2,19 @@ import 'dart:convert';
 
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
-import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/endpoints.dart';
-import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/authentication/password_alert_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends StatefulWidget {
-  static String id = '/loginWebview';
-
   const LoginWebview({super.key});
 
   @override
@@ -60,7 +58,7 @@ class _LoginWebviewState extends State<LoginWebview> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) async {
-            NavigatorState nav = Navigator.of(context);
+            final goRouter = GoRouter.of(context);
 
             if (url.startsWith(
                 '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
@@ -101,8 +99,7 @@ class _LoginWebviewState extends State<LoginWebview> {
 
                 if (myProfile == null || myInfo == null) {
                   debugPrint('NEW USER');
-                  nav.pushNamedAndRemoveUntil(
-                      ProfileDetails.id, (route) => false);
+                  goRouter.goNamed(AppRoutes.profileDetails.name);
                 } else {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
@@ -113,8 +110,7 @@ class _LoginWebviewState extends State<LoginWebview> {
                   if (hashedPassword !=
                       Encryption.bytesToHexadecimal(
                           Encryption.calculateSHA256(password))) {
-                    nav.pushNamedAndRemoveUntil(
-                        SplashScreen.id, (route) => false);
+                    goRouter.goNamed(AppRoutes.splash.name);
                   }
 
                   await SharedPrefs.setPassword(password);
@@ -131,8 +127,7 @@ class _LoginWebviewState extends State<LoginWebview> {
                               key: LoginStore.password!))
                       .toString());
 
-                  nav.pushNamedAndRemoveUntil(
-                      SplashScreen.id, (route) => false);
+                  goRouter.goNamed(AppRoutes.splash.name);
                 }
               }
             }

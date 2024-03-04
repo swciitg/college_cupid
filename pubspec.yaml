@@ -59,6 +59,7 @@ dependencies:
   path_provider: ^2.1.2
   crop_image: ^1.0.11
   upgrader: ^9.0.0
+  go_router: ^13.2.0
 
 dev_dependencies:
   flutter_test:

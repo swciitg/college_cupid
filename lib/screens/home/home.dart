@@ -16,8 +16,6 @@ import '../your_matches/your_matches_tab.dart';
 import './home_tab.dart';
 
 class Home extends StatefulWidget {
-  static String id = '/home';
-
   const Home({super.key});
 
   @override
@@ -74,7 +72,8 @@ class _HomeState extends State<Home> {
               surfaceTintColor: CupidColors.navBarBackgroundColor,
               iconTheme: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.selected)) {
-                  return const IconThemeData(color: CupidColors.navBarIconColor);
+                  return const IconThemeData(
+                      color: CupidColors.navBarIconColor);
                 } else {
                   return const IconThemeData(color: Colors.grey);
                 }

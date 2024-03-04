@@ -1,6 +1,5 @@
-import 'package:college_cupid/routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/splash.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/filter_store.dart';
@@ -31,10 +30,9 @@ class CollegeCupidApp extends StatelessWidget {
         Provider<CommonStore>(create: (_) => CommonStore()),
         Provider<PageViewStore>(create: (_) => PageViewStore()),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'CollegeCupid',
         debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey,
         scaffoldMessengerKey: rootScaffoldMessengerKey,
         theme: ThemeData(
           textSelectionTheme: TextSelectionThemeData(
@@ -43,8 +41,7 @@ class CollegeCupidApp extends StatelessWidget {
             selectionColor: CupidColors.secondaryColor.withOpacity(0.75),
           ),
         ),
-        initialRoute: SplashScreen.id,
-        routes: routes,
+        routerConfig: goRouter,
       ),
     );
   }

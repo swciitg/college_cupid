@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/main.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/screens/profile/edit_profile/crop_image_screen.dart';
-import 'package:college_cupid/screens/profile/edit_profile/select_interests_screen.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -24,6 +23,7 @@ import 'package:college_cupid/widgets/profile/interests/display_only_interest_li
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -95,6 +95,7 @@ class _EditProfileState extends State<EditProfile> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: CupidColors.titleColor,
           onPressed: () async {
+            final goRouter = GoRouter.of(context);
             if (loading) return;
             if (_cupidFormKey.currentState!.validate() == false) return;
             if (myProgram == Program.none) {
@@ -140,7 +141,7 @@ class _EditProfileState extends State<EditProfile> {
               setState(() {
                 loading = false;
               });
-              navigatorKey.currentState!.pop(updatedProfile);
+              goRouter.pop(updatedProfile);
             } catch (e) {
               setState(() {
                 loading = false;
@@ -213,7 +214,9 @@ class _EditProfileState extends State<EditProfile> {
                                               (context, url, progress) =>
                                                   Container(
                                             color: CupidColors.titleColor,
-                                            child: const CustomLoader(color: Colors.white,),
+                                            child: const CustomLoader(
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -338,12 +341,8 @@ class _EditProfileState extends State<EditProfile> {
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SelectInterestsScreen(),
-                                ));
+                            context.pushNamed(
+                                AppRoutes.selectInterestsScreen.name);
                           },
                           child: Container(
                             color: Colors.white,

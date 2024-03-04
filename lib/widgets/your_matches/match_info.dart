@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
-import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
+import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MatchInfo extends StatelessWidget {
   final String email;
@@ -33,15 +34,10 @@ class MatchInfo extends StatelessWidget {
           } else {
             return GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserProfileScreen(
-                      isMine: false,
-                      userProfile: UserProfile.fromJson(snapshot.data!),
-                    ),
-                  ),
-                );
+                context.pushNamed(AppRoutes.userProfileScreen.name, extra: {
+                  'isMine': false,
+                  'userProfile': UserProfile.fromJson(snapshot.data!)
+                });
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
