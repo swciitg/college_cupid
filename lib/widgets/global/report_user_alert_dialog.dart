@@ -1,19 +1,21 @@
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/repositories/user_moderation_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/widgets/global/cupid_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ReportUserAlertDialog extends StatefulWidget {
+class ReportUserAlertDialog extends ConsumerStatefulWidget {
   final String userEmail;
 
   const ReportUserAlertDialog({required this.userEmail, super.key});
 
   @override
-  State<ReportUserAlertDialog> createState() => _ReportUserAlertDialogState();
+  ConsumerState<ReportUserAlertDialog> createState() =>
+      _ReportUserAlertDialogState();
 }
 
-class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
+class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
   final reportingReasonController = TextEditingController();
 
   @override
@@ -24,6 +26,7 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final userModerationRepo = ref.read(userModerationRepoProvider);
     return AlertDialog(
       title: Text(
         'Reason for reporting ${widget.userEmail}',
@@ -58,7 +61,7 @@ class _ReportUserAlertDialogState extends State<ReportUserAlertDialog> {
                   showSnackBar("Field cannot be empty!");
                   return;
                 }
-                await APIService().reportAndBlockUser(
+                await userModerationRepo.reportAndBlockUser(
                     widget.userEmail, reportingReasonController.text);
                 nav.pop();
                 showSnackBar('Reported and Blocked ${widget.userEmail}');

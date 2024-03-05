@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/personal_info.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/repositories/personal_info_repository.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_routes.dart';
-import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -14,11 +15,11 @@ import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:college_cupid/widgets/profile/interests/display_interests.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class AboutYouScreen extends StatefulWidget {
-  static String id = 'aboutYou';
+class AboutYouScreen extends ConsumerStatefulWidget {
   final PersonalInfo myInfo;
   final String password;
   final String privateKey;
@@ -34,10 +35,10 @@ class AboutYouScreen extends StatefulWidget {
       required this.myInfo});
 
   @override
-  State<AboutYouScreen> createState() => _AboutYouScreenState();
+  ConsumerState<AboutYouScreen> createState() => _AboutYouScreenState();
 }
 
-class _AboutYouScreenState extends State<AboutYouScreen> {
+class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
   late TextEditingController bioController;
   late InterestStore interestStore;
   bool loading = false;
@@ -54,6 +55,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfileRepo = ref.read(userProfileRepoProvider);
+    final personalInfoRepo = ref.read(personalInfoRepoProvider);
+
     final commonStore = context.read<CommonStore>();
     return GestureDetector(
       onTap: () {
@@ -89,9 +93,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                   .toList();
               final goRouter = GoRouter.of(context);
 
-              await APIService().postPersonalInfo(widget.myInfo);
+              await personalInfoRepo.postPersonalInfo(widget.myInfo);
 
-              widget.myProfile.profilePicUrl = await APIService()
+              widget.myProfile.profilePicUrl = await userProfileRepo
                   .postUserProfile(widget.image, widget.myProfile);
 
               await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);

@@ -1,9 +1,8 @@
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/routing/app_routes.dart';
-import 'package:college_cupid/services/api.dart';
-import 'package:college_cupid/services/auth_free_api.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -11,12 +10,13 @@ import 'package:college_cupid/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:college_cupid/widgets/profile/display_profile_info.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../shared/colors.dart';
 
-class UserProfileScreen extends StatefulWidget {
+class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
 
@@ -24,10 +24,10 @@ class UserProfileScreen extends StatefulWidget {
       {required this.isMine, required this.userProfile, super.key});
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
+class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   late UserProfile profile;
 
   @override
@@ -38,6 +38,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final crushesRepo = ref.read(crushesRepoProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: widget.isMine
@@ -97,9 +98,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     plainText: profile.email, key: LoginStore.password!));
 
             bool success =
-                await APIService().addCrush(sharedSecret, encryptedCrushEmail);
+                await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
             if (success) {
-              await AuthFreeAPIService().increaseCount(profile.email);
+              await crushesRepo.increaseCrushesCount(profile.email);
             }
           }
         },

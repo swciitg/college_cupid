@@ -4,9 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/screens/profile/edit_profile/crop_image_screen.dart';
-import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
@@ -23,20 +23,21 @@ import 'package:college_cupid/widgets/profile/interests/display_only_interest_li
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class EditProfile extends StatefulWidget {
+class EditProfile extends ConsumerStatefulWidget {
   static String id = '/editProfile';
 
   const EditProfile({super.key});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  ConsumerState<EditProfile> createState() => _EditProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _EditProfileState extends ConsumerState<EditProfile> {
   ImageHelpers imageHelpers = ImageHelpers();
   late Gender gender;
   File? image;
@@ -77,6 +78,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfileRepo = ref.read(userProfileRepoProvider);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -126,10 +128,10 @@ class _EditProfileState extends State<EditProfile> {
                 interests: interestStore.selectedInterests,
               );
 
-              updatedProfile.profilePicUrl =
-                  await APIService().updateUserProfile(image, updatedProfile);
+              updatedProfile.profilePicUrl = await userProfileRepo
+                  .updateUserProfile(image, updatedProfile);
               final updatedProfileMap =
-                  await APIService().getUserProfile(LoginStore.email!);
+                  await userProfileRepo.getUserProfile(LoginStore.email!);
 
               if (updatedProfileMap != null) {
                 await commonStore.updateMyProfile(updatedProfileMap);

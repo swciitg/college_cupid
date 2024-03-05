@@ -1,19 +1,19 @@
-import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
+import 'package:college_cupid/repositories/matches_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/widgets/your_matches/match_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class YourMatches extends StatefulWidget {
+class YourMatches extends ConsumerWidget {
   const YourMatches({super.key});
 
   @override
-  State<YourMatches> createState() => _YourMatchesState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final matchesRepo = ref.read(matchesRepoProvider);
+    final crushesRepo = ref.read(crushesRepoProvider);
 
-class _YourMatchesState extends State<YourMatches> {
-  @override
-  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 30, right: 30),
       child: Column(
@@ -26,7 +26,7 @@ class _YourMatchesState extends State<YourMatches> {
                 .copyWith(color: CupidColors.titleColor),
           ),
           FutureBuilder(
-              future: APIService().getCrushesCount(),
+              future: crushesRepo.getCrushesCount(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox();
@@ -52,7 +52,7 @@ class _YourMatchesState extends State<YourMatches> {
               }),
           Expanded(
             child: FutureBuilder(
-              future: APIService().getMatches(),
+              future: matchesRepo.getMatches(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(

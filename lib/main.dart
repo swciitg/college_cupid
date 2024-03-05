@@ -6,10 +6,11 @@ import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/stores/page_view_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const CollegeCupidApp());
+  runApp(const riverpod.ProviderScope(child: CollegeCupidApp()));
 }
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =

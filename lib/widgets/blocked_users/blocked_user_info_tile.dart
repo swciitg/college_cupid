@@ -1,16 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_routes.dart';
-import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:college_cupid/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class BlockedUserInfoTile extends StatelessWidget {
+class BlockedUserInfoTile extends ConsumerWidget {
   final String email;
   final int index;
   final BlockedUsersStore blockedUsersStore;
@@ -22,7 +23,8 @@ class BlockedUserInfoTile extends StatelessWidget {
       super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userProfileRepo = ref.read(userProfileRepoProvider);
     return Container(
       margin: const EdgeInsets.only(top: 32),
       height: 66,
@@ -32,7 +34,7 @@ class BlockedUserInfoTile extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),
       child: FutureBuilder(
-        future: APIService().getUserProfile(email),
+        future: userProfileRepo.getUserProfile(email),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CustomLoader();

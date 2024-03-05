@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:college_cupid/services/api.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
@@ -11,16 +11,17 @@ import 'package:college_cupid/widgets/home/profile_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  State<HomeTab> createState() => _HomeTabState();
+  ConsumerState<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends ConsumerState<HomeTab> {
   final _pageController = PageController();
   final TextEditingController _searchController = TextEditingController();
   Timer? timer;
@@ -37,6 +38,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfileRepo = ref.read(userProfileRepoProvider);
     filterStore = context.read<FilterStore>();
     pageViewStore = context.read<PageViewStore>();
     return SingleChildScrollView(
@@ -121,7 +123,7 @@ class _HomeTabState extends State<HomeTab> {
           Observer(builder: (_) {
             pageViewStore.resetStore();
             return FutureBuilder(
-              future: APIService().getPaginatedUsers(0, {
+              future: userProfileRepo.getPaginatedUsers(0, {
                 //don't want it to be triggered when pageNumber is changed
                 'gender': filterStore.interestedInGender.databaseString,
                 'program': filterStore.program.databaseString,

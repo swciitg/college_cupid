@@ -2,26 +2,28 @@ import 'dart:convert';
 
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
+import 'package:college_cupid/repositories/personal_info_repository.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_routes.dart';
-import 'package:college_cupid/services/api.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/widgets/authentication/password_alert_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class LoginWebview extends StatefulWidget {
+class LoginWebview extends ConsumerStatefulWidget {
   const LoginWebview({super.key});
 
   @override
-  State<LoginWebview> createState() => _LoginWebviewState();
+  ConsumerState<LoginWebview> createState() => _LoginWebviewState();
 }
 
-class _LoginWebviewState extends State<LoginWebview> {
+class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
   late CommonStore commonStore;
 
@@ -52,6 +54,9 @@ class _LoginWebviewState extends State<LoginWebview> {
   @override
   void initState() {
     super.initState();
+    final userProfileRepo = ref.read(userProfileRepoProvider);
+    final personalInfoRepo = ref.read(personalInfoRepoProvider);
+
     commonStore = context.read<CommonStore>();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -91,9 +96,9 @@ class _LoginWebviewState extends State<LoginWebview> {
                 debugPrint('DATA INITIALIZED');
 
                 Map<String, dynamic>? myProfile =
-                    await APIService().getUserProfile(email);
+                    await userProfileRepo.getUserProfile(email);
                 Map<String, dynamic>? myInfo =
-                    await APIService().getPersonalInfo();
+                    await personalInfoRepo.getPersonalInfo();
 
                 await WebViewCookieManager().clearCookies();
 
@@ -121,11 +126,11 @@ class _LoginWebviewState extends State<LoginWebview> {
                   SharedPrefs.setDHPublicKey(
                       commonStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
-                          Encryption.decryptAES(
-                              encryptedText: Encryption.hexadecimalToBytes(
-                                  myInfo['encryptedPrivateKey']),
-                              key: LoginStore.password!))
-                      .toString());
+                    Encryption.decryptAES(
+                        encryptedText: Encryption.hexadecimalToBytes(
+                            myInfo['encryptedPrivateKey']),
+                        key: LoginStore.password!),
+                  ).toString());
 
                   goRouter.goNamed(AppRoutes.splash.name);
                 }

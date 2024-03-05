@@ -1,14 +1,14 @@
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../services/api.dart';
 import '../services/shared_prefs.dart';
 import '../shared/database_strings.dart';
 
 class LoginStore {
   static bool isProfileCompleted = false;
   static bool isPasswordSaved = false;
-  
+
   static String? email;
   static String? displayName;
   static String? dhPrivateKey;
@@ -25,7 +25,8 @@ class LoginStore {
       debugPrint('USER CONTAINS KEY');
       await initializeStore();
       if ((password ?? "").isNotEmpty) isPasswordSaved = true;
-      Map<String, dynamic>? data = await APIService().getUserProfile(email!);
+      Map<String, dynamic>? data =
+          await UserProfileRepository().getUserProfile(email!);
       if (data != null) {
         await SharedPrefs.saveMyProfile(data);
         // await initializeMyProfile();
