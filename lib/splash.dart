@@ -1,7 +1,7 @@
+import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/routing/app_routes.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/widgets/global/app_title.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

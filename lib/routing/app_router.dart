@@ -1,13 +1,13 @@
-import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/presentation/screens/authentication/login_webview.dart';
+import 'package:college_cupid/presentation/screens/authentication/welcome.dart';
+import 'package:college_cupid/presentation/screens/blocked_users/blocked_user_list_screen.dart';
+import 'package:college_cupid/presentation/screens/home/home.dart';
+import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_profile.dart';
+import 'package:college_cupid/presentation/screens/profile/edit_profile/profile_details.dart';
+import 'package:college_cupid/presentation/screens/profile/edit_profile/select_interests_screen.dart';
+import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/routing/app_routes.dart';
-import 'package:college_cupid/screens/authentication/login_webview.dart';
-import 'package:college_cupid/screens/authentication/welcome.dart';
-import 'package:college_cupid/screens/blocked_users/blocked_user_list_screen.dart';
-import 'package:college_cupid/screens/home/home.dart';
-import 'package:college_cupid/screens/profile/edit_profile/edit_profile.dart';
-import 'package:college_cupid/screens/profile/edit_profile/profile_details.dart';
-import 'package:college_cupid/screens/profile/edit_profile/select_interests_screen.dart';
-import 'package:college_cupid/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:go_router/go_router.dart';
 

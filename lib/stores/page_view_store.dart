@@ -1,4 +1,4 @@
-import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:mobx/mobx.dart';
 
 part 'page_view_store.g.dart';
@@ -27,7 +27,7 @@ abstract class _PageViewStore with Store {
   }
 
   @action
-  void removeHomeTabProfile(String email){
+  void removeHomeTabProfile(String email) {
     homeTabProfileList.removeWhere((element) => element.email == email);
   }
 

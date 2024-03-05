@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:college_cupid/models/personal_info.dart';
+import 'package:college_cupid/domain/models/personal_info.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:dio/dio.dart';

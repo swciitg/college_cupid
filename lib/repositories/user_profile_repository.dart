@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:college_cupid/models/user_profile.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:dio/dio.dart';
