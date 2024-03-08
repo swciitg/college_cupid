@@ -20,7 +20,7 @@ class CrushInfoTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final program =
         Program.values.firstWhere((p) => p.databaseString == profile.program);
-    final crushesList = ref.read(crushesProvider.notifier);
+    final crushesList = ref.read(crushesControllerProvider.notifier);
 
     return Container(
       margin: const EdgeInsets.only(top: 32),
