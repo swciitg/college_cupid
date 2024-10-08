@@ -24,7 +24,7 @@ class CustomDropDown extends StatelessWidget {
     this.index,
     this.value,
     this.borderRadius,
-    required this.validator,
+    this.validator,
     this.isNecessary = false,
     this.icon,
     this.flex = 1,
@@ -35,7 +35,7 @@ class CustomDropDown extends StatelessWidget {
     return Expanded(
       flex: flex!,
       child: DropdownButtonFormField(
-        validator: validator,
+        validator: validator ?? (value) => null,
         menuMaxHeight: 300,
         value: value,
         isExpanded: true,

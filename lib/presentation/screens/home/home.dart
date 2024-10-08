@@ -69,10 +69,9 @@ class _HomeState extends State<Home> {
               elevation: 4,
               shadowColor: Colors.black,
               surfaceTintColor: CupidColors.navBarBackgroundColor,
-              iconTheme: MaterialStateProperty.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
-                  return const IconThemeData(
-                      color: CupidColors.navBarIconColor);
+              iconTheme: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const IconThemeData(color: CupidColors.navBarIconColor);
                 } else {
                   return const IconThemeData(color: Colors.grey);
                 }
@@ -86,8 +85,7 @@ class _HomeState extends State<Home> {
                   _pageController.jumpToPage(i);
                 } else {
                   _pageController.animateToPage(i,
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeIn);
+                      duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
                 }
                 _selectedIndex = i;
               }),

@@ -12,11 +12,12 @@ class CupidTextButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
       ),
       child: Text(
         text,
         style: CupidStyles.textButtonStyle.copyWith(color: fontColor),
-      ),);
+      ),
+    );
   }
 }

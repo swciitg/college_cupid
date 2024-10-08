@@ -27,14 +27,12 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
   late CommonStore commonStore;
 
-  Future<String> getElementById(
-      WebViewController controller, String elementId) async {
-    var element = await controller.runJavaScriptReturningResult(
-        "document.querySelector('#$elementId').innerText");
+  Future<String> getElementById(WebViewController controller, String elementId) async {
+    var element = await controller
+        .runJavaScriptReturningResult("document.querySelector('#$elementId').innerText");
     String newString = element.toString();
     if (element.toString().startsWith('"')) {
-      newString =
-          element.toString().substring(1, element.toString().length - 1);
+      newString = element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }
@@ -65,20 +63,16 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
           onPageFinished: (String url) async {
             final goRouter = GoRouter.of(context);
 
-            if (url.startsWith(
-                '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+            if (url.startsWith('${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
               String authStatus = await getElementById(controller, 'status');
               if (authStatus == 'SUCCESS') {
                 if (!mounted) return;
                 String outlookInfoString =
-                    (await getElementById(controller, 'outlookInfo'))
-                        .replaceAll("\\", '"');
+                    (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
 
-                Map<String, dynamic> outlookInfo =
-                    jsonDecode(outlookInfoString);
+                Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
-                String displayName =
-                    outlookInfo['displayName']!.toString().toTitleCase();
+                String displayName = outlookInfo['displayName']!.toString().toTitleCase();
                 String rollNumber = outlookInfo['rollNumber']!;
                 String accessToken = outlookInfo['accessToken']!;
                 String refreshToken = outlookInfo['refreshToken']!;
@@ -95,10 +89,8 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                 debugPrint('DATA INITIALIZED');
 
-                Map<String, dynamic>? myProfile =
-                    await userProfileRepo.getUserProfile(email);
-                Map<String, dynamic>? myInfo =
-                    await personalInfoRepo.getPersonalInfo();
+                Map<String, dynamic>? myProfile = await userProfileRepo.getUserProfile(email);
+                Map<String, dynamic>? myInfo = await personalInfoRepo.getPersonalInfo();
 
                 await WebViewCookieManager().clearCookies();
 
@@ -113,8 +105,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   String password = await getPasswordFromUser(hashedPassword);
 
                   if (hashedPassword !=
-                      Encryption.bytesToHexadecimal(
-                          Encryption.calculateSHA256(password))) {
+                      Encryption.bytesToHexadecimal(Encryption.calculateSHA256(password))) {
                     goRouter.goNamed(AppRoutes.splash.name);
                   }
 
@@ -123,12 +114,10 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   await commonStore.initializeProfile();
                   LoginStore.password = password;
 
-                  SharedPrefs.setDHPublicKey(
-                      commonStore.myProfile['publicKey']);
+                  SharedPrefs.setDHPublicKey(commonStore.myProfile['publicKey']);
                   SharedPrefs.setDHPrivateKey(BigInt.parse(
                     Encryption.decryptAES(
-                        encryptedText: Encryption.hexadecimalToBytes(
-                            myInfo['encryptedPrivateKey']),
+                        encryptedText: Encryption.hexadecimalToBytes(myInfo['encryptedPrivateKey']),
                         key: LoginStore.password!),
                   ).toString());
 

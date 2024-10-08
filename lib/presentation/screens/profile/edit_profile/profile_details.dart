@@ -46,8 +46,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   void onSubmit() {
     if (image == null) {
-      showSnackBar(
-          "Please pick your profile picture. You can change it later.");
+      showSnackBar("Please pick your profile picture. You can change it later.");
       return;
     }
     if (myProgram == Program.none) {
@@ -76,8 +75,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       PersonalInfo myInfo = PersonalInfo(
         email: LoginStore.email!,
-        hashedPassword: Encryption.bytesToHexadecimal(
-            Encryption.calculateSHA256(pass.text)),
+        hashedPassword: Encryption.bytesToHexadecimal(Encryption.calculateSHA256(pass.text)),
         encryptedPrivateKey: encryptedPrivateKey,
         publicKey: publicKey,
         crushes: [],
@@ -107,8 +105,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     name.text = LoginStore.displayName!;
     pass.text = '';
     emailController.text = LoginStore.email!;
-    yearOfJoinController.text =
-        '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
+    yearOfJoinController.text = '20${getYearOfJoinFromRollNumber(LoginStore.rollNumber!)}';
     programController.text = myProgram.displayString;
   }
 
@@ -156,17 +153,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     GestureDetector(
                       onTap: () async {
                         final nav = Navigator.of(context);
-                        final value = await imageHelpers.pickImage(
-                            source: ImageSource.gallery);
+                        final value = await imageHelpers.pickImage(source: ImageSource.gallery);
 
                         if (value == null) return;
 
-                        Image pickedImage =
-                            await ImageHelpers.xFileToImage(xFile: value);
-                        final croppedImage =
-                            await nav.push<File>(MaterialPageRoute(
-                          builder: (context) =>
-                              CropImageScreen(image: pickedImage),
+                        Image pickedImage = await ImageHelpers.xFileToImage(xFile: value);
+                        final croppedImage = await nav.push<File>(MaterialPageRoute(
+                          builder: (context) => CropImageScreen(image: pickedImage),
                         ));
 
                         setState(() {
@@ -236,37 +229,33 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         color: CupidColors.pinkColor,
                       ),
                       borderRadius: BorderRadius.circular(15)),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text(
-                          'Select Gender',
-                          style: TextStyle(
-                            color: CupidColors.pinkColor,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              gender = Gender.male;
-                            });
-                          },
-                          child: GenderTile(
-                            gender: Gender.male,
-                            isSelected: gender == Gender.male,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              gender = Gender.female;
-                            });
-                          },
-                          child: GenderTile(
-                              gender: Gender.female,
-                              isSelected: gender == Gender.female),
-                        )
-                      ]),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                    const Text(
+                      'Select Gender',
+                      style: TextStyle(
+                        color: CupidColors.pinkColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          gender = Gender.male;
+                        });
+                      },
+                      child: GenderTile(
+                        gender: Gender.male,
+                        isSelected: gender == Gender.male,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          gender = Gender.female;
+                        });
+                      },
+                      child: GenderTile(gender: Gender.female, isSelected: gender == Gender.female),
+                    )
+                  ]),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 15)),
                 SizedBox(
@@ -278,12 +267,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         items: programs.map((e) => e.displayString).toList(),
                         label: "Program",
                         value: Program.none.displayString,
-                        validator: (value) {},
                         onChanged: (value) {
                           if (mounted) {
                             setState(() {
-                              myProgram = Program.values.firstWhere(
-                                  (element) => element.displayString == value);
+                              myProgram = Program.values
+                                  .firstWhere((element) => element.displayString == value);
                               programController.text = myProgram.displayString;
                             });
                           }
