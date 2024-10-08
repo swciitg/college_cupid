@@ -88,15 +88,14 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
                 loading = true;
               });
               widget.myProfile.bio = bioController.text.trim();
-              widget.myProfile.interests = interestStore.selectedInterests
-                  .map((element) => element)
-                  .toList();
+              widget.myProfile.interests =
+                  interestStore.selectedInterests.map((element) => element).toList();
               final goRouter = GoRouter.of(context);
 
               await personalInfoRepo.postPersonalInfo(widget.myInfo);
 
-              widget.myProfile.profilePicUrl = await userProfileRepo
-                  .postUserProfile(widget.image, widget.myProfile);
+              widget.myProfile.profilePicUrl =
+                  await userProfileRepo.postUserProfile(widget.image, widget.myProfile);
 
               await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
               await SharedPrefs.setDHPrivateKey(widget.privateKey);
@@ -130,8 +129,7 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
                       child: Text('Bio',
-                          style: CupidStyles.headingStyle
-                              .copyWith(color: CupidColors.titleColor)),
+                          style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor)),
                     ),
                     const Padding(
                       padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -147,10 +145,8 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
                         controller: bioController,
                         maxLines: 5,
                         style: CupidStyles.normalTextStyle,
-                        decoration:
-                            CupidStyles.textFieldInputDecoration.copyWith(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 20),
+                        decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -164,8 +160,7 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Text(
                         "Your Interests",
-                        style: CupidStyles.headingStyle
-                            .copyWith(color: CupidColors.titleColor),
+                        style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor),
                       ),
                     ),
                     const DisplayInterests(),
