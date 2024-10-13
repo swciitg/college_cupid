@@ -4,7 +4,7 @@ CollegeCupid is a Flutter app designed to help college students connect with one
 
 ## UI Design
 
-Look at the design [here](https://www.figma.com/file/UflmkdmzL9LVwFgbfdlJaa/CampusCupid---SWC-IITG?type=design&node-id=4-1476&mode=design&t=ABmiAo6g0caTFR8y-0)
+Look at the design [here]([https://www.figma.com/file/UflmkdmzL9LVwFgbfdlJaa/CampusCupid---SWC-IITG?type=design&node-id=4-1476&mode=design&t=ABmiAo6g0caTFR8y-0](https://www.figma.com/design/1q7Wq5JevYV2q3SbJ2gweP/College-Cupid?node-id=751-91&t=fyvKHQW5eTGgTmfm-1))
 
 ## Getting Started
 
