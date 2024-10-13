@@ -44,7 +44,7 @@ Before you can start contributing to CollegeCupid, you need to set up your devel
 1. You can now run the app on an emulator or a physical device using the following command:
 
    ```bash
-   flutter run
+   flutter run --dart-define SECURITY_KEY="Cupid-Dev" --dart-define API_URL="https://swc.iitg.ac.in/test/collegeCupid/api/v2" --dart-define BASE_URL="https://swc.iitg.ac.in/test/collegeCupid"
    ```
 
 ## Contributing
@@ -61,7 +61,7 @@ We welcome all contributions, big or small. Here's how you can contribute to Col
 
 6. **Push Changes**: Push your changes to your fork on GitHub.
 
-7. **Create a Pull Request**: Open a pull request from your fork to the `main` branch of the original repository.
+7. **Create a Pull Request**: Open a pull request from your fork to the `dev` branch of the original repository.
 
 8. **Review and Feedback**: Your pull request will be reviewed by our team. Make any necessary changes based on feedback.
 
