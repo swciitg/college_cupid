@@ -2,7 +2,6 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(SexualOrientationScreen());
 
 class SexualOrientationScreen extends StatefulWidget {
   const SexualOrientationScreen({super.key});
