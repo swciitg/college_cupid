@@ -35,7 +35,7 @@ class CupidStyles {
   );
 
   static const textButtonStyle = TextStyle(
-      fontFamily: 'Neue Montreal', fontSize: 18, color: CupidColors.grayColor);
+      fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
 
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
@@ -85,5 +85,8 @@ class CupidStyles {
     fontSize: 12,
     color: CupidColors.normalTextColor,
   );
+
+
+
 
 }

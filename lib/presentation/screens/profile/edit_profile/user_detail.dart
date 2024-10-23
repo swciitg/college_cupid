@@ -107,6 +107,13 @@ class UserDetailScreen extends StatefulWidget {
                 ),
               ),
             ),
+            Container(
+              alignment: Alignment(1,0),
+              margin:const EdgeInsets.only(right:30,top:40),
+              child: TextButton(onPressed: (){}, child: const Text('next',
+              style:CupidStyles.textButtonStyle)
+              ),
+            ),
           ],
 
         ),
