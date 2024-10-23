@@ -16,4 +16,5 @@ class CupidColors {
   static const grayColor = Color.fromRGBO(0, 0, 0, 0.7);
   static const lightTextColor = Color.fromRGBO(0, 0, 0, 0.7);
   static const normalTextColor = Color.fromRGBO(0, 0, 0, 1);
+
 }

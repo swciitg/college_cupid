@@ -53,12 +53,12 @@ class CupidStyles {
       TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
 
   static const headingStyle = TextStyle(
-    fontFamily: 'Sk-Modernist',
-    fontSize: 24,
+    fontFamily: 'Neue Montreal',
+    fontSize: 30,
     fontWeight: FontWeight.bold,
   );
   static const pageHeadingStyle = TextStyle(
-    fontFamily: 'Sk-Modernist',
+    fontFamily: 'Neue Montreal',
     fontSize: 30,
     color: CupidColors.normalTextColor,
   );
@@ -82,7 +82,12 @@ class CupidStyles {
   );
   static const labelTextStyle = TextStyle(
     fontFamily: 'Neue Montreal',
-    fontSize: 12,
+    fontSize: 14,
+    color: CupidColors.normalTextColor,
+  );
+  static const nextTextStyle = TextStyle(
+    fontFamily: 'Neue Montreal',
+    fontSize: 22,
     color: CupidColors.normalTextColor,
   );
 
