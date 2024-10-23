@@ -11,12 +11,12 @@ class CupidStyles {
       borderRadius: BorderRadius.all(Radius.circular(20)),
       borderSide: BorderSide(
         width: 1.2,
-        color: CupidColors.secondaryColor,
+        color: CupidColors.blackColor,
       ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(20)),
-      borderSide: BorderSide(color: CupidColors.titleColor),
+      borderSide: BorderSide(color: CupidColors.blackColor),
     ),
     errorBorder: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.red, width: 1.2),
@@ -27,7 +27,7 @@ class CupidStyles {
       borderRadius: BorderRadius.all(Radius.circular(20)),
     ),
     disabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: CupidColors.pinkColor, width: 1),
+      borderSide: BorderSide(color: CupidColors.blackColor, width: 1),
       borderRadius: BorderRadius.all(
         Radius.circular(15),
       ),
@@ -35,7 +35,7 @@ class CupidStyles {
   );
 
   static const textButtonStyle = TextStyle(
-      fontFamily: 'Sk-Modernist', fontSize: 18, color: CupidColors.grayColor);
+      fontFamily: 'Neue Montreal', fontSize: 18, color: CupidColors.grayColor);
 
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
@@ -74,4 +74,16 @@ class CupidStyles {
     fontWeight: FontWeight.normal,
     color: CupidColors.normalTextColor,
   );
+  static const headingTextStyle = TextStyle(
+    fontFamily: 'Neue Montreal',
+    fontSize: 26,
+    fontWeight:FontWeight.bold,
+    color: CupidColors.normalTextColor,
+  );
+  static const labelTextStyle = TextStyle(
+    fontFamily: 'Neue Montreal',
+    fontSize: 12,
+    color: CupidColors.normalTextColor,
+  );
+
 }
