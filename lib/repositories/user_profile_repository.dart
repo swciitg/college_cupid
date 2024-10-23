@@ -4,11 +4,11 @@ import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
-final userProfileRepoProvider =
-    Provider<UserProfileRepository>((ref) => UserProfileRepository());
+final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserProfileRepository());
 
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
@@ -66,13 +66,10 @@ class UserProfileRepository extends ApiRepository {
   Future<Map<String, dynamic>?> getUserProfile(String email) async {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');
-      if (res.statusCode == 200) {
-        return res.data['userProfile'];
-      } else {
-        return Future.error(res.statusMessage.toString());
-      }
+      return res.data['userProfile'];
     } catch (error) {
-      return Future.error(error.toString());
+      debugPrint("Error getting User Profile: $error");
+      return null;
     }
   }
 
@@ -82,8 +79,7 @@ class UserProfileRepository extends ApiRepository {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }
     try {
-      Response res = await dio.get(
-          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+      Response res = await dio.get('${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];

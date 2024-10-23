@@ -25,9 +25,7 @@ class CollegeCupidUpgrader extends StatelessWidget {
             contentTextStyle: CupidStyles.normalTextStyle,
           ),
           textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                  textStyle:
-                      MaterialStateProperty.all(CupidStyles.textButtonStyle)))),
+              style: ButtonStyle(textStyle: WidgetStateProperty.all(CupidStyles.textButtonStyle)))),
       child: UpgradeAlert(
           upgrader: Upgrader(
             countryCode: 'IN',

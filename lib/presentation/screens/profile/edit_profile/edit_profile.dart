@@ -286,7 +286,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           items: programs.map((e) => e.displayString).toList(),
                           label: "Program",
                           value: myProgram.displayString,
-                          validator: (value) {},
                           onChanged: (value) {
                             if (mounted) {
                               setState(() {

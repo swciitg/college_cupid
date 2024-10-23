@@ -140,7 +140,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     filterStore.setProgram(Program.values
                         .firstWhere((p) => p.displayString == selectedProgram));
                   },
-                  validator: (value) {},
                   icon: dropDownIcon,
                 ),
                 const SizedBox(width: 20),
@@ -154,7 +153,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   onChanged: (selectedYear) {
                     filterStore.setYearOfJoin(yearOfJoinMap[selectedYear]);
                   },
-                  validator: (value) {},
                   icon: dropDownIcon,
                 ),
               ],
