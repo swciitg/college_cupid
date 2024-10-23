@@ -61,6 +61,7 @@ dependencies:
   upgrader: ^9.0.0
   go_router: ^13.2.0
   flutter_riverpod: ^2.4.10
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:

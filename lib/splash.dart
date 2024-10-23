@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -17,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     LoginStore.isAuthenticated().then((value) async {
       if (value == true &&
           LoginStore.isProfileCompleted &&
@@ -25,6 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
         final goRouter = GoRouter.of(context);
         await context.read<CommonStore>().initializeProfile();
         goRouter.goNamed(AppRoutes.home.name);
+
       } else {
         debugPrint('USER IS NOT AUTHENTICATED');
         context.goNamed(AppRoutes.welcome.name);

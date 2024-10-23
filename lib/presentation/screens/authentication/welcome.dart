@@ -70,7 +70,7 @@ class _WelcomeState extends State<Welcome> {
                 child: CupidButton(
                   text: 'Continue with Outlook',
                   onTap: () {
-                    context.goNamed(AppRoutes.loginWebview.name);
+                    context.goNamed(AppRoutes.home.name);
                   },
                   height: 50,
                 ),
