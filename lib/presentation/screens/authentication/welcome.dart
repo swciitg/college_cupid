@@ -80,6 +80,7 @@ class _WelcomeState extends State<Welcome> {
               ),
             ],
           ),
+
         ],
       ),
     );
