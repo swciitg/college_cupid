@@ -6,6 +6,8 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../profile_setup/profilesetup.dart';
+
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
 
@@ -70,7 +72,8 @@ class _WelcomeState extends State<Welcome> {
                 child: CupidButton(
                   text: 'Continue with Outlook',
                   onTap: () {
-                    context.goNamed(AppRoutes.home.name);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileSetup()));
+                    ///context.goNamed(AppRoutes.home.name);
                   },
                   height: 50,
                 ),

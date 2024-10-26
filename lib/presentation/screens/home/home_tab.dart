@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:college_cupid/presentation/screens/profile_setup/profilesetup.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_store.dart';
@@ -62,9 +63,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       ],
                     ),
                     padding: const EdgeInsets.all(2),
-                    child: SvgPicture.asset(
-                      "assets/icons/cupid.svg",
-                      height: 30,
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: SvgPicture.asset(
+                        "assets/icons/cupid.svg",
+                        height: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
