@@ -37,6 +37,7 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CupidColors.glassWhite,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
