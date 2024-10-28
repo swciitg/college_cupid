@@ -22,13 +22,9 @@ class _ProfileSetupState extends State<ProfileSetup> {
       case 0:
         return const LookingFor();
       case 1:
-        return const TextField(
-          decoration: InputDecoration(labelText: "Who are you looking for?"),
-        );
+        return Container();
       case 2:
-        return const TextField(
-          decoration: InputDecoration(labelText: "Your dating preferences"),
-        );
+        return Container();
       default:
         return Container();
     }
@@ -113,12 +109,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                               MaterialStateProperty.all(Colors.transparent),
                           elevation: MaterialStateProperty.all(0),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoadingPage()));
-                        }, 
+                        onPressed: _nextStep,
                         child: const Text(
                           'Next',
                           style: TextStyle(color: CupidColors.textColorBlack),
