@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/dating_pref.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
       case 0:
         return const LookingFor();
       case 1:
-        return Container();
+        return DatingPreference();
       case 2:
         return Container();
       default:
