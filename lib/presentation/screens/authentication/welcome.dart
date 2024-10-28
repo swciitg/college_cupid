@@ -98,7 +98,6 @@ class _WelcomeState extends State<Welcome> {
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const ProfileSetup()));
-                //context.goNamed(AppRoutes.loginWebview.name);
               },
               style: TextButton.styleFrom(
                 foregroundColor: CupidColors.blackColor,
