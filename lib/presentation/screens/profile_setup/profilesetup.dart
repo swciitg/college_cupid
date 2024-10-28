@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/dating_pref.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,9 @@ class _ProfileSetupState extends State<ProfileSetup> {
       case 0:
         return const LookingFor();
       case 1:
-        return const TextField(
-          decoration: InputDecoration(labelText: "Who are you looking for?"),
-        );
+        return DatingPreference();
       case 2:
-        return const TextField(
-          decoration: InputDecoration(labelText: "Your dating preferences"),
-        );
+        return Container();
       default:
         return Container();
     }
@@ -113,12 +110,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                               MaterialStateProperty.all(Colors.transparent),
                           elevation: MaterialStateProperty.all(0),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoadingPage()));
-                        }, 
+                        onPressed: _nextStep,
                         child: const Text(
                           'Next',
                           style: TextStyle(color: CupidColors.textColorBlack),
