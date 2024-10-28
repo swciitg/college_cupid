@@ -96,7 +96,9 @@ class _WelcomeState extends State<Welcome> {
             offset: const Offset(0, -48),
             child: TextButton(
               onPressed: () {
-                context.goNamed(AppRoutes.loginWebview.name);
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ProfileSetup()));
+                //context.goNamed(AppRoutes.loginWebview.name);
               },
               style: TextButton.styleFrom(
                 foregroundColor: CupidColors.blackColor,
@@ -112,7 +114,6 @@ class _WelcomeState extends State<Welcome> {
               child: const Text('sign in through outlook'),
             ),
           ),
-
         ],
       ),
     );
