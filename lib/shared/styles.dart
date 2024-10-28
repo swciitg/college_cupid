@@ -90,7 +90,11 @@ class CupidStyles {
     fontSize: 22,
     color: CupidColors.normalTextColor,
   );
-
+  static const queTextStyle = TextStyle(
+    fontFamily: 'Neue Montreal',
+    fontSize: 20,
+    color: CupidColors.normalTextColor,
+  );
 
 
 

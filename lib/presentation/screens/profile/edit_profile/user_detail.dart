@@ -1,3 +1,4 @@
+import 'package:college_cupid/presentation/screens/profile/edit_profile/sexual_orientation_screen.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
@@ -110,11 +111,13 @@ class UserDetailScreen extends StatefulWidget {
             Container(
               alignment: Alignment(1,0),
               margin:const EdgeInsets.only(right:30,top:40),
-              child: TextButton(onPressed: (){}, child: const Text('next',
+              child: TextButton(onPressed: (){
+              }, child: const Text('next',
               style:CupidStyles.textButtonStyle)
               ),
             ),
           ],
+          
 
         ),
       )
