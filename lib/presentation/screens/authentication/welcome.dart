@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:college_cupid/routing/app_routes.dart';
 import 'package:go_router/go_router.dart';
 
+import '../profile_setup/profilesetup.dart';
+
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
 
@@ -110,6 +112,7 @@ class _WelcomeState extends State<Welcome> {
               child: const Text('sign in through outlook'),
             ),
           ),
+
         ],
       ),
     );
