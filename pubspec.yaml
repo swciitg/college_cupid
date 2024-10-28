@@ -141,6 +141,11 @@ flutter:
         - asset: assets/fonts/Sk-Modernist-Bold.otf
           weight: 700
 
+    - family: NeueMontreal
+      fonts:
+            - asset: assets/fonts/NeueMontreal-Regular.otf
+
+
 
 
   #   - family: Trajan Pro
