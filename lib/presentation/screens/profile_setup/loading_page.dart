@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math';
 
-import '../home/home.dart';
-
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
 
@@ -84,11 +82,11 @@ class CircularTextPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double radius =
         size.width / 4; // Adjusted to give more space for the text
-    final text =
+    const text =
         "College Cupid . "; // Added a dot to make the circular flow smoother
-    final angleStep = 2 * pi / text.length;
+    const angleStep = 2 * pi / text.length;
 
-    final textStyle = TextStyle(
+    const textStyle = TextStyle(
       fontSize: 18, // Adjust font size for better readability
       fontWeight: FontWeight.bold,
       color: CupidColors.textColorBlack, // Using your app's custom color
