@@ -21,7 +21,6 @@ class HomeTab extends ConsumerStatefulWidget {
 }
 
 class _HomeTabState extends ConsumerState<HomeTab> {
-  final _pageController = PageController();
   final TextEditingController _searchController = TextEditingController();
   Timer? timer;
   late FilterStore filterStore;
