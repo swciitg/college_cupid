@@ -60,10 +60,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   void initState() {
     commonStore = context.read<CommonStore>();
     UserProfile myProfile = UserProfile.fromJson(commonStore.myProfile);
-    myProgram = Program.values
-        .firstWhere((element) => element.databaseString == myProfile.program);
-    gender = Gender.values
-        .firstWhere((element) => element.databaseString == myProfile.gender);
+    myProgram = Program.values.firstWhere((element) => element.databaseString == myProfile.program);
+    gender = Gender.values.firstWhere((element) => element.databaseString == myProfile.gender);
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
     emailController.text = myProfile.email;
@@ -91,8 +89,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           backgroundColor: Colors.white,
           scrolledUnderElevation: 0,
           elevation: 0,
-          title:
-              const Text("Edit Profile", style: CupidStyles.pageHeadingStyle),
+          title: const Text("Edit Profile", style: CupidStyles.pageHeadingStyle),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: CupidColors.titleColor,
@@ -128,17 +125,15 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                 interests: interestStore.selectedInterests,
               );
 
-              updatedProfile.profilePicUrl = await userProfileRepo
-                  .updateUserProfile(image, updatedProfile);
-              final updatedProfileMap =
-                  await userProfileRepo.getUserProfile(LoginStore.email!);
+              updatedProfile.profilePicUrl =
+                  await userProfileRepo.updateUserProfile(image, updatedProfile);
+              final updatedProfileMap = await userProfileRepo.getUserProfile(LoginStore.email!);
 
               if (updatedProfileMap != null) {
                 await commonStore.updateMyProfile(updatedProfileMap);
                 showSnackBar("Profile updated Successfully");
               } else {
-                showSnackBar(
-                    "Profile couldn't update locally. Kindly update again later!");
+                showSnackBar("Profile couldn't update locally. Kindly update again later!");
               }
               setState(() {
                 loading = false;
@@ -175,17 +170,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         child: GestureDetector(
                           onTap: () async {
                             final nav = Navigator.of(context);
-                            final value = await imageHelpers.pickImage(
-                                source: ImageSource.gallery);
+                            final value = await imageHelpers.pickImage(source: ImageSource.gallery);
 
                             if (value == null) return;
 
-                            Image pickedImage =
-                                await ImageHelpers.xFileToImage(xFile: value);
-                            final croppedImage =
-                                await nav.push<File>(MaterialPageRoute(
-                              builder: (context) =>
-                                  CropImageScreen(image: pickedImage),
+                            Image pickedImage = await ImageHelpers.xFileToImage(xFile: value);
+                            final croppedImage = await nav.push<File>(MaterialPageRoute(
+                              builder: (context) => CropImageScreen(image: pickedImage),
                             ));
 
                             setState(() {
@@ -212,9 +203,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                           fit: BoxFit.cover,
                                           imageUrl: myProfile.profilePicUrl,
                                           cacheManager: customCacheManager,
-                                          progressIndicatorBuilder:
-                                              (context, url, progress) =>
-                                                  Container(
+                                          progressIndicatorBuilder: (context, url, progress) =>
+                                              Container(
                                             color: CupidColors.titleColor,
                                             child: const CustomLoader(
                                               color: Colors.white,
@@ -234,11 +224,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       ),
                     ]),
                     const Padding(padding: EdgeInsets.only(top: 30)),
-                    DisabledTextField(
-                        controller: nameController, labelText: "Name"),
+                    DisabledTextField(controller: nameController, labelText: "Name"),
                     const Padding(padding: EdgeInsets.only(top: 15)),
-                    DisabledTextField(
-                        controller: emailController, labelText: "Email"),
+                    DisabledTextField(controller: emailController, labelText: "Email"),
                     const Padding(padding: EdgeInsets.only(top: 15)),
                     Container(
                       height: 56,
@@ -247,36 +235,31 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             color: CupidColors.pinkColor,
                           ),
                           borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              'Select Gender',
-                              style: TextStyle(
-                                color: CupidColors.pinkColor,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  gender = Gender.male;
-                                });
-                              },
-                              child: GenderTile(
-                                  gender: Gender.male,
-                                  isSelected: Gender.male == gender),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  gender = Gender.female;
-                                });
-                              },
-                              child: GenderTile(
-                                  gender: Gender.female,
-                                  isSelected: Gender.female == gender),
-                            )
-                          ]),
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                        const Text(
+                          'Select Gender',
+                          style: TextStyle(
+                            color: CupidColors.pinkColor,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              gender = Gender.male;
+                            });
+                          },
+                          child: GenderTile(gender: Gender.male, isSelected: Gender.male == gender),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              gender = Gender.female;
+                            });
+                          },
+                          child: GenderTile(
+                              gender: Gender.female, isSelected: Gender.female == gender),
+                        )
+                      ]),
                     ),
                     const Padding(padding: EdgeInsets.only(top: 15)),
                     Row(
@@ -289,11 +272,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           onChanged: (value) {
                             if (mounted) {
                               setState(() {
-                                myProgram = Program.values.firstWhere(
-                                    (element) =>
-                                        element.displayString == value);
-                                programController.text =
-                                    myProgram.displayString;
+                                myProgram = Program.values
+                                    .firstWhere((element) => element.displayString == value);
+                                programController.text = myProgram.displayString;
                               });
                             }
                           },
@@ -314,8 +295,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text('Bio',
-                            style: CupidStyles.headingStyle
-                                .copyWith(color: CupidColors.titleColor)),
+                            style:
+                                CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor)),
                         const SizedBox(height: 10),
                         const Text(
                           'Write a brief description about yourself to attract people to your profile.',
@@ -333,34 +314,31 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           controller: bioController,
                           maxLines: 5,
                           style: CupidStyles.normalTextStyle,
-                          decoration:
-                              CupidStyles.textFieldInputDecoration.copyWith(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 20),
+                          decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                           ),
                         ),
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () {
-                            context.pushNamed(
-                                AppRoutes.selectInterestsScreen.name);
+                            context.pushNamed(AppRoutes.selectInterestsScreen.name);
                           },
                           child: Container(
                             color: Colors.white,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Your Interests",
-                                    style: CupidStyles.headingStyle.copyWith(
-                                        color: CupidColors.titleColor),
+                                    style: CupidStyles.headingStyle
+                                        .copyWith(color: CupidColors.titleColor),
                                   ),
                                   const Icon(
                                     FluentIcons.chevron_right_24_regular,
-                                    color: CupidColors.grayColor,
+                                    color: CupidColors.greyColor,
                                   )
                                 ],
                               ),

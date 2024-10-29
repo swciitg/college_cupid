@@ -8,34 +8,32 @@ class CupidStyles {
     fillColor: Colors.white,
     filled: true,
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(20)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
       borderSide: BorderSide(
         width: 1.2,
         color: CupidColors.blackColor,
       ),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(20)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
       borderSide: BorderSide(color: CupidColors.blackColor),
     ),
     errorBorder: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.red, width: 1.2),
-      borderRadius: BorderRadius.all(Radius.circular(20)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.red, width: 1.5),
-      borderRadius: BorderRadius.all(Radius.circular(20)),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     disabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: CupidColors.blackColor, width: 1),
-      borderRadius: BorderRadius.all(
-        Radius.circular(15),
-      ),
+      borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
   );
 
-  static const textButtonStyle = TextStyle(
-      fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
+  static const textButtonStyle =
+      TextStyle(fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
 
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
@@ -49,8 +47,7 @@ class CupidStyles {
     color: CupidColors.navBarBackgroundColor,
   );
 
-  static const countdownLabelStyle =
-      TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
+  static const countdownLabelStyle = TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
 
   static const headingStyle = TextStyle(
     fontFamily: 'Neue Montreal',
@@ -77,7 +74,7 @@ class CupidStyles {
   static const headingTextStyle = TextStyle(
     fontFamily: 'Neue Montreal',
     fontSize: 26,
-    fontWeight:FontWeight.bold,
+    fontWeight: FontWeight.bold,
     color: CupidColors.normalTextColor,
   );
   static const labelTextStyle = TextStyle(
@@ -95,7 +92,4 @@ class CupidStyles {
     fontSize: 20,
     color: CupidColors.normalTextColor,
   );
-
-
-
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../shared/colors.dart';
@@ -25,16 +24,12 @@ class _DatingPreferenceState extends State<DatingPreference> {
           const Text(
             "Select",
             style: TextStyle(
-                fontSize: 32,
-                color: CupidColors.textColorBlack,
-                fontWeight: FontWeight.w400),
+                fontSize: 32, color: CupidColors.textColorBlack, fontWeight: FontWeight.w400),
           ),
           const Text(
             "dating preference",
             style: TextStyle(
-                fontSize: 32,
-                color: CupidColors.textColorBlack,
-                fontWeight: FontWeight.w500),
+                fontSize: 32, color: CupidColors.textColorBlack, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 5),
           const Text(
@@ -123,8 +118,7 @@ class _DatingPreferenceState extends State<DatingPreference> {
     );
   }
 
-  Widget _buildChip(
-      String option, String? selectedOption, Function(String) onSelected) {
+  Widget _buildChip(String option, String? selectedOption, Function(String) onSelected) {
     final isSelected = option == selectedOption;
 
     return GestureDetector(
@@ -133,16 +127,15 @@ class _DatingPreferenceState extends State<DatingPreference> {
         height: 35,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0x78FBA8AA) : Colors.transparent,
-          border:
-          Border.all(color: isSelected ? Colors.pinkAccent : Colors.black),
+          color: isSelected ? const Color(0x78FBA8AA) : Colors.transparent,
+          border: Border.all(color: isSelected ? Colors.pinkAccent : Colors.black),
           borderRadius: BorderRadius.circular(8),
         ),
         child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             option,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: CupidColors.textColorBlack,
             ),

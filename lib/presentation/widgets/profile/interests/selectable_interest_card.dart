@@ -7,8 +7,7 @@ class SelectableInterestCard extends StatelessWidget {
   final String text;
   final bool selected;
 
-  const SelectableInterestCard(
-      {super.key, required this.selected, required this.text});
+  const SelectableInterestCard({super.key, required this.selected, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +22,12 @@ class SelectableInterestCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color:
-              selected ? CupidColors.selectedInterestTileColor : Colors.white,
+          color: selected ? CupidColors.selectedInterestTileColor : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
               width: 1,
-              color: selected
-                  ? CupidColors.selectedInterestTileBorderColor
-                  : CupidColors.grayColor),
+              color:
+                  selected ? CupidColors.selectedInterestTileBorderColor : CupidColors.greyColor),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         child: Text(
