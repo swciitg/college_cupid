@@ -5,7 +5,7 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/upload_pics.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
-
+import 'widgets/gender_select.dart';
 import 'loading_page.dart';
 import 'widgets/heart_shape.dart';
 
@@ -20,6 +20,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   int _currentStep = 0;
   final List<Widget> steps = [
     const BasicDetails(),
+    const GenderSelect(),
     const ChooseIntrests(),
     const LookingFor(),
     const DatingPreference(),

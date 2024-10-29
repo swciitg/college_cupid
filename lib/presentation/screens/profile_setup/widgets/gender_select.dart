@@ -4,14 +4,14 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 
 
-class SexualOrientationScreen extends StatefulWidget {
-  const SexualOrientationScreen({super.key});
+class GenderSelect extends StatefulWidget {
+  const GenderSelect({super.key});
 
   @override
-  State<SexualOrientationScreen> createState() => _SexualOrientationState();
+  State<GenderSelect> createState() => _GenderSelectState();
 }
 
-class _SexualOrientationState extends State<SexualOrientationScreen> {
+class _GenderSelectState extends State<GenderSelect> {
   bool _yesNoSwitchValue = false;
   final List<String> _tags = [
     "straight",
@@ -115,34 +115,6 @@ class _SexualOrientationState extends State<SexualOrientationScreen> {
                     });
                   },
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 40),
-          Row(
-            children: [
-              Container(
-                alignment: Alignment(-1, 0),
-                margin: const EdgeInsets.only(left: 10),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-
-                    },
-                    child:
-                        const Text('back', style: CupidStyles.nextTextStyle)),
-              ),
-              Expanded(child: Container()),
-              Container(
-                alignment: Alignment(1, 0),
-                margin: const EdgeInsets.only(right: 10),
-                child: TextButton(
-                    onPressed: () {
-
-
-                    },
-                    child:
-                        const Text('next', style: CupidStyles.nextTextStyle)),
               ),
             ],
           ),
