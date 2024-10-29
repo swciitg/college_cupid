@@ -109,9 +109,10 @@ class UserDetailScreen extends StatefulWidget {
               ),
             ),
             Container(
-              alignment: Alignment(1,0),
+              alignment: const Alignment(1,0),
               margin:const EdgeInsets.only(right:30,top:40),
               child: TextButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SexualOrientationScreen()));
               }, child: const Text('next',
               style:CupidStyles.textButtonStyle)
               ),

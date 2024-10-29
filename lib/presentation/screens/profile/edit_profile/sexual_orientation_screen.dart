@@ -1,3 +1,4 @@
+import 'package:college_cupid/presentation/screens/profile/edit_profile/surprise_quiz.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
@@ -23,40 +24,38 @@ class _SexualOrientationState extends State<SexualOrientationScreen> {
     "queer",
     "still figuring it out"
   ];
-  List<String> _selectedFilters = [];
-  List<Widget> _buildFilterChips() {
+  String _selectedChoice = "";
+  List<Widget> _buildchoiceChips() {
     return _tags.map((tag) {
-      return FilterChip(
+      return ChoiceChip(
         label: Text(tag),
-        selected: _selectedFilters.contains(tag),
-        backgroundColor: Colors.white,
-        selectedColor: CupidColors.secondaryColor, // Custom selected color
+        selectedColor: CupidColors.secondaryColor,
         checkmarkColor: Colors.white,
+        selected: _selectedChoice == tag,
         onSelected: (bool selected) {
           setState(() {
-            if (selected) {
-              _selectedFilters.add(tag);
-            } else {
-              _selectedFilters.remove(tag);
-            }
+            _selectedChoice = selected ? tag : "";
           });
         },
       );
-    }).toList();
-  }
 
+  }).toList();
+        }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(children: [
-          Container(
-            alignment: Alignment(-1, 0),
-            margin: const EdgeInsets.only(left: 20, top: 160),
-            child: const Text(
-              "some more details about you",
-              style: CupidStyles.nextTextStyle,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              alignment: Alignment(-1, 0),
+              margin: const EdgeInsets.only(left: 20, top: 160),
+              child: const Text(
+                "some more details about you",
+                style: CupidStyles.nextTextStyle,
+              ),
             ),
           ),
           const SizedBox(
@@ -92,7 +91,7 @@ class _SexualOrientationState extends State<SexualOrientationScreen> {
           const SizedBox(height: 40),
           Wrap(
             spacing: 8.0,
-            children: _buildFilterChips(),
+            children: _buildchoiceChips(),
           ),
           const SizedBox(height: 40),
           Row(
@@ -126,7 +125,10 @@ class _SexualOrientationState extends State<SexualOrientationScreen> {
                 alignment: Alignment(-1, 0),
                 margin: const EdgeInsets.only(left: 10),
                 child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                    },
                     child:
                         const Text('back', style: CupidStyles.nextTextStyle)),
               ),
@@ -135,7 +137,10 @@ class _SexualOrientationState extends State<SexualOrientationScreen> {
                 alignment: Alignment(1, 0),
                 margin: const EdgeInsets.only(right: 10),
                 child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+
+
+                    },
                     child:
                         const Text('next', style: CupidStyles.nextTextStyle)),
               ),
