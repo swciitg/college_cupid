@@ -32,9 +32,7 @@ class DisplayInterests extends StatelessWidget {
                     child: Text(
                       key,
                       style: const TextStyle(
-                          fontSize: 20,
-                          color: CupidColors.grayColor,
-                          fontWeight: FontWeight.w600),
+                          fontSize: 20, color: CupidColors.greyColor, fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(

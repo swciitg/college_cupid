@@ -53,8 +53,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                                 fit: BoxFit.contain,
                                 imageUrl: widget.userProfile.profilePicUrl,
                                 // cacheManager: customCacheManager,
-                                progressIndicatorBuilder:
-                                    (context, url, progress) => SizedBox(
+                                progressIndicatorBuilder: (context, url, progress) => SizedBox(
                                   height: MediaQuery.of(context).size.width,
                                   child: const CustomLoader(),
                                 ),
@@ -70,11 +69,9 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       decoration: const BoxDecoration(
-                        borderRadius:
-                            BorderRadius.vertical(bottom: Radius.circular(20)),
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
                         color: CupidColors.backgroundColor,
                       ),
                       child: Column(
@@ -82,8 +79,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                         children: [
                           const Text(
                             'About me',
-                            style: TextStyle(
-                                fontSize: 18, color: CupidColors.grayColor),
+                            style: TextStyle(fontSize: 18, color: CupidColors.greyColor),
                             textAlign: TextAlign.left,
                           ),
                           Text(
@@ -100,8 +96,7 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                               padding: EdgeInsets.only(bottom: 10),
                               child: Text(
                                 "Interested in",
-                                style: TextStyle(
-                                    color: CupidColors.grayColor, fontSize: 18),
+                                style: TextStyle(color: CupidColors.greyColor, fontSize: 18),
                                 textAlign: TextAlign.left,
                               ),
                             ),
