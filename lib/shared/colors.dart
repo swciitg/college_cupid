@@ -26,4 +26,5 @@ class CupidColors {
   static const textColorBlack =Color(0xFF11142A);
   static const cupidBlue = Color(0xFFA8CEFA);
   static const cupidYellow= Color(0x99EAE27A);
+
 }
