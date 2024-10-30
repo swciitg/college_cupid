@@ -7,7 +7,6 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'widgets/gender_select.dart';
 import 'loading_page.dart';
-import 'widgets/heart_shape.dart';
 
 class ProfileSetup extends StatefulWidget {
   const ProfileSetup({super.key});
@@ -18,7 +17,7 @@ class ProfileSetup extends StatefulWidget {
 
 class _ProfileSetupState extends State<ProfileSetup> {
   int _currentStep = 0;
-  final List<Widget> steps = [
+  final steps = [
     const BasicDetails(),
     const GenderSelect(),
     const ChooseIntrests(),
@@ -50,130 +49,32 @@ class _ProfileSetupState extends State<ProfileSetup> {
     }
   }
 
+  List<Widget> getBackgroundHearts() {
+    switch (_currentStep) {
+      case 0:
+        return BasicDetails.getBackgroundHearts();
+      case 1:
+        return GenderSelect.getBackgroundHearts();
+      case 2:
+        return ChooseIntrests.getBackgroundHearts();
+      case 3:
+        return LookingFor.getBackgroundHearts();
+      case 4:
+        return DatingPreference.getBackgroundHearts();
+      case 5:
+        return AddPhotos.getBackgroundHearts();
+      default:
+        return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CupidColors.glassWhite,
       body: Stack(
         children: [
-          if (_currentStep == 0 || _currentStep == 1) ...[
-            Builder(builder: (context) {
-              return Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.07,
-                right: 0,
-                child: const HeartShape(
-                  size: 125,
-                  asset: "assets/icons/heart_outline.svg",
-                  color: Color(0x99FBA8AA),
-                ),
-              );
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  right: MediaQuery.of(context).size.width * 0.27,
-                  top: MediaQuery.of(context).size.height * 0.07,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99A8CEFA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  left: 0,
-                  bottom: -MediaQuery.of(context).size.height * .15,
-                  child: const HeartShape(
-                      size: 500,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99EAE27A)));
-            }),
-          ],
-          if (_currentStep == 2) ...[
-            Builder(builder: (context) {
-              return const Positioned(
-                  top: 50,
-                  right: 0,
-                  child: HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99FBA8AA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  left: -75,
-                  bottom: MediaQuery.of(context).size.height * 0.27,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99A8CEFA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  right: -40,
-                  bottom: MediaQuery.of(context).size.height * 0.05,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99EAE27A)));
-            }),
-          ],
-          if (_currentStep == 3) ...[
-            Builder(builder: (context) {
-              return const Positioned(
-                  bottom: 50,
-                  right: 0,
-                  child: HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99FBA8AA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  right: -75,
-                  top: MediaQuery.of(context).size.height * 0.09,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99A8CEFA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  left: -50,
-                  bottom: MediaQuery.of(context).size.height * 0.40,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99EAE27A)));
-            }),
-          ],
-          if (_currentStep == 4) ...[
-            Builder(builder: (context) {
-              return const Positioned(
-                  top: 100,
-                  left: -60,
-                  child: HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99FBA8AA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  right: 75,
-                  bottom: MediaQuery.of(context).size.height * 0.09,
-                  child: const HeartShape(
-                      size: 200,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99A8CEFA)));
-            }),
-            Builder(builder: (context) {
-              return Positioned(
-                  right: -50,
-                  top: MediaQuery.of(context).size.height * 0.25,
-                  child: const HeartShape(
-                      size: 180,
-                      asset: "assets/icons/heart_outline.svg",
-                      color: Color(0x99EAE27A)));
-            }),
-          ],
+          ...getBackgroundHearts(),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),

@@ -1,3 +1,4 @@
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,36 @@ class BasicDetails extends StatefulWidget {
 
   @override
   State<BasicDetails> createState() => _BasicDetailsState();
+
+  static List<Widget> getBackgroundHearts() {
+    return [
+      Builder(builder: (context) {
+        return Positioned(
+          bottom: MediaQuery.of(context).size.height * 0.07,
+          right: 0,
+          child: const HeartShape(
+            size: 125,
+            asset: "assets/icons/heart_outline.svg",
+            color: Color(0x99FBA8AA),
+          ),
+        );
+      }),
+      Builder(builder: (context) {
+        return Positioned(
+            right: MediaQuery.of(context).size.width * 0.27,
+            top: MediaQuery.of(context).size.height * 0.07,
+            child: const HeartShape(
+                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99A8CEFA)));
+      }),
+      Builder(builder: (context) {
+        return Positioned(
+            left: 0,
+            bottom: -MediaQuery.of(context).size.height * .15,
+            child: const HeartShape(
+                size: 500, asset: "assets/icons/heart_outline.svg", color: Color(0x99EAE27A)));
+      }),
+    ];
+  }
 }
 
 class _BasicDetailsState extends State<BasicDetails> {

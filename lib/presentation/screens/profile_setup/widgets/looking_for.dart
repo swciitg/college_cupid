@@ -1,3 +1,4 @@
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,32 @@ class LookingFor extends StatefulWidget {
 
   @override
   State<LookingFor> createState() => _LookingForState();
+
+  static List<Widget> getBackgroundHearts() {
+    return [
+      Builder(builder: (context) {
+        return const Positioned(
+            top: 50,
+            right: 0,
+            child: HeartShape(
+                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99FBA8AA)));
+      }),
+      Builder(builder: (context) {
+        return Positioned(
+            left: -75,
+            bottom: MediaQuery.of(context).size.height * 0.27,
+            child: const HeartShape(
+                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99A8CEFA)));
+      }),
+      Builder(builder: (context) {
+        return Positioned(
+            right: -40,
+            bottom: MediaQuery.of(context).size.height * 0.05,
+            child: const HeartShape(
+                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99EAE27A)));
+      }),
+    ];
+  }
 }
 
 class _LookingForState extends State<LookingFor> {
