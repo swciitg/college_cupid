@@ -12,6 +12,7 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/common_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -61,37 +62,99 @@ class _HomeState extends State<Home> {
             ),
           ),
           backgroundColor: Colors.white,
-          bottomNavigationBar: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              indicatorColor: Colors.pink.shade50,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-              height: 60,
-              elevation: 4,
-              shadowColor: Colors.black,
-              surfaceTintColor: CupidColors.navBarBackgroundColor,
-              iconTheme: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const IconThemeData(
-                      color: CupidColors.navBarIconColor);
-                } else {
-                  return const IconThemeData(color: Colors.grey);
-                }
-              }),
+          bottomNavigationBar: Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
-            child: NavigationBar(
-              backgroundColor: CupidColors.navBarBackgroundColor,
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (i) => setState(() {
-                if ((i - _selectedIndex).abs() != 1) {
-                  _pageController.jumpToPage(i);
-                } else {
-                  _pageController.animateToPage(i,
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeIn);
-                }
-                _selectedIndex = i;
-              }),
-              destinations: navIcons,
+            child: NavigationBarTheme(
+              data: NavigationBarThemeData(
+                indicatorColor: Colors.pink.shade50,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                height: 60,
+                elevation: 4,
+                shadowColor: Colors.black,
+                surfaceTintColor: CupidColors.navBarBackgroundColor,
+                iconTheme: MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return const IconThemeData(color: CupidColors.navBarIconColor);
+                  } else {
+                    return const IconThemeData(color: Colors.grey);
+                  }
+                }),
+              ),
+              child: NavigationBar(
+                backgroundColor: CupidColors.navBarBackgroundColor,
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (int i) {
+                  setState(() {
+                    if ((i - _selectedIndex).abs() != 1) {
+                      _pageController.jumpToPage(i);
+                    } else {
+                      _pageController.animateToPage(i,
+                          duration: const Duration(milliseconds: 150),
+                          curve: Curves.easeIn);
+                    }
+                    _selectedIndex = i;
+                  });
+                },
+                destinations: [
+                  NavigationDestination(
+                    icon: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _selectedIndex == 0
+                            ? CupidColors.navBarSelectedColor
+                        :CupidColors.navBarUnselectedColor,
+                            // : CupidColors.navBarUnselectedColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 0,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(2),
+                      child: SvgPicture.asset(
+                        "assets/icons/cupid.svg",
+                        height: 20,
+                      ),
+                    ),
+                    label: '',
+                  ),
+                  NavigationDestination(
+                    icon: _selectedIndex == 1
+                        ? ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                          CupidColors.navBarSelectedColor, BlendMode.srcIn),
+                      child: Image.asset("assets/images/profile.png", height: 24),
+                    )
+                        : Image.asset("assets/images/profile.png", height: 24),
+                    label: '',
+                  ),
+                  NavigationDestination(
+                    icon: _selectedIndex == 2
+                        ? ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                          CupidColors.navBarSelectedColor, BlendMode.srcIn),
+                      child: Image.asset("assets/images/message.png", height: 24),
+                    )
+                        : Image.asset("assets/images/message.png", height: 24),
+                    label: '',
+                  ),
+                  NavigationDestination(
+                    icon: _selectedIndex == 3
+                        ? ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                          CupidColors.navBarSelectedColor, BlendMode.srcIn),
+                      child: Image.asset("assets/images/settings.png", height: 24),
+                    )
+                        : Image.asset("assets/images/settings.png", height: 24),
+                    label: '',
+                  ),
+                ],
+              ),
             ),
           ),
           body: SizedBox.expand(

@@ -53,7 +53,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     return Observer(builder: (nestedContext) {
       return SizedBox(
-        height: screenHeight * 0.65,
+        height: screenHeight * 0.75,
         child: PageView(
           padEnds: true,
           key: Key(widget.userProfiles.hashCode.toString()),

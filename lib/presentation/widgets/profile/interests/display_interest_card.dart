@@ -10,11 +10,11 @@ class DisplayInterestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: CupidColors.selectedInterestTileColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(width: 0, color: Colors.transparent),
+        color: CupidColors.cupidYellow,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(width: 0, color: CupidColors.glassWhite),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Text(
         text,
         style: const TextStyle(
