@@ -2,6 +2,7 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_d
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_intrests.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/dating_pref.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/surprise_quiz.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/upload_pics.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   final steps = [
     const BasicDetails(),
     const GenderSelect(),
+    const SurpriseQuiz(),
     const ChooseIntrests(),
     const LookingFor(),
     const DatingPreference(),
@@ -56,12 +58,15 @@ class _ProfileSetupState extends State<ProfileSetup> {
       case 1:
         return GenderSelect.getBackgroundHearts();
       case 2:
-        return ChooseIntrests.getBackgroundHearts();
+        return SurpriseQuiz.getBackgroundHearts();
+
       case 3:
-        return LookingFor.getBackgroundHearts();
+        return ChooseIntrests.getBackgroundHearts();
       case 4:
-        return DatingPreference.getBackgroundHearts();
+        return LookingFor.getBackgroundHearts();
       case 5:
+        return DatingPreference.getBackgroundHearts();
+      case 6:
         return AddPhotos.getBackgroundHearts();
       default:
         return [];
