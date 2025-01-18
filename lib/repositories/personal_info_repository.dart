@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:college_cupid/domain/models/personal_info.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
 import 'package:college_cupid/shared/endpoints.dart';
@@ -14,6 +15,7 @@ class PersonalInfoRepository extends ApiRepository {
 
   Future<void> postPersonalInfo(PersonalInfo myInfo) async {
     try {
+      log("Personal Info: ${myInfo.toJson()}");
       await dio.post(Endpoints.postPersonalInfo, data: jsonEncode(myInfo));
     } catch (e) {
       debugPrint("Error Posting Personal Info: $e");
@@ -23,6 +25,8 @@ class PersonalInfoRepository extends ApiRepository {
 
   Future<Map<String, dynamic>?> getPersonalInfo() async {
     try {
+      log("Getting Personal Info");
+      log(dio.options.headers.toString());
       Response res = await dio.get(Endpoints.getPersonalInfo);
       return res.data['personalInfo'];
     } catch (e) {

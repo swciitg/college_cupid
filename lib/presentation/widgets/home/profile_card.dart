@@ -3,7 +3,8 @@ import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:college_cupid/presentation/widgets/profile/user_info.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,7 @@ class ProfileCard extends StatelessWidget {
           context: context,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          builder: (context) =>
-              ProfileOptionsBottomSheet(userEmail: user.email),
+          builder: (context) => ProfileOptionsBottomSheet(userEmail: user.email),
         );
       },
       onTap: () {
@@ -52,8 +52,7 @@ class ProfileCard extends StatelessWidget {
                     imageUrl: user.profilePicUrl,
                     fit: BoxFit.cover,
                     cacheManager: customCacheManager,
-                    progressIndicatorBuilder: (context, url, progress) =>
-                        Container(
+                    progressIndicatorBuilder: (context, url, progress) => Container(
                       color: CupidColors.backgroundColor,
                       child: const CustomLoader(),
                     ),

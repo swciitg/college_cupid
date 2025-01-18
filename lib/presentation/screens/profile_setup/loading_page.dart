@@ -1,4 +1,4 @@
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,8 +11,7 @@ class LoadingPage extends StatefulWidget {
   State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage>
-    with SingleTickerProviderStateMixin {
+class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -55,8 +54,7 @@ class _LoadingPageState extends State<LoadingPage>
                 );
               },
             ),
-            const SizedBox(
-                height: 40), // Space between rotating text and the loading text
+            const SizedBox(height: 40), // Space between rotating text and the loading text
             // Loading text
             const Text(
               "Looking for the best \n match for you....",
@@ -81,10 +79,8 @@ class CircularTextPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double radius =
-        size.width / 4; // Adjusted to give more space for the text
-    const text =
-        "College Cupid . "; // Added a dot to make the circular flow smoother
+    final double radius = size.width / 4; // Adjusted to give more space for the text
+    const text = "College Cupid . "; // Added a dot to make the circular flow smoother
     const angleStep = 2 * pi / text.length;
 
     const textStyle = TextStyle(
@@ -110,8 +106,7 @@ class CircularTextPainter extends CustomPainter {
       canvas.save();
       canvas.translate(offset.dx, offset.dy);
       canvas.rotate(angle + pi / 2); // Rotate the text to face outward
-      textPainter.paint(
-          canvas, Offset(-textPainter.width / 2, -textPainter.height / 2));
+      textPainter.paint(canvas, Offset(-textPainter.width / 2, -textPainter.height / 2));
       canvas.restore();
     }
   }

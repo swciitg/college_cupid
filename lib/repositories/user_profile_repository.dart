@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:college_cupid/domain/models/user_profile.dart';
@@ -26,6 +27,10 @@ class UserProfileRepository extends ApiRepository {
     FormData formData = FormData.fromMap(userProfileMap);
 
     try {
+      log("User profile");
+      for (var e in formData.fields) {
+        log("${e.key} : ${e.value}");
+      }
       Response res = await dio.post(Endpoints.postUserProfile, data: formData);
 
       if (res.statusCode == 200) {

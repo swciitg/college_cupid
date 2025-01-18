@@ -2,10 +2,8 @@ import 'dart:math';
 
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:college_cupid/routing/app_routes.dart';
-import 'package:go_router/go_router.dart';
 
-import '../profile_setup/profilesetup.dart';
+import '../profile_setup/profile_setup.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -96,8 +94,7 @@ class _WelcomeState extends State<Welcome> {
             offset: const Offset(0, -48),
             child: TextButton(
               onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const ProfileSetup()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSetup()));
               },
               style: TextButton.styleFrom(
                 foregroundColor: CupidColors.blackColor,

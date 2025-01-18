@@ -3,11 +3,11 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 
-class GenderSelect extends StatefulWidget {
-  const GenderSelect({super.key});
+class SexualOrientation extends StatefulWidget {
+  const SexualOrientation({super.key});
 
   @override
-  State<GenderSelect> createState() => _GenderSelectState();
+  State<SexualOrientation> createState() => _SexualOrientationState();
 
   static List<Widget> getBackgroundHearts() {
     return [
@@ -40,7 +40,7 @@ class GenderSelect extends StatefulWidget {
   }
 }
 
-class _GenderSelectState extends State<GenderSelect> {
+class _SexualOrientationState extends State<SexualOrientation> {
   bool _yesNoSwitchValue = false;
   final List<String> _tags = [
     "straight",
@@ -63,7 +63,14 @@ class _GenderSelectState extends State<GenderSelect> {
             color: _selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
           ),
         ),
-        selectedColor: CupidColors.secondaryColor,
+        color: WidgetStateColor.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return CupidColors.secondaryColor;
+            }
+            return Colors.transparent;
+          },
+        ),
         checkmarkColor: Colors.white,
         selected: _selectedChoice == tag,
         onSelected: (bool selected) {

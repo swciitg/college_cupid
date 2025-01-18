@@ -7,12 +7,24 @@ import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_pro
 import 'package:college_cupid/presentation/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/select_interests_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:go_router/go_router.dart';
 
-final goRouter =
-    GoRouter(initialLocation: '/', debugLogDiagnostics: true, routes: [
+enum AppRoutes {
+  splash,
+  home,
+  welcome,
+  loginWebview,
+  profileDetails,
+  profileSetup,
+  blockedUserListScreen,
+  userProfileScreen,
+  editProfile,
+  selectInterestsScreen
+}
+
+final goRouter = GoRouter(initialLocation: '/', debugLogDiagnostics: true, routes: [
   GoRoute(
     path: '/',
     name: AppRoutes.splash.name,
@@ -34,6 +46,11 @@ final goRouter =
     builder: (context, state) => const LoginWebview(),
   ),
   GoRoute(
+    path: '/${AppRoutes.profileSetup.name}',
+    name: AppRoutes.profileSetup.name,
+    builder: (context, state) => const ProfileSetup(),
+  ),
+  GoRoute(
       path: '/${AppRoutes.home.name}',
       name: AppRoutes.home.name,
       builder: (context, state) => const Home(),
@@ -44,8 +61,7 @@ final goRouter =
           builder: (context, state) {
             final props = state.extra as Map<String, dynamic>;
             return UserProfileScreen(
-                isMine: props['isMine'] as bool,
-                userProfile: props['userProfile'] as UserProfile);
+                isMine: props['isMine'] as bool, userProfile: props['userProfile'] as UserProfile);
           },
         ),
         GoRoute(

@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
@@ -17,10 +18,7 @@ class BlockedUserInfoTile extends ConsumerWidget {
   final BlockedUsersStore blockedUsersStore;
 
   const BlockedUserInfoTile(
-      {required this.email,
-      required this.blockedUsersStore,
-      required this.index,
-      super.key});
+      {required this.email, required this.blockedUsersStore, required this.index, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,10 +41,8 @@ class BlockedUserInfoTile extends ConsumerWidget {
           } else {
             return GestureDetector(
               onTap: () {
-                context.pushNamed(AppRoutes.userProfileScreen.name, extra: {
-                  'isMine': false,
-                  'userProfile': UserProfile.fromJson(snapshot.data!)
-                });
+                context.pushNamed(AppRoutes.userProfileScreen.name,
+                    extra: {'isMine': false, 'userProfile': UserProfile.fromJson(snapshot.data!)});
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,12 +56,10 @@ class BlockedUserInfoTile extends ConsumerWidget {
                       // Image border
                       child: SizedBox.fromSize(
                         child: CachedNetworkImage(
-                            imageUrl:
-                                snapshot.data!['profilePicUrl'].toString(),
+                            imageUrl: snapshot.data!['profilePicUrl'].toString(),
                             cacheManager: customCacheManager,
-                            progressIndicatorBuilder:
-                                (context, url, progress) =>
-                                    const CustomLoader(),
+                            progressIndicatorBuilder: (context, url, progress) =>
+                                const CustomLoader(),
                             fit: BoxFit.cover,
                             width: 64,
                             height: 66),

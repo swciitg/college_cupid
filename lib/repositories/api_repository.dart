@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/services/backend_helper.dart';
 import 'package:college_cupid/shared/endpoints.dart';
@@ -25,8 +27,7 @@ class ApiRepository {
   Dio get authFreeDio => _authFreeDio;
 
   ApiRepository() {
-    _authFreeDio.interceptors
-        .add(InterceptorsWrapper(onError: (error, handler) async {
+    _authFreeDio.interceptors.add(InterceptorsWrapper(onError: (error, handler) async {
       var response = error.response;
 
       if (response != null) {
@@ -34,9 +35,9 @@ class ApiRepository {
       }
       return handler.next(error);
     }));
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
+    _dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
       options.headers["Authorization"] = "Bearer ${LoginStore.accessToken}";
+      log("Header: ${options.headers}");
       handler.next(options);
     }, onError: (error, handler) async {
       var response = error.response;
@@ -47,8 +48,7 @@ class ApiRepository {
           bool couldRegenerate = await BackendHelper().regenerateAccessToken();
           if (couldRegenerate) {
             debugPrint('RETRYING REQUEST');
-            return handler
-                .resolve(await BackendHelper().retryRequest(response));
+            return handler.resolve(await BackendHelper().retryRequest(response));
           } else {
             await LoginStore.logout();
             showSnackBar("Your session has expired!! Login again.");

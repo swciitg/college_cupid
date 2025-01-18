@@ -25,7 +25,7 @@ Widget _buildChip(String option, Function(String) onSelected) {
       height: 35,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: isSelected ? Color(0x78FBA8AA) : Colors.transparent,
+        color: isSelected ? const Color(0x78FBA8AA) : Colors.transparent,
         border: Border.all(color: isSelected ? Colors.pinkAccent : Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
@@ -33,7 +33,7 @@ Widget _buildChip(String option, Function(String) onSelected) {
         fit: BoxFit.scaleDown,
         child: Text(
           option,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: CupidColors.textColorBlack,
           ),

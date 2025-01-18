@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
@@ -36,10 +37,8 @@ class MatchInfo extends ConsumerWidget {
           } else {
             return GestureDetector(
               onTap: () {
-                context.pushNamed(AppRoutes.userProfileScreen.name, extra: {
-                  'isMine': false,
-                  'userProfile': UserProfile.fromJson(snapshot.data!)
-                });
+                context.pushNamed(AppRoutes.userProfileScreen.name,
+                    extra: {'isMine': false, 'userProfile': UserProfile.fromJson(snapshot.data!)});
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,15 +53,13 @@ class MatchInfo extends ConsumerWidget {
                       ),
                       child: SizedBox.fromSize(
                         child: CachedNetworkImage(
-                            imageUrl:
-                                snapshot.data!['profilePicUrl'].toString(),
+                            imageUrl: snapshot.data!['profilePicUrl'].toString(),
                             cacheManager: customCacheManager,
-                            progressIndicatorBuilder:
-                                (context, url, progress) => Center(
-                                      child: CircularProgressIndicator(
-                                        value: progress.progress,
-                                      ),
-                                    ),
+                            progressIndicatorBuilder: (context, url, progress) => Center(
+                                  child: CircularProgressIndicator(
+                                    value: progress.progress,
+                                  ),
+                                ),
                             fit: BoxFit.cover,
                             width: 64,
                             height: 66),

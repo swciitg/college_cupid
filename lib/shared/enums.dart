@@ -32,7 +32,8 @@ enum InterestedInGender {
 
 enum Gender {
   male("Male", "MALE"),
-  female("Female", "FEMALE");
+  female("Female", "FEMALE"),
+  nonBinary("Non-binary", "NONBINARY");
 
   final String displayString;
   final String databaseString;

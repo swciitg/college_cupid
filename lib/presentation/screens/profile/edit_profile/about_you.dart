@@ -7,7 +7,8 @@ import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/profile/interests/display_interests.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -53,6 +54,45 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
 
   final _cupidFormKey = GlobalKey<FormState>();
 
+  void onSubmitInterests(
+    UserProfileRepository userProfileRepo,
+    PersonalInfoRepository personalInfoRepo,
+    CommonStore commonStore,
+  ) async {
+    if (_cupidFormKey.currentState!.validate()) {
+      if (interestStore.selectedInterests.length < 5) {
+        showSnackBar("Select at least 5 interests!");
+        return;
+      }
+      if (interestStore.selectedInterests.length > 20) {
+        showSnackBar("You cannot select more than 20 interests!");
+        return;
+      }
+      setState(() {
+        loading = true;
+      });
+      widget.myProfile.bio = bioController.text.trim();
+      widget.myProfile.interests =
+          interestStore.selectedInterests.map((element) => element).toList();
+      final goRouter = GoRouter.of(context);
+
+      await personalInfoRepo.postPersonalInfo(widget.myInfo);
+
+      widget.myProfile.profilePicUrl =
+          await userProfileRepo.postUserProfile(widget.image, widget.myProfile);
+
+      await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
+      await SharedPrefs.setDHPrivateKey(widget.privateKey);
+      await SharedPrefs.setPassword(widget.password);
+      await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
+      await commonStore.initializeProfile();
+      setState(() {
+        loading = false;
+      });
+      goRouter.goNamed(AppRoutes.splash.name);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProfileRepo = ref.read(userProfileRepoProvider);
@@ -74,39 +114,8 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: CupidColors.titleColor,
-          onPressed: () async {
-            if (_cupidFormKey.currentState!.validate()) {
-              if (interestStore.selectedInterests.length < 5) {
-                showSnackBar("Select at least 5 interests!");
-                return;
-              }
-              if (interestStore.selectedInterests.length > 20) {
-                showSnackBar("You cannot select more than 20 interests!");
-                return;
-              }
-              setState(() {
-                loading = true;
-              });
-              widget.myProfile.bio = bioController.text.trim();
-              widget.myProfile.interests =
-                  interestStore.selectedInterests.map((element) => element).toList();
-              final goRouter = GoRouter.of(context);
-
-              await personalInfoRepo.postPersonalInfo(widget.myInfo);
-
-              widget.myProfile.profilePicUrl =
-                  await userProfileRepo.postUserProfile(widget.image, widget.myProfile);
-
-              await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
-              await SharedPrefs.setDHPrivateKey(widget.privateKey);
-              await SharedPrefs.setPassword(widget.password);
-              await SharedPrefs.saveMyProfile(widget.myProfile.toJson());
-              await commonStore.initializeProfile();
-              setState(() {
-                loading = false;
-              });
-              goRouter.goNamed(AppRoutes.splash.name);
-            }
+          onPressed: () {
+            onSubmitInterests(userProfileRepo, personalInfoRepo, commonStore);
           },
           child: loading
               ? const CustomLoader(

@@ -3,7 +3,8 @@ import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/widgets/authentication/logout_button.dart';
 import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_text_button.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

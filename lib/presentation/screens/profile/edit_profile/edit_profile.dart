@@ -11,7 +11,8 @@ import 'package:college_cupid/presentation/widgets/profile/disabled_text_field.d
 import 'package:college_cupid/presentation/widgets/profile/gender_tile.dart';
 import 'package:college_cupid/presentation/widgets/profile/interests/display_only_interest_list.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';

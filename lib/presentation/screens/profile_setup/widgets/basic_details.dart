@@ -42,96 +42,121 @@ class BasicDetails extends StatefulWidget {
 }
 
 class _BasicDetailsState extends State<BasicDetails> {
-  List<Program> programs = [Program.none];
+  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
   Program myProgram = Program.none;
-  final TextEditingController age = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
-  final TextEditingController name = TextEditingController();
-  final TextEditingController programController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  String? selectedGender;
+  String? selectedCourse;
+  int? selectedYear;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          alignment: const Alignment(-1, 0),
-          margin: const EdgeInsets.only(left: 20),
-          child: Text(
-            "some details about you",
-            style: CupidStyles.pageHeadingStyle.copyWith(
-              color: CupidColors.normalTextColor,
-              fontSize: 24,
-            ),
-          ),
+        const Text(
+          "About you",
+          style: CupidStyles.headingStyle,
         ),
         const SizedBox(height: 8),
-        Opacity(
-          opacity: 0.4,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TextField(
-              focusNode: FocusNode(),
-              controller: name,
-              decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                labelText: "Name",
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: const TextStyle(color: CupidColors.blackColor),
-                enabled: false,
-              ),
-            ),
+        TextField(
+          focusNode: FocusNode(),
+          controller: nameController,
+          decoration: CupidStyles.textFieldInputDecoration.copyWith(
+            labelText: "Name",
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            labelStyle: const TextStyle(color: CupidColors.blackColor),
+            enabled: false,
           ),
         ),
         const SizedBox(height: 16),
-        Opacity(
-          opacity: 0.4,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: TextField(
-              focusNode: FocusNode(),
-              controller: genderController,
-              decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                labelText: "Gender",
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: const TextStyle(color: CupidColors.blackColor),
-                enabled: false,
-              ),
-            ),
-          ),
+        const Text(
+          "Gender",
+          style: CupidStyles.subHeadingTextStyle,
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          alignment: WrapAlignment.start,
+          children: List.generate(Gender.values.length, (index) {
+            final gender = Gender.values[index];
+            final selected = selectedGender == gender.databaseString;
+            return _buildChip(gender.displayString, selected, () {
+              setState(() => selectedGender = gender.databaseString);
+            });
+          }),
         ),
         const SizedBox(height: 16),
-        Opacity(
-          opacity: 0.4,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: TextField(
-              focusNode: FocusNode(),
-              controller: programController,
-              decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                labelText: "Course",
-                floatingLabelAlignment: FloatingLabelAlignment.start,
-                labelStyle: const TextStyle(color: CupidColors.blackColor),
-                enabled: false,
-              ),
-            ),
-          ),
+        const Text(
+          "Program",
+          style: CupidStyles.subHeadingTextStyle,
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          alignment: WrapAlignment.start,
+          children: List.generate(programs.length, (index) {
+            final program = programs[index];
+            final selected = selectedCourse == program.databaseString;
+            return _buildChip(program.displayString, selected, () {
+              setState(() => selectedCourse = program.databaseString);
+            });
+          }),
         ),
         const SizedBox(height: 16),
-        Container(
-          margin: const EdgeInsets.only(left: 20, right: 20),
-          height: 48,
-          child: TextField(
-            focusNode: FocusNode(),
-            controller: age,
-            decoration: CupidStyles.textFieldInputDecoration.copyWith(
-              labelText: "Age",
-              floatingLabelAlignment: FloatingLabelAlignment.start,
-              labelStyle: const TextStyle(color: CupidColors.blackColor),
-              enabled: true,
-            ),
-          ),
+        const Text(
+          "Year",
+          style: CupidStyles.subHeadingTextStyle,
         ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          alignment: WrapAlignment.start,
+          children: [
+            ...List.generate(5, (index) {
+              final year = index + 1;
+              return _buildChip(year.toString(), selectedYear == year, () {
+                setState(() => selectedYear = year);
+              });
+            }),
+            _buildChip(
+              "beyond",
+              selectedYear == 6,
+              () {
+                setState(() => selectedYear = 6);
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildChip(String option, bool isSelected, VoidCallback onSelected) {
+    return ChoiceChip(
+      label: Text(
+        option,
+        style: CupidStyles.normalTextStyle.setColor(
+          isSelected ? Colors.white : CupidColors.textColorBlack,
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: CupidColors.secondaryColor,
+      elevation: 0,
+      color: WidgetStateColor.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return CupidColors.secondaryColor;
+          }
+          return Colors.transparent;
+        },
+      ),
+      checkmarkColor: Colors.white,
+      onSelected: (bool selected) {
+        onSelected();
+      },
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_d
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_intrests.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/dating_pref.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/surprise_quiz.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/upload_pics.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +19,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   int _currentStep = 0;
   final steps = [
     const BasicDetails(),
-    const GenderSelect(),
-    const SurpriseQuiz(),
+    const SexualOrientation(),
     const ChooseIntrests(),
     const LookingFor(),
     const DatingPreference(),
@@ -56,17 +54,14 @@ class _ProfileSetupState extends State<ProfileSetup> {
       case 0:
         return BasicDetails.getBackgroundHearts();
       case 1:
-        return GenderSelect.getBackgroundHearts();
+        return SexualOrientation.getBackgroundHearts();
       case 2:
-        return SurpriseQuiz.getBackgroundHearts();
-
-      case 3:
         return ChooseIntrests.getBackgroundHearts();
-      case 4:
+      case 3:
         return LookingFor.getBackgroundHearts();
-      case 5:
+      case 4:
         return DatingPreference.getBackgroundHearts();
-      case 6:
+      case 5:
         return AddPhotos.getBackgroundHearts();
       default:
         return [];
@@ -75,52 +70,58 @@ class _ProfileSetupState extends State<ProfileSetup> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return Scaffold(
       backgroundColor: CupidColors.glassWhite,
       body: Stack(
         children: [
           ...getBackgroundHearts(),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  steps[_currentStep],
-                  const SizedBox(height: 50),
-                  Row(
-                    mainAxisAlignment:
-                        _currentStep == 0 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (_currentStep != 0)
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                            elevation: WidgetStateProperty.all(0),
-                          ),
-                          onPressed: _previousStep,
-                          child: const Text(
-                            'Back',
-                            style: TextStyle(color: CupidColors.textColorBlack),
-                          ),
-                        ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                          elevation: WidgetStateProperty.all(0),
-                        ),
-                        onPressed: () {
-                          _nextStep();
-                        },
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(color: CupidColors.textColorBlack),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+          SizedBox(
+            height: size.height,
+            width: size.width,
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: steps[_currentStep],
               ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _navigationButtons(),
+    );
+  }
+
+  Widget _navigationButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+      child: Row(
+        mainAxisAlignment:
+            _currentStep == 0 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+        children: [
+          if (_currentStep != 0)
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                elevation: WidgetStateProperty.all(0),
+              ),
+              onPressed: _previousStep,
+              child: const Text(
+                'Back',
+                style: TextStyle(color: CupidColors.textColorBlack),
+              ),
+            ),
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.transparent),
+              elevation: WidgetStateProperty.all(0),
+            ),
+            onPressed: () {
+              _nextStep();
+            },
+            child: const Text(
+              'Next',
+              style: TextStyle(color: CupidColors.textColorBlack),
             ),
           ),
         ],

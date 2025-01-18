@@ -71,10 +71,10 @@ class CupidStyles {
     fontWeight: FontWeight.normal,
     color: CupidColors.normalTextColor,
   );
-  static const headingTextStyle = TextStyle(
+  static const subHeadingTextStyle = TextStyle(
     fontFamily: 'Neue Montreal',
     fontSize: 26,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w500,
     color: CupidColors.normalTextColor,
   );
   static const labelTextStyle = TextStyle(
@@ -92,4 +92,18 @@ class CupidStyles {
     fontSize: 20,
     color: CupidColors.normalTextColor,
   );
+}
+
+extension CupidTextStylesExtension on TextStyle {
+  TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
+  TextStyle get semiBold => copyWith(fontWeight: FontWeight.w600);
+  TextStyle get medium => copyWith(fontWeight: FontWeight.w500);
+  TextStyle get regular => copyWith(fontWeight: FontWeight.normal);
+  TextStyle get light => copyWith(fontWeight: FontWeight.w300);
+  TextStyle get extraLight => copyWith(fontWeight: FontWeight.w200);
+  TextStyle get extraBold => copyWith(fontWeight: FontWeight.w800);
+  TextStyle setColor(Color color) => copyWith(color: color);
+  TextStyle setFontSize(double size) => copyWith(fontSize: size);
+  TextStyle setFontFamily(String family) => copyWith(fontFamily: family);
+  TextStyle setLineHeight(double height) => copyWith(height: height);
 }

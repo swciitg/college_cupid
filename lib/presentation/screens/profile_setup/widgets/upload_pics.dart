@@ -53,7 +53,7 @@ class AddPhotos extends StatelessWidget {
         const SizedBox(
           height: 15,
         ),
-        Container(
+        SizedBox(
           height: 411,
           width: 383,
           child: Stack(

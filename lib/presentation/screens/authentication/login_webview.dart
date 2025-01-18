@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/widgets/authentication/password_alert_dialog.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/routing/app_routes.dart';
+import 'package:college_cupid/routing/app_router.dart';
+
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/stores/common_store.dart';
@@ -95,7 +97,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                 await WebViewCookieManager().clearCookies();
 
                 if (myProfile == null || myInfo == null) {
-                  debugPrint('NEW USER');
+                  log('NEW USER');
                   goRouter.goNamed(AppRoutes.profileDetails.name);
                 } else {
                   debugPrint('USER ALREADY EXISTS');
