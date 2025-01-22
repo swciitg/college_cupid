@@ -1,4 +1,4 @@
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
@@ -10,34 +10,25 @@ class BasicDetails extends StatefulWidget {
   @override
   State<BasicDetails> createState() => _BasicDetailsState();
 
-  static List<Widget> getBackgroundHearts() {
-    return [
-      Builder(builder: (context) {
-        return Positioned(
-          bottom: MediaQuery.of(context).size.height * 0.07,
-          right: 0,
-          child: const HeartShape(
-            size: 125,
-            asset: "assets/icons/heart_outline.svg",
-            color: Color(0x99FBA8AA),
-          ),
-        );
-      }),
-      Builder(builder: (context) {
-        return Positioned(
-            right: MediaQuery.of(context).size.width * 0.27,
-            top: MediaQuery.of(context).size.height * 0.07,
-            child: const HeartShape(
-                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99A8CEFA)));
-      }),
-      Builder(builder: (context) {
-        return Positioned(
-            left: 0,
-            bottom: -MediaQuery.of(context).size.height * .15,
-            child: const HeartShape(
-                size: 500, asset: "assets/icons/heart_outline.svg", color: Color(0x99EAE27A)));
-      }),
-    ];
+  static Map<String, HeartState> heartStates(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    return {
+      "yellow": HeartState(
+        size: 200,
+        left: 0,
+        bottom: -size.height * .15,
+      ),
+      "blue": HeartState(
+        size: 200,
+        right: size.width * 0.27,
+        top: size.height * 0.07,
+      ),
+      "pink": HeartState(
+        size: 125,
+        right: 0,
+        bottom: size.height * 0.07,
+      ),
+    };
   }
 }
 
@@ -55,6 +46,7 @@ class _BasicDetailsState extends State<BasicDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        const SizedBox(height: kToolbarHeight),
         const Text(
           "About you",
           style: CupidStyles.headingStyle,
@@ -77,7 +69,7 @@ class _BasicDetailsState extends State<BasicDetails> {
         ),
         const SizedBox(height: 4),
         Wrap(
-          spacing: 4,
+          spacing: 8,
           alignment: WrapAlignment.start,
           children: List.generate(Gender.values.length, (index) {
             final gender = Gender.values[index];
@@ -94,7 +86,7 @@ class _BasicDetailsState extends State<BasicDetails> {
         ),
         const SizedBox(height: 4),
         Wrap(
-          spacing: 4,
+          spacing: 8,
           alignment: WrapAlignment.start,
           children: List.generate(programs.length, (index) {
             final program = programs[index];
@@ -111,7 +103,7 @@ class _BasicDetailsState extends State<BasicDetails> {
         ),
         const SizedBox(height: 4),
         Wrap(
-          spacing: 4,
+          spacing: 8,
           alignment: WrapAlignment.start,
           children: [
             ...List.generate(5, (index) {

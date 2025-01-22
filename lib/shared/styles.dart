@@ -77,19 +77,9 @@ class CupidStyles {
     fontWeight: FontWeight.w500,
     color: CupidColors.normalTextColor,
   );
-  static const labelTextStyle = TextStyle(
-    fontFamily: 'Neue Montreal',
-    fontSize: 14,
-    color: CupidColors.normalTextColor,
-  );
   static const nextTextStyle = TextStyle(
     fontFamily: 'Neue Montreal',
     fontSize: 22,
-    color: CupidColors.normalTextColor,
-  );
-  static const queTextStyle = TextStyle(
-    fontFamily: 'Neue Montreal',
-    fontSize: 20,
     color: CupidColors.normalTextColor,
   );
 }

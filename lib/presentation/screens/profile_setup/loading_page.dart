@@ -23,6 +23,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     )..repeat(); // Repeat animation indefinitely
 
     Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
       context.goNamed(AppRoutes.loginWebview.name);
     });
   }

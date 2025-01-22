@@ -22,11 +22,13 @@ class _SplashScreenState extends State<SplashScreen> {
     LoginStore.isAuthenticated().then((value) async {
       if (value == true && LoginStore.isProfileCompleted && LoginStore.isPasswordSaved) {
         debugPrint('USER IS AUTHENTICATED');
+        if (!mounted) return;
         final goRouter = GoRouter.of(context);
         await context.read<CommonStore>().initializeProfile();
         goRouter.goNamed(AppRoutes.home.name);
       } else {
         debugPrint('USER IS NOT AUTHENTICATED');
+        if (!mounted) return;
         context.goNamed(AppRoutes.welcome.name);
       }
     });

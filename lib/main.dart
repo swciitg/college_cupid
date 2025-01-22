@@ -10,7 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const riverpod.ProviderScope(child: CollegeCupidApp()));
+  runApp(
+    const riverpod.ProviderScope(
+      child: CollegeCupidApp(),
+    ),
+  );
 }
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -39,7 +43,7 @@ class CollegeCupidApp extends StatelessWidget {
           textSelectionTheme: TextSelectionThemeData(
             selectionHandleColor: CupidColors.titleColor,
             cursorColor: CupidColors.secondaryColor,
-            selectionColor: CupidColors.secondaryColor.withOpacity(0.75),
+            selectionColor: CupidColors.secondaryColor.withValues(alpha: 0.75),
           ),
         ),
         routerConfig: goRouter,

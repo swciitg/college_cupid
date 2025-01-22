@@ -1,7 +1,8 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-final customCacheManager = CacheManager(Config('customKey',
-    stalePeriod: const Duration(days: 10), maxNrOfCacheObjects: 50));
+final customCacheManager = CacheManager(
+  Config('customKey', stalePeriod: const Duration(days: 10), maxNrOfCacheObjects: 50),
+);
 
 Map<String, List<String>> interestsMap = {
   'Sports': [
@@ -44,7 +45,7 @@ Map<String, List<String>> interestsMap = {
     "🎲 Board games",
     "🌱 Gardening",
     "🍳 Cooking",
-    "🍰 Baking"
+    "🍰 Baking",
   ],
   "Film & TV": [
     "📺 Romance",
@@ -54,7 +55,7 @@ Map<String, List<String>> interestsMap = {
     "📺 Thriller",
     "📺 Fantasy",
     "📺 Sci-fi",
-    "📺 Anime"
+    "📺 Anime",
   ],
   "Reading": [
     "📚 Romance",
@@ -63,7 +64,7 @@ Map<String, List<String>> interestsMap = {
     "📚 Horror",
     "📚 Manga",
     "📚 Fantasy",
-    "📚 Sci-fi"
+    "📚 Sci-fi",
   ],
   "Music": [
     "🎵 Hip hop",
@@ -74,7 +75,7 @@ Map<String, List<String>> interestsMap = {
     "🎵 Classical",
     "🎵 Country",
     "🎵 Desi",
-    "🎵 Jazz"
+    "🎵 Jazz",
   ],
   "Food & Drink": [
     "🍷 Wine",
@@ -84,7 +85,7 @@ Map<String, List<String>> interestsMap = {
     "🥃 Whiskey",
     "🌱 Vegan",
     "🍕 Pizza",
-    "🥦 Vegetarian"
+    "🥦 Vegetarian",
   ],
   "Travelling": [
     "🏖️ Beaches",
@@ -95,7 +96,7 @@ Map<String, List<String>> interestsMap = {
     "🏡 Country escapes",
     "🎒 Backpacking",
     "⛺ Hiking trips",
-    "🛣️ Road trips"
+    "🛣️ Road trips",
   ],
   "Pets": [
     "🐶 Dogs",
@@ -104,6 +105,6 @@ Map<String, List<String>> interestsMap = {
     "🐠 Fishes",
     "🐇 Rabbits",
     "🐢 Turtles",
-    "🐍 Snakes"
+    "🐍 Snakes",
   ]
 };

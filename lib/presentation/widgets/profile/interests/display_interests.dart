@@ -13,44 +13,41 @@ class DisplayInterests extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final InterestStore interestStore = context.read<InterestStore>();
-    return Observer(builder: (_) {
-      return Column(children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Text(
-            "Select a few of your interests and let everyone know what you’re passionate about.",
-            style: CupidStyles.lightTextStyle,
-          ),
-        ),
-        ...interestsMap.keys
-            .map(
-              (key) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      key,
-                      style: const TextStyle(
-                          fontSize: 20, color: CupidColors.greyColor, fontWeight: FontWeight.w600),
-                    ),
+    return Observer(
+      builder: (_) {
+        return Column(
+          children: [
+            const Text(
+              "Select a few of your interests and let everyone know what you’re passionate about.",
+              style: CupidStyles.lightTextStyle,
+            ),
+            const SizedBox(height: 16),
+            ...interestsMap.keys
+                .map(
+                  (key) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        key,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: CupidColors.greyColor,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 8),
+                      SelectableInterestList(
+                        allInterests: interestsMap[key]!,
+                        selectedInterests: interestStore.selectedInterests,
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider()
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                    child: SelectableInterestList(
-                      allInterests: interestsMap[key]!,
-                      selectedInterests: interestStore.selectedInterests,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  const Divider()
-                ],
-              ),
-            )
-            .toList()
-      ]);
-    });
+                )
+                .toList()
+          ],
+        );
+      },
+    );
   }
 }

@@ -30,7 +30,6 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  ImageHelpers imageHelpers = ImageHelpers();
   Gender gender = Gender.male;
   File? image;
 
@@ -63,15 +62,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           Encryption.encryptAES(plainText: privateKey, key: pass.text));
 
       UserProfile myProfile = UserProfile(
-          name: LoginStore.displayName!,
-          profilePicUrl: '',
-          gender: gender.databaseString,
-          email: LoginStore.email!,
-          bio: '',
-          yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-          program: myProgram.databaseString!,
-          publicKey: publicKey,
-          interests: []);
+        name: LoginStore.displayName!,
+        profilePicUrl: '',
+        gender: gender.databaseString,
+        email: LoginStore.email!,
+        bio: '',
+        yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
+        program: myProgram.databaseString!,
+        publicKey: publicKey,
+        interests: [],
+      );
 
       PersonalInfo myInfo = PersonalInfo(
         email: LoginStore.email!,
@@ -157,10 +157,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
                         if (value == null) return;
 
-                        Image pickedImage = await ImageHelpers.xFileToImage(xFile: value);
-                        final croppedImage = await nav.push<File>(MaterialPageRoute(
-                          builder: (context) => CropImageScreen(image: pickedImage),
-                        ));
+                        Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
+                        final croppedImage = await nav.push<File>(
+                          MaterialPageRoute(
+                            builder: (context) => CropImageScreen(image: pickedImage),
+                          ),
+                        );
 
                         setState(() {
                           image = croppedImage;

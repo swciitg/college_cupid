@@ -39,7 +39,6 @@ class EditProfile extends ConsumerStatefulWidget {
 }
 
 class _EditProfileState extends ConsumerState<EditProfile> {
-  ImageHelpers imageHelpers = ImageHelpers();
   late Gender gender;
   File? image;
 
@@ -175,7 +174,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
                             if (value == null) return;
 
-                            Image pickedImage = await ImageHelpers.xFileToImage(xFile: value);
+                            Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
                             final croppedImage = await nav.push<File>(MaterialPageRoute(
                               builder: (context) => CropImageScreen(image: pickedImage),
                             ));

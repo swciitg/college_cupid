@@ -7,7 +7,11 @@ class SelectableInterestCard extends StatelessWidget {
   final String text;
   final bool selected;
 
-  const SelectableInterestCard({super.key, required this.selected, required this.text});
+  const SelectableInterestCard({
+    super.key,
+    required this.selected,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {

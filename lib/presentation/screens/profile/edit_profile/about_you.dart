@@ -27,13 +27,14 @@ class AboutYouScreen extends ConsumerStatefulWidget {
   final File? image;
   final UserProfile myProfile;
 
-  const AboutYouScreen(
-      {super.key,
-      required this.myProfile,
-      required this.privateKey,
-      required this.password,
-      required this.image,
-      required this.myInfo});
+  const AboutYouScreen({
+    super.key,
+    required this.myProfile,
+    required this.privateKey,
+    required this.password,
+    required this.image,
+    required this.myInfo,
+  });
 
   @override
   ConsumerState<AboutYouScreen> createState() => _AboutYouScreenState();

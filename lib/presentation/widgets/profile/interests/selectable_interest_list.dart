@@ -22,13 +22,16 @@ class _SelectableInterestListState extends State<SelectableInterestList> {
         children: [
           Wrap(
             direction: Axis.horizontal,
-            spacing: 5,
-            runSpacing: 10,
-            children: widget.allInterests.map((interest) {
-              return SelectableInterestCard(
+            spacing: 4,
+            runSpacing: 8,
+            children: widget.allInterests.map(
+              (interest) {
+                return SelectableInterestCard(
                   selected: widget.selectedInterests.contains(interest),
-                  text: interest);
-            }).toList(),
+                  text: interest,
+                );
+              },
+            ).toList(),
           ),
         ],
       );

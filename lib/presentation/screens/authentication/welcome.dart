@@ -107,7 +107,7 @@ class _WelcomeState extends State<Welcome> {
                 ),
                 splashFactory: InkRipple.splashFactory,
               ),
-              child: const Text('sign in through outlook'),
+              child: const Text('Sign in through outlook'),
             ),
           ),
         ],

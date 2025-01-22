@@ -35,11 +35,12 @@ class _CropImageScreenState extends State<CropImageScreen> {
         ),
         actions: [
           CupidTextButton(
-              text: 'Revert',
-              fontColor: Colors.white,
-              onPressed: () {
-                setAspectRatio(-1);
-              })
+            text: 'Revert',
+            fontColor: Colors.white,
+            onPressed: () {
+              setAspectRatio(-1);
+            },
+          )
         ],
       ),
       body: CropImage(
@@ -62,65 +63,65 @@ class _CropImageScreenState extends State<CropImageScreen> {
                 color: Colors.white,
               ),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(
-                  FluentIcons.arrow_rotate_counterclockwise_24_regular,
-                  color: Colors.white,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    FluentIcons.arrow_rotate_counterclockwise_24_regular,
+                    color: Colors.white,
+                  ),
+                  onPressed: _rotateLeft,
                 ),
-                onPressed: _rotateLeft,
-              ),
-              IconButton(
-                icon: const Icon(
-                  FluentIcons.arrow_rotate_clockwise_24_regular,
-                  color: Colors.white,
+                IconButton(
+                  icon: const Icon(
+                    FluentIcons.arrow_rotate_clockwise_24_regular,
+                    color: Colors.white,
+                  ),
+                  onPressed: _rotateRight,
                 ),
-                onPressed: _rotateRight,
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  setAspectRatio(1);
-                },
-                child: Text(
-                  '1 : 1',
-                  style:
-                      CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setAspectRatio(1);
+                  },
+                  child: Text(
+                    '1 : 1',
+                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setAspectRatio(3 / 4);
-                },
-                child: Text(
-                  '3 : 4',
-                  style:
-                      CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                TextButton(
+                  onPressed: () {
+                    setAspectRatio(3 / 4);
+                  },
+                  child: Text(
+                    '3 : 4',
+                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setAspectRatio(9 / 16);
-                },
-                child: Text(
-                  '9 : 16',
-                  style:
-                      CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                TextButton(
+                  onPressed: () {
+                    setAspectRatio(9 / 16);
+                  },
+                  child: Text(
+                    '9 : 16',
+                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -143,7 +144,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
     }
     final nav = Navigator.of(context);
     ui.Image image = await controller.croppedBitmap();
-    File croppedFile = await ImageHelpers.imageToFile(image: image);
+    File croppedFile = await imageHelpers.imageToFile(image: image);
     nav.pop(croppedFile);
   }
 }
