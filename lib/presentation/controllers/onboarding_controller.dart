@@ -180,7 +180,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         name: LoginStore.displayName!,
         profilePicUrl: '',
         email: LoginStore.email,
-        bio: '',
+        bio: bioController.text.trim(),
         yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
         publicKey: publicKey,
       ),

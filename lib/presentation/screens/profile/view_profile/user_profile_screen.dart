@@ -39,74 +39,81 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final crushesRepo = ref.read(crushesRepoProvider);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget.isMine
-          ? null
-          : AppBar(
-              actions: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.more_vert_rounded,
-                    color: CupidColors.pinkColor,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      context: context,
-                      builder: (context) => ProfileOptionsBottomSheet(
-                        userEmail: widget.userProfile.email,
-                      ),
-                    );
-                  },
-                ),
-              ],
-              systemOverlayStyle: CupidStyles.statusBarStyle,
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              automaticallyImplyLeading: false,
-              centerTitle: false,
-              title: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('CollegeCupid',
-                    style: TextStyle(
-                      fontFamily: 'SedgwickAve',
-                      color: CupidColors.titleColor,
-                      fontSize: 32,
-                    )),
-              ),
-            ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: CupidColors.titleColor,
-        onPressed: () async {
-          if (widget.isMine) {
-            context.pushNamed(AppRoutes.editProfile.name).then((value) {
-              setState(() {
-                profile = ref.read(userProvider).myProfile!;
-              });
-            });
-          } else {
-            String sharedSecret = DiffieHellman.generateSharedSecret(
-                    otherPublicKey: BigInt.parse(profile.publicKey),
-                    myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
-                .toString();
-            String encryptedCrushEmail = Encryption.bytesToHexadecimal(
-                Encryption.encryptAES(plainText: profile.email, key: LoginStore.password!));
-
-            bool success = await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
-            if (success) {
-              await crushesRepo.increaseCrushesCount(profile.email);
-            }
-          }
-        },
-        child: Icon(
-          widget.isMine ? FluentIcons.edit_12_filled : Icons.favorite,
-          size: 30,
-          color: Colors.white,
-        ),
-      ),
+      appBar: _appBar(context),
+      floatingActionButton: _actionButton(context, crushesRepo),
       body: SafeArea(
         child: DisplayProfileInfo(userProfile: profile),
+      ),
+    );
+  }
+
+  FloatingActionButton _actionButton(BuildContext context, CrushesRepository crushesRepo) {
+    return FloatingActionButton(
+      backgroundColor: CupidColors.titleColor,
+      onPressed: () async {
+        if (widget.isMine) {
+          context.pushNamed(AppRoutes.editProfile.name).then((value) {
+            setState(() {
+              profile = ref.read(userProvider).myProfile!;
+            });
+          });
+        } else {
+          String sharedSecret = DiffieHellman.generateSharedSecret(
+                  otherPublicKey: BigInt.parse(profile.publicKey),
+                  myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
+              .toString();
+          String encryptedCrushEmail = Encryption.bytesToHexadecimal(
+              Encryption.encryptAES(plainText: profile.email, key: LoginStore.password!));
+
+          bool success = await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
+          if (success) {
+            await crushesRepo.increaseCrushesCount(profile.email);
+          }
+        }
+      },
+      child: Icon(
+        widget.isMine ? FluentIcons.edit_12_filled : Icons.favorite,
+        size: 30,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  AppBar? _appBar(BuildContext context) {
+    if (widget.isMine) return null;
+    return AppBar(
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.more_vert_rounded,
+            color: CupidColors.pinkColor,
+          ),
+          onPressed: () {
+            showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              context: context,
+              builder: (context) => ProfileOptionsBottomSheet(
+                userEmail: widget.userProfile.email,
+              ),
+            );
+          },
+        ),
+      ],
+      systemOverlayStyle: CupidStyles.statusBarStyle,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      title: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text('CollegeCupid',
+            style: TextStyle(
+              fontFamily: 'SedgwickAve',
+              color: CupidColors.titleColor,
+              fontSize: 32,
+            )),
       ),
     );
   }

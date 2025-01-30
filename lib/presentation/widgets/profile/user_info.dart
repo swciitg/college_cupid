@@ -16,36 +16,29 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo> {
   @override
   Widget build(BuildContext context) {
-    Program program = Program.values
-        .firstWhere((p) => p == widget.userProfile.program);
+    Program program = widget.userProfile.program!;
     String programAndYearDisplayString =
         "${program.displayString} '${widget.userProfile.yearOfJoin}";
     return Hero(
       tag: 'userInfo',
-      child: Material(
-        type: MaterialType.transparency,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Text(
-                widget.userProfile.name,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                    color: Colors.white),
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Text(
+              widget.userProfile.name,
+              overflow: TextOverflow.ellipsis,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
             ),
-            IconLabelText(
-                text: widget.userProfile.email,
-                icon: FluentIcons.mail_32_filled),
-            IconLabelText(
-                text: programAndYearDisplayString,
-                icon: FluentIcons.hat_graduation_12_filled)
-          ],
-        ),
+          ),
+          IconLabelText(text: widget.userProfile.email, icon: FluentIcons.mail_32_filled),
+          IconLabelText(
+            text: programAndYearDisplayString,
+            icon: FluentIcons.hat_graduation_12_filled,
+          )
+        ],
       ),
     );
   }

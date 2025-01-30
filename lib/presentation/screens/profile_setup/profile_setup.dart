@@ -78,7 +78,7 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                     if (loadingMessage != null)
                       Text(
                         loadingMessage,
-                        style: CupidStyles.normalTextStyle,
+                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
                       ),
                   ],
                 ),

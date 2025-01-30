@@ -18,9 +18,7 @@ class IconLabelText extends StatelessWidget {
             color: Colors.white,
             size: 12,
           ),
-          const SizedBox(
-            width: 5,
-          ),
+          const SizedBox(width: 4),
           Text(
             text,
             textAlign: TextAlign.left,

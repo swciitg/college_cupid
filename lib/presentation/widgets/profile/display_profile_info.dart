@@ -1,9 +1,7 @@
-import 'package:blurhash_ffi/blurhashffi_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/profile/interests/display_only_interest_list.dart';
 import 'package:college_cupid/presentation/widgets/profile/user_info.dart';
+import 'package:college_cupid/presentation/widgets/profile/user_profile_images.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +17,6 @@ class DisplayProfileInfo extends StatefulWidget {
 class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Flex(
@@ -33,7 +30,10 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
                   children: [
                     Stack(
                       children: [
-                        _buildProfileImage(context, size.width - 20),
+                        UserProfileImages(
+                          user: widget.userProfile,
+                          moveToProfile: false,
+                        ),
                         Positioned(
                           bottom: 10,
                           left: 25,
@@ -88,50 +88,6 @@ class _DisplayProfileInfoState extends State<DisplayProfileInfo> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Hero _buildProfileImage(BuildContext context, double width) {
-    final blurHash = widget.userProfile.images.first.blurHash;
-    return Hero(
-      tag: 'profilePic',
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(20),
-          bottom: Radius.zero,
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          constraints: const BoxConstraints(
-            minHeight: 250,
-          ),
-          foregroundDecoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.transparent, Colors.black],
-                begin: Alignment.center,
-                end: Alignment.bottomCenter),
-          ),
-          child: CachedNetworkImage(
-            fit: BoxFit.contain,
-            imageUrl: widget.userProfile.images.first.url,
-            placeholder: (context, url) {
-              if (blurHash == null) {
-                return const CustomLoader();
-              }
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: SizedBox(
-                  width: width,
-                  height: width,
-                  child: BlurhashFfi(
-                    hash: widget.userProfile.images.first.blurHash!,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
       ),
     );
   }

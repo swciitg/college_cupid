@@ -13,8 +13,7 @@ class ProfileView extends ConsumerStatefulWidget {
   final List<UserProfile> userProfiles;
   final PageController pageController;
 
-  const ProfileView(
-      {required this.pageController, required this.userProfiles, super.key});
+  const ProfileView({required this.pageController, required this.userProfiles, super.key});
 
   @override
   ConsumerState<ProfileView> createState() => _ProfileViewState();
@@ -35,7 +34,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   @override
   Widget build(BuildContext context) {
     final userProfileRepo = ref.read(userProfileRepoProvider);
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final size = MediaQuery.sizeOf(context);
+    final double screenWidth = size.width;
     filterStore = context.read<FilterStore>();
     pageViewStore = context.read<PageViewStore>();
 
@@ -53,7 +53,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     return Observer(builder: (nestedContext) {
       return SizedBox(
-        height: screenHeight * 0.65,
+        height: (screenWidth - 20) * 4 / 3,
         child: PageView(
           padEnds: true,
           key: Key(widget.userProfiles.hashCode.toString()),
@@ -64,8 +64,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             if (pageViewStore.isLastPage) return;
             if (pageViewStore.homeTabProfileList.length - value <= 4) {
               pageViewStore.setPageNumber(pageViewStore.pageNumber + 1);
-              final List<UserProfile> users = await userProfileRepo
-                  .getPaginatedUsers(pageViewStore.pageNumber, {
+              final List<UserProfile> users =
+                  await userProfileRepo.getPaginatedUsers(pageViewStore.pageNumber, {
                 'gender': filterStore.interestedInGender.databaseString,
                 'program': filterStore.program.databaseString,
                 'yearOfJoin': filterStore.yearOfJoin,
