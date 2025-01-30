@@ -12,7 +12,7 @@ import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
   void onSubmitInterests(
     UserProfileRepository userProfileRepo,
     PersonalInfoRepository personalInfoRepo,
-    CommonStore commonStore,
+    UserController commonStore,
   ) async {
     if (_cupidFormKey.currentState!.validate()) {
       if (interestStore.selectedInterests.length < 5) {
@@ -79,8 +79,8 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
 
       await personalInfoRepo.postPersonalInfo(widget.myInfo);
 
-      widget.myProfile.profilePicUrl =
-          await userProfileRepo.postUserProfile(widget.image, widget.myProfile);
+      // widget.myProfile.profilePicUrl =
+      // await userProfileRepo.postUserProfile(widget.image, widget.myProfile);
 
       await SharedPrefs.setDHPublicKey(widget.myInfo.publicKey);
       await SharedPrefs.setDHPrivateKey(widget.privateKey);
@@ -99,7 +99,7 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
 
-    final commonStore = context.read<CommonStore>();
+    final commonStoreController = ref.read(userProvider.notifier);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -116,7 +116,7 @@ class _AboutYouScreenState extends ConsumerState<AboutYouScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: CupidColors.titleColor,
           onPressed: () {
-            onSubmitInterests(userProfileRepo, personalInfoRepo, commonStore);
+            onSubmitInterests(userProfileRepo, personalInfoRepo, commonStoreController);
           },
           child: loading
               ? const CustomLoader(

@@ -1,42 +1,14 @@
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'heart_state.dart';
 
-class LookingForScreen extends StatefulWidget {
+class LookingForScreen extends ConsumerWidget {
   const LookingForScreen({super.key});
-
-  @override
-  State<LookingForScreen> createState() => _LookingForScreenState();
-
-  static List<Widget> getBackgroundHearts() {
-    return [
-      Builder(builder: (context) {
-        return const Positioned(
-            top: 50,
-            right: 0,
-            child: HeartShape(
-                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99FBA8AA)));
-      }),
-      Builder(builder: (context) {
-        return Positioned(
-            left: -75,
-            bottom: MediaQuery.of(context).size.height * 0.27,
-            child: const HeartShape(
-                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99A8CEFA)));
-      }),
-      Builder(builder: (context) {
-        return Positioned(
-            right: -40,
-            bottom: MediaQuery.of(context).size.height * 0.05,
-            child: const HeartShape(
-                size: 200, asset: "assets/icons/heart_outline.svg", color: Color(0x99EAE27A)));
-      }),
-    ];
-  }
 
   static Map<String, HeartState> heartStates(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -58,14 +30,11 @@ class LookingForScreen extends StatefulWidget {
       ),
     };
   }
-}
-
-class _LookingForScreenState extends State<LookingForScreen> {
-  bool _displayOnProfile = false;
-  var _selectedOption = LookingFor.longTermPartner;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,7 +45,10 @@ class _LookingForScreenState extends State<LookingForScreen> {
           style: CupidStyles.normalTextStyle,
         ),
         const SizedBox(height: 16),
-        _buildchoiceChips(),
+        _buildchoiceChips(onboardingState.userProfile?.relationshipGoals?.goal,
+            onSelected: (value) {
+          onboardingController.updateLookingForType(value);
+        }),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,11 +59,9 @@ class _LookingForScreenState extends State<LookingForScreen> {
             ),
             const SizedBox(width: 8),
             Switch(
-              value: _displayOnProfile,
+              value: onboardingState.userProfile?.relationshipGoals?.display ?? false,
               onChanged: (value) {
-                setState(() {
-                  _displayOnProfile = value;
-                });
+                onboardingController.updateLookingForDisplay(value);
               },
               inactiveTrackColor: WidgetStateColor.transparent,
               activeColor: Colors.pinkAccent,
@@ -104,7 +74,8 @@ class _LookingForScreenState extends State<LookingForScreen> {
     );
   }
 
-  Widget _buildchoiceChips() {
+  Widget _buildchoiceChips(LookingFor? selectedChoice,
+      {required void Function(LookingFor) onSelected}) {
     return Wrap(
       spacing: 8,
       children: LookingFor.values.map((tag) {
@@ -112,7 +83,7 @@ class _LookingForScreenState extends State<LookingForScreen> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: _selectedOption == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(
@@ -124,11 +95,9 @@ class _LookingForScreenState extends State<LookingForScreen> {
             },
           ),
           checkmarkColor: Colors.white,
-          selected: _selectedOption == tag,
-          onSelected: (_) {
-            setState(() {
-              _selectedOption = tag;
-            });
+          selected: selectedChoice == tag,
+          onSelected: (val) {
+            onSelected(tag);
           },
         );
       }).toList(),

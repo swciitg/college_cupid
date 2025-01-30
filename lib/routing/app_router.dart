@@ -9,6 +9,7 @@ import 'package:college_cupid/presentation/screens/profile/edit_profile/select_i
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/splash.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoutes {
@@ -24,33 +25,39 @@ enum AppRoutes {
   selectInterestsScreen
 }
 
-final goRouter = GoRouter(initialLocation: '/', debugLogDiagnostics: true, routes: [
-  GoRoute(
-    path: '/',
-    name: AppRoutes.splash.name,
-    builder: (context, state) => const SplashScreen(),
-  ),
-  GoRoute(
-    path: '/${AppRoutes.profileDetails.name}',
-    name: AppRoutes.profileDetails.name,
-    builder: (context, state) => const ProfileDetails(),
-  ),
-  GoRoute(
-    path: '/${AppRoutes.welcome.name}',
-    name: AppRoutes.welcome.name,
-    builder: (context, state) => const Welcome(),
-  ),
-  GoRoute(
-    path: '/${AppRoutes.loginWebview.name}',
-    name: AppRoutes.loginWebview.name,
-    builder: (context, state) => const LoginWebview(),
-  ),
-  GoRoute(
-    path: '/${AppRoutes.profileSetup.name}',
-    name: AppRoutes.profileSetup.name,
-    builder: (context, state) => const ProfileSetup(),
-  ),
-  GoRoute(
+final navigatorKey = GlobalKey<NavigatorState>();
+
+final goRouter = GoRouter(
+  initialLocation: '/',
+  debugLogDiagnostics: true,
+  navigatorKey: navigatorKey,
+  routes: [
+    GoRoute(
+      path: '/',
+      name: AppRoutes.splash.name,
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.profileDetails.name}',
+      name: AppRoutes.profileDetails.name,
+      builder: (context, state) => const ProfileDetails(),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.welcome.name}',
+      name: AppRoutes.welcome.name,
+      builder: (context, state) => const Welcome(),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.loginWebview.name}',
+      name: AppRoutes.loginWebview.name,
+      builder: (context, state) => const LoginWebview(),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.profileSetup.name}',
+      name: AppRoutes.profileSetup.name,
+      builder: (context, state) => const ProfileSetup(),
+    ),
+    GoRoute(
       path: '/${AppRoutes.home.name}',
       name: AppRoutes.home.name,
       builder: (context, state) => const Home(),
@@ -80,5 +87,7 @@ final goRouter = GoRouter(initialLocation: '/', debugLogDiagnostics: true, route
           name: AppRoutes.blockedUserListScreen.name,
           builder: (context, state) => const BlockedUserListScreen(),
         ),
-      ]),
-]);
+      ],
+    ),
+  ],
+);

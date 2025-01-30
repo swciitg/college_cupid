@@ -1,9 +1,9 @@
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/stores/interest_store.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SelectableInterestCard extends StatelessWidget {
+class SelectableInterestCard extends ConsumerWidget {
   final String text;
   final bool selected;
 
@@ -14,14 +14,14 @@ class SelectableInterestCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final interestStore = context.read<InterestStore>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     return GestureDetector(
       onTap: () {
         if (selected) {
-          interestStore.removeInterest(text);
+          onboardingController.removeInterest(text);
         } else {
-          interestStore.addInterest(text);
+          onboardingController.addInterest(text);
         }
       },
       child: Container(

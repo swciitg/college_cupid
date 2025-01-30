@@ -1,44 +1,19 @@
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'heart_state.dart';
 
-class SexualOrientationScreen extends StatefulWidget {
+class SexualOrientationScreen extends ConsumerWidget {
   const SexualOrientationScreen({super.key});
 
   @override
-  State<SexualOrientationScreen> createState() => _SexualOrientationScreenState();
-
-  static Map<String, HeartState> heartStates(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    return {
-      "yellow": HeartState(
-        size: 500,
-        left: 0,
-        bottom: -size.height * .15,
-      ),
-      "blue": HeartState(
-        size: 200,
-        right: size.width * 0.27,
-        top: size.height * 0.07,
-      ),
-      "pink": HeartState(
-        size: 125,
-        right: 0,
-        bottom: size.height * 0.07,
-      ),
-    };
-  }
-}
-
-class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
-  bool _displayOnProfile = false;
-  SexualOrientation _selectedChoice = SexualOrientation.straight;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,7 +38,10 @@ class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
           style: CupidStyles.normalTextStyle,
         ),
         const SizedBox(height: 24),
-        _buildchoiceChips(),
+        _buildchoiceChips(onboardingState.userProfile?.sexualOrientation?.type,
+            onSelected: (value) {
+          onboardingController.updateSexualOrientation(value);
+        }),
         const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,11 +54,9 @@ class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
               activeColor: CupidColors.secondaryColor,
               inactiveThumbColor: CupidColors.secondaryColor,
               inactiveTrackColor: CupidColors.offWhiteColor,
-              value: _displayOnProfile,
+              value: onboardingState.userProfile?.sexualOrientation?.display ?? false,
               onChanged: (value) {
-                setState(() {
-                  _displayOnProfile = value;
-                });
+                onboardingController.updateSexualOrientationDisplay(value);
               },
             ),
           ],
@@ -89,7 +65,8 @@ class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
     );
   }
 
-  Widget _buildchoiceChips() {
+  Widget _buildchoiceChips(SexualOrientation? selectedChoice,
+      {required Function(SexualOrientation) onSelected}) {
     return Wrap(
       spacing: 8,
       children: SexualOrientation.values.map((tag) {
@@ -97,7 +74,7 @@ class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: _selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(
@@ -109,14 +86,33 @@ class _SexualOrientationScreenState extends State<SexualOrientationScreen> {
             },
           ),
           checkmarkColor: Colors.white,
-          selected: _selectedChoice == tag,
+          selected: selectedChoice == tag,
           onSelected: (_) {
-            setState(() {
-              _selectedChoice = tag;
-            });
+            onSelected(tag);
           },
         );
       }).toList(),
     );
+  }
+
+  static Map<String, HeartState> heartStates(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    return {
+      "yellow": HeartState(
+        size: 500,
+        left: 0,
+        bottom: -size.height * .15,
+      ),
+      "blue": HeartState(
+        size: 200,
+        right: size.width * 0.27,
+        top: size.height * 0.07,
+      ),
+      "pink": HeartState(
+        size: 125,
+        right: 0,
+        bottom: size.height * 0.07,
+      ),
+    };
   }
 }

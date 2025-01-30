@@ -16,6 +16,14 @@ enum Program {
   final int? numberOfYears;
 
   const Program(this.displayString, this.databaseString, this.rollNumberCode, this.numberOfYears);
+
+  static Program fromDatabaseString(String databaseString) {
+    final program =
+        Program.values.firstWhere((e) => e.databaseString == databaseString, orElse: () {
+      return Program.none;
+    });
+    return program;
+  }
 }
 
 enum InterestedInGender {
@@ -38,6 +46,13 @@ enum Gender {
   final String databaseString;
 
   const Gender(this.displayString, this.databaseString);
+
+  static Gender fromDatabaseString(String databaseString) {
+    final gender = Gender.values.firstWhere((e) => e.databaseString == databaseString, orElse: () {
+      return Gender.male;
+    });
+    return gender;
+  }
 }
 
 enum SexualOrientation {
@@ -55,6 +70,27 @@ enum SexualOrientation {
   final String databaseString;
 
   const SexualOrientation(this.displayString, this.databaseString);
+
+  Gender? preferredGender(Gender gender) {
+    switch (this) {
+      case gay:
+        return Gender.male;
+      case lesbian:
+        return Gender.female;
+      case straight:
+        return gender == Gender.male ? Gender.female : Gender.male;
+      default:
+        return null;
+    }
+  }
+
+  static SexualOrientation fromDatabaseString(String databaseString) {
+    final orientation =
+        SexualOrientation.values.firstWhere((e) => e.databaseString == databaseString, orElse: () {
+      return SexualOrientation.straight;
+    });
+    return orientation;
+  }
 }
 
 enum LookingFor {
@@ -69,4 +105,12 @@ enum LookingFor {
   final String databaseString;
 
   const LookingFor(this.displayString, this.databaseString);
+
+  static LookingFor fromDatabaseString(String databaseString) {
+    final orientation =
+        LookingFor.values.firstWhere((e) => e.databaseString == databaseString, orElse: () {
+      return LookingFor.longTermPartner;
+    });
+    return orientation;
+  }
 }

@@ -1,4 +1,3 @@
-import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
@@ -9,19 +8,18 @@ import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  ConsumerState<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends ConsumerState<Home> {
   int _selectedIndex = 0;
   late PageController _pageController;
 
@@ -39,7 +37,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final commonStore = context.read<CommonStore>();
+    final userController = ref.read(userProvider);
 
     return CollegeCupidUpgrader(
       child: GestureDetector(
@@ -71,8 +69,7 @@ class _HomeState extends State<Home> {
               surfaceTintColor: CupidColors.navBarBackgroundColor,
               iconTheme: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return const IconThemeData(
-                      color: CupidColors.navBarIconColor);
+                  return const IconThemeData(color: CupidColors.navBarIconColor);
                 } else {
                   return const IconThemeData(color: Colors.grey);
                 }
@@ -86,8 +83,7 @@ class _HomeState extends State<Home> {
                   _pageController.jumpToPage(i);
                 } else {
                   _pageController.animateToPage(i,
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeIn);
+                      duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
                 }
                 _selectedIndex = i;
               }),
@@ -95,25 +91,23 @@ class _HomeState extends State<Home> {
             ),
           ),
           body: SizedBox.expand(
-            child: Observer(builder: (_) {
-              return PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
-                children: [
-                  const HomeTab(),
-                  const YourCrushesTab(),
-                  const YourMatches(),
-                  UserProfileScreen(
-                    isMine: true,
-                    userProfile: UserProfile.fromJson(commonStore.myProfile),
-                  ),
-                ],
-              );
-            }),
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              children: [
+                const HomeTab(),
+                const YourCrushesTab(),
+                const YourMatches(),
+                UserProfileScreen(
+                  isMine: true,
+                  userProfile: userController.myProfile!,
+                ),
+              ],
+            ),
           ),
         ),
       ),

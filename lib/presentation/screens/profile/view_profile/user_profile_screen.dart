@@ -8,13 +8,12 @@ import 'package:college_cupid/routing/app_router.dart';
 
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
@@ -83,7 +82,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           if (widget.isMine) {
             context.pushNamed(AppRoutes.editProfile.name).then((value) {
               setState(() {
-                profile = UserProfile.fromJson(context.read<CommonStore>().myProfile);
+                profile = ref.read(userProvider).myProfile!;
               });
             });
           } else {

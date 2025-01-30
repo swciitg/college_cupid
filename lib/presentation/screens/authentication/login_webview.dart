@@ -10,12 +10,11 @@ import 'package:college_cupid/routing/app_router.dart';
 
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/endpoints.dart';
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebview extends ConsumerStatefulWidget {
@@ -27,7 +26,7 @@ class LoginWebview extends ConsumerStatefulWidget {
 
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
-  late CommonStore commonStore;
+  late UserProviderState commonStore;
 
   Future<String> getElementById(WebViewController controller, String elementId) async {
     var element = await controller
@@ -40,7 +39,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
   }
 
   Future<String> getPasswordFromUser(String hashedPassword) async {
-    final commonStore = context.read<CommonStore>();
+    final commonStore = ref.read(userProvider);
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -57,7 +56,8 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
 
-    commonStore = context.read<CommonStore>();
+    commonStore = ref.read(userProvider);
+    final commonStoreController = ref.read(userProvider.notifier);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -98,7 +98,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                 if (myProfile == null || myInfo == null) {
                   log('NEW USER');
-                  goRouter.goNamed(AppRoutes.profileDetails.name);
+                  goRouter.goNamed(AppRoutes.profileSetup.name);
                 } else {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
@@ -113,15 +113,16 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                   await SharedPrefs.setPassword(password);
                   await SharedPrefs.saveMyProfile(myProfile);
-                  await commonStore.initializeProfile();
+                  await commonStoreController.initializeProfile();
                   LoginStore.password = password;
 
-                  SharedPrefs.setDHPublicKey(commonStore.myProfile['publicKey']);
-                  SharedPrefs.setDHPrivateKey(BigInt.parse(
+                  await SharedPrefs.setDHPublicKey(commonStore.myProfile!.publicKey);
+                  final privateKey = BigInt.parse(
                     Encryption.decryptAES(
                         encryptedText: Encryption.hexadecimalToBytes(myInfo['encryptedPrivateKey']),
                         key: LoginStore.password!),
-                  ).toString());
+                  ).toString();
+                  await SharedPrefs.setDHPrivateKey(privateKey);
 
                   goRouter.goNamed(AppRoutes.splash.name);
                 }

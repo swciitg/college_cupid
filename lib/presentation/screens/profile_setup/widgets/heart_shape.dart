@@ -32,7 +32,7 @@ class HeartShape extends StatelessWidget {
           ),
           ClipRect(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Container(color: Colors.transparent),
             ),
           ),

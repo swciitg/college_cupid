@@ -1,20 +1,22 @@
+import 'dart:developer';
+
 import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/routing/app_router.dart';
 
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -24,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
         debugPrint('USER IS AUTHENTICATED');
         if (!mounted) return;
         final goRouter = GoRouter.of(context);
-        await context.read<CommonStore>().initializeProfile();
+        await ref.read(userProvider.notifier).initializeProfile();
         goRouter.goNamed(AppRoutes.home.name);
       } else {
         debugPrint('USER IS NOT AUTHENTICATED');

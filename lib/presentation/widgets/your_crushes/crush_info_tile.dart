@@ -19,7 +19,7 @@ class CrushInfoTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final program = Program.values.firstWhere((p) => p.databaseString == profile.program);
+    final program = Program.values.firstWhere((p) => p == profile.program);
     final crushesList = ref.read(crushesControllerProvider.notifier);
 
     return Container(
@@ -39,23 +39,23 @@ class CrushInfoTile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Hero(
-              tag: 'profilePic',
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.horizontal(left: Radius.circular(19), right: Radius.zero),
-                // Image border
-                child: SizedBox.fromSize(
-                  child: CachedNetworkImage(
-                      imageUrl: profile.profilePicUrl,
-                      cacheManager: customCacheManager,
-                      progressIndicatorBuilder: (context, url, progress) => const CustomLoader(),
-                      fit: BoxFit.cover,
-                      width: 64,
-                      height: 66),
-                ),
-              ),
-            ),
+            // Hero(
+            //   tag: 'profilePic',
+            //   child: ClipRRect(
+            //     borderRadius:
+            //         const BorderRadius.horizontal(left: Radius.circular(19), right: Radius.zero),
+            //     // Image border
+            //     child: SizedBox.fromSize(
+            //       child: CachedNetworkImage(
+            //           imageUrl: profile.profilePicUrl,
+            //           cacheManager: customCacheManager,
+            //           progressIndicatorBuilder: (context, url, progress) => const CustomLoader(),
+            //           fit: BoxFit.cover,
+            //           width: 64,
+            //           height: 66),
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Column(

@@ -14,32 +14,48 @@ final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserPro
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
 
-  Future<String> postUserProfile(File? image, UserProfile userProfile) async {
-    final userProfileMap = userProfile.toJson();
-    if (image != null) {
-      String fileName = image.path.split('/').last;
-      userProfileMap['dp'] = await MultipartFile.fromFile(
-        image.path,
-        filename: fileName,
-        contentType: MediaType('image', 'png'),
-      );
-    }
-    FormData formData = FormData.fromMap(userProfileMap);
-
+  Future<String> postUserProfileImage(File? image, {Function(double)? onSendProgress}) async {
     try {
-      log("User profile");
-      for (var e in formData.fields) {
-        log("${e.key} : ${e.value}");
-      }
-      Response res = await dio.post(Endpoints.postUserProfile, data: formData);
-
+      final formData = FormData.fromMap({
+        'dp': await MultipartFile.fromFile(
+          image!.path,
+          filename: image.path.split('/').last,
+          contentType: MediaType('image', 'png'),
+        ),
+      });
+      Response res =
+          await dio.post(Endpoints.postProfileImage, data: formData, onSendProgress: (sent, total) {
+        if (onSendProgress != null) {
+          onSendProgress(sent / total);
+        }
+      });
       if (res.statusCode == 200) {
-        return res.data['profilePicUrl'] ?? '';
+        return res.data['imageUrl'] ?? '';
       } else {
         return Future.error(res.statusMessage.toString());
       }
     } catch (error) {
-      return Future.error(error.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> deleteProfileImage(String imageId) async {
+    try {
+      final url = '${Endpoints.deleteProfileImage}/$imageId';
+      await dio.delete(url);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> postUserProfile(UserProfile userProfile) async {
+    final userProfileMap = userProfile.toJson();
+
+    try {
+      log("User profile");
+      await dio.post(Endpoints.postUserProfile, data: userProfileMap);
+    } catch (error) {
+      rethrow;
     }
   }
 

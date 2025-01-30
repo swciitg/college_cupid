@@ -17,7 +17,7 @@ class _UserInfoState extends State<UserInfo> {
   @override
   Widget build(BuildContext context) {
     Program program = Program.values
-        .firstWhere((p) => p.databaseString == widget.userProfile.program);
+        .firstWhere((p) => p == widget.userProfile.program);
     String programAndYearDisplayString =
         "${program.displayString} '${widget.userProfile.yearOfJoin}";
     return Hero(

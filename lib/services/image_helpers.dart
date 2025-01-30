@@ -1,10 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
-
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:blurhash_ffi/blurhash_ffi.dart';
 
 class _ImageHelpers {
   final ImagePicker _imagePicker;
@@ -35,6 +36,18 @@ class _ImageHelpers {
     file.writeAsBytesSync(bytes);
 
     return file;
+  }
+
+  // encode blurhash
+  Future<String?> encodeBlurHash({required ImageProvider<Object> imageProvider}) async {
+    try {
+      final blurHash = await BlurhashFFI.encode(imageProvider);
+    log("BlurHash: $blurHash");
+    return blurHash;  
+    } catch (e) {
+      log("BlurHash error: $e");
+      return null;
+    }
   }
 }
 

@@ -7,6 +7,8 @@ class Endpoints {
 
   static const postPersonalInfo = '/user/personalInfo';
   static const getPersonalInfo = '/user/personalInfo';
+  static const postProfileImage = '/uploadImage';
+  static const deleteProfileImage = '/deleteImage';
   static const postUserProfile = '/user/profile';
   static const getUserProfile = '/user/profile/email'; // + '/${email}'
   static const getPaginatedUserProfiles = '/user/profile/page'; // + '/${pageNumber}'

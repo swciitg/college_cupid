@@ -63,14 +63,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
       UserProfile myProfile = UserProfile(
         name: LoginStore.displayName!,
-        profilePicUrl: '',
-        gender: gender.databaseString,
+        gender: gender,
         email: LoginStore.email!,
         bio: '',
         yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-        program: myProgram.databaseString!,
+        program: myProgram,
         publicKey: publicKey,
         interests: [],
+        sexualOrientation: SexualOrientationModel(type: SexualOrientation.straight, display: false),
       );
 
       PersonalInfo myInfo = PersonalInfo(

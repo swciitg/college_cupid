@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../profile_setup/profile_setup.dart';
+import '../../../routing/app_router.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -69,45 +71,51 @@ class _WelcomeState extends State<Welcome> {
               ),
             ),
           ),
-          const Text(
-            'yes of course!',
-            style: TextStyle(
-              fontFamily: 'NeueMontreal',
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFFA8CEFA),
+          Text(
+            'Yes of course!',
+            style: CupidStyles.lightTextStyle.setColor(
+              const Color.fromARGB(255, 148, 187, 233),
             ),
           ),
 
           // Curved Arrow Image
           Transform.translate(
             offset: const Offset(48, -48),
-            child: Image.asset(
-              'assets/images/curved_arrow.png',
-              width: 158.02,
-              height: 218.0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/images/curved_arrow.png',
+                width: 158.02,
+                height: 218.0,
+              ),
             ),
           ),
 
           //sign in through outlook
           Transform.translate(
             offset: const Offset(0, -48),
-            child: TextButton(
+            child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSetup()));
+                context.goNamed(AppRoutes.loginWebview.name);
+                // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileSetup()));
               },
-              style: TextButton.styleFrom(
-                foregroundColor: CupidColors.blackColor,
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                foregroundColor: CupidColors.offWhiteColor,
+                backgroundColor: CupidColors.blackColor,
                 textStyle: const TextStyle(
                   fontFamily: 'NeueMontreal',
-                  decoration: TextDecoration.underline,
-                  decorationThickness: 2.0,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
                 splashFactory: InkRipple.splashFactory,
               ),
-              child: const Text('Sign in through outlook'),
+              child: Text(
+                'Sign in with Outlook',
+                style: CupidStyles.lightTextStyle.semiBold.setColor(
+                  CupidColors.offWhiteColor,
+                ),
+              ),
             ),
           ),
         ],

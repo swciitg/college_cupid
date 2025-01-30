@@ -1,17 +1,15 @@
 import 'dart:io';
-import 'package:college_cupid/services/image_helpers.dart';
+
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
+import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
-import '../../profile/edit_profile/crop_image_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'heart_state.dart';
 
-class AddPhotos extends StatefulWidget {
+class AddPhotos extends ConsumerWidget {
   const AddPhotos({super.key});
-  @override
-  State<AddPhotos> createState() => _AddPhotosState();
 
   static Map<String, HeartState> heartStates(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -33,42 +31,9 @@ class AddPhotos extends StatefulWidget {
       ),
     };
   }
-}
-
-class _AddPhotosState extends State<AddPhotos> {
-  File? image1;
-  File? image2;
-  File? image3;
-
-  void _selectImage(int index) async {
-    final nav = Navigator.of(context);
-    final value = await imageHelpers.pickImage(source: ImageSource.gallery);
-
-    if (value == null) return;
-
-    Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
-    final croppedImage = await nav.push<File>(
-      MaterialPageRoute(
-        builder: (context) => CropImageScreen(image: pickedImage),
-      ),
-    );
-
-    setState(() {
-      switch (index) {
-        case 0:
-          image1 = croppedImage;
-          break;
-        case 1:
-          image2 = croppedImage;
-          break;
-        default:
-          image3 = croppedImage;
-      }
-    });
-  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.sizeOf(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,17 +48,17 @@ class _AddPhotosState extends State<AddPhotos> {
               Positioned(
                 top: 0,
                 right: 60,
-                child: _profilePic(0),
+                child: _profilePic(0, ref, context),
               ),
               Positioned(
                 top: 70,
                 left: 0,
-                child: _profilePic(1),
+                child: _profilePic(1, ref, context),
               ),
               Positioned(
                 bottom: 10,
                 right: 10,
-                child: _profilePic(2),
+                child: _profilePic(2, ref, context),
               ),
             ],
           ),
@@ -110,7 +75,7 @@ class _AddPhotosState extends State<AddPhotos> {
         _buildTextRow(
           Icons.check,
           const Color(0xFF7AEAA9),
-          "Use photos related to your interests",
+          "Atleast 2 photos",
         ),
         _buildTextRow(
           Icons.close,
@@ -121,18 +86,21 @@ class _AddPhotosState extends State<AddPhotos> {
     );
   }
 
-  Widget _profilePic(int index) {
-    final image = index == 0
-        ? image1
-        : index == 1
-            ? image2
-            : image3;
+  Widget _profilePic(int index, WidgetRef ref, BuildContext context) {
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final image = onboardingState.images?[index];
     const height = 230.0;
     const width = 230 * 0.75;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _selectImage(index);
+        ref.read(onboardingControllerProvider.notifier).pickImage((val) {
+          return Navigator.of(context).push<File>(
+            MaterialPageRoute(
+              builder: (context) => CropImageScreen(image: val),
+            ),
+          );
+        }, index);
       },
       child: DecoratedBox(
         decoration: BoxDecoration(

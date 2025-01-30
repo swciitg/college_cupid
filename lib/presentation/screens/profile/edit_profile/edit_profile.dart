@@ -18,7 +18,7 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/common_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -47,7 +47,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   List<Program> programs = [Program.none];
   late Program myProgram;
   late InterestStore interestStore;
-  late CommonStore commonStore;
+  late UserProviderState userController;
+  late UserController commonStoreController;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -58,10 +59,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   void initState() {
-    commonStore = context.read<CommonStore>();
-    UserProfile myProfile = UserProfile.fromJson(commonStore.myProfile);
-    myProgram = Program.values.firstWhere((element) => element.databaseString == myProfile.program);
-    gender = Gender.values.firstWhere((element) => element.databaseString == myProfile.gender);
+    userController = ref.read(userProvider);
+    UserProfile myProfile = userController.myProfile!;
+    myProgram = Program.values.firstWhere((element) => element == myProfile.program);
+    gender = Gender.values.firstWhere((element) => element == myProfile.gender);
     nameController.text = myProfile.name;
     bioController.text = myProfile.bio;
     emailController.text = myProfile.email;
@@ -115,22 +116,26 @@ class _EditProfileState extends ConsumerState<EditProfile> {
               });
               UserProfile updatedProfile = UserProfile(
                 name: LoginStore.displayName!,
-                profilePicUrl: '',
-                gender: gender.databaseString,
+                gender: gender,
                 email: LoginStore.email!,
                 bio: bioController.text.trim(),
                 yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-                program: myProgram.databaseString!,
+                program: myProgram,
                 publicKey: LoginStore.dhPublicKey!,
                 interests: interestStore.selectedInterests,
+                sexualOrientation: SexualOrientationModel(
+                  type: SexualOrientation.straight,
+                  display: false,
+                ),
               );
 
-              updatedProfile.profilePicUrl =
-                  await userProfileRepo.updateUserProfile(image, updatedProfile);
+              // updatedProfile.profilePicUrl =
+              //     await userProfileRepo.updateUserProfile(image, updatedProfile);
               final updatedProfileMap = await userProfileRepo.getUserProfile(LoginStore.email!);
 
               if (updatedProfileMap != null) {
-                await commonStore.updateMyProfile(updatedProfileMap);
+                final user = UserProfile.fromJson(updatedProfileMap);
+                await commonStoreController.updateMyProfile(user);
                 showSnackBar("Profile updated Successfully");
               } else {
                 showSnackBar("Profile couldn't update locally. Kindly update again later!");
@@ -158,70 +163,70 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         body: Form(
           key: _cupidFormKey,
           child: Observer(builder: (_) {
-            UserProfile myProfile = UserProfile.fromJson(commonStore.myProfile);
+            UserProfile myProfile = userController.myProfile!;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Column(
                   children: [
                     Stack(children: [
-                      Hero(
-                        tag: 'profilePic',
-                        child: GestureDetector(
-                          onTap: () async {
-                            final nav = Navigator.of(context);
-                            final value = await imageHelpers.pickImage(source: ImageSource.gallery);
+                      // Hero(
+                      //   tag: 'profilePic',
+                      //   child: GestureDetector(
+                      //     onTap: () async {
+                      //       final nav = Navigator.of(context);
+                      //       final value = await imageHelpers.pickImage(source: ImageSource.gallery);
 
-                            if (value == null) return;
+                      //       if (value == null) return;
 
-                            Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
-                            final croppedImage = await nav.push<File>(MaterialPageRoute(
-                              builder: (context) => CropImageScreen(image: pickedImage),
-                            ));
+                      //       Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
+                      //       final croppedImage = await nav.push<File>(MaterialPageRoute(
+                      //         builder: (context) => CropImageScreen(image: pickedImage),
+                      //       ));
 
-                            setState(() {
-                              image = croppedImage;
-                            });
-                          },
-                          child: image != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.file(
-                                    image!,
-                                    width: 150,
-                                    height: 150,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : myProfile.profilePicUrl.isNotEmpty
-                                  ? SizedBox(
-                                      width: 150,
-                                      height: 150,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: CachedNetworkImage(
-                                          fit: BoxFit.cover,
-                                          imageUrl: myProfile.profilePicUrl,
-                                          cacheManager: customCacheManager,
-                                          progressIndicatorBuilder: (context, url, progress) =>
-                                              Container(
-                                            color: CupidColors.titleColor,
-                                            child: const CustomLoader(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : ClipOval(
-                                      child: Container(
-                                        width: 100,
-                                        height: 100,
-                                        color: CupidColors.titleColor,
-                                      ),
-                                    ),
-                        ),
-                      ),
+                      //       setState(() {
+                      //         image = croppedImage;
+                      //       });
+                      //     },
+                      //     child: image != null
+                      //         ? ClipRRect(
+                      //             borderRadius: BorderRadius.circular(20),
+                      //             child: Image.file(
+                      //               image!,
+                      //               width: 150,
+                      //               height: 150,
+                      //               fit: BoxFit.cover,
+                      //             ),
+                      //           )
+                      //         : myProfile.profilePicUrl.isNotEmpty
+                      //             ? SizedBox(
+                      //                 width: 150,
+                      //                 height: 150,
+                      //                 child: ClipRRect(
+                      //                   borderRadius: BorderRadius.circular(20),
+                      //                   child: CachedNetworkImage(
+                      //                     fit: BoxFit.cover,
+                      //                     imageUrl: myProfile.profilePicUrl,
+                      //                     cacheManager: customCacheManager,
+                      //                     progressIndicatorBuilder: (context, url, progress) =>
+                      //                         Container(
+                      //                       color: CupidColors.titleColor,
+                      //                       child: const CustomLoader(
+                      //                         color: Colors.white,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               )
+                      //             : ClipOval(
+                      //                 child: Container(
+                      //                   width: 100,
+                      //                   height: 100,
+                      //                   color: CupidColors.titleColor,
+                      //                 ),
+                      //               ),
+                      //   ),
+                      // ),
                     ]),
                     const Padding(padding: EdgeInsets.only(top: 30)),
                     DisabledTextField(controller: nameController, labelText: "Name"),

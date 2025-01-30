@@ -59,9 +59,10 @@ dependencies:
   path_provider: ^2.1.2
   crop_image: ^1.0.11
   upgrader: ^9.0.0
-  go_router: ^13.2.0
+  go_router: ^14.7.2
   flutter_riverpod: ^2.4.10
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.10+1  
+  blurhash_ffi: ^1.2.6
 
 dev_dependencies:
   flutter_test:

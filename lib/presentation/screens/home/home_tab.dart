@@ -44,82 +44,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
-            child: Stack(
-              alignment: Alignment.centerRight,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(
-                      color: CupidColors.titleColor,
-                    ),
-                  ),
-                  child: TextFormField(
-                    controller: _searchController,
-                    textInputAction: TextInputAction.search,
-                    onFieldSubmitted: (value) {
-                      filterStore.setName(value);
-                    },
-                    onChanged: (value) {
-                      if (timer != null) timer!.cancel();
-                      timer = Timer(const Duration(seconds: 1), () {
-                        filterStore.setName(value);
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    filterStore.setName('');
-                  },
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text('Filters'),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
-                child: GestureDetector(
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: CupidColors.backgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Center(
-                          child: Icon(
-                            FluentIcons.filter_20_filled,
-                            size: 20,
-                            color: CupidColors.pinkColor,
-                          ),
-                        ),
-                      )),
-                  onTap: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.white,
-                        context: context,
-                        builder: (_) {
-                          return const FilterBottomSheet();
-                        });
-                  },
-                ),
-              ),
-            ],
-          ),
+          _buildSearchField(),
+          _filters(context),
           Observer(builder: (_) {
             pageViewStore.resetStore();
             return FutureBuilder(
@@ -149,6 +75,88 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               },
             );
           }),
+        ],
+      ),
+    );
+  }
+
+  Row _filters(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text('Filters'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
+          child: GestureDetector(
+            child: Container(
+                decoration: BoxDecoration(
+                  color: CupidColors.backgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Center(
+                    child: Icon(
+                      FluentIcons.filter_20_filled,
+                      size: 20,
+                      color: CupidColors.pinkColor,
+                    ),
+                  ),
+                )),
+            onTap: () {
+              showModalBottomSheet(
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (_) {
+                    return const FilterBottomSheet();
+                  });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Padding _buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
+      child: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              border: Border.all(
+                color: CupidColors.titleColor,
+              ),
+            ),
+            child: TextFormField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              onFieldSubmitted: (value) {
+                filterStore.setName(value);
+              },
+              onChanged: (value) {
+                if (timer != null) timer!.cancel();
+                timer = Timer(const Duration(seconds: 1), () {
+                  filterStore.setName(value);
+                });
+              },
+              decoration: const InputDecoration(
+                hintText: 'Search',
+                prefixIcon: Icon(Icons.search),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              _searchController.clear();
+              filterStore.setName('');
+            },
+          ),
         ],
       ),
     );

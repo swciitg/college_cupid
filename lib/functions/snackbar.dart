@@ -7,6 +7,7 @@ void showSnackBar(String message) {
   rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
     content: Text(message),
     duration: const Duration(seconds: 1),
+    behavior: SnackBarBehavior.floating,
   ));
 }
 
@@ -16,5 +17,6 @@ void showErrorSnackBar(DioException err) {
         ? err.response!.data['message']
         : 'Some error occurred, please try again.'),
     duration: const Duration(seconds: 5),
+    behavior: SnackBarBehavior.floating,
   ));
 }

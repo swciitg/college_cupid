@@ -1,83 +1,50 @@
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_details.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_interests.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/add_profile_photos.dart';
+// import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/onboarding_navigation_buttons.dart';
 import 'package:college_cupid/shared/assets.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'widgets/heart_shape.dart';
 import 'widgets/sexual_orientation_screen.dart';
-import 'loading_page.dart';
 
-class ProfileSetup extends StatefulWidget {
+class ProfileSetup extends ConsumerStatefulWidget {
   const ProfileSetup({super.key});
 
   @override
-  State<ProfileSetup> createState() => _ProfileSetupState();
+  ConsumerState<ProfileSetup> createState() => _ProfileSetupState();
 }
 
-class _ProfileSetupState extends State<ProfileSetup> {
-  int _currentStep = 0;
-  late HeartState? _yellow;
-  late HeartState? _blue;
-  late HeartState? _pink;
+class _ProfileSetupState extends ConsumerState<ProfileSetup> {
   final steps = [
     const BasicDetails(),
     const SexualOrientationScreen(),
     const ChooseInterests(),
     const AddPhotos(),
     const LookingForScreen(),
+    // const MbtiTestScreen(),
   ];
 
-  final List<Map<String, HeartState>> _heartStates = [];
-
-  void _nextStep() {
-    if (_currentStep < steps.length - 1) {
-      setState(() {
-        _currentStep += 1;
-        _updateHeartStates();
-      });
-    } else if (_currentStep == steps.length - 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoadingPage(),
-        ),
-      );
-    }
-  }
-
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep -= 1;
-        _updateHeartStates();
-      });
-    }
-  }
-
-  void _updateHeartStates() {
-    if (_heartStates.isEmpty) {
-      _heartStates.addAll(
-        [
-          BasicDetails.heartStates(context),
-          SexualOrientationScreen.heartStates(context),
-          ChooseInterests.heartStates(context),
-          AddPhotos.heartStates(context),
-          LookingForScreen.heartStates(context),
-        ],
-      );
-    }
-    _yellow = _heartStates[_currentStep]['yellow'];
-    _blue = _heartStates[_currentStep]['blue'];
-    _pink = _heartStates[_currentStep]['pink'];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final onboardingController = ref.read(onboardingControllerProvider.notifier);
+      onboardingController.updateHeartStates(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    if (_heartStates.isEmpty) _updateHeartStates();
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final loading = onboardingState.loading;
+    final loadingMessage = onboardingState.loadingMessage;
     return Scaffold(
       backgroundColor: CupidColors.glassWhite,
       body: Stack(
@@ -89,97 +56,88 @@ class _ProfileSetupState extends State<ProfileSetup> {
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
-                child: steps[_currentStep],
+                child: steps[onboardingState.currentStep],
               ),
             ),
           ),
+          if (loading)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: CupidColors.secondaryColor,
+                      ),
+                    ),
+                    if (loadingMessage != null) const SizedBox(height: 16),
+                    if (loadingMessage != null)
+                      Text(
+                        loadingMessage,
+                        style: CupidStyles.normalTextStyle,
+                      ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
-      bottomNavigationBar: _navigationButtons(),
+      bottomNavigationBar: !loading ? const OnboaringNavigationButtons() : null,
     );
   }
 
   List<Widget> _heartShapes() {
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final yellow = onboardingState.yellow;
+    final blue = onboardingState.blue;
+    final pink = onboardingState.pink;
+    if (yellow == null || blue == null || pink == null) {
+      return [const SizedBox()];
+    }
     return [
-      if (_yellow != null)
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 2000),
-          curve: Curves.easeInOut,
-          top: _yellow!.top,
-          right: _yellow!.right,
-          bottom: _yellow!.bottom,
-          left: _yellow!.left,
-          child: HeartShape(
-            size: _yellow!.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99EAE27A),
-          ),
+      AnimatedPositioned(
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeInOut,
+        top: yellow.top,
+        right: yellow.right,
+        bottom: yellow.bottom,
+        left: yellow.left,
+        child: HeartShape(
+          size: yellow.size,
+          asset: CupidIcons.heartOutline,
+          color: const Color(0x99EAE27A),
         ),
-      if (_blue != null)
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 2000),
-          curve: Curves.easeInOut,
-          top: _blue!.top,
-          right: _blue!.right,
-          bottom: _blue!.bottom,
-          left: _blue!.left,
-          child: HeartShape(
-            size: _blue!.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99A8CEFA),
-          ),
-        ),
-      if (_pink != null)
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 2000),
-          curve: Curves.easeInOut,
-          top: _pink!.top,
-          right: _pink!.right,
-          bottom: _pink!.bottom,
-          left: _pink!.left,
-          child: HeartShape(
-            size: _pink!.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99F9A8D4),
-          ),
-        ),
-    ];
-  }
-
-  Widget _navigationButtons() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-      child: Row(
-        mainAxisAlignment:
-            _currentStep == 0 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
-        children: [
-          if (_currentStep != 0)
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                elevation: WidgetStateProperty.all(0),
-              ),
-              onPressed: _previousStep,
-              child: const Text(
-                'Back',
-                style: TextStyle(color: CupidColors.textColorBlack),
-              ),
-            ),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.transparent),
-              elevation: WidgetStateProperty.all(0),
-            ),
-            onPressed: () {
-              _nextStep();
-            },
-            child: const Text(
-              'Next',
-              style: TextStyle(color: CupidColors.textColorBlack),
-            ),
-          ),
-        ],
       ),
-    );
+      AnimatedPositioned(
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeInOut,
+        top: blue.top,
+        right: blue.right,
+        bottom: blue.bottom,
+        left: blue.left,
+        child: HeartShape(
+          size: blue.size,
+          asset: CupidIcons.heartOutline,
+          color: const Color(0x99A8CEFA),
+        ),
+      ),
+      AnimatedPositioned(
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeInOut,
+        top: pink.top,
+        right: pink.right,
+        bottom: pink.bottom,
+        left: pink.left,
+        child: HeartShape(
+          size: pink.size,
+          asset: CupidIcons.heartOutline,
+          color: const Color(0x99F9A8D4),
+        ),
+      ),
+    ];
   }
 }
