@@ -1,25 +1,17 @@
+// ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
-
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final userModerationRepoProvider =
-    Provider<UserModerationRepository>((ref) => UserModerationRepository());
+class _UserModerationRepository extends ApiRepository {
+  _UserModerationRepository() : super();
 
-class UserModerationRepository extends ApiRepository {
-  UserModerationRepository() : super();
-
-  Future<void> reportAndBlockUser(
-      String userEmail, String reasonForReporting) async {
+  Future<void> reportAndBlockUser(String userEmail, String reasonForReporting) async {
     try {
       Response res = await dio.post(Endpoints.reportUser,
-          data: jsonEncode({
-            'reportedEmail': userEmail,
-            'reasonForReporting': reasonForReporting
-          }));
+          data: jsonEncode({'reportedEmail': userEmail, 'reasonForReporting': reasonForReporting}));
 
       if (res.statusCode == 200) {
         return;
@@ -62,3 +54,5 @@ class UserModerationRepository extends ApiRepository {
     }
   }
 }
+
+final UserModerationRepository = _UserModerationRepository();

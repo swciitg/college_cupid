@@ -51,37 +51,40 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       );
     }
 
-    return Observer(builder: (nestedContext) {
-      return SizedBox(
-        height: (screenWidth - 20) * 4 / 3,
-        child: PageView(
-          padEnds: true,
-          key: Key(widget.userProfiles.hashCode.toString()),
-          allowImplicitScrolling: false,
-          controller: widget.pageController,
-          scrollDirection: Axis.horizontal,
-          onPageChanged: (value) async {
-            if (pageViewStore.isLastPage) return;
-            if (pageViewStore.homeTabProfileList.length - value <= 4) {
-              pageViewStore.setPageNumber(pageViewStore.pageNumber + 1);
-              final List<UserProfile> users =
-                  await userProfileRepo.getPaginatedUsers(pageViewStore.pageNumber, {
-                'gender': filterStore.interestedInGender.databaseString,
-                'program': filterStore.program.databaseString,
-                'yearOfJoin': filterStore.yearOfJoin,
-                'name': filterStore.name
-              });
-              if (users.length < 10) {
-                pageViewStore.setIsLastPage(true);
+    return Observer(
+      builder: (nestedContext) {
+        return SizedBox(
+          height: (screenWidth - 20) * 4 / 3,
+          child: PageView(
+            padEnds: true,
+            key: Key(widget.userProfiles.hashCode.toString()),
+            allowImplicitScrolling: false,
+            controller: widget.pageController,
+            scrollDirection: Axis.horizontal,
+            onPageChanged: (value) async {
+              if (pageViewStore.isLastPage) return;
+              if (pageViewStore.homeTabProfileList.length - value <= 4) {
+                pageViewStore.setPageNumber(pageViewStore.pageNumber + 1);
+                final List<UserProfile> users =
+                    await userProfileRepo.getPaginatedUsers(pageViewStore.pageNumber, {
+                  'gender': filterStore.interestedInGender.databaseString,
+                  'program': filterStore.program.databaseString,
+                  'yearOfJoin': filterStore.yearOfJoin,
+                  'name': filterStore.name
+                });
+                if (users.length < 10) {
+                  pageViewStore.setIsLastPage(true);
+                }
+                pageViewStore.addHomeTabProfiles(users);
               }
-              pageViewStore.addHomeTabProfiles(users);
-            }
-          },
-          children: pageViewStore.homeTabProfileList
-              .map((element) => ProfileCard(user: element))
-              .toList(),
-        ),
-      );
-    });
+            },
+            children: List.generate(
+              pageViewStore.homeTabProfileList.length,
+              (index) => ProfileCard(user: pageViewStore.homeTabProfileList[index]),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

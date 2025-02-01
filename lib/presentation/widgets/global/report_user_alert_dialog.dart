@@ -26,7 +26,6 @@ class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final userModerationRepo = ref.read(userModerationRepoProvider);
     return AlertDialog(
       title: Text(
         'Reason for reporting ${widget.userEmail}',
@@ -61,7 +60,7 @@ class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
                   showSnackBar("Field cannot be empty!");
                   return;
                 }
-                await userModerationRepo.reportAndBlockUser(
+                await UserModerationRepository.reportAndBlockUser(
                     widget.userEmail, reportingReasonController.text);
                 nav.pop();
                 showSnackBar('Reported and Blocked ${widget.userEmail}');

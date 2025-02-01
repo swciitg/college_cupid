@@ -114,3 +114,35 @@ enum LookingFor {
     return orientation;
   }
 }
+
+enum QuestionCategory {
+  energy,
+  mind,
+  nature,
+  tactics,
+}
+
+enum PersonalityType {
+  enfj, // Extraverted, Intuitive, Feeling, Judging
+  enfp, // Extraverted, Intuitive, Feeling, Prospecting
+  entj, // Extraverted, Intuitive, Thinking, Judging
+  entp, // Extraverted, Intuitive, Thinking, Prospecting
+  esfj, // Extraverted, Observant, Feeling, Judging
+  esfp, // Extraverted, Observant, Feeling, Prospecting
+  estj, // Extraverted, Observant, Thinking, Judging
+  estp, // Extraverted, Observant, Thinking, Prospecting
+  infj, // Introverted, Intuitive, Feeling, Judging
+  infp, // Introverted, Intuitive, Feeling, Prospecting
+  intj, // Introverted, Intuitive, Thinking, Judging
+  intp, // Introverted, Intuitive, Thinking, Prospecting
+  isfj, // Introverted, Observant, Feeling, Judging
+  isfp, // Introverted, Observant, Feeling, Prospecting
+  istj, // Introverted, Observant, Thinking, Judging
+  istp; // Introverted, Observant, Thinking, Prospecting
+
+  const PersonalityType();
+
+  static PersonalityType fromString(String value) {
+    return PersonalityType.values.firstWhere((e) => e.name == value);
+  }
+}

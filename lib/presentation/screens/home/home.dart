@@ -1,5 +1,6 @@
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/presentation/screens/your_matches/your_matches_tab.dart';
 import 'package:college_cupid/presentation/widgets/global/app_title.dart';
@@ -27,6 +28,11 @@ class _HomeState extends ConsumerState<Home> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(userProvider).myProfile!;
+      if (user.personalityType != null) return;
+      _showMBTITest(context);
+    });
   }
 
   @override
@@ -35,9 +41,27 @@ class _HomeState extends ConsumerState<Home> {
     super.dispose();
   }
 
+  void _showMBTITest(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) => const ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        child: Padding(
+          padding: EdgeInsets.only(top: kToolbarHeight),
+          child: MbtiTestScreen(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userController = ref.read(userProvider);
+    final userController = ref.watch(userProvider);
 
     return CollegeCupidUpgrader(
       child: GestureDetector(

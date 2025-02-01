@@ -12,6 +12,7 @@ class UserProfile {
   SexualOrientationModel? sexualOrientation;
   RelationshipGoal? relationshipGoals;
   List<ImageModel> images;
+  PersonalityType? personalityType;
 
   UserProfile({
     this.name = '',
@@ -25,6 +26,7 @@ class UserProfile {
     this.sexualOrientation,
     this.images = const [],
     this.relationshipGoals,
+    this.personalityType,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -44,6 +46,11 @@ class UserProfile {
       relationshipGoals: json['relationshipGoals'] != null
           ? RelationshipGoal.fromJson(json['relationshipGoals'])
           : null,
+      personalityType: json['personalityType'] != null && json['personalityType'] != ''
+          ? PersonalityType.values.firstWhere(
+              (e) => e.name == json['personalityType'],
+            )
+          : null,
     );
   }
 
@@ -60,6 +67,7 @@ class UserProfile {
     data['sexualOrientation'] = sexualOrientation?.toJson();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
     data['relationshipGoals'] = relationshipGoals?.toJson();
+    data['personalityType'] = personalityType?.name;
     return data;
   }
 
@@ -76,6 +84,7 @@ class UserProfile {
     SexualOrientationModel? sexualOrientation,
     RelationshipGoal? relationshipGoals,
     List<ImageModel>? images,
+    PersonalityType? personalityType,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -89,6 +98,7 @@ class UserProfile {
       sexualOrientation: sexualOrientation ?? this.sexualOrientation,
       relationshipGoals: relationshipGoals ?? this.relationshipGoals,
       images: images ?? this.images,
+      personalityType: personalityType ?? this.personalityType,
     );
   }
 }

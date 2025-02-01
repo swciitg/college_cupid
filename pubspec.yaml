@@ -63,6 +63,7 @@ dependencies:
   flutter_riverpod: ^2.4.10
   flutter_svg: ^2.0.10+1  
   blurhash_ffi: ^1.2.6
+  stacked_page_view: ^1.1.2
 
 dev_dependencies:
   flutter_test:

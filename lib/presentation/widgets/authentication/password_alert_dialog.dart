@@ -25,7 +25,7 @@ class _PasswordAlertDialogState extends ConsumerState<PasswordAlertDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final commonStore = ref.read(userProvider.notifier);
+    final userController = ref.read(userProvider.notifier);
     return PopScope(
       canPop: false,
       child: AlertDialog(
@@ -58,7 +58,7 @@ class _PasswordAlertDialogState extends ConsumerState<PasswordAlertDialog> {
             onTap: () {
               bool matched = verifyPassword(widget.hashedPassword, passwordController.text);
               if (matched) {
-                commonStore.setPassword(passwordController.text);
+                userController.setPassword(passwordController.text);
                 Navigator.of(context).pop();
               } else {
                 showSnackBar('Incorrect Password');

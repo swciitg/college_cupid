@@ -19,20 +19,25 @@ class CollegeCupidUpgrader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-          dialogTheme: const DialogTheme(
-            backgroundColor: CupidColors.backgroundColor,
-            titleTextStyle: CupidStyles.pageHeadingStyle,
-            contentTextStyle: CupidStyles.normalTextStyle,
+        dialogTheme: const DialogTheme(
+          backgroundColor: CupidColors.backgroundColor,
+          titleTextStyle: CupidStyles.pageHeadingStyle,
+          contentTextStyle: CupidStyles.normalTextStyle,
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            textStyle: WidgetStateProperty.all(CupidStyles.textButtonStyle),
           ),
-          textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(textStyle: WidgetStateProperty.all(CupidStyles.textButtonStyle)))),
+        ),
+      ),
       child: UpgradeAlert(
-          upgrader: Upgrader(
-            countryCode: 'IN',
-            durationUntilAlertAgain: const Duration(hours: 1),
-            messages: CollegeCupidUpgraderMessages(),
-          ),
-          child: child),
+        upgrader: Upgrader(
+          countryCode: 'IN',
+          durationUntilAlertAgain: const Duration(hours: 1),
+          messages: CollegeCupidUpgraderMessages(),
+        ),
+        child: child,
+      ),
     );
   }
 }

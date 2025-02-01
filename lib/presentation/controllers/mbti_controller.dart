@@ -1,4 +1,5 @@
 import 'package:college_cupid/domain/models/mbti_model.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final mbtiControllerProvider =
@@ -26,5 +27,39 @@ class MbtiController extends StateNotifier<MBTIModel> {
       currentQuestion: 1,
       questions: mbtiQuestions,
     );
+  }
+
+  PersonalityType? getPersonalityType() {
+    final answeredQuestions = state.questions.where((question) => question.answer != null).toList();
+    if (answeredQuestions.length < mbtiQuestions.length) return null;
+    int energy = 0;
+    int mind = 0;
+    int nature = 0;
+    int tactics = 0;
+
+    for (final question in state.questions) {
+      switch (question.type) {
+        case QuestionCategory.energy:
+          energy += question.score;
+          break;
+        case QuestionCategory.mind:
+          mind += question.score;
+          break;
+        case QuestionCategory.nature:
+          nature += question.score;
+          break;
+        case QuestionCategory.tactics:
+          tactics += question.score;
+          break;
+      }
+    }
+
+    var personalityString = '';
+    personalityString += energy >= 3 ? 'e' : 'i';
+    personalityString += mind >= 3 ? 's' : 'n';
+    personalityString += nature >= 3 ? 't' : 'f';
+    personalityString += tactics >= 3 ? 'j' : 'p';
+    print("Personality String: $personalityString");
+    return PersonalityType.fromString(personalityString);
   }
 }

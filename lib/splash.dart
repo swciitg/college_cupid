@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/routing/app_router.dart';
 

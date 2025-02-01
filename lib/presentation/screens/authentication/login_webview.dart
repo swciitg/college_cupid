@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/widgets/authentication/password_alert_dialog.dart';
@@ -26,7 +27,6 @@ class LoginWebview extends ConsumerStatefulWidget {
 
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
-  late UserProviderState commonStore;
 
   Future<String> getElementById(WebViewController controller, String elementId) async {
     var element = await controller
@@ -38,8 +38,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
     return newString.replaceAll('\\', '');
   }
 
-  Future<String> getPasswordFromUser(String hashedPassword) async {
-    final commonStore = ref.read(userProvider);
+  Future<void> getPasswordFromUser(String hashedPassword) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -47,7 +46,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
         return PasswordAlertDialog(hashedPassword: hashedPassword);
       },
     );
-    return commonStore.password;
   }
 
   @override
@@ -55,9 +53,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
     super.initState();
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
-
-    commonStore = ref.read(userProvider);
-    final commonStoreController = ref.read(userProvider.notifier);
+    final userController = ref.read(userProvider.notifier);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -104,7 +100,9 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   debugPrint('LOGGING IN');
 
                   String hashedPassword = myInfo['hashedPassword'];
-                  String password = await getPasswordFromUser(hashedPassword);
+                  await getPasswordFromUser(hashedPassword);
+                  String password = ref.read(userProvider).password;
+                  print("Password: $password");
 
                   if (hashedPassword !=
                       Encryption.bytesToHexadecimal(Encryption.calculateSHA256(password))) {
@@ -112,11 +110,11 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   }
 
                   await SharedPrefs.setPassword(password);
-                  await SharedPrefs.saveMyProfile(myProfile);
-                  await commonStoreController.initializeProfile();
+                  final userProfileMap = await userProfileRepo.getUserProfile(email);
+                  final userProfile = UserProfile.fromJson(userProfileMap!);
+                  await userController.updateMyProfile(userProfile);
                   LoginStore.password = password;
-
-                  await SharedPrefs.setDHPublicKey(commonStore.myProfile!.publicKey);
+                  await SharedPrefs.setDHPublicKey(userProfile.publicKey);
                   final privateKey = BigInt.parse(
                     Encryption.decryptAES(
                         encryptedText: Encryption.hexadecimalToBytes(myInfo['encryptedPrivateKey']),

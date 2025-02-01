@@ -12,12 +12,12 @@ abstract class _BlockedUsersStore with Store {
   @action
   Future<void> getBlockedUsers() async {
     blockedUserList = ObservableList();
-    blockedUserList.addAll(await UserModerationRepository().getBlockedUsers());
+    blockedUserList.addAll(await UserModerationRepository.getBlockedUsers());
   }
 
   @action
   Future<void> unblockUser(int index) async {
-    bool success = await UserModerationRepository().unblockUser(index);
+    bool success = await UserModerationRepository.unblockUser(index);
     if (success) blockedUserList.removeAt(index);
   }
 }

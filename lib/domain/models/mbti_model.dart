@@ -1,3 +1,5 @@
+import 'package:college_cupid/shared/enums.dart';
+
 class MBTIModel {
   final int currentQuestion;
   final List<QuestionModel> questions;
@@ -43,7 +45,7 @@ class MBTIModel {
 class QuestionModel {
   final int id;
   final String question;
-  final String type;
+  final QuestionCategory type;
   final int? answer;
   final bool reverseScore;
 
@@ -59,21 +61,6 @@ class QuestionModel {
     this.answer,
     required this.reverseScore,
   });
-
-  QuestionModel copyWith({
-    String? question,
-    String? type,
-    int? answer,
-    bool? reverseScore,
-  }) {
-    return QuestionModel(
-      id: id,
-      question: question ?? this.question,
-      type: type ?? this.type,
-      answer: answer ?? this.answer,
-      reverseScore: reverseScore ?? this.reverseScore,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -94,6 +81,22 @@ class QuestionModel {
       reverseScore: map['reverseScore'],
     );
   }
+
+  QuestionModel copyWith({
+    int? id,
+    String? question,
+    QuestionCategory? type,
+    int? answer,
+    bool? reverseScore,
+  }) {
+    return QuestionModel(
+      id: id ?? this.id,
+      question: question ?? this.question,
+      type: type ?? this.type,
+      answer: answer ?? this.answer,
+      reverseScore: reverseScore ?? this.reverseScore,
+    );
+  }
 }
 
 final mbtiQuestions = [
@@ -101,31 +104,31 @@ final mbtiQuestions = [
   QuestionModel(
     id: 1,
     question: "I feel energized after spending time in large social gatherings.",
-    type: "Energy",
+    type: QuestionCategory.energy,
     reverseScore: false,
   ),
   QuestionModel(
     id: 2,
     question: "I prefer deep conversations with one person over small talk in groups.",
-    type: "Energy",
+    type: QuestionCategory.energy,
     reverseScore: true,
   ),
   QuestionModel(
     id: 3,
     question: "Being alone for too long makes me restless.",
-    type: "Energy",
+    type: QuestionCategory.energy,
     reverseScore: true,
   ),
   QuestionModel(
     id: 4,
     question: "I often need quiet time to recharge after a busy day.",
-    type: "Energy",
+    type: QuestionCategory.energy,
     reverseScore: false,
   ),
   QuestionModel(
     id: 5,
     question: "I enjoy attending parties with many new people.",
-    type: "Energy",
+    type: QuestionCategory.energy,
     reverseScore: false,
   ),
 
@@ -133,31 +136,31 @@ final mbtiQuestions = [
   QuestionModel(
     id: 6,
     question: "I rely more on past experiences than abstract theories when solving problems.",
-    type: "Mind",
+    type: QuestionCategory.mind,
     reverseScore: false,
   ),
   QuestionModel(
     id: 7,
     question: "I often imagine futuristic scenarios or inventions.",
-    type: "Mind",
+    type: QuestionCategory.mind,
     reverseScore: true,
   ),
   QuestionModel(
     id: 8,
     question: "I prefer clear, step-by-step instructions over open-ended tasks.",
-    type: "Mind",
+    type: QuestionCategory.mind,
     reverseScore: false,
   ),
   QuestionModel(
     id: 9,
     question: "Hidden meanings in art or poetry fascinate me.",
-    type: "Mind",
+    type: QuestionCategory.mind,
     reverseScore: true,
   ),
   QuestionModel(
     id: 10,
     question: "I focus on practical details rather than abstract ideas.",
-    type: "Mind",
+    type: QuestionCategory.mind,
     reverseScore: false,
   ),
 
@@ -165,31 +168,31 @@ final mbtiQuestions = [
   QuestionModel(
     id: 11,
     question: "Logical consistency matters more than others’ feelings in debates.",
-    type: "Nature",
+    type: QuestionCategory.nature,
     reverseScore: false,
   ),
   QuestionModel(
     id: 12,
     question: "I prioritize group harmony over strict fairness.",
-    type: "Nature",
+    type: QuestionCategory.nature,
     reverseScore: true,
   ),
   QuestionModel(
     id: 13,
     question: "I struggle to comfort emotionally distressed people.",
-    type: "Nature",
+    type: QuestionCategory.nature,
     reverseScore: false,
   ),
   QuestionModel(
     id: 14,
     question: "I often adjust my plans to accommodate others’ needs.",
-    type: "Nature",
+    type: QuestionCategory.nature,
     reverseScore: true,
   ),
   QuestionModel(
     id: 15,
     question: "I make decisions based on facts rather than emotions.",
-    type: "Nature",
+    type: QuestionCategory.nature,
     reverseScore: false,
   ),
 
@@ -197,31 +200,31 @@ final mbtiQuestions = [
   QuestionModel(
     id: 16,
     question: "I work best with strict deadlines and detailed plans.",
-    type: "Tactics",
+    type: QuestionCategory.tactics,
     reverseScore: false,
   ),
   QuestionModel(
     id: 17,
     question: "I enjoy improvising rather than sticking to a schedule.",
-    type: "Tactics",
+    type: QuestionCategory.tactics,
     reverseScore: true,
   ),
   QuestionModel(
     id: 18,
     question: "A messy workspace stresses me out.",
-    type: "Tactics",
+    type: QuestionCategory.tactics,
     reverseScore: false,
   ),
   QuestionModel(
     id: 19,
     question: "I prefer keeping my options open rather than committing early.",
-    type: "Tactics",
+    type: QuestionCategory.tactics,
     reverseScore: true,
   ),
   QuestionModel(
     id: 20,
     question: "I like to have a clear plan for the day.",
-    type: "Tactics",
+    type: QuestionCategory.tactics,
     reverseScore: false,
   ),
 ];

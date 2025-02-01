@@ -47,8 +47,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   List<Program> programs = [Program.none];
   late Program myProgram;
   late InterestStore interestStore;
-  late UserProviderState userController;
-  late UserController commonStoreController;
+  late UserProviderState userState;
+  late UserController userController;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -59,8 +59,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   void initState() {
-    userController = ref.read(userProvider);
-    UserProfile myProfile = userController.myProfile!;
+    userState = ref.read(userProvider);
+    UserProfile myProfile = userState.myProfile!;
     myProgram = Program.values.firstWhere((element) => element == myProfile.program);
     gender = Gender.values.firstWhere((element) => element == myProfile.gender);
     nameController.text = myProfile.name;
@@ -135,7 +135,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
               if (updatedProfileMap != null) {
                 final user = UserProfile.fromJson(updatedProfileMap);
-                await commonStoreController.updateMyProfile(user);
+                await userController.updateMyProfile(user);
                 showSnackBar("Profile updated Successfully");
               } else {
                 showSnackBar("Profile couldn't update locally. Kindly update again later!");
@@ -163,7 +163,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         body: Form(
           key: _cupidFormKey,
           child: Observer(builder: (_) {
-            UserProfile myProfile = userController.myProfile!;
+            UserProfile myProfile = userState.myProfile!;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
