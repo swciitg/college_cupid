@@ -160,6 +160,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       showSnackBar("Failed to update profile");
       setState(() {
         _loading = false;
+        _loadingMessage = null;
       });
     }
   }
