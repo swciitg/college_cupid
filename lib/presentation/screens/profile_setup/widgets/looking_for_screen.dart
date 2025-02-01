@@ -45,8 +45,7 @@ class LookingForScreen extends ConsumerWidget {
           style: CupidStyles.normalTextStyle,
         ),
         const SizedBox(height: 16),
-        _buildchoiceChips(onboardingState.userProfile?.relationshipGoals?.goal,
-            onSelected: (value) {
+        _buildchoiceChips(onboardingState.userProfile?.relationshipGoal?.goal, onSelected: (value) {
           onboardingController.updateLookingForType(value);
         }),
         const SizedBox(height: 20),
@@ -59,7 +58,7 @@ class LookingForScreen extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Switch(
-              value: onboardingState.userProfile?.relationshipGoals?.display ?? false,
+              value: onboardingState.userProfile?.relationshipGoal?.display ?? false,
               onChanged: (value) {
                 onboardingController.updateLookingForDisplay(value);
               },

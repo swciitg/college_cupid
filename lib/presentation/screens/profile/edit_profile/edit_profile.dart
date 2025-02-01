@@ -1,37 +1,19 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
-import 'package:college_cupid/presentation/widgets/global/custom_drop_down.dart';
-import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
-import 'package:college_cupid/presentation/widgets/profile/disabled_text_field.dart';
-import 'package:college_cupid/presentation/widgets/profile/gender_tile.dart';
-import 'package:college_cupid/presentation/widgets/profile/interests/display_only_interest_list.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
-
-import 'package:college_cupid/services/image_helpers.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
-import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/user_controller.dart';
-import 'package:college_cupid/stores/interest_store.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
-  static String id = '/editProfile';
-
+  static const id = 'editProfile';
   const EditProfile({super.key});
 
   @override
@@ -39,331 +21,383 @@ class EditProfile extends ConsumerStatefulWidget {
 }
 
 class _EditProfileState extends ConsumerState<EditProfile> {
-  late Gender gender;
-  File? image;
-
-  final _cupidFormKey = GlobalKey<FormState>();
-
-  List<Program> programs = [Program.none];
-  late Program myProgram;
-  late InterestStore interestStore;
-  late UserProviderState userState;
-  late UserController userController;
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController yearOfJoinController = TextEditingController();
-  final TextEditingController programController = TextEditingController();
-  final TextEditingController bioController = TextEditingController();
-  bool loading = false;
+  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
+  late TextEditingController _bioController;
+  late Gender _selectedGender;
+  late Program _selectedProgram;
+  late int _yearOfJoin;
+  var _loading = false;
+  late SexualOrientation _selectedSexualOrientation;
+  late bool _displaySexualOrientation;
+  late LookingFor _relationshipGoal;
+  late bool _displayRelationshipGoal;
 
   @override
   void initState() {
-    userState = ref.read(userProvider);
-    UserProfile myProfile = userState.myProfile!;
-    myProgram = Program.values.firstWhere((element) => element == myProfile.program);
-    gender = Gender.values.firstWhere((element) => element == myProfile.gender);
-    nameController.text = myProfile.name;
-    bioController.text = myProfile.bio;
-    emailController.text = myProfile.email;
-    yearOfJoinController.text = '20${myProfile.yearOfJoin}';
-    programController.text = myProgram.displayString;
-    programs.addAll(getProgramListFromRollNumber(LoginStore.rollNumber!));
-
-    interestStore = context.read<InterestStore>();
-    interestStore.setSelectedInterests(myProfile.interests);
+    final userState = ref.read(userProvider);
+    _selectedProgram = userState.myProfile!.program!;
+    _selectedGender = userState.myProfile!.gender!;
+    _selectedSexualOrientation = userState.myProfile!.sexualOrientation!.type;
+    _displaySexualOrientation = userState.myProfile!.sexualOrientation!.display;
+    _yearOfJoin = DateTime.now().year % 100 - userState.myProfile!.yearOfJoin!;
+    _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ?? LookingFor.longTermPartner;
+    _displayRelationshipGoal = userState.myProfile!.relationshipGoal?.display ?? true;
+    _bioController = TextEditingController(text: userState.myProfile!.bio);
     super.initState();
   }
 
   @override
+  void dispose() {
+    _bioController.dispose();
+    super.dispose();
+  }
+
+  void _updateProfile() async {
+    if (_loading) return;
+    final bio = _bioController.text.trim();
+    if (bio.isEmpty) {
+      showSnackBar("Bio cannot be empty");
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+    final profile = ref.read(userProvider).myProfile!;
+    final userProfile = profile.copyWith(
+      bio: bio,
+      gender: _selectedGender,
+      program: _selectedProgram,
+      sexualOrientation: SexualOrientationModel(
+        type: _selectedSexualOrientation,
+        display: _displaySexualOrientation,
+      ),
+      relationshipGoal: RelationshipGoal(
+        goal: _relationshipGoal,
+        display: _displayRelationshipGoal,
+      ),
+    );
+    try {
+      await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
+      ref.read(userProvider.notifier).updateMyProfile(userProfile);
+      await SharedPrefs.saveMyProfile(userProfile.toJson());
+      ref.read(userProvider.notifier).updateMyProfile(userProfile);
+      setState(() {
+        _loading = false;
+      });
+      navigatorKey.currentState!.pop();
+      showSnackBar("Profile updated successfully");
+    } catch (e) {
+      showSnackBar("Failed to update profile");
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final userProfileRepo = ref.read(userProfileRepoProvider);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          systemOverlayStyle: CupidStyles.statusBarStyle,
-          foregroundColor: CupidColors.titleColor,
-          backgroundColor: Colors.white,
-          scrolledUnderElevation: 0,
-          elevation: 0,
-          title: const Text("Edit Profile", style: CupidStyles.pageHeadingStyle),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: CupidColors.titleColor,
-          onPressed: () async {
-            final goRouter = GoRouter.of(context);
-            if (loading) return;
-            if (_cupidFormKey.currentState!.validate() == false) return;
-            if (myProgram == Program.none) {
-              showSnackBar("Please select your program!");
-              return;
-            }
-            if (interestStore.selectedInterests.length < 5) {
-              showSnackBar("Select at least 5 interests!");
-              return;
-            }
-            if (interestStore.selectedInterests.length > 20) {
-              showSnackBar("You cannot select more than 20 interests!");
-              return;
-            }
-            try {
-              setState(() {
-                loading = true;
-              });
-              UserProfile updatedProfile = UserProfile(
-                name: LoginStore.displayName!,
-                gender: gender,
-                email: LoginStore.email!,
-                bio: bioController.text.trim(),
-                yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
-                program: myProgram,
-                publicKey: LoginStore.dhPublicKey!,
-                interests: interestStore.selectedInterests,
-                sexualOrientation: SexualOrientationModel(
-                  type: SexualOrientation.straight,
-                  display: false,
-                ),
-              );
-
-              // updatedProfile.profilePicUrl =
-              //     await userProfileRepo.updateUserProfile(image, updatedProfile);
-              final updatedProfileMap = await userProfileRepo.getUserProfile(LoginStore.email!);
-
-              if (updatedProfileMap != null) {
-                final user = UserProfile.fromJson(updatedProfileMap);
-                await userController.updateMyProfile(user);
-                showSnackBar("Profile updated Successfully");
-              } else {
-                showSnackBar("Profile couldn't update locally. Kindly update again later!");
-              }
-              setState(() {
-                loading = false;
-              });
-              goRouter.pop(updatedProfile);
-            } catch (e) {
-              setState(() {
-                loading = false;
-              });
-              showSnackBar("Some error occurred!");
-            }
-          },
-          child: loading
-              ? const CustomLoader(
-                  color: Colors.white,
-                )
-              : const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
-        ),
-        body: Form(
-          key: _cupidFormKey,
-          child: Observer(builder: (_) {
-            UserProfile myProfile = userState.myProfile!;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: Column(
-                  children: [
-                    Stack(children: [
-                      // Hero(
-                      //   tag: 'profilePic',
-                      //   child: GestureDetector(
-                      //     onTap: () async {
-                      //       final nav = Navigator.of(context);
-                      //       final value = await imageHelpers.pickImage(source: ImageSource.gallery);
-
-                      //       if (value == null) return;
-
-                      //       Image pickedImage = await imageHelpers.xFileToImage(xFile: value);
-                      //       final croppedImage = await nav.push<File>(MaterialPageRoute(
-                      //         builder: (context) => CropImageScreen(image: pickedImage),
-                      //       ));
-
-                      //       setState(() {
-                      //         image = croppedImage;
-                      //       });
-                      //     },
-                      //     child: image != null
-                      //         ? ClipRRect(
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             child: Image.file(
-                      //               image!,
-                      //               width: 150,
-                      //               height: 150,
-                      //               fit: BoxFit.cover,
-                      //             ),
-                      //           )
-                      //         : myProfile.profilePicUrl.isNotEmpty
-                      //             ? SizedBox(
-                      //                 width: 150,
-                      //                 height: 150,
-                      //                 child: ClipRRect(
-                      //                   borderRadius: BorderRadius.circular(20),
-                      //                   child: CachedNetworkImage(
-                      //                     fit: BoxFit.cover,
-                      //                     imageUrl: myProfile.profilePicUrl,
-                      //                     cacheManager: customCacheManager,
-                      //                     progressIndicatorBuilder: (context, url, progress) =>
-                      //                         Container(
-                      //                       color: CupidColors.titleColor,
-                      //                       child: const CustomLoader(
-                      //                         color: Colors.white,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               )
-                      //             : ClipOval(
-                      //                 child: Container(
-                      //                   width: 100,
-                      //                   height: 100,
-                      //                   color: CupidColors.titleColor,
-                      //                 ),
-                      //               ),
-                      //   ),
-                      // ),
-                    ]),
-                    const Padding(padding: EdgeInsets.only(top: 30)),
-                    DisabledTextField(controller: nameController, labelText: "Name"),
-                    const Padding(padding: EdgeInsets.only(top: 15)),
-                    DisabledTextField(controller: emailController, labelText: "Email"),
-                    const Padding(padding: EdgeInsets.only(top: 15)),
-                    Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: CupidColors.pinkColor,
-                          ),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                        const Text(
-                          'Select Gender',
-                          style: TextStyle(
-                            color: CupidColors.pinkColor,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              gender = Gender.male;
-                            });
-                          },
-                          child: GenderTile(gender: Gender.male, isSelected: Gender.male == gender),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              gender = Gender.female;
-                            });
-                          },
-                          child: GenderTile(
-                              gender: Gender.female, isSelected: Gender.female == gender),
-                        )
-                      ]),
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 15)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        CustomDropDown(
-                          items: programs.map((e) => e.displayString).toList(),
-                          label: "Program",
-                          value: myProgram.displayString,
-                          onChanged: (value) {
-                            if (mounted) {
-                              setState(() {
-                                myProgram = Program.values
-                                    .firstWhere((element) => element.displayString == value);
-                                programController.text = myProgram.displayString;
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(width: 16),
-                        // Add some spacing between dropdowns
-                        Expanded(
-                          child: DisabledTextField(
-                            controller: yearOfJoinController,
-                            labelText: "Year of joining",
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text('Bio',
-                            style:
-                                CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor)),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Write a brief description about yourself to attract people to your profile.',
-                          softWrap: true,
-                          style: CupidStyles.lightTextStyle,
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Please enter your bio";
-                            }
-                            return null;
-                          },
-                          controller: bioController,
-                          maxLines: 5,
-                          style: CupidStyles.normalTextStyle,
-                          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        GestureDetector(
-                          onTap: () {
-                            context.pushNamed(AppRoutes.selectInterestsScreen.name);
-                          },
-                          child: Container(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Your Interests",
-                                    style: CupidStyles.headingStyle
-                                        .copyWith(color: CupidColors.titleColor),
-                                  ),
-                                  const Icon(
-                                    FluentIcons.chevron_right_24_regular,
-                                    color: CupidColors.greyColor,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                      ],
-                    ),
-                    DisplayOnlyInterestList(
-                      interests: interestStore.selectedInterests,
-                    ),
-                    const SizedBox(height: 100),
-                  ],
-                ),
+    return Scaffold(
+      appBar: _appBar(context),
+      floatingActionButton: _submitButton(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TextField(
+              controller: TextEditingController(text: LoginStore.displayName),
+              decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                labelText: "Name",
+                floatingLabelAlignment: FloatingLabelAlignment.start,
+                labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                enabled: false,
+                fillColor: Colors.transparent,
               ),
-            );
-          }),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: TextEditingController(text: LoginStore.email),
+              decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                labelText: "Email",
+                floatingLabelAlignment: FloatingLabelAlignment.start,
+                labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                enabled: false,
+                fillColor: Colors.transparent,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Bio",
+              style: CupidStyles.subHeadingTextStyle,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _bioController,
+              decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                hintText: "Bio",
+                hintStyle: const TextStyle(color: CupidColors.secondaryColor),
+                enabled: true,
+                fillColor: Colors.transparent,
+              ),
+              maxLines: 5,
+              maxLength: 500,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Gender",
+              style: CupidStyles.subHeadingTextStyle,
+            ),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 8,
+              alignment: WrapAlignment.start,
+              children: List.generate(Gender.values.length, (index) {
+                final gender = Gender.values[index];
+                final selected = _selectedGender == gender;
+                return _buildChip(gender.displayString, selected, () {
+                  setState(() {
+                    _selectedGender = gender;
+                  });
+                });
+              }),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Program",
+              style: CupidStyles.subHeadingTextStyle,
+            ),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 8,
+              alignment: WrapAlignment.start,
+              children: List.generate(programs.length, (index) {
+                final program = programs[index];
+                final selected = _selectedProgram == program;
+                return _buildChip(program.displayString, selected, () {
+                  setState(() {
+                    _selectedProgram = program;
+                  });
+                });
+              }),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Year",
+              style: CupidStyles.subHeadingTextStyle,
+            ),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 8,
+              alignment: WrapAlignment.start,
+              children: [
+                ...List.generate(5, (index) {
+                  final year = index + 1;
+                  return _buildChip(year.toString(), _yearOfJoin == year, () {});
+                }),
+                _buildChip("beyond", _yearOfJoin == 6, () {}),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Sexual orientation',
+              style: CupidStyles.subHeadingTextStyle,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Your results will be based on your preference',
+              style: CupidStyles.normalTextStyle,
+            ),
+            const SizedBox(height: 8),
+            _buildSexualOrientationChoiceChips(_selectedSexualOrientation, onSelected: (value) {
+              setState(() {
+                _selectedSexualOrientation = value;
+              });
+            }),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Display on profile',
+                  style: CupidStyles.lightTextStyle,
+                ),
+                Switch(
+                  activeColor: CupidColors.secondaryColor,
+                  inactiveThumbColor: CupidColors.secondaryColor,
+                  inactiveTrackColor: CupidColors.offWhiteColor,
+                  value: _displaySexualOrientation,
+                  onChanged: (value) {
+                    setState(() {
+                      _displaySexualOrientation = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            //
+            // TODO: Redirect to choose interests
+            //
+            const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
+            const SizedBox(height: 5),
+            const Text(
+              "The profiles showed to you will be based on this",
+              style: CupidStyles.normalTextStyle,
+            ),
+            const SizedBox(height: 16),
+            _buildLookingForChoiceChips(_relationshipGoal, onSelected: (value) {
+              setState(() {
+                _relationshipGoal = value;
+              });
+            }),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Display on profile",
+                  style: CupidStyles.lightTextStyle,
+                ),
+                const SizedBox(width: 8),
+                Switch(
+                  value: _displayRelationshipGoal,
+                  onChanged: (value) {
+                    setState(() {
+                      _displayRelationshipGoal = value;
+                    });
+                  },
+                  inactiveTrackColor: WidgetStateColor.transparent,
+                  activeColor: Colors.pinkAccent,
+                  inactiveThumbColor: const Color(0xFFFBA8AA),
+                  activeTrackColor: const Color(0x48FBA8AA),
+                ),
+              ],
+            ),
+            const SizedBox(height: 120)
+          ],
         ),
       ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      scrolledUnderElevation: 0,
+      title: const Text(
+        "Edit Profile",
+        style: CupidStyles.headingStyle,
+      ),
+      centerTitle: false,
+    );
+  }
+
+  Widget _buildChip(String option, bool isSelected, VoidCallback onSelected) {
+    return ChoiceChip(
+      label: Text(
+        option,
+        style: CupidStyles.normalTextStyle.setColor(
+          isSelected ? Colors.white : CupidColors.textColorBlack,
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: CupidColors.secondaryColor,
+      elevation: 0,
+      color: WidgetStateColor.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return CupidColors.secondaryColor;
+          }
+          return Colors.transparent;
+        },
+      ),
+      checkmarkColor: Colors.white,
+      onSelected: (bool selected) {
+        onSelected();
+      },
+    );
+  }
+
+  Widget _buildSexualOrientationChoiceChips(SexualOrientation? selectedChoice,
+      {required Function(SexualOrientation) onSelected}) {
+    return Wrap(
+      spacing: 8,
+      children: SexualOrientation.values.map((tag) {
+        return ChoiceChip(
+          label: Text(
+            tag.displayString,
+            style: CupidStyles.normalTextStyle.copyWith(
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+            ),
+          ),
+          color: WidgetStateColor.resolveWith(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return CupidColors.secondaryColor;
+              }
+              return Colors.transparent;
+            },
+          ),
+          checkmarkColor: Colors.white,
+          selected: selectedChoice == tag,
+          onSelected: (_) {
+            onSelected(tag);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLookingForChoiceChips(LookingFor? selectedChoice,
+      {required void Function(LookingFor) onSelected}) {
+    return Wrap(
+      spacing: 8,
+      children: LookingFor.values.map((tag) {
+        return ChoiceChip(
+          label: Text(
+            tag.displayString,
+            style: CupidStyles.normalTextStyle.copyWith(
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+            ),
+          ),
+          color: WidgetStateColor.resolveWith(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return CupidColors.secondaryColor;
+              }
+              return Colors.transparent;
+            },
+          ),
+          checkmarkColor: Colors.white,
+          selected: selectedChoice == tag,
+          onSelected: (val) {
+            onSelected(tag);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  FloatingActionButton _submitButton() {
+    return FloatingActionButton(
+      backgroundColor: CupidColors.titleColor,
+      onPressed: () {
+        _updateProfile();
+      },
+      child: _loading
+          ? const CircularProgressIndicator(color: Colors.white)
+          : const Icon(
+              FluentIcons.save_16_regular,
+              size: 30,
+              color: Colors.white,
+            ),
     );
   }
 }

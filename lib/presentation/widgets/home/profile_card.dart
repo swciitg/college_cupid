@@ -11,28 +11,48 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    return GestureDetector(
-      onLongPress: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          builder: (context) => ProfileOptionsBottomSheet(userEmail: user.email),
-        );
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-        child: Stack(
-          children: [
-            UserProfileImages(user: user, moveToProfile: true),
-            Positioned(
-              bottom: 16,
-              left: 16,
-              child: UserInfo(userProfile: user),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxHeight = constraints.maxHeight;
+          return GestureDetector(
+            onLongPress: () {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                builder: (context) => ProfileOptionsBottomSheet(userEmail: user.email),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
+                children: [
+                  UserProfileImages(
+                    user: user,
+                    moveToProfile: true,
+                    height: maxHeight,
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: SizedBox(
+                      height: maxHeight - 16,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          UserInfo(userProfile: user),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

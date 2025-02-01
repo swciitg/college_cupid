@@ -18,10 +18,11 @@ class UserInfo extends ConsumerWidget {
     final width = MediaQuery.sizeOf(context).width;
     final currentUser = ref.watch(userProvider).myProfile!;
     return SizedBox(
-      width: width - width * 0.04 - 32,
+      width: width - 32,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

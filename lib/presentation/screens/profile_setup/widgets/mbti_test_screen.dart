@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:college_cupid/domain/models/mbti_model.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/controllers/mbti_controller.dart';
@@ -89,7 +87,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     _navigationDisabled = false;
   }
 
-  void postMBTI() async {
+  void _postMBTI() async {
     try {
       setState(() {
         _loading = true;
@@ -136,9 +134,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                SizedBox(
-                  height: Platform.isIOS ? kToolbarHeight : kToolbarHeight / 2,
-                ),
+                const SizedBox(height: 16),
                 _progressIndicator(),
                 const SizedBox(height: 8),
                 const Text('MBTI Test', style: CupidStyles.headingStyle),
@@ -225,7 +221,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     return FloatingActionButton(
       backgroundColor: CupidColors.secondaryColor,
       onPressed: () {
-        postMBTI();
+        _postMBTI();
       },
       child: _loading
           ? const CircularProgressIndicator(color: Colors.white)
@@ -376,7 +372,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
                             mbtiModel.questions.where((e) => e.answer != null).lastOrNull?.id ?? 0;
                         if (e.id > lastAnswered + 1) {
                           setState(() {
-                            _errorMessage = "Please answer the previous question first!";
+                            _errorMessage = "Please answer the previous questions first!";
                           });
                           return;
                         }

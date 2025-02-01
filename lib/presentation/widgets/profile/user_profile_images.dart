@@ -11,10 +11,12 @@ class UserProfileImages extends StatefulWidget {
     super.key,
     required this.user,
     this.moveToProfile = true,
+    this.height,
   });
 
   final UserProfile user;
   final bool moveToProfile;
+  final double? height;
 
   @override
   State<UserProfileImages> createState() => _UserProfileImagesState();
@@ -57,7 +59,7 @@ class _UserProfileImagesState extends State<UserProfileImages> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width - 20;
-    final height = width * 4 / 3;
+    final height = widget.height ?? width * 4 / 3;
     return Hero(
       tag: 'profilePic',
       child: ClipRRect(
@@ -138,7 +140,7 @@ class _UserProfileImagesState extends State<UserProfileImages> with SingleTicker
     );
   }
 
-  Container _imagePageView(double width, double height) {
+  Container _imagePageView(double width, double? height) {
     return Container(
       width: width,
       height: height,

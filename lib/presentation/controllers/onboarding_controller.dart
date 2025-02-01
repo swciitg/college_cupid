@@ -141,7 +141,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         }
         return true;
       case OnboardingStep.lookingFor:
-        if (state.userProfile?.relationshipGoals == null) {
+        if (state.userProfile?.relationshipGoal == null) {
           if (submit) showSnackBar("Please select what you're looking for");
           return false;
         }
@@ -249,7 +249,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoals: state.userProfile?.relationshipGoals?.copyWith(display: value),
+        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -257,9 +257,9 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForType(LookingFor type) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoals: RelationshipGoal(
+        relationshipGoal: RelationshipGoal(
           goal: type,
-          display: state.userProfile?.relationshipGoals?.display ?? false,
+          display: state.userProfile?.relationshipGoal?.display ?? false,
         ),
       ),
     );
@@ -288,12 +288,15 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       for (int i = 0; i < state.images!.length; i++) {
         final image = state.images![i];
         if (image != null) {
-          final imageUrl = await userProfileRepo.postUserProfileImage(image, onSendProgress: (val) {
-            imageProgress = (i + val) / state.images!.length * 100;
-            state = state.copyWith(
-              loadingMessage: "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
-            );
-          });
+          final imageUrl = await userProfileRepo.postUserProfileImage(
+            image,
+            onSendProgress: (val) {
+              imageProgress = (i + val) / state.images!.length * 100;
+              state = state.copyWith(
+                loadingMessage: "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
+              );
+            },
+          );
           final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }

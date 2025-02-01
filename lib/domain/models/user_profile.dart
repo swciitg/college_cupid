@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
@@ -15,7 +14,7 @@ class UserProfile {
   Program? program;
   List<String> interests;
   SexualOrientationModel? sexualOrientation;
-  RelationshipGoal? relationshipGoals;
+  RelationshipGoal? relationshipGoal;
   List<ImageModel> images;
   PersonalityType? personalityType;
 
@@ -35,7 +34,7 @@ class UserProfile {
     this.interests = const [],
     this.sexualOrientation,
     this.images = const [],
-    this.relationshipGoals,
+    this.relationshipGoal,
     this.personalityType,
   });
 
@@ -53,7 +52,7 @@ class UserProfile {
           ? SexualOrientationModel.fromJson(json['sexualOrientation'])
           : null,
       images: (json['profilePicUrls'] as List? ?? []).map((e) => ImageModel.fromJson(e)).toList(),
-      relationshipGoals: json['relationshipGoals'] != null
+      relationshipGoal: json['relationshipGoals'] != null
           ? RelationshipGoal.fromJson(json['relationshipGoals'])
           : null,
       personalityType: json['personalityType'] != null && json['personalityType'] != ''
@@ -76,7 +75,7 @@ class UserProfile {
     data['interests'] = interests;
     data['sexualOrientation'] = sexualOrientation?.toJson();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
-    data['relationshipGoals'] = relationshipGoals?.toJson();
+    data['relationshipGoals'] = relationshipGoal?.toJson();
     data['personalityType'] = personalityType?.name;
     return data;
   }
@@ -92,7 +91,7 @@ class UserProfile {
     String? publicKey,
     List<String>? interests,
     SexualOrientationModel? sexualOrientation,
-    RelationshipGoal? relationshipGoals,
+    RelationshipGoal? relationshipGoal,
     List<ImageModel>? images,
     PersonalityType? personalityType,
   }) {
@@ -106,7 +105,7 @@ class UserProfile {
       publicKey: publicKey ?? this.publicKey,
       interests: interests ?? this.interests,
       sexualOrientation: sexualOrientation ?? this.sexualOrientation,
-      relationshipGoals: relationshipGoals ?? this.relationshipGoals,
+      relationshipGoal: relationshipGoal ?? this.relationshipGoal,
       images: images ?? this.images,
       personalityType: personalityType ?? this.personalityType,
     );
@@ -115,13 +114,13 @@ class UserProfile {
   double? getMatchScore(UserProfile other) {
     if (other.personalityType == null ||
         other.sexualOrientation == null ||
-        other.relationshipGoals == null) {
+        other.relationshipGoal == null) {
       return null;
     }
     final personalityScore = _getPersonalityTypeScore(other.personalityType!.name);
     final sexualOrientationScore =
         _sexualOrientationScore(other.sexualOrientation!.type, other.gender!);
-    final relationshipGoalsScore = _relationshipGoalsScore(other.relationshipGoals!.goal);
+    final relationshipGoalsScore = _relationshipGoalsScore(other.relationshipGoal!.goal);
     final interestsScore = _interestsScore(other.interests);
     final totalScore =
         personalityScore + sexualOrientationScore + relationshipGoalsScore + interestsScore;
@@ -155,9 +154,9 @@ class UserProfile {
   }
 
   double _relationshipGoalsScore(LookingFor goal) {
-    if (relationshipGoals == null) return 0;
+    if (relationshipGoal == null) return 0;
 
-    if (relationshipGoals!.goal == goal) {
+    if (relationshipGoal!.goal == goal) {
       log("Relationship Goals Score: ${relationshipGoalsWeight.toDouble()}");
       return relationshipGoalsWeight.toDouble();
     }

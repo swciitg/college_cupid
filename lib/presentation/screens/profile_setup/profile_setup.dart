@@ -27,7 +27,6 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     const ChooseInterests(),
     const AddPhotos(),
     const LookingForScreen(),
-    // const MbtiTestScreen(),
   ];
 
   @override

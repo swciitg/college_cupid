@@ -49,7 +49,7 @@ Map<String, List<String>> interestsMap = {
   ],
   "Film & TV": [
     "📺 Romance",
-    "📺 Comedy",
+    "📺 Comedy shows",
     "📺 Drama",
     "📺 Horror",
     "📺 Thriller",

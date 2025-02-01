@@ -11,9 +11,8 @@ import 'package:provider/provider.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   final List<UserProfile> userProfiles;
-  final PageController pageController;
 
-  const ProfileView({required this.pageController, required this.userProfiles, super.key});
+  const ProfileView({required this.userProfiles, super.key});
 
   @override
   ConsumerState<ProfileView> createState() => _ProfileViewState();
@@ -22,20 +21,25 @@ class ProfileView extends ConsumerStatefulWidget {
 class _ProfileViewState extends ConsumerState<ProfileView> {
   late FilterStore filterStore;
   late PageViewStore pageViewStore;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
 
   @override
   void dispose() {
     pageViewStore.resetStore();
     filterStore.resetStore();
-    widget.pageController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final userProfileRepo = ref.read(userProfileRepoProvider);
-    final size = MediaQuery.sizeOf(context);
-    final double screenWidth = size.width;
     filterStore = context.read<FilterStore>();
     pageViewStore = context.read<PageViewStore>();
 
@@ -53,35 +57,32 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     return Observer(
       builder: (nestedContext) {
-        return SizedBox(
-          height: (screenWidth - 20) * 4 / 3,
-          child: PageView(
-            padEnds: true,
-            key: Key(widget.userProfiles.hashCode.toString()),
-            allowImplicitScrolling: false,
-            controller: widget.pageController,
-            scrollDirection: Axis.horizontal,
-            onPageChanged: (value) async {
-              if (pageViewStore.isLastPage) return;
-              if (pageViewStore.homeTabProfileList.length - value <= 4) {
-                pageViewStore.setPageNumber(pageViewStore.pageNumber + 1);
-                final List<UserProfile> users =
-                    await userProfileRepo.getPaginatedUsers(pageViewStore.pageNumber, {
-                  'gender': filterStore.interestedInGender.databaseString,
-                  'program': filterStore.program.databaseString,
-                  'yearOfJoin': filterStore.yearOfJoin,
-                  'name': filterStore.name
-                });
-                if (users.length < 10) {
-                  pageViewStore.setIsLastPage(true);
-                }
-                pageViewStore.addHomeTabProfiles(users);
+        return PageView(
+          padEnds: true,
+          key: Key(widget.userProfiles.hashCode.toString()),
+          allowImplicitScrolling: false,
+          controller: _pageController,
+          scrollDirection: Axis.horizontal,
+          onPageChanged: (value) async {
+            if (pageViewStore.isLastPage) return;
+            if (pageViewStore.homeTabProfileList.length - value <= 4) {
+              pageViewStore.setPageNumber(pageViewStore.pageNumber + 1);
+              final List<UserProfile> users =
+                  await userProfileRepo.getPaginatedUsers(pageViewStore.pageNumber, {
+                'gender': filterStore.interestedInGender.databaseString,
+                'program': filterStore.program.databaseString,
+                'yearOfJoin': filterStore.yearOfJoin,
+                'name': filterStore.name
+              });
+              if (users.length < 10) {
+                pageViewStore.setIsLastPage(true);
               }
-            },
-            children: List.generate(
-              pageViewStore.homeTabProfileList.length,
-              (index) => ProfileCard(user: pageViewStore.homeTabProfileList[index]),
-            ),
+              pageViewStore.addHomeTabProfiles(users);
+            }
+          },
+          children: List.generate(
+            pageViewStore.homeTabProfileList.length,
+            (index) => ProfileCard(user: pageViewStore.homeTabProfileList[index]),
           ),
         );
       },

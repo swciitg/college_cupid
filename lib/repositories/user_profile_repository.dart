@@ -23,12 +23,15 @@ class UserProfileRepository extends ApiRepository {
           contentType: MediaType('image', 'png'),
         ),
       });
-      Response res =
-          await dio.post(Endpoints.postProfileImage, data: formData, onSendProgress: (sent, total) {
-        if (onSendProgress != null) {
-          onSendProgress(sent / total);
-        }
-      });
+      Response res = await dio.post(
+        Endpoints.postProfileImage,
+        data: formData,
+        onSendProgress: (sent, total) {
+          if (onSendProgress != null) {
+            onSendProgress(sent / total);
+          }
+        },
+      );
       if (res.statusCode == 200) {
         return res.data['imageUrl'] ?? '';
       } else {

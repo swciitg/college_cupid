@@ -23,7 +23,6 @@ class HomeTab extends ConsumerStatefulWidget {
 
 class _HomeTabState extends ConsumerState<HomeTab> {
   final TextEditingController _searchController = TextEditingController();
-  final PageController _pageController = PageController();
   Timer? timer;
   late FilterStore filterStore;
   late PageViewStore pageViewStore;
@@ -41,12 +40,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     final userProfileRepo = ref.read(userProfileRepoProvider);
     filterStore = context.read<FilterStore>();
     pageViewStore = context.read<PageViewStore>();
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildSearchField(),
-          const SizedBox(height: 10),
-          Observer(builder: (_) {
+    return Column(
+      children: [
+        _buildSearchField(),
+        const SizedBox(height: 10),
+        Expanded(
+          child: Observer(builder: (_) {
             pageViewStore.resetStore();
             return FutureBuilder(
               future: userProfileRepo.getPaginatedUsers(0, {
@@ -65,18 +64,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     style: CupidStyles.lightTextStyle,
                   ));
                 } else if (snapshot.hasData) {
-                  return ProfileView(
-                    pageController: _pageController,
-                    userProfiles: snapshot.data!,
-                  );
+                  return ProfileView(userProfiles: snapshot.data!);
                 } else {
                   return const CustomLoader();
                 }
               },
             );
           }),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -116,36 +112,39 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                border: Border.all(
-                  color: CupidColors.titleColor,
-                ),
-              ),
-              child: TextFormField(
-                controller: _searchController,
-                textInputAction: TextInputAction.search,
-                onFieldSubmitted: (value) {
+            child: TextFormField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              onFieldSubmitted: (value) {
+                filterStore.setName(value);
+              },
+              onChanged: (value) {
+                if (timer != null) timer!.cancel();
+                timer = Timer(const Duration(seconds: 1), () {
                   filterStore.setName(value);
-                },
-                onChanged: (value) {
-                  if (timer != null) timer!.cancel();
-                  timer = Timer(const Duration(seconds: 1), () {
-                    filterStore.setName(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: const Icon(Icons.search),
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                      filterStore.setName('');
-                    },
-                  ),
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: CupidColors.titleColor),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: CupidColors.titleColor),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: CupidColors.titleColor),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    filterStore.setName('');
+                  },
                 ),
               ),
             ),
