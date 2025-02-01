@@ -52,6 +52,12 @@ class UserInfo extends ConsumerWidget {
     if (matchScore == null) {
       return const SizedBox();
     }
+    final myPreferredGender =
+        currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
+    final otherGender = userProfile.gender!;
+    if (myPreferredGender != null && myPreferredGender != otherGender) {
+      return const SizedBox();
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
