@@ -102,13 +102,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   String hashedPassword = myInfo['hashedPassword'];
                   await getPasswordFromUser(hashedPassword);
                   String password = ref.read(userProvider).password;
-                  print("Password: $password");
-
-                  if (hashedPassword !=
-                      Encryption.bytesToHexadecimal(Encryption.calculateSHA256(password))) {
-                    goRouter.goNamed(AppRoutes.splash.name);
-                  }
-
                   await SharedPrefs.setPassword(password);
                   final userProfileMap = await userProfileRepo.getUserProfile(email);
                   final userProfile = UserProfile.fromJson(userProfileMap!);

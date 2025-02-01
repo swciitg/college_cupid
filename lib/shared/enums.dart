@@ -80,6 +80,7 @@ enum SexualOrientation {
       case straight:
         return gender == Gender.male ? Gender.female : Gender.male;
       default:
+        // Not that simple
         return null;
     }
   }

@@ -27,8 +27,8 @@ class ProfileCard extends StatelessWidget {
           children: [
             UserProfileImages(user: user, moveToProfile: true),
             Positioned(
-              bottom: 15,
-              left: 25,
+              bottom: 16,
+              left: 16,
               child: UserInfo(userProfile: user),
             ),
           ],
