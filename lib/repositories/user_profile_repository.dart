@@ -46,6 +46,7 @@ class UserProfileRepository extends ApiRepository {
     try {
       final url = '${Endpoints.deleteProfileImage}/$imageId';
       await dio.delete(url);
+      log("Deleted Profile Image: $imageId");
     } catch (error) {
       rethrow;
     }

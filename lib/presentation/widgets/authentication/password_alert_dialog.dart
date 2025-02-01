@@ -23,9 +23,20 @@ class _PasswordAlertDialogState extends ConsumerState<PasswordAlertDialog> {
         Encryption.bytesToHexadecimal(Encryption.calculateSHA256(enteredPassword));
   }
 
+  void _confirmSubmit() {
+    final userController = ref.read(userProvider.notifier);
+    bool matched = verifyPassword(widget.hashedPassword, passwordController.text);
+    if (matched) {
+      userController.setPassword(passwordController.text);
+      Navigator.of(context).pop();
+    } else {
+      showSnackBar('Incorrect Password');
+      passwordController.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userController = ref.read(userProvider.notifier);
     return PopScope(
       canPop: false,
       child: AlertDialog(
@@ -49,22 +60,15 @@ class _PasswordAlertDialogState extends ConsumerState<PasswordAlertDialog> {
               )),
           controller: passwordController,
           obscureText: true,
+          onFieldSubmitted: (val) {
+            _confirmSubmit();
+          },
         ),
-        actions: <Widget>[
-          // const Padding(padding: EdgeInsets.only(top: 20)),
+        actions: [
           CupidButton(
             backgroundColor: CupidColors.pinkColor,
             text: "Continue",
-            onTap: () {
-              bool matched = verifyPassword(widget.hashedPassword, passwordController.text);
-              if (matched) {
-                userController.setPassword(passwordController.text);
-                Navigator.of(context).pop();
-              } else {
-                showSnackBar('Incorrect Password');
-                passwordController.clear();
-              }
-            },
+            onTap: _confirmSubmit,
           ),
         ],
       ),
