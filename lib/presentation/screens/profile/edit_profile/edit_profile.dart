@@ -102,6 +102,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     });
     var profile = ref.read(userProvider).myProfile!;
     var newImagesLenth = newImages.where((e) => e != null).length;
+    if (newImagesLenth + profile.images.length < 2) {
+      showSnackBar("You need at least 2 images");
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
     var updatedImages = profile.images;
     if (newImagesLenth != 0) {
       _loadingMessage = "Uploading Images";
@@ -388,9 +395,16 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
                   child: Center(
-                    child: Text(
-                      _loadingMessage!,
-                      style: CupidStyles.normalTextStyle,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: CupidColors.secondaryColor,
+                      ),
+                      child: Text(
+                        _loadingMessage!,
+                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                      ),
                     ),
                   ),
                 ),

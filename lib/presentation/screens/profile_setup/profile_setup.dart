@@ -75,10 +75,17 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                     ),
                     if (loadingMessage != null) const SizedBox(height: 16),
                     if (loadingMessage != null)
-                      Text(
-                        loadingMessage,
-                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
-                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: CupidColors.secondaryColor,
+                        ),
+                        child: Text(
+                          loadingMessage,
+                          style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                        ),
+                      )
                   ],
                 ),
               ),
