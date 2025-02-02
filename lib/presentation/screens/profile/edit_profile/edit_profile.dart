@@ -110,46 +110,46 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       return;
     }
     var updatedImages = profile.images;
-    if (newImagesLenth != 0) {
-      _loadingMessage = "Uploading Images";
-      setState(() {});
-      var count = 0;
-      for (int i = 0; i < newImages.length; i++) {
-        final image = newImages[i];
-        if (image == null) continue;
-        final url = await ref.read(userProfileRepoProvider).postUserProfileImage(image,
-            onSendProgress: (val) {
-          final imageProgress = (count + val) / newImagesLenth * 100;
-          setState(
-            () {
-              _loadingMessage = "Uploading Image(s) : ${imageProgress.toStringAsFixed(2)}%";
-            },
-          );
-        });
-        final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
-        if (i <= profile.images.length - 1) {
-          updatedImages[i] = ImageModel(url: url, blurHash: blurHash);
-        } else {
-          updatedImages.add(ImageModel(url: url, blurHash: blurHash));
-        }
-        count++;
-      }
-    }
-    final userProfile = profile.copyWith(
-      bio: bio,
-      gender: _selectedGender,
-      program: _selectedProgram,
-      sexualOrientation: SexualOrientationModel(
-        type: _selectedSexualOrientation,
-        display: _displaySexualOrientation,
-      ),
-      relationshipGoal: RelationshipGoal(
-        goal: _relationshipGoal,
-        display: _displayRelationshipGoal,
-      ),
-      images: updatedImages,
-    );
     try {
+      if (newImagesLenth != 0) {
+        _loadingMessage = "Uploading Images";
+        setState(() {});
+        var count = 0;
+        for (int i = 0; i < newImages.length; i++) {
+          final image = newImages[i];
+          if (image == null) continue;
+          final url = await ref.read(userProfileRepoProvider).postUserProfileImage(image,
+              onSendProgress: (val) {
+            final imageProgress = (count + val) / newImagesLenth * 100;
+            setState(
+              () {
+                _loadingMessage = "Uploading Image(s) : ${imageProgress.toStringAsFixed(2)}%";
+              },
+            );
+          });
+          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+          if (i <= profile.images.length - 1) {
+            updatedImages[i] = ImageModel(url: url, blurHash: blurHash);
+          } else {
+            updatedImages.add(ImageModel(url: url, blurHash: blurHash));
+          }
+          count++;
+        }
+      }
+      final userProfile = profile.copyWith(
+        bio: bio,
+        gender: _selectedGender,
+        program: _selectedProgram,
+        sexualOrientation: SexualOrientationModel(
+          type: _selectedSexualOrientation,
+          display: _displaySexualOrientation,
+        ),
+        relationshipGoal: RelationshipGoal(
+          goal: _relationshipGoal,
+          display: _displayRelationshipGoal,
+        ),
+        images: updatedImages,
+      );
       await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
       ref.read(userProvider.notifier).updateMyProfile(userProfile);
       await SharedPrefs.saveMyProfile(userProfile.toJson());
@@ -165,6 +165,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       showSnackBar("Profile updated successfully");
     } catch (e) {
       showSnackBar("Failed to update profile");
+      log("Error updating profile: $e");
       setState(() {
         _loading = false;
         _loadingMessage = null;

@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/icon_label_text.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -17,32 +20,84 @@ class UserInfo extends ConsumerWidget {
     String programAndYearDisplayString = "${program.displayString} '${userProfile.yearOfJoin}";
     final width = MediaQuery.sizeOf(context).width;
     final currentUser = ref.watch(userProvider).myProfile!;
+    final showSexualOrientation = currentUser.sexualOrientation?.display == true;
+    final showRelationshipGoal = currentUser.relationshipGoal?.display == true;
+    final visible = showSexualOrientation || showRelationshipGoal;
     return SizedBox(
       width: width - 32,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  userProfile.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userProfile.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+                    ),
+                    IconLabelText(text: userProfile.email, icon: FluentIcons.mail_32_filled),
+                    IconLabelText(
+                      text: programAndYearDisplayString,
+                      icon: FluentIcons.hat_graduation_12_filled,
+                    )
+                  ],
                 ),
-                IconLabelText(text: userProfile.email, icon: FluentIcons.mail_32_filled),
-                IconLabelText(
-                  text: programAndYearDisplayString,
-                  icon: FluentIcons.hat_graduation_12_filled,
-                )
-              ],
+              ),
+              if (currentUser.email != userProfile.email) _buildMatchScore(currentUser)
+            ],
+          ),
+          if (visible)
+            Padding(
+              padding: const EdgeInsets.all(16).copyWith(bottom: 0, top: 8),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  if (showSexualOrientation)
+                    _chip(userProfile.sexualOrientation!.type.displayString),
+                  if (showRelationshipGoal) _chip(userProfile.relationshipGoal!.goal.displayString),
+                ],
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
+  Widget _chip(String label) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withValues(alpha: 0.1),
+              Colors.white.withValues(alpha: 0.1),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 4,
+            sigmaY: 4,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              label,
+              style: CupidStyles.normalTextStyle.setColor(Colors.white),
             ),
           ),
-          if (currentUser.email != userProfile.email) _buildMatchScore(currentUser)
-        ],
+        ),
       ),
     );
   }

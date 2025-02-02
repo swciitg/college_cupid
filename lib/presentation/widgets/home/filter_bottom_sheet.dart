@@ -38,7 +38,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     return Observer(builder: (_) {
       return Container(
-        padding: const EdgeInsets.all(40).copyWith(top: 0),
+        padding: const EdgeInsets.all(16).copyWith(
+          top: 0,
+          bottom: 32,
+        ),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
@@ -50,14 +53,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           children: [
             const SizedBox(height: 5),
             Center(
-              child: Container(
-                width: 40,
-                height: 3,
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                    color: Colors.grey, borderRadius: BorderRadius.circular(3)),
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: const SizedBox(width: 40, height: 3),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: Stack(
@@ -84,12 +88,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Text(
               'Interested in',
-              style: CupidStyles.headingStyle.copyWith(fontSize: 16),
+              style: CupidStyles.normalTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             Row(
               children: [
                 SelectionButton(
@@ -98,12 +105,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   },
                   label: InterestedInGender.girls.displayString,
                   borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(
-                      15,
-                    ),
+                    left: Radius.circular(15),
                   ),
-                  isSelected: filterStore.interestedInGender ==
-                      InterestedInGender.girls,
+                  isSelected: filterStore.interestedInGender == InterestedInGender.girls,
                 ),
                 SelectionButton(
                   onTap: () {
@@ -111,8 +115,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   },
                   label: InterestedInGender.boys.displayString,
                   borderRadius: const BorderRadius.all(Radius.zero),
-                  isSelected:
-                      filterStore.interestedInGender == InterestedInGender.boys,
+                  isSelected: filterStore.interestedInGender == InterestedInGender.boys,
                 ),
                 SelectionButton(
                   onTap: () {
@@ -120,16 +123,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   },
                   label: InterestedInGender.both.displayString,
                   borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(
-                      15,
-                    ),
+                    right: Radius.circular(15),
                   ),
-                  isSelected:
-                      filterStore.interestedInGender == InterestedInGender.both,
+                  isSelected: filterStore.interestedInGender == InterestedInGender.both,
                 ),
               ],
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
             Row(
               children: [
                 CustomDropDown(
@@ -137,19 +137,19 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   label: 'Programs',
                   value: filterStore.program.displayString,
                   onChanged: (selectedProgram) {
-                    filterStore.setProgram(Program.values
-                        .firstWhere((p) => p.displayString == selectedProgram));
+                    filterStore.setProgram(
+                        Program.values.firstWhere((p) => p.displayString == selectedProgram));
                   },
                   icon: dropDownIcon,
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 12),
                 CustomDropDown(
                   items: yearOfJoinMap.keys
                       .toList()
                       .sublist(0, (filterStore.program.numberOfYears ?? 4) + 2),
                   label: "Year of join",
-                  value: yearOfJoinMap.keys.firstWhere(
-                      (key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
+                  value: yearOfJoinMap.keys
+                      .firstWhere((key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
                   onChanged: (selectedYear) {
                     filterStore.setYearOfJoin(yearOfJoinMap[selectedYear]);
                   },
@@ -157,7 +157,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
             CupidButton(
               text: "Apply",
               onTap: () {
