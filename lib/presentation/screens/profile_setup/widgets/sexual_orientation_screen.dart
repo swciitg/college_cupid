@@ -51,9 +51,10 @@ class SexualOrientationScreen extends ConsumerWidget {
               style: CupidStyles.lightTextStyle,
             ),
             Switch(
-              activeColor: CupidColors.secondaryColor,
-              inactiveThumbColor: CupidColors.secondaryColor,
-              inactiveTrackColor: CupidColors.offWhiteColor,
+              inactiveTrackColor: WidgetStateColor.transparent,
+              activeColor: Colors.pinkAccent,
+              inactiveThumbColor: const Color(0xFFFBA8AA),
+              activeTrackColor: const Color(0x48FBA8AA),
               value: onboardingState.userProfile?.sexualOrientation?.display ?? false,
               onChanged: (value) {
                 onboardingController.updateSexualOrientationDisplay(value);

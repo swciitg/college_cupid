@@ -10,23 +10,17 @@ class SelectableInterestList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          direction: Axis.horizontal,
-          spacing: 4,
-          runSpacing: 8,
-          children: allInterests.map(
-            (interest) {
-              return SelectableInterestCard(
-                selected: selectedInterests.contains(interest),
-                text: interest,
-              );
-            },
-          ).toList(),
-        ),
-      ],
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8,
+      children: allInterests.map(
+        (interest) {
+          return SelectableInterestCard(
+            selected: selectedInterests.contains(interest),
+            text: interest,
+          );
+        },
+      ).toList(),
     );
   }
 }

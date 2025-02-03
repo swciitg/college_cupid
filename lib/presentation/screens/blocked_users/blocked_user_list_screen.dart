@@ -21,24 +21,19 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
     final blockedUsersStore = context.read<BlockedUsersStore>();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        foregroundColor: CupidColors.pinkColor,
-        systemOverlayStyle: CupidStyles.statusBarStyle,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        title: const AppTitle(),
-      ),
+      appBar: _appBar(),
       body: Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30),
+        padding: const EdgeInsets.only(left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Blocked Users',
-                style: CupidStyles.headingStyle
-                    .copyWith(color: CupidColors.titleColor)),
+            Text(
+              'Blocked Users',
+              style: CupidStyles.headingStyle.copyWith(
+                color: CupidColors.titleColor,
+              ),
+            ),
             Expanded(
                 child: FutureBuilder(
               future: blockedUsersStore.getBlockedUsers(),
@@ -65,6 +60,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                         );
                       }
                       return ListView.builder(
+                          padding: EdgeInsets.zero,
                           itemCount: blockedUsersStore.blockedUserList.length,
                           itemBuilder: (BuildContext context, int index) {
                             return BlockedUserInfoTile(
@@ -81,6 +77,18 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+      foregroundColor: CupidColors.pinkColor,
+      systemOverlayStyle: CupidStyles.statusBarStyle,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      title: const AppTitle(),
     );
   }
 }

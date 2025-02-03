@@ -45,8 +45,11 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
               data: (crushesList) {
                 if (crushesList.isEmpty) {
                   return const Center(
-                    child: Text('No Crushes as of now\nGet Rolling!!!',
-                        textAlign: TextAlign.center, style: CupidStyles.lightTextStyle),
+                    child: Text(
+                      'No Crushes as of now\nGet Rolling!!!',
+                      textAlign: TextAlign.center,
+                      style: CupidStyles.lightTextStyle,
+                    ),
                   );
                 } else {
                   return ListView.builder(
@@ -60,8 +63,12 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                 }
               },
               error: (err, st) => const Center(
-                  child: Text('Some error occurred\nPlease try again!',
-                      textAlign: TextAlign.center, style: CupidStyles.lightTextStyle)),
+                child: Text(
+                  'Some error occurred\nPlease try again!',
+                  textAlign: TextAlign.center,
+                  style: CupidStyles.lightTextStyle,
+                ),
+              ),
               loading: () => const CustomLoader(),
             ),
           ),

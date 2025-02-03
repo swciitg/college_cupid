@@ -82,26 +82,30 @@ class CrushInfoTile extends ConsumerWidget {
     );
   }
 
-  Hero _profileImage() {
-    return Hero(
-      tag: 'profilePic',
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        // Image border
-        child: CachedNetworkImage(
-          imageUrl: profile.images.first.url,
-          cacheManager: customCacheManager,
-          placeholder: (context, url) {
-            if (profile.images.first.blurHash == null) return const CustomLoader();
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: BlurhashFfi(hash: profile.images.first.blurHash!),
-            );
-          },
-          fit: BoxFit.cover,
-          width: 80,
-          height: 80,
-        ),
+  Widget _profileImage() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      // Image border
+      child: CachedNetworkImage(
+        imageUrl: profile.images.first.url,
+        cacheManager: customCacheManager,
+        placeholder: (context, url) {
+          if (profile.images.first.blurHash == null) return const CustomLoader();
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: BlurhashFfi(hash: profile.images.first.blurHash!),
+          );
+        },
+        errorWidget: (context, url, error) {
+          if (profile.images.first.blurHash == null) return const CustomLoader();
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: BlurhashFfi(hash: profile.images.first.blurHash!),
+          );
+        },
+        fit: BoxFit.cover,
+        width: 80,
+        height: 80,
       ),
     );
   }

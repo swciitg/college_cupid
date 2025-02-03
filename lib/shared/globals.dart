@@ -58,6 +58,7 @@ Map<String, List<String>> interestsMap = {
     "📺 Anime",
   ],
   "Reading": [
+    "📚 Spiritual",
     "📚 Romance",
     "📚 Comedy",
     "📚 Mystery",

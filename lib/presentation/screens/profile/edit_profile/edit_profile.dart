@@ -5,6 +5,7 @@ import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/snackbar.dart';
+import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
@@ -19,6 +20,7 @@ import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
   static const id = 'editProfile';
@@ -57,6 +59,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     _displayRelationshipGoal = userState.myProfile!.relationshipGoal?.display ?? true;
     _bioController = TextEditingController(text: userState.myProfile!.bio);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(onboardingControllerProvider.notifier).setInterests(
+            userState.myProfile!.interests,
+          );
+    });
   }
 
   @override
@@ -95,6 +102,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     final bio = _bioController.text.trim();
     if (bio.isEmpty) {
       showSnackBar("Bio cannot be empty");
+      return;
+    }
+    final newInterests = ref.read(onboardingControllerProvider).interests;
+    if (newInterests == null || newInterests.length < 5) {
+      showSnackBar("Please select at least 5 interests");
       return;
     }
     setState(() {
@@ -310,6 +322,24 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Interests", style: CupidStyles.subHeadingTextStyle),
+                      IconButton(
+                        onPressed: () {
+                          context.goNamed(AppRoutes.editInterests.name);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  _buildInterests(),
+                  const SizedBox(height: 16),
                   const Text(
                     'Sexual orientation',
                     style: CupidStyles.subHeadingTextStyle,
@@ -335,9 +365,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         style: CupidStyles.lightTextStyle,
                       ),
                       Switch(
-                        activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor: CupidColors.secondaryColor,
-                        inactiveTrackColor: CupidColors.offWhiteColor,
+                        inactiveTrackColor: WidgetStateColor.transparent,
+                        activeColor: Colors.pinkAccent,
+                        inactiveThumbColor: const Color(0xFFFBA8AA),
+                        activeTrackColor: const Color(0x48FBA8AA),
                         value: _displaySexualOrientation,
                         onChanged: (value) {
                           setState(() {
@@ -347,11 +378,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       ),
                     ],
                   ),
-                  //
-                  // TODO: Redirect to choose interests
-                  //
+                  const SizedBox(height: 8),
                   const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   const Text(
                     "The profiles showed to you will be based on this",
                     style: CupidStyles.normalTextStyle,
@@ -412,6 +441,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Wrap _buildInterests() {
+    return Wrap(
+      spacing: 8,
+      children: List.generate(
+        ref.watch(onboardingControllerProvider).interests?.length ?? 0,
+        (index) {
+          final interest = ref.watch(onboardingControllerProvider).interests?[index] ?? "";
+          return _buildChip(interest, false, () {});
+        },
       ),
     );
   }
@@ -538,7 +580,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           return DecoratedBox(
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF11142A), width: 1.5),
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
             child: SizedBox(
               height: height,
@@ -548,7 +590,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         Positioned.fill(
                           child: ClipRRect(
                             borderRadius: const BorderRadius.all(
-                              Radius.circular(30),
+                              Radius.circular(20),
                             ),
                             child: Image.file(image, fit: BoxFit.cover),
                           ),
@@ -562,12 +604,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             Positioned.fill(
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.all(
-                                  Radius.circular(30),
+                                  Radius.circular(20),
                                 ),
                                 child: CachedNetworkImage(
                                   fit: BoxFit.cover,
                                   imageUrl: url,
                                   placeholder: (context, url) {
+                                    if (blurHash == null) return const CustomLoader();
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: BlurhashFfi(hash: blurHash),
+                                    );
+                                  },
+                                  errorWidget: (context, url, error) {
                                     if (blurHash == null) return const CustomLoader();
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(20),

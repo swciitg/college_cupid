@@ -3,9 +3,9 @@ import 'package:college_cupid/presentation/screens/authentication/login_webview.
 import 'package:college_cupid/presentation/screens/authentication/welcome.dart';
 import 'package:college_cupid/presentation/screens/blocked_users/blocked_user_list_screen.dart';
 import 'package:college_cupid/presentation/screens/home/home.dart';
+import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_interests.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_profile.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/profile_details.dart';
-import 'package:college_cupid/presentation/screens/profile/edit_profile/select_interests_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/splash.dart';
@@ -22,7 +22,7 @@ enum AppRoutes {
   blockedUserListScreen,
   userProfileScreen,
   editProfile,
-  selectInterestsScreen
+  editInterests,
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -72,16 +72,17 @@ final goRouter = GoRouter(
           },
         ),
         GoRoute(
-            path: AppRoutes.editProfile.name,
-            name: AppRoutes.editProfile.name,
-            builder: (context, state) => const EditProfile(),
-            routes: [
-              GoRoute(
-                path: AppRoutes.selectInterestsScreen.name,
-                name: AppRoutes.selectInterestsScreen.name,
-                builder: (context, state) => const SelectInterestsScreen(),
-              ),
-            ]),
+          path: AppRoutes.editProfile.name,
+          name: AppRoutes.editProfile.name,
+          builder: (context, state) => const EditProfile(),
+          routes: [
+            GoRoute(
+              path: AppRoutes.editInterests.name,
+              name: AppRoutes.editInterests.name,
+              builder: (context, state) => const EditInterests(),
+            ),
+          ],
+        ),
         GoRoute(
           path: AppRoutes.blockedUserListScreen.name,
           name: AppRoutes.blockedUserListScreen.name,

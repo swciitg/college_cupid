@@ -144,7 +144,7 @@ class UserProfile {
     log("(${gender.displayString}, ${sexualOrientation.displayString}) vs (${this.gender!.displayString}, ${this.sexualOrientation!.type.displayString})");
     final otherPreferedGender = sexualOrientation.preferredGender(gender);
     final myPreferedGender = this.sexualOrientation!.type.preferredGender(this.gender!);
-    if (myPreferedGender == null) {
+    if (myPreferedGender == null && otherPreferedGender == null) {
       log("Sexual Orientation Score: ${sexualOrientationWeight.toDouble()}");
       return sexualOrientationWeight.toDouble();
     }

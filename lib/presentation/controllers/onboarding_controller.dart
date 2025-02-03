@@ -318,6 +318,10 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     }
   }
 
+  void setInterests(List<String> interests) {
+    state = state.copyWith(interests: interests);
+  }
+
   @override
   void dispose() {
     passwordController.dispose();
