@@ -164,9 +164,18 @@ class _UserProfileImagesState extends State<UserProfileImages> with SingleTicker
                 child: SizedBox(
                   width: width,
                   height: width,
-                  child: BlurhashFfi(
-                    hash: widget.user.images.first.blurHash!,
-                  ),
+                  child: BlurhashFfi(hash: blurHash),
+                ),
+              );
+            },
+            errorWidget: (context, url, error) {
+              if (blurHash == null) return const CustomLoader();
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: SizedBox(
+                  width: width,
+                  height: width,
+                  child: BlurhashFfi(hash: blurHash),
                 ),
               );
             },

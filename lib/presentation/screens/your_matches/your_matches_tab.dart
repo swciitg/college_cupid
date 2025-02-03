@@ -15,41 +15,45 @@ class YourMatches extends ConsumerWidget {
     final crushesRepo = ref.read(crushesRepoProvider);
 
     return Container(
-      margin: const EdgeInsets.only(left: 30, right: 30),
+      margin: const EdgeInsets.only(left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             'Your Matches',
-            style: CupidStyles.headingStyle
-                .copyWith(color: CupidColors.titleColor),
+            style: CupidStyles.headingStyle.copyWith(color: CupidColors.titleColor),
           ),
           FutureBuilder(
-              future: crushesRepo.getCrushesCount(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox();
-                } else if (snapshot.hasError || snapshot.hasData == false) {
-                  return const Center(
-                    child: Text(
-                      'Some error occurred!',
-                      textAlign: TextAlign.center,
-                      style: CupidStyles.lightTextStyle,
-                    ),
-                  );
-                }
-                String text = 'You have got ${snapshot.data} admirers!';
-                if (snapshot.data! == 1) {
-                  text = 'You have got an admirer!';
-                }
-                if (snapshot.data! == 0) {
-                  text = 'Your admirer has not registered yet :(';
-                }
-                return Text(text,
-                    style: CupidStyles.headingStyle
-                        .copyWith(color: CupidColors.titleColor, fontSize: 16));
-              }),
+            future: crushesRepo.getCrushesCount(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox();
+              } else if (snapshot.hasError || snapshot.hasData == false) {
+                return const Center(
+                  child: Text(
+                    'Some error occurred!',
+                    textAlign: TextAlign.center,
+                    style: CupidStyles.lightTextStyle,
+                  ),
+                );
+              }
+              String text = 'You have got ${snapshot.data} admirers!';
+              if (snapshot.data! == 1) {
+                text = 'You have got an admirer!';
+              }
+              if (snapshot.data! == 0) {
+                text = 'Your admirer has not registered yet :(';
+              }
+              return Text(
+                text,
+                style: CupidStyles.headingStyle.copyWith(
+                  color: CupidColors.titleColor,
+                  fontSize: 16,
+                ),
+              );
+            },
+          ),
           Expanded(
             child: FutureBuilder(
               future: matchesRepo.getMatches(),
@@ -86,6 +90,7 @@ class YourMatches extends ConsumerWidget {
                     );
                   }
                   return ListView.builder(
+                    padding: EdgeInsets.zero,
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return MatchInfo(
