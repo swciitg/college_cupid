@@ -20,8 +20,11 @@ class UserInfo extends ConsumerWidget {
     String programAndYearDisplayString = "${program.displayString} '${userProfile.yearOfJoin}";
     final width = MediaQuery.sizeOf(context).width;
     final currentUser = ref.watch(userProvider).myProfile!;
-    final showSexualOrientation = currentUser.sexualOrientation?.display == true;
-    final showRelationshipGoal = currentUser.relationshipGoal?.display == true;
+    // Ensures mutual display
+    final showSexualOrientation = currentUser.sexualOrientation?.display == true &&
+        userProfile.sexualOrientation?.display == true;
+    final showRelationshipGoal = currentUser.relationshipGoal?.display == true &&
+        userProfile.relationshipGoal?.display == true;
     final visible = showSexualOrientation || showRelationshipGoal;
     return SizedBox(
       width: width - 32,
