@@ -19,7 +19,7 @@ class ChooseInterests extends StatelessWidget {
         ),
         SizedBox(height: 8),
         DisplayInterests(),
-        SizedBox(height: 16),
+        SizedBox(height: 2 * kBottomNavigationBarHeight),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/surprise_quiz.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_details.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_interests.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for_screen.dart';
@@ -24,6 +25,7 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
   final steps = [
     const BasicDetails(),
     const SexualOrientationScreen(),
+    const SurpriseQuiz(),
     const ChooseInterests(),
     const AddPhotos(),
     const LookingForScreen(),
@@ -33,7 +35,8 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final onboardingController = ref.read(onboardingControllerProvider.notifier);
+      final onboardingController =
+          ref.read(onboardingControllerProvider.notifier);
       onboardingController.updateHeartStates(context);
     });
   }
@@ -76,14 +79,16 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                     if (loadingMessage != null) const SizedBox(height: 16),
                     if (loadingMessage != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: CupidColors.secondaryColor,
                         ),
                         child: Text(
                           loadingMessage,
-                          style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                          style: CupidStyles.normalTextStyle
+                              .setColor(Colors.white),
                         ),
                       )
                   ],
@@ -93,6 +98,7 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
         ],
       ),
       bottomNavigationBar: !loading ? const OnboaringNavigationButtons() : null,
+      extendBody: true,
     );
   }
 

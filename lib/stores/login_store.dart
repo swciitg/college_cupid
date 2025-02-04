@@ -32,6 +32,7 @@ class LoginStore {
         // await initializeMyProfile();
         isProfileCompleted = true;
       } else {
+        // TODO: Don't logout if internet is turned-off
         await logout();
         return false;
       }

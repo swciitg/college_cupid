@@ -13,7 +13,8 @@ class SexualOrientationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,13 +56,15 @@ class SexualOrientationScreen extends ConsumerWidget {
               activeColor: Colors.pinkAccent,
               inactiveThumbColor: const Color(0xFFFBA8AA),
               activeTrackColor: const Color(0x48FBA8AA),
-              value: onboardingState.userProfile?.sexualOrientation?.display ?? false,
+              value: onboardingState.userProfile?.sexualOrientation?.display ??
+                  false,
               onChanged: (value) {
                 onboardingController.updateSexualOrientationDisplay(value);
               },
             ),
           ],
         ),
+        const SizedBox(height: 2 * kBottomNavigationBarHeight),
       ],
     );
   }
@@ -75,7 +78,9 @@ class SexualOrientationScreen extends ConsumerWidget {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag
+                  ? Colors.white
+                  : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(

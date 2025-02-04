@@ -19,7 +19,8 @@ class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
 
-  const UserProfileScreen({required this.isMine, required this.userProfile, super.key});
+  const UserProfileScreen(
+      {required this.isMine, required this.userProfile, super.key});
 
   @override
   ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -47,7 +48,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
-  FloatingActionButton _actionButton(BuildContext context, CrushesRepository crushesRepo) {
+  FloatingActionButton _actionButton(
+      BuildContext context, CrushesRepository crushesRepo) {
     return FloatingActionButton(
       backgroundColor: CupidColors.titleColor,
       onPressed: () async {
@@ -63,9 +65,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                   myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
               .toString();
           String encryptedCrushEmail = Encryption.bytesToHexadecimal(
-              Encryption.encryptAES(plainText: profile.email, key: LoginStore.password!));
+              Encryption.encryptAES(
+                  plainText: profile.email, key: LoginStore.password!));
 
-          bool success = await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
+          bool success =
+              await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
           if (success) {
             await crushesRepo.increaseCrushesCount(profile.email);
           }

@@ -32,8 +32,8 @@ class CupidStyles {
     ),
   );
 
-  static const textButtonStyle =
-      TextStyle(fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
+  static const textButtonStyle = TextStyle(
+      fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
 
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
@@ -47,7 +47,8 @@ class CupidStyles {
     color: CupidColors.navBarBackgroundColor,
   );
 
-  static const countdownLabelStyle = TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
+  static const countdownLabelStyle =
+      TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
 
   static const headingStyle = TextStyle(
     fontFamily: 'Neue Montreal',
@@ -96,4 +97,6 @@ extension CupidTextStylesExtension on TextStyle {
   TextStyle setFontSize(double size) => copyWith(fontSize: size);
   TextStyle setFontFamily(String family) => copyWith(fontFamily: family);
   TextStyle setLineHeight(double height) => copyWith(height: height);
+  TextStyle setFontWeight(FontWeight fontWeight) =>
+      copyWith(fontWeight: fontWeight);
 }

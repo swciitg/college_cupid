@@ -1,25 +1,19 @@
 import 'package:college_cupid/presentation/widgets/global/report_user_alert_dialog.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/page_view_store.dart';
+import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProfileOptionsBottomSheet extends StatefulWidget {
+class ProfileOptionsBottomSheet extends ConsumerWidget {
   final String userEmail;
 
   const ProfileOptionsBottomSheet({required this.userEmail, super.key});
 
   @override
-  State<ProfileOptionsBottomSheet> createState() =>
-      _ProfileOptionsBottomSheetState();
-}
-
-class _ProfileOptionsBottomSheetState extends State<ProfileOptionsBottomSheet> {
-  @override
-  Widget build(BuildContext context) {
-    final pageViewStore = context.read<PageViewStore>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pageViewStore = ref.read(pageViewProvider.notifier);
     return Padding(
       padding: const EdgeInsets.all(25),
       child: Container(
@@ -39,10 +33,10 @@ class _ProfileOptionsBottomSheetState extends State<ProfileOptionsBottomSheet> {
                   await showDialog(
                     context: context,
                     builder: (context) =>
-                        ReportUserAlertDialog(userEmail: widget.userEmail),
+                        ReportUserAlertDialog(userEmail: userEmail),
                   );
                   nav.pop();
-                  pageViewStore.removeHomeTabProfile(widget.userEmail);
+                  pageViewStore.removeHomeTabProfile(userEmail);
                 },
                 child: const Row(
                   crossAxisAlignment: CrossAxisAlignment.center,

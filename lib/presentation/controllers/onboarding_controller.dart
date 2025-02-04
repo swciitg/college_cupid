@@ -27,17 +27,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
+final onboardingControllerProvider =
+    StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
 );
 
 enum OnboardingStep {
   basicDetails,
   sexualOrientation,
+  surpriseQuiz,
   chooseInterests,
   addPhotos,
   lookingFor;
-  // mbtiTest;
 }
 
 class OnboardingController extends StateNotifier<OnboardingState> {
@@ -47,7 +48,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         super(OnboardingState(currentStep: 0));
 
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController bioController = TextEditingController();
 
   final List<Map<String, HeartState>> _heartStates = [];
@@ -98,7 +100,9 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       case OnboardingStep.basicDetails:
         final password = passwordController.text.trim();
         if (password.length < 6) {
-          if (submit) showSnackBar("Password must be at least 6 characters long");
+          if (submit) {
+            showSnackBar("Password must be at least 6 characters long");
+          }
           return false;
         }
         final confirmPassword = confirmPasswordController.text.trim();
@@ -134,7 +138,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         );
         return true;
       case OnboardingStep.addPhotos:
-        final nonNullImagesCount = state.images!.where((element) => element != null).length;
+        final nonNullImagesCount =
+            state.images!.where((element) => element != null).length;
         if (nonNullImagesCount < 2) {
           if (submit) showSnackBar("Please upload atleast 2 photos");
           return false;
@@ -146,6 +151,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
           return false;
         }
         return await createUser();
+      case OnboardingStep.surpriseQuiz:
+        return true;
     }
   }
 
@@ -192,7 +199,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   }
 
   void toggleConfirmPasswordVisibility() {
-    state = state.copyWith(confirmPasswordVisible: !state.confirmPasswordVisible);
+    state =
+        state.copyWith(confirmPasswordVisible: !state.confirmPasswordVisible);
   }
 
   void updateGender(Gender gender) {
@@ -216,7 +224,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateSexualOrientationDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        sexualOrientation: state.userProfile?.sexualOrientation?.copyWith(display: value),
+        sexualOrientation:
+            state.userProfile?.sexualOrientation?.copyWith(display: value),
       ),
     );
   }
@@ -249,7 +258,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
+        relationshipGoal:
+            state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -293,16 +303,19 @@ class OnboardingController extends StateNotifier<OnboardingState> {
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
-                loadingMessage: "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
+                loadingMessage:
+                    "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(
+              imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
-      state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
+      state = state.copyWith(
+          userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
@@ -392,7 +405,8 @@ class OnboardingState {
       blue: blue ?? this.blue,
       pink: pink ?? this.pink,
       passwordVisible: passwordVisible ?? this.passwordVisible,
-      confirmPasswordVisible: confirmPasswordVisible ?? this.confirmPasswordVisible,
+      confirmPasswordVisible:
+          confirmPasswordVisible ?? this.confirmPasswordVisible,
       loading: loading ?? this.loading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
     );

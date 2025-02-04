@@ -17,6 +17,7 @@ class UserProfile {
   RelationshipGoal? relationshipGoal;
   List<ImageModel> images;
   PersonalityType? personalityType;
+  bool deactivated;
 
   static const personalityWeight = 30;
   static const interestsWeight = 30;
@@ -36,6 +37,7 @@ class UserProfile {
     this.images = const [],
     this.relationshipGoal,
     this.personalityType,
+    this.deactivated = false,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -51,15 +53,19 @@ class UserProfile {
       sexualOrientation: json['sexualOrientation'] != null
           ? SexualOrientationModel.fromJson(json['sexualOrientation'])
           : null,
-      images: (json['profilePicUrls'] as List? ?? []).map((e) => ImageModel.fromJson(e)).toList(),
+      images: (json['profilePicUrls'] as List? ?? [])
+          .map((e) => ImageModel.fromJson(e))
+          .toList(),
       relationshipGoal: json['relationshipGoals'] != null
           ? RelationshipGoal.fromJson(json['relationshipGoals'])
           : null,
-      personalityType: json['personalityType'] != null && json['personalityType'] != ''
-          ? PersonalityType.values.firstWhere(
-              (e) => e.name == json['personalityType'],
-            )
-          : null,
+      personalityType:
+          json['personalityType'] != null && json['personalityType'] != ''
+              ? PersonalityType.values.firstWhere(
+                  (e) => e.name == json['personalityType'],
+                )
+              : null,
+      deactivated: json['deactivated'] ?? false,
     );
   }
 
@@ -77,6 +83,7 @@ class UserProfile {
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
     data['relationshipGoals'] = relationshipGoal?.toJson();
     data['personalityType'] = personalityType?.name;
+    data['deactivated'] = deactivated;
     return data;
   }
 
@@ -94,6 +101,7 @@ class UserProfile {
     RelationshipGoal? relationshipGoal,
     List<ImageModel>? images,
     PersonalityType? personalityType,
+    bool? diactivated,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -108,6 +116,7 @@ class UserProfile {
       relationshipGoal: relationshipGoal ?? this.relationshipGoal,
       images: images ?? this.images,
       personalityType: personalityType ?? this.personalityType,
+      deactivated: diactivated ?? this.deactivated,
     );
   }
 
@@ -117,13 +126,17 @@ class UserProfile {
         other.relationshipGoal == null) {
       return null;
     }
-    final personalityScore = _getPersonalityTypeScore(other.personalityType!.name);
+    final personalityScore =
+        _getPersonalityTypeScore(other.personalityType!.name);
     final sexualOrientationScore =
         _sexualOrientationScore(other.sexualOrientation!.type, other.gender!);
-    final relationshipGoalsScore = _relationshipGoalsScore(other.relationshipGoal!.goal);
+    final relationshipGoalsScore =
+        _relationshipGoalsScore(other.relationshipGoal!.goal);
     final interestsScore = _interestsScore(other.interests);
-    final totalScore =
-        personalityScore + sexualOrientationScore + relationshipGoalsScore + interestsScore;
+    final totalScore = personalityScore +
+        sexualOrientationScore +
+        relationshipGoalsScore +
+        interestsScore;
     log("Total Score: $totalScore");
     return totalScore;
   }
@@ -131,19 +144,23 @@ class UserProfile {
   double _getPersonalityTypeScore(String personalityType) {
     log("$personalityType vs ${this.personalityType?.name}");
     final myType = this.personalityType?.name ?? '';
-    final commonletters =
-        myType.split('').where((element) => personalityType.contains(element)).length;
+    final commonletters = myType
+        .split('')
+        .where((element) => personalityType.contains(element))
+        .length;
     final score = commonletters / 4 * 100;
     final finalScore = score * personalityWeight / 100;
     log("Personality Score: $finalScore");
     return finalScore;
   }
 
-  double _sexualOrientationScore(SexualOrientation sexualOrientation, Gender gender) {
+  double _sexualOrientationScore(
+      SexualOrientation sexualOrientation, Gender gender) {
     if (this.sexualOrientation == null) return 0;
     log("(${gender.displayString}, ${sexualOrientation.displayString}) vs (${this.gender!.displayString}, ${this.sexualOrientation!.type.displayString})");
     final otherPreferedGender = sexualOrientation.preferredGender(gender);
-    final myPreferedGender = this.sexualOrientation!.type.preferredGender(this.gender!);
+    final myPreferedGender =
+        this.sexualOrientation!.type.preferredGender(this.gender!);
     if (myPreferedGender == null && otherPreferedGender == null) {
       log("Sexual Orientation Score: ${sexualOrientationWeight.toDouble()}");
       return sexualOrientationWeight.toDouble();
@@ -188,7 +205,12 @@ class UserProfile {
     final userCategories = <String, List<String>>{};
     final myCategories = <String, List<String>>{};
     for (final interest in interests) {
-      final category = allCategories.firstWhere((element) => element.value.contains(interest)).key;
+      final category = allCategories.firstWhere(
+        (element) => element.value.contains(interest),
+        orElse: () {
+          return allCategories.first;
+        },
+      ).key;
       if (userCategories.containsKey(category)) {
         userCategories[category]!.add(interest);
       } else {
@@ -196,7 +218,9 @@ class UserProfile {
       }
     }
     for (final interest in myInterests) {
-      final category = allCategories.firstWhere((element) => element.value.contains(interest)).key;
+      final category = allCategories
+          .firstWhere((element) => element.value.contains(interest))
+          .key;
       if (myCategories.containsKey(category)) {
         myCategories[category]!.add(interest);
       } else {
@@ -208,7 +232,8 @@ class UserProfile {
       (element) => myCategories.keys.contains(element),
     );
     log("Common Categories: $commonCategories");
-    final unionLength = userCategories.length + myCategories.length - commonCategories.length;
+    final unionLength =
+        userCategories.length + myCategories.length - commonCategories.length;
 
     // half score for common categories
     final categoryScore = (commonCategories.length / unionLength) * (100 / 2);
@@ -217,10 +242,11 @@ class UserProfile {
     final eachCategoryPart = 100 / commonCategories.length / 2;
     var interestsScore = 0.0;
     for (var e in commonCategories) {
-      final commonInterests =
-          userCategories[e]!.where((element) => myCategories[e]!.contains(element));
-      final unionLength =
-          userCategories[e]!.length + myCategories[e]!.length - commonInterests.length;
+      final commonInterests = userCategories[e]!
+          .where((element) => myCategories[e]!.contains(element));
+      final unionLength = userCategories[e]!.length +
+          myCategories[e]!.length -
+          commonInterests.length;
       interestsScore += commonInterests.length / unionLength * eachCategoryPart;
       log("$e: ${commonInterests.length / unionLength * eachCategoryPart}");
     }

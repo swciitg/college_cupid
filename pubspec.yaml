@@ -146,6 +146,7 @@ flutter:
     - family: NeueMontreal
       fonts:
             - asset: assets/fonts/NeueMontreal-Regular.otf
+              weight: 400
 
 
 

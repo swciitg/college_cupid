@@ -3,15 +3,13 @@ import 'dart:async';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/home/filter_bottom_sheet.dart';
 import 'package:college_cupid/presentation/widgets/home/profile_view.dart';
-import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
-import 'package:college_cupid/stores/page_view_store.dart';
+import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -25,52 +23,26 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   final TextEditingController _searchController = TextEditingController();
   Timer? timer;
   late FilterStore filterStore;
-  late PageViewStore pageViewStore;
 
   @override
   void dispose() {
     _searchController.dispose();
     filterStore.resetStore();
-    pageViewStore.resetStore();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final userProfileRepo = ref.read(userProfileRepoProvider);
     filterStore = context.read<FilterStore>();
-    pageViewStore = context.read<PageViewStore>();
+    final pageViewState = ref.watch(pageViewProvider);
     return Column(
       children: [
         _buildSearchField(),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Expanded(
-          child: Observer(builder: (_) {
-            pageViewStore.resetStore();
-            return FutureBuilder(
-              future: userProfileRepo.getPaginatedUsers(0, {
-                //don't want it to be triggered when pageNumber is changed
-                'gender': filterStore.interestedInGender.databaseString,
-                'program': filterStore.program.databaseString,
-                'yearOfJoin': filterStore.yearOfJoin,
-                'name': filterStore.name,
-              }),
-              builder: (futureBuilderContext, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(
-                      child: Text(
-                    'Some Error Occurred!\nPlease try again!',
-                    textAlign: TextAlign.center,
-                    style: CupidStyles.lightTextStyle,
-                  ));
-                } else if (snapshot.hasData) {
-                  return ProfileView(userProfiles: snapshot.data!);
-                } else {
-                  return const CustomLoader();
-                }
-              },
-            );
-          }),
+          child: pageViewState.loading
+              ? const CustomLoader()
+              : ProfileView(userProfiles: pageViewState.homeTabProfileList),
         ),
       ],
     );
@@ -78,19 +50,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Widget _filters(BuildContext context) {
     return GestureDetector(
-      child: Container(
-        decoration: BoxDecoration(
-          color: CupidColors.backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.all(4),
-          child: Center(
-            child: Icon(
-              FluentIcons.filter_20_filled,
-              size: 20,
-              color: CupidColors.pinkColor,
-            ),
+      child: const SizedBox(
+        height: 36,
+        width: 36,
+        child: Center(
+          child: Icon(
+            FluentIcons.filter_20_filled,
+            size: 24,
+            color: CupidColors.blackColor,
           ),
         ),
       ),
@@ -107,49 +74,78 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Padding _buildSearchField() {
+    final pageViewController = ref.read(pageViewProvider.notifier);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0)
+          .copyWith(top: 8),
       child: Row(
         children: [
+          SvgPicture.asset(
+            'assets/icons/cupid_logo.svg',
+            height: 36,
+            width: 36,
+          ),
+          const SizedBox(width: 8),
           Expanded(
-            child: TextFormField(
-              controller: _searchController,
-              textInputAction: TextInputAction.search,
-              onFieldSubmitted: (value) {
-                filterStore.setName(value);
-              },
-              onChanged: (value) {
-                if (timer != null) timer!.cancel();
-                timer = Timer(const Duration(seconds: 1), () {
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.16),
+                    blurRadius: 8.4,
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
+              child: TextFormField(
+                controller: _searchController,
+                textInputAction: TextInputAction.search,
+                onFieldSubmitted: (value) {
                   filterStore.setName(value);
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(color: CupidColors.titleColor),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: CupidColors.titleColor),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: CupidColors.titleColor),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    filterStore.setName('');
-                  },
+                  pageViewController.getInitialProfiles(context);
+                },
+                onChanged: (value) {
+                  if (timer != null) timer!.cancel();
+                  timer = Timer(const Duration(seconds: 1), () {
+                    filterStore.setName(value);
+                    pageViewController.getInitialProfiles(context);
+                    if (value.isEmpty) {
+                      FocusScope.of(context).unfocus();
+                    }
+                  });
+                },
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.zero,
+                  hintText: 'Search',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                      filterStore.setName('');
+                      pageViewController.getInitialProfiles(context);
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           _filters(context)
         ],
       ),

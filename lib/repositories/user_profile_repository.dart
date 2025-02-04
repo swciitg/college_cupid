@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
-final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserProfileRepository());
+final userProfileRepoProvider =
+    Provider<UserProfileRepository>((ref) => UserProfileRepository());
 
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
 
-  Future<String> postUserProfileImage(File? image, {Function(double)? onSendProgress}) async {
+  Future<String> postUserProfileImage(File? image,
+      {Function(double)? onSendProgress}) async {
     try {
       final formData = FormData.fromMap({
         'dp': await MultipartFile.fromFile(
@@ -88,7 +90,9 @@ class UserProfileRepository extends ApiRepository {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }
     try {
-      Response res = await dio.get('${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+      log("Page $pageNumber ${filterQuery.toString()}");
+      Response res = await dio.get(
+          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];

@@ -36,12 +36,14 @@ class BasicDetails extends ConsumerStatefulWidget {
 }
 
 class _BasicDetailsState extends ConsumerState<BasicDetails> {
-  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
+  List<Program> programs =
+      Program.values.where((e) => e != Program.none).toList();
 
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -85,7 +87,9 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             fillColor: Colors.transparent,
             suffixIcon: IconButton(
               icon: Icon(
-                onboardingState.passwordVisible ? Icons.visibility : Icons.visibility_off,
+                onboardingState.passwordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: CupidColors.secondaryColor,
               ),
               onPressed: () {
@@ -106,7 +110,9 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             fillColor: Colors.transparent,
             suffixIcon: IconButton(
               icon: Icon(
-                onboardingState.confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                onboardingState.confirmPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: CupidColors.secondaryColor,
               ),
               onPressed: () {
@@ -178,8 +184,8 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           children: [
             ...List.generate(5, (index) {
               final year = index + 1;
-              return _buildChip(year.toString(), onboardingState.userProfile?.yearOfJoin == year,
-                  () {
+              return _buildChip(year.toString(),
+                  onboardingState.userProfile?.yearOfJoin == year, () {
                 onboardingController.updateYearOfJoin(year);
               });
             }),
@@ -192,7 +198,7 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 2 * kBottomNavigationBarHeight),
       ],
     );
   }

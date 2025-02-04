@@ -34,7 +34,8 @@ class LookingForScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,7 +46,8 @@ class LookingForScreen extends ConsumerWidget {
           style: CupidStyles.normalTextStyle,
         ),
         const SizedBox(height: 16),
-        _buildchoiceChips(onboardingState.userProfile?.relationshipGoal?.goal, onSelected: (value) {
+        _buildchoiceChips(onboardingState.userProfile?.relationshipGoal?.goal,
+            onSelected: (value) {
           onboardingController.updateLookingForType(value);
         }),
         const SizedBox(height: 20),
@@ -58,7 +60,8 @@ class LookingForScreen extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Switch(
-              value: onboardingState.userProfile?.relationshipGoal?.display ?? false,
+              value: onboardingState.userProfile?.relationshipGoal?.display ??
+                  false,
               onChanged: (value) {
                 onboardingController.updateLookingForDisplay(value);
               },
@@ -69,6 +72,7 @@ class LookingForScreen extends ConsumerWidget {
             ),
           ],
         ),
+        const SizedBox(height: 2 * kBottomNavigationBarHeight),
       ],
     );
   }
@@ -82,7 +86,9 @@ class LookingForScreen extends ConsumerWidget {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag
+                  ? Colors.white
+                  : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(

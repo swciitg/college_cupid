@@ -5,7 +5,6 @@ import 'package:college_cupid/presentation/screens/blocked_users/blocked_user_li
 import 'package:college_cupid/presentation/screens/home/home.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_interests.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_profile.dart';
-import 'package:college_cupid/presentation/screens/profile/edit_profile/profile_details.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/splash.dart';
@@ -17,7 +16,6 @@ enum AppRoutes {
   home,
   welcome,
   loginWebview,
-  profileDetails,
   profileSetup,
   blockedUserListScreen,
   userProfileScreen,
@@ -36,11 +34,6 @@ final goRouter = GoRouter(
       path: '/',
       name: AppRoutes.splash.name,
       builder: (context, state) => const SplashScreen(),
-    ),
-    GoRoute(
-      path: '/${AppRoutes.profileDetails.name}',
-      name: AppRoutes.profileDetails.name,
-      builder: (context, state) => const ProfileDetails(),
     ),
     GoRoute(
       path: '/${AppRoutes.welcome.name}',
@@ -68,7 +61,8 @@ final goRouter = GoRouter(
           builder: (context, state) {
             final props = state.extra as Map<String, dynamic>;
             return UserProfileScreen(
-                isMine: props['isMine'] as bool, userProfile: props['userProfile'] as UserProfile);
+                isMine: props['isMine'] as bool,
+                userProfile: props['userProfile'] as UserProfile);
           },
         ),
         GoRoute(
