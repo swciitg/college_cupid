@@ -18,6 +18,7 @@ class UserProfile {
   List<ImageModel> images;
   PersonalityType? personalityType;
   bool deactivated;
+  List<QuizQuestion> surpriseQuiz;
 
   static const personalityWeight = 30;
   static const interestsWeight = 30;
@@ -38,6 +39,7 @@ class UserProfile {
     this.relationshipGoal,
     this.personalityType,
     this.deactivated = false,
+    this.surpriseQuiz = const [],
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -66,6 +68,9 @@ class UserProfile {
                 )
               : null,
       deactivated: json['deactivated'] ?? false,
+      surpriseQuiz: (json['surpriseQuiz'] as List? ?? [])
+          .map((e) => QuizQuestion.fromJson(e))
+          .toList(),
     );
   }
 
@@ -101,7 +106,8 @@ class UserProfile {
     RelationshipGoal? relationshipGoal,
     List<ImageModel>? images,
     PersonalityType? personalityType,
-    bool? diactivated,
+    bool? deactivated,
+    List<QuizQuestion>? surpriseQuiz,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -116,7 +122,8 @@ class UserProfile {
       relationshipGoal: relationshipGoal ?? this.relationshipGoal,
       images: images ?? this.images,
       personalityType: personalityType ?? this.personalityType,
-      deactivated: diactivated ?? this.deactivated,
+      deactivated: deactivated ?? this.deactivated,
+      surpriseQuiz: surpriseQuiz ?? this.surpriseQuiz,
     );
   }
 
@@ -358,6 +365,30 @@ class RelationshipGoal {
     return RelationshipGoal(
       goal: goal ?? this.goal,
       display: display ?? this.display,
+    );
+  }
+}
+
+class QuizQuestion {
+  final String question;
+  final String? answer;
+
+  QuizQuestion({
+    required this.question,
+    this.answer,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['question'] = question;
+    data['answer'] = answer;
+    return data;
+  }
+
+  factory QuizQuestion.fromJson(Map<String, dynamic> json) {
+    return QuizQuestion(
+      question: json['question'],
+      answer: json['answer'],
     );
   }
 }
