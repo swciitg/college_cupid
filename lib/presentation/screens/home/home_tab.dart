@@ -10,7 +10,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -22,18 +21,27 @@ class HomeTab extends ConsumerStatefulWidget {
 class _HomeTabState extends ConsumerState<HomeTab> {
   final TextEditingController _searchController = TextEditingController();
   Timer? timer;
-  late FilterStore filterStore;
+  late FilterState filterStore;
+  late FilterNotifier filterController;
 
   @override
   void dispose() {
     _searchController.dispose();
-    filterStore.resetStore();
     super.dispose();
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(filterProvider.notifier).resetStore();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    filterStore = context.read<FilterStore>();
+    filterStore = ref.watch(filterProvider);
+    filterController = ref.read(filterProvider.notifier);
     final pageViewState = ref.watch(pageViewProvider);
     return Column(
       children: [
@@ -76,8 +84,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Padding _buildSearchField() {
     final pageViewController = ref.read(pageViewProvider.notifier);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0)
-          .copyWith(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0).copyWith(top: 8),
       child: Row(
         children: [
           SvgPicture.asset(
@@ -102,14 +109,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 controller: _searchController,
                 textInputAction: TextInputAction.search,
                 onFieldSubmitted: (value) {
-                  filterStore.setName(value);
-                  pageViewController.getInitialProfiles(context);
+                  filterController.setName(value);
+                  pageViewController.getInitialProfiles(context, search: true);
                 },
                 onChanged: (value) {
                   if (timer != null) timer!.cancel();
                   timer = Timer(const Duration(seconds: 1), () {
-                    filterStore.setName(value);
-                    pageViewController.getInitialProfiles(context);
+                    filterController.setName(value);
+                    pageViewController.getInitialProfiles(context, search: value.isNotEmpty);
                     if (value.isEmpty) {
                       FocusScope.of(context).unfocus();
                     }
@@ -137,8 +144,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       _searchController.clear();
-                      filterStore.setName('');
-                      pageViewController.getInitialProfiles(context);
+                      filterController.setName('');
+                      pageViewController.getInitialProfiles(context, search: false);
                     },
                   ),
                 ),

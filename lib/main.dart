@@ -1,12 +1,13 @@
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
-import 'package:college_cupid/stores/filter_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(
     const riverpod.ProviderScope(
       child: CollegeCupidApp(),
@@ -25,7 +26,6 @@ class CollegeCupidApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<BlockedUsersStore>(create: (_) => BlockedUsersStore()),
-        Provider<FilterStore>(create: (_) => FilterStore()),
       ],
       child: MaterialApp.router(
         title: 'CollegeCupid',

@@ -16,7 +16,10 @@ class CupidTextButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: CupidStyles.textButtonStyle.copyWith(color: fontColor),
+        style: CupidStyles.textButtonStyle.copyWith(
+          color: fontColor,
+          fontSize: 20,
+        ),
       ),
     );
   }

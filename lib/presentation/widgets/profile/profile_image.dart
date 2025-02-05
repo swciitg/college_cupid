@@ -2,6 +2,7 @@ import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ProfileImage extends StatelessWidget {
   const ProfileImage({
@@ -12,6 +13,7 @@ class ProfileImage extends StatelessWidget {
     required this.index,
     this.overlay,
     this.height,
+    this.backButton = false,
   });
   final double? height;
   final double width;
@@ -19,6 +21,7 @@ class ProfileImage extends StatelessWidget {
   final Widget? overlay;
   final String url;
   final String? blurHash;
+  final bool backButton;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +76,35 @@ class ProfileImage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: overlay,
             ),
-          )
+          ),
+        if (backButton)
+          Positioned(
+            top: 16,
+            left: 16,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.7),
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SvgPicture.asset(
+                      'assets/icons/back_icon.svg',
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

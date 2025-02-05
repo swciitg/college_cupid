@@ -15,48 +15,46 @@ class ProfileOptionsBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pageViewStore = ref.read(pageViewProvider.notifier);
     return Padding(
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.all(16).copyWith(bottom: 24),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: Colors.white,
         ),
         height: 80,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  final nav = Navigator.of(context);
-                  await showDialog(
-                    context: context,
-                    builder: (context) =>
-                        ReportUserAlertDialog(userEmail: userEmail),
-                  );
-                  nav.pop();
-                  pageViewStore.removeHomeTabProfile(userEmail);
-                },
-                child: const Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      FluentIcons.flag_24_regular,
-                      color: CupidColors.titleColor,
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final nav = Navigator.of(context);
+                await showDialog(
+                  context: context,
+                  builder: (context) => ReportUserAlertDialog(userEmail: userEmail),
+                );
+                nav.pop();
+                pageViewStore.removeHomeTabProfile(userEmail);
+              },
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(width: 16),
+                  Icon(
+                    FluentIcons.flag_24_regular,
+                    color: CupidColors.titleColor,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
                       'Report and Block User',
                       style: CupidStyles.textButtonStyle,
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

@@ -1,6 +1,8 @@
+import 'dart:math' as math;
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,140 +40,187 @@ class SurpriseQuiz extends ConsumerStatefulWidget {
 class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
   var _currentIndex = 0;
   late PageController _pageController;
-  List<TextEditingController> _textEditingControllers = [];
+  List<TextEditingController> textEditingControllers = [];
+
+  /// Length = 2
+  List<int> randomQuestions = [0, 0];
 
   @override
   void initState() {
     _pageController = PageController();
-    _textEditingControllers.addAll([
+    textEditingControllers.addAll([
       TextEditingController(),
       TextEditingController(),
     ]);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _swapSwapQuestion(0);
+      _swapSwapQuestion(1);
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _textEditingControllers.first.dispose();
-    _textEditingControllers.last.dispose();
+    textEditingControllers.first.dispose();
+    textEditingControllers.last.dispose();
     super.dispose();
+  }
+
+  void _swapSwapQuestion(int index) {
+    var rand = math.Random().nextInt(quizQuestions.length);
+    while (rand == randomQuestions.first || rand == randomQuestions.last) {
+      rand = math.Random().nextInt(quizQuestions.length);
+    }
+    setState(() {
+      randomQuestions[index] = rand;
+    });
+  }
+
+  void onChange(String val, OnboardingController onboardingController) {
+    final list = [
+      QuizQuestion(
+          question: quizQuestions[randomQuestions[0]].question,
+          answer: textEditingControllers[0].text),
+      QuizQuestion(
+          question: quizQuestions[randomQuestions[1]].question,
+          answer: textEditingControllers[1].text),
+    ];
+    onboardingController.updateSurpriseQuizAnswer(
+      list,
+      _currentIndex,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final size = MediaQuery.sizeOf(context);
-    return SizedBox(
-      width: size.width,
-      height: size.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          const Text('Surprise quiz', style: CupidStyles.headingStyle),
-          const SizedBox(height: 8),
-          const Text(
-            'This will help your potential matches know you better ',
-            style: CupidStyles.normalTextStyle,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const Text('Surprise quiz', style: CupidStyles.headingStyle),
+        const SizedBox(height: 8),
+        const Text(
+          'This will help your potential matches know you better ',
+          style: CupidStyles.normalTextStyle,
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: Divider(
+                color: _currentIndex == 0 ? Colors.black : Colors.grey,
+                height: 1,
+              ),
+            ),
+            Expanded(
+              child: Divider(
+                color: _currentIndex == 1 ? Colors.black : Colors.grey,
+                height: 1,
+              ),
+            )
+          ],
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: size.width,
+          height: size.width * 0.8,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (value) {
+              setState(() {
+                _currentIndex = value;
+              });
+            },
+            children: List.generate(
+              2,
+              (index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Column(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                quizQuestions[randomQuestions[index]].question,
+                                style: CupidStyles.normalTextStyle,
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: textEditingControllers[index],
+                                maxLength: 120,
+                                maxLines: 4,
+                                style: CupidStyles.normalTextStyle.copyWith(
+                                  color: CupidColors.lightTextColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                onChanged: (val) {
+                                  onChange(val, onboardingController);
+                                },
+                                onSubmitted: (val) {
+                                  if (_currentIndex == 0) {
+                                    _pageController.nextPage(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeIn);
+                                  }
+                                },
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.zero,
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-          const SizedBox(height: 24),
-          Row(
+        ),
+        TextButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateColor.resolveWith(
+              (states) {
+                return Colors.transparent;
+              },
+            ),
+          ),
+          onPressed: () {
+            _swapSwapQuestion(_currentIndex);
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Divider(
-                  color: _currentIndex == 0 ? Colors.black : Colors.grey,
-                  height: 1,
+              Text(
+                "Suffle question",
+                style: CupidStyles.normalTextStyle.copyWith(
+                  decoration: TextDecoration.underline,
                 ),
               ),
-              Expanded(
-                child: Divider(
-                  color: _currentIndex == 1 ? Colors.black : Colors.grey,
-                  height: 1,
-                ),
-              )
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.refresh_rounded,
+                color: Colors.black,
+              ),
             ],
           ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (value) {
-                setState(() {
-                  _currentIndex = value;
-                });
-              },
-              children: List.generate(
-                2,
-                (index) {
-                  return DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "I've always wanted to learn how to",
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _textEditingControllers[index],
-                            maxLength: 120,
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildchoiceChips(SexualOrientation? selectedChoice,
-      {required Function(SexualOrientation) onSelected}) {
-    return Wrap(
-      spacing: 8,
-      children: SexualOrientation.values.map((tag) {
-        return ChoiceChip(
-          label: Text(
-            tag.displayString,
-            style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag
-                  ? Colors.white
-                  : CupidColors.textColorBlack,
-            ),
-          ),
-          color: WidgetStateColor.resolveWith(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return CupidColors.secondaryColor;
-              }
-              return Colors.transparent;
-            },
-          ),
-          checkmarkColor: Colors.white,
-          selected: selectedChoice == tag,
-          onSelected: (_) {
-            onSelected(tag);
-          },
-        );
-      }).toList(),
+        )
+      ],
     );
   }
 }

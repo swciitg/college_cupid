@@ -11,8 +11,7 @@ class ReportUserAlertDialog extends ConsumerStatefulWidget {
   const ReportUserAlertDialog({required this.userEmail, super.key});
 
   @override
-  ConsumerState<ReportUserAlertDialog> createState() =>
-      _ReportUserAlertDialogState();
+  ConsumerState<ReportUserAlertDialog> createState() => _ReportUserAlertDialogState();
 }
 
 class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {

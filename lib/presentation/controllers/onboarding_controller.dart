@@ -27,8 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final onboardingControllerProvider =
-    StateNotifierProvider<OnboardingController, OnboardingState>(
+final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
 );
 
@@ -48,9 +47,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         super(OnboardingState(currentStep: 0));
 
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-  final TextEditingController bioController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   final List<Map<String, HeartState>> _heartStates = [];
 
@@ -95,42 +92,37 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     }
   }
 
-  Future<bool> validateSubmit({bool submit = true}) async {
+  Future<bool> validateSubmit() async {
     switch (OnboardingStep.values[state.currentStep]) {
       case OnboardingStep.basicDetails:
         final password = passwordController.text.trim();
         if (password.length < 6) {
-          if (submit) {
-            showSnackBar("Password must be at least 6 characters long");
-          }
+          showSnackBar("Password must be at least 6 characters long");
+
           return false;
         }
         final confirmPassword = confirmPasswordController.text.trim();
         if (password != confirmPassword) {
-          if (submit) showSnackBar("Passwords do not match");
-          return false;
-        }
-        if (bioController.text.trim().isEmpty) {
-          if (submit) showSnackBar("Bio cannot be empty");
+          showSnackBar("Passwords do not match");
           return false;
         }
         if (state.userProfile?.gender == null ||
             state.userProfile?.program == null ||
             state.userProfile?.yearOfJoin == null) {
-          if (submit) showSnackBar("Please fill in all fields");
+          showSnackBar("Please fill in all fields");
           return false;
         }
-        if (submit) _initNewUser();
+        _initNewUser();
         return true;
       case OnboardingStep.sexualOrientation:
         if (state.userProfile?.sexualOrientation == null) {
-          if (submit) showSnackBar("Please select a sexual orientation");
+          showSnackBar("Please select a sexual orientation");
           return false;
         }
         return true;
       case OnboardingStep.chooseInterests:
         if (state.interests == null || state.interests!.length < 5) {
-          if (submit) showSnackBar("Please select at least 5 interests");
+          showSnackBar("Please select at least 5 interests");
           return false;
         }
         state = state.copyWith(
@@ -138,20 +130,27 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         );
         return true;
       case OnboardingStep.addPhotos:
-        final nonNullImagesCount =
-            state.images!.where((element) => element != null).length;
+        final nonNullImagesCount = state.images!.where((element) => element != null).length;
         if (nonNullImagesCount < 2) {
-          if (submit) showSnackBar("Please upload atleast 2 photos");
+          showSnackBar("Please upload atleast 2 photos");
           return false;
         }
         return true;
       case OnboardingStep.lookingFor:
         if (state.userProfile?.relationshipGoal == null) {
-          if (submit) showSnackBar("Please select what you're looking for");
+          showSnackBar("Please select what you're looking for");
           return false;
         }
         return await createUser();
       case OnboardingStep.surpriseQuiz:
+        final anyEmpty = state.userProfile?.surpriseQuiz.any((element) {
+              return element.answer.isEmpty;
+            }) ??
+            true;
+        if (anyEmpty) {
+          showSnackBar("Please answer these questions");
+          return false;
+        }
         return true;
     }
   }
@@ -187,7 +186,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         name: LoginStore.displayName!,
         profilePicUrl: '',
         email: LoginStore.email,
-        bio: bioController.text.trim(),
         yearOfJoin: getYearOfJoinFromRollNumber(LoginStore.rollNumber!),
         publicKey: publicKey,
       ),
@@ -199,8 +197,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   }
 
   void toggleConfirmPasswordVisibility() {
-    state =
-        state.copyWith(confirmPasswordVisible: !state.confirmPasswordVisible);
+    state = state.copyWith(confirmPasswordVisible: !state.confirmPasswordVisible);
   }
 
   void updateGender(Gender gender) {
@@ -224,8 +221,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateSexualOrientationDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        sexualOrientation:
-            state.userProfile?.sexualOrientation?.copyWith(display: value),
+        sexualOrientation: state.userProfile?.sexualOrientation?.copyWith(display: value),
       ),
     );
   }
@@ -258,8 +254,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoal:
-            state.userProfile?.relationshipGoal?.copyWith(display: value),
+        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -303,19 +298,16 @@ class OnboardingController extends StateNotifier<OnboardingState> {
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
-                loadingMessage:
-                    "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
+                loadingMessage: "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(
-              imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
-      state = state.copyWith(
-          userProfile: state.userProfile?.copyWith(images: imageModels));
+      state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
@@ -335,11 +327,21 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     state = state.copyWith(interests: interests);
   }
 
+  void updateSurpriseQuizAnswer(List<QuizQuestion> ques, int index) {
+    final user = state.userProfile!.copyWith(surpriseQuiz: ques);
+    state = state.copyWith(userProfile: user);
+  }
+
+  void reset() {
+    state = OnboardingState(currentStep: 0);
+    passwordController.clear();
+    confirmPasswordController.clear();
+  }
+
   @override
   void dispose() {
     passwordController.dispose();
     confirmPasswordController.dispose();
-    bioController.dispose();
     super.dispose();
   }
 }
@@ -405,8 +407,7 @@ class OnboardingState {
       blue: blue ?? this.blue,
       pink: pink ?? this.pink,
       passwordVisible: passwordVisible ?? this.passwordVisible,
-      confirmPasswordVisible:
-          confirmPasswordVisible ?? this.confirmPasswordVisible,
+      confirmPasswordVisible: confirmPasswordVisible ?? this.confirmPasswordVisible,
       loading: loading ?? this.loading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
     );

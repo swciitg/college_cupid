@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -36,14 +39,24 @@ class BasicDetails extends ConsumerStatefulWidget {
 }
 
 class _BasicDetailsState extends ConsumerState<BasicDetails> {
-  List<Program> programs =
-      Program.values.where((e) => e != Program.none).toList();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final onboardingController = ref.read(onboardingControllerProvider.notifier);
+      final yearOfJoin =
+          DateTime.now().year % 100 - getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
+      log("Year of join : $yearOfJoin");
+      onboardingController.updateYearOfJoin(yearOfJoin);
+    });
+  }
+
+  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
 
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -87,9 +100,7 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             fillColor: Colors.transparent,
             suffixIcon: IconButton(
               icon: Icon(
-                onboardingState.passwordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
+                onboardingState.passwordVisible ? Icons.visibility : Icons.visibility_off,
                 color: CupidColors.secondaryColor,
               ),
               onPressed: () {
@@ -110,9 +121,7 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             fillColor: Colors.transparent,
             suffixIcon: IconButton(
               icon: Icon(
-                onboardingState.confirmPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
+                onboardingState.confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 color: CupidColors.secondaryColor,
               ),
               onPressed: () {
@@ -120,23 +129,6 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
               },
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          "Bio",
-          style: CupidStyles.subHeadingTextStyle,
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: onboardingController.bioController,
-          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-            hintText: "Bio",
-            hintStyle: const TextStyle(color: CupidColors.secondaryColor),
-            enabled: true,
-            fillColor: Colors.transparent,
-          ),
-          maxLines: 5,
-          maxLength: 500,
         ),
         const SizedBox(height: 16),
         const Text(
@@ -184,16 +176,16 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           children: [
             ...List.generate(5, (index) {
               final year = index + 1;
-              return _buildChip(year.toString(),
-                  onboardingState.userProfile?.yearOfJoin == year, () {
-                onboardingController.updateYearOfJoin(year);
+              return _buildChip(year.toString(), onboardingState.userProfile?.yearOfJoin == year,
+                  () {
+                // onboardingController.updateYearOfJoin(year);
               });
             }),
             _buildChip(
               "beyond",
               onboardingState.userProfile?.yearOfJoin == 6,
               () {
-                onboardingController.updateYearOfJoin(6);
+                // onboardingController.updateYearOfJoin(6);
               },
             ),
           ],

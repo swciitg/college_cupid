@@ -10,16 +10,16 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FilterBottomSheet extends StatefulWidget {
+class FilterBottomSheet extends ConsumerStatefulWidget {
   const FilterBottomSheet({super.key});
 
   @override
-  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
+  ConsumerState<FilterBottomSheet> createState() => _FilterBottomSheetState();
 }
 
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
+class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   List<Program> programs = Program.values;
   Map<String, int?> yearOfJoinMap = getYearOfJoinMap();
 
@@ -34,7 +34,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final filterStore = context.read<FilterStore>();
+    final filterStore = ref.watch(filterProvider);
+    final filterController = ref.read(filterProvider.notifier);
 
     return Observer(builder: (_) {
       return Container(
@@ -74,7 +75,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     bottom: 0,
                     child: GestureDetector(
                       onTap: () {
-                        filterStore.clearFilters();
+                        filterController.clearFilters();
                       },
                       child: Text(
                         "Clear",
@@ -101,7 +102,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               children: [
                 SelectionButton(
                   onTap: () {
-                    filterStore.setInterestedInGender(InterestedInGender.girls);
+                    filterController.setInterestedInGender(InterestedInGender.girls);
                   },
                   label: InterestedInGender.girls.displayString,
                   borderRadius: const BorderRadius.horizontal(
@@ -111,7 +112,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ),
                 SelectionButton(
                   onTap: () {
-                    filterStore.setInterestedInGender(InterestedInGender.boys);
+                    filterController.setInterestedInGender(InterestedInGender.boys);
                   },
                   label: InterestedInGender.boys.displayString,
                   borderRadius: const BorderRadius.all(Radius.zero),
@@ -119,7 +120,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ),
                 SelectionButton(
                   onTap: () {
-                    filterStore.setInterestedInGender(InterestedInGender.both);
+                    filterController.setInterestedInGender(InterestedInGender.both);
                   },
                   label: InterestedInGender.both.displayString,
                   borderRadius: const BorderRadius.horizontal(
@@ -137,7 +138,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   label: 'Programs',
                   value: filterStore.program.displayString,
                   onChanged: (selectedProgram) {
-                    filterStore.setProgram(
+                    filterController.setProgram(
                         Program.values.firstWhere((p) => p.displayString == selectedProgram));
                   },
                   icon: dropDownIcon,
@@ -151,7 +152,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   value: yearOfJoinMap.keys
                       .firstWhere((key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
                   onChanged: (selectedYear) {
-                    filterStore.setYearOfJoin(yearOfJoinMap[selectedYear]);
+                    filterController.setYearOfJoin(yearOfJoinMap[selectedYear]);
                   },
                   icon: dropDownIcon,
                 ),

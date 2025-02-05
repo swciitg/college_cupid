@@ -55,22 +55,18 @@ class UserProfile {
       sexualOrientation: json['sexualOrientation'] != null
           ? SexualOrientationModel.fromJson(json['sexualOrientation'])
           : null,
-      images: (json['profilePicUrls'] as List? ?? [])
-          .map((e) => ImageModel.fromJson(e))
-          .toList(),
+      images: (json['profilePicUrls'] as List? ?? []).map((e) => ImageModel.fromJson(e)).toList(),
       relationshipGoal: json['relationshipGoals'] != null
           ? RelationshipGoal.fromJson(json['relationshipGoals'])
           : null,
-      personalityType:
-          json['personalityType'] != null && json['personalityType'] != ''
-              ? PersonalityType.values.firstWhere(
-                  (e) => e.name == json['personalityType'],
-                )
-              : null,
+      personalityType: json['personalityType'] != null && json['personalityType'] != ''
+          ? PersonalityType.values.firstWhere(
+              (e) => e.name == json['personalityType'],
+            )
+          : null,
       deactivated: json['deactivated'] ?? false,
-      surpriseQuiz: (json['surpriseQuiz'] as List? ?? [])
-          .map((e) => QuizQuestion.fromJson(e))
-          .toList(),
+      surpriseQuiz:
+          (json['surpriseQuiz'] as List? ?? []).map((e) => QuizQuestion.fromJson(e)).toList(),
     );
   }
 
@@ -89,6 +85,7 @@ class UserProfile {
     data['relationshipGoals'] = relationshipGoal?.toJson();
     data['personalityType'] = personalityType?.name;
     data['deactivated'] = deactivated;
+    data['surpriseQuiz'] = surpriseQuiz.map((e) => e.toJson()).toList();
     return data;
   }
 
@@ -133,17 +130,13 @@ class UserProfile {
         other.relationshipGoal == null) {
       return null;
     }
-    final personalityScore =
-        _getPersonalityTypeScore(other.personalityType!.name);
+    final personalityScore = _getPersonalityTypeScore(other.personalityType!.name);
     final sexualOrientationScore =
         _sexualOrientationScore(other.sexualOrientation!.type, other.gender!);
-    final relationshipGoalsScore =
-        _relationshipGoalsScore(other.relationshipGoal!.goal);
+    final relationshipGoalsScore = _relationshipGoalsScore(other.relationshipGoal!.goal);
     final interestsScore = _interestsScore(other.interests);
-    final totalScore = personalityScore +
-        sexualOrientationScore +
-        relationshipGoalsScore +
-        interestsScore;
+    final totalScore =
+        personalityScore + sexualOrientationScore + relationshipGoalsScore + interestsScore;
     log("Total Score: $totalScore");
     return totalScore;
   }
@@ -151,23 +144,19 @@ class UserProfile {
   double _getPersonalityTypeScore(String personalityType) {
     log("$personalityType vs ${this.personalityType?.name}");
     final myType = this.personalityType?.name ?? '';
-    final commonletters = myType
-        .split('')
-        .where((element) => personalityType.contains(element))
-        .length;
+    final commonletters =
+        myType.split('').where((element) => personalityType.contains(element)).length;
     final score = commonletters / 4 * 100;
     final finalScore = score * personalityWeight / 100;
     log("Personality Score: $finalScore");
     return finalScore;
   }
 
-  double _sexualOrientationScore(
-      SexualOrientation sexualOrientation, Gender gender) {
+  double _sexualOrientationScore(SexualOrientation sexualOrientation, Gender gender) {
     if (this.sexualOrientation == null) return 0;
     log("(${gender.displayString}, ${sexualOrientation.displayString}) vs (${this.gender!.displayString}, ${this.sexualOrientation!.type.displayString})");
     final otherPreferedGender = sexualOrientation.preferredGender(gender);
-    final myPreferedGender =
-        this.sexualOrientation!.type.preferredGender(this.gender!);
+    final myPreferedGender = this.sexualOrientation!.type.preferredGender(this.gender!);
     if (myPreferedGender == null && otherPreferedGender == null) {
       log("Sexual Orientation Score: ${sexualOrientationWeight.toDouble()}");
       return sexualOrientationWeight.toDouble();
@@ -225,9 +214,7 @@ class UserProfile {
       }
     }
     for (final interest in myInterests) {
-      final category = allCategories
-          .firstWhere((element) => element.value.contains(interest))
-          .key;
+      final category = allCategories.firstWhere((element) => element.value.contains(interest)).key;
       if (myCategories.containsKey(category)) {
         myCategories[category]!.add(interest);
       } else {
@@ -239,8 +226,7 @@ class UserProfile {
       (element) => myCategories.keys.contains(element),
     );
     log("Common Categories: $commonCategories");
-    final unionLength =
-        userCategories.length + myCategories.length - commonCategories.length;
+    final unionLength = userCategories.length + myCategories.length - commonCategories.length;
 
     // half score for common categories
     final categoryScore = (commonCategories.length / unionLength) * (100 / 2);
@@ -249,11 +235,10 @@ class UserProfile {
     final eachCategoryPart = 100 / commonCategories.length / 2;
     var interestsScore = 0.0;
     for (var e in commonCategories) {
-      final commonInterests = userCategories[e]!
-          .where((element) => myCategories[e]!.contains(element));
-      final unionLength = userCategories[e]!.length +
-          myCategories[e]!.length -
-          commonInterests.length;
+      final commonInterests =
+          userCategories[e]!.where((element) => myCategories[e]!.contains(element));
+      final unionLength =
+          userCategories[e]!.length + myCategories[e]!.length - commonInterests.length;
       interestsScore += commonInterests.length / unionLength * eachCategoryPart;
       log("$e: ${commonInterests.length / unionLength * eachCategoryPart}");
     }
@@ -371,11 +356,11 @@ class RelationshipGoal {
 
 class QuizQuestion {
   final String question;
-  final String? answer;
+  final String answer;
 
   QuizQuestion({
     required this.question,
-    this.answer,
+    this.answer = '',
   });
 
   Map<String, dynamic> toJson() {
@@ -389,6 +374,16 @@ class QuizQuestion {
     return QuizQuestion(
       question: json['question'],
       answer: json['answer'],
+    );
+  }
+
+  QuizQuestion copyWith({
+    String? question,
+    String? answer,
+  }) {
+    return QuizQuestion(
+      question: question ?? this.question,
+      answer: answer ?? this.answer,
     );
   }
 }

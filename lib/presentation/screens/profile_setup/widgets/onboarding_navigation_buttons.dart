@@ -17,18 +17,19 @@ class OnboaringNavigationButtons extends ConsumerWidget {
     return Padding(
       padding: EdgeInsets.only(
         bottom: Platform.isIOS ? kBottomNavigationBarHeight : 8,
-        left: 8,
-        right: 8,
+        left: 16,
+        right: 16,
       ),
       child: Row(
-        mainAxisAlignment:
-            currentStep == 0 ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: currentStep == 0 || currentStep == 2
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.spaceBetween,
         children: [
-          if (currentStep != 0)
+          if (currentStep != 0 && currentStep != 2)
             ElevatedButton(
               key: const Key('back_button'),
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                backgroundColor: WidgetStateProperty.all(CupidColors.secondaryColor),
                 elevation: WidgetStateProperty.all(0),
                 overlayColor: WidgetStateProperty.all(CupidColors.secondaryColor),
               ),
@@ -38,7 +39,7 @@ class OnboaringNavigationButtons extends ConsumerWidget {
           ElevatedButton(
             key: const Key('next_button'),
             style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.transparent),
+              backgroundColor: WidgetStateProperty.all(CupidColors.secondaryColor),
               elevation: WidgetStateProperty.all(0),
               overlayColor: WidgetStateProperty.all(CupidColors.secondaryColor),
             ),

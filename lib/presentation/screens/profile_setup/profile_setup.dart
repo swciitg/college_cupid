@@ -4,7 +4,6 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_d
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_interests.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/add_profile_photos.dart';
-// import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/onboarding_navigation_buttons.dart';
 import 'package:college_cupid/shared/assets.dart';
 import 'package:college_cupid/shared/colors.dart';

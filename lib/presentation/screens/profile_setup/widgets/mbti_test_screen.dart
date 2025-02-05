@@ -9,6 +9,7 @@ import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +110,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       setState(() {
         _loading = false;
       });
+      ref.read(pageViewProvider.notifier).getInitialProfiles(context);
       navigatorKey.currentState!.pop();
       showSnackBar("Updated personality type successfully");
     } catch (e) {

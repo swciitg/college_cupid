@@ -13,11 +13,13 @@ class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
   final double width;
   final UserProfile userProfile;
+  final bool backButton;
   const BasicProfileInfo({
     super.key,
     required this.maxHeight,
     required this.width,
     required this.userProfile,
+    this.backButton = false,
   });
 
   @override
@@ -27,13 +29,8 @@ class BasicProfileInfo extends ConsumerWidget {
     final programString = program.displayString.toLowerCase();
     String programAndYearDisplayString =
         "$programString ${DateTime.now().year % 100 - userProfile.yearOfJoin!}";
-    // Ensures mutual display
-    final showRelationshipGoal =
-        currentUser.relationshipGoal?.display == true &&
-            userProfile.relationshipGoal?.display == true;
-    final showSexualOrientation =
-        currentUser.sexualOrientation?.display == true &&
-            userProfile.sexualOrientation?.display == true;
+    final showRelationshipGoal = userProfile.relationshipGoal?.display == true;
+    final showSexualOrientation = userProfile.sexualOrientation?.display == true;
     return SizedBox(
       height: maxHeight,
       width: width,
@@ -45,11 +42,11 @@ class BasicProfileInfo extends ConsumerWidget {
               width: width,
               index: 0,
               overlay: showRelationshipGoal
-                  ? OverlayChip(
-                      label: userProfile.relationshipGoal!.goal.displayString)
+                  ? OverlayChip(label: userProfile.relationshipGoal!.goal.displayString)
                   : null,
               url: userProfile.images.first.url,
               blurHash: userProfile.images.first.blurHash,
+              backButton: backButton,
             ),
           ),
           const SizedBox(height: 8),
@@ -64,8 +61,7 @@ class BasicProfileInfo extends ConsumerWidget {
                     Text(
                       userProfile.name,
                       overflow: TextOverflow.ellipsis,
-                      style: CupidStyles.subHeadingTextStyle
-                          .setFontWeight(FontWeight.bold),
+                      style: CupidStyles.subHeadingTextStyle.setFontWeight(FontWeight.bold),
                     ),
                     Row(
                       children: [
@@ -75,8 +71,7 @@ class BasicProfileInfo extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                             child: Text(
                               programAndYearDisplayString,
                               style: CupidStyles.normalTextStyle,
@@ -91,11 +86,9 @@ class BasicProfileInfo extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
+                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                               child: Text(
-                                userProfile
-                                    .sexualOrientation!.type.displayString,
+                                userProfile.sexualOrientation!.type.displayString,
                                 style: CupidStyles.normalTextStyle,
                               ),
                             ),
@@ -105,12 +98,10 @@ class BasicProfileInfo extends ConsumerWidget {
                   ],
                 ),
               ),
-              if (currentUser.email != userProfile.email)
-                _buildMatchScore(currentUser),
+              if (currentUser.email != userProfile.email) _buildMatchScore(currentUser),
               const SizedBox(width: 8),
             ],
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );
@@ -121,8 +112,8 @@ class BasicProfileInfo extends ConsumerWidget {
     if (matchScore == null) {
       return const SizedBox();
     }
-    final myPreferredGender = currentUser.sexualOrientation!.type
-        .preferredGender(currentUser.gender!);
+    final myPreferredGender =
+        currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
     final otherGender = userProfile.gender!;
     if (myPreferredGender != null && myPreferredGender != otherGender) {
       return const SizedBox();

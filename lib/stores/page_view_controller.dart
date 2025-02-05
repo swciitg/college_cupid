@@ -6,10 +6,9 @@ import 'package:college_cupid/stores/filter_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:provider/provider.dart';
+import 'package:get_storage/get_storage.dart';
 
-final pageViewProvider =
-    StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
+final pageViewProvider = StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
   return PageViewNotifier(ref: ref);
 });
 
@@ -27,17 +26,29 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     isLastPage = value;
   }
 
-  void addHomeTabProfiles(List<UserProfile> value) {
+  void addHomeTabProfiles(List<UserProfile> value, {bool search = false}) {
     state = state.copyWith(
       homeTabProfileList: [...state.homeTabProfileList, ...value],
     );
+    if (!search) {
+      final ls = GetStorage();
+      final newAddition = PageViewState(
+        loading: false,
+        homeTabProfileList: state.homeTabProfileList.sublist(currentPage),
+      );
+      final data = {
+        'state': newAddition.toJson(),
+        'pageNumber': isLastPage ? 0 : pageNumber,
+      };
+      log("pageNumber: ${data['pageNumber']}", name: 'PageViewNotifier');
+      ls.write('pageViewState', data);
+    }
   }
 
   void removeHomeTabProfile(String email) {
     state = state.copyWith(
-      homeTabProfileList: state.homeTabProfileList
-          .where((element) => element.email != email)
-          .toList(),
+      homeTabProfileList:
+          state.homeTabProfileList.where((element) => element.email != email).toList(),
     );
   }
 
@@ -64,13 +75,29 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     currentPage = value;
   }
 
-  void getInitialProfiles(BuildContext context) async {
+  Future<void> getInitialProfiles(BuildContext context, {bool search = false}) async {
     resetStore();
     final userProfileRepo = _ref.read(userProfileRepoProvider);
-    final filterStore = context.read<FilterStore>();
+    final filterStore = _ref.read(filterProvider);
     final pageViewStore = _ref.read(pageViewProvider.notifier);
     try {
       pageViewStore.setLoading(true);
+      final ls = GetStorage();
+      final data = ls.read('pageViewState');
+      if (data != null && !search) {
+        log("pageNumber: ${data['pageNumber']}", name: 'PageViewNotifier');
+        final pageNumber = data['pageNumber'] as int;
+        final current = PageViewState.fromJson(data['state']);
+        final previousProfiles = current.homeTabProfileList;
+        log("profiles: ${previousProfiles.length}", name: 'PageViewNotifier');
+        setPageNumber(pageNumber);
+        setCurrentPage(0);
+        state = current.copyWith(
+          homeTabProfileList: previousProfiles,
+        );
+        pageViewStore.setLoading(false);
+        return;
+      }
       final profiles = await userProfileRepo.getPaginatedUsers(0, {
         //don't want it to be triggered when pageNumber is changed
         'gender': filterStore.interestedInGender.databaseString,
@@ -105,6 +132,21 @@ class PageViewState {
     return PageViewState(
       loading: loading ?? this.loading,
       homeTabProfileList: homeTabProfileList ?? this.homeTabProfileList,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'loading': loading,
+      'homeTabProfileList': homeTabProfileList.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  factory PageViewState.fromJson(Map<String, dynamic> json) {
+    return PageViewState(
+      loading: json['loading'],
+      homeTabProfileList:
+          (json['homeTabProfileList'] as List).map((e) => UserProfile.fromJson(e)).toList(),
     );
   }
 }

@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
@@ -10,15 +7,12 @@ import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
-import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -36,9 +30,11 @@ class _HomeState extends ConsumerState<Home> {
     super.initState();
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getInitialProfiles();
       final user = ref.read(userProvider).myProfile!;
-      if (user.personalityType != null) return;
+      if (user.personalityType != null) {
+        ref.read(pageViewProvider.notifier).getInitialProfiles(context);
+        return;
+      }
       _showMBTITest(context);
     });
   }
@@ -47,29 +43,6 @@ class _HomeState extends ConsumerState<Home> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
-  }
-
-  void _getInitialProfiles() async {
-    final userProfileRepo = ref.read(userProfileRepoProvider);
-    final filterStore = context.read<FilterStore>();
-    final pageViewStore = ref.read(pageViewProvider.notifier);
-    try {
-      pageViewStore.setLoading(true);
-      final profiles = await userProfileRepo.getPaginatedUsers(0, {
-        //don't want it to be triggered when pageNumber is changed
-        'gender': filterStore.interestedInGender.databaseString,
-        'program': filterStore.program.databaseString,
-        'yearOfJoin': filterStore.yearOfJoin,
-        'name': filterStore.name,
-      });
-      pageViewStore.setHomeTabProfiles(profiles);
-      pageViewStore.setIsLastPage(profiles.length < 10);
-      pageViewStore.setLoading(false);
-    } catch (e) {
-      showSnackBar("Something went wrong! try again later.");
-      log("Error fetching initial profiles: ${e.toString()}");
-      pageViewStore.setLoading(false);
-    }
   }
 
   void _showMBTITest(BuildContext context) {
@@ -126,8 +99,7 @@ class _HomeState extends ConsumerState<Home> {
               surfaceTintColor: CupidColors.navBarBackgroundColor,
               iconTheme: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return const IconThemeData(
-                      color: CupidColors.navBarIconColor);
+                  return const IconThemeData(color: CupidColors.navBarIconColor);
                 } else {
                   return const IconThemeData(color: Colors.grey);
                 }
@@ -141,8 +113,7 @@ class _HomeState extends ConsumerState<Home> {
                   _pageController.jumpToPage(i);
                 } else {
                   _pageController.animateToPage(i,
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeIn);
+                      duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
                 }
                 _selectedIndex = i;
               }),
