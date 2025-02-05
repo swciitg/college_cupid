@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:college_cupid/domain/models/personal_info.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/add_profile_photos.dart';
@@ -14,6 +13,7 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_s
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/sexual_orientation_screen.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
@@ -21,13 +21,15 @@ import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
 import 'package:college_cupid/shared/enums.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 
-final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
+final onboardingControllerProvider =
+    StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
 );
 
@@ -42,12 +44,10 @@ enum OnboardingStep {
 
 class OnboardingController extends StateNotifier<OnboardingState> {
   final Ref _ref;
+
   OnboardingController({required Ref ref})
       : _ref = ref,
         super(OnboardingState(currentStep: 0));
-
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
 
   final List<Map<String, HeartState>> _heartStates = [];
 
@@ -95,17 +95,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   Future<bool> validateSubmit() async {
     switch (OnboardingStep.values[state.currentStep]) {
       case OnboardingStep.basicDetails:
-        final password = passwordController.text.trim();
-        if (password.length < 6) {
-          showSnackBar("Password must be at least 6 characters long");
-
-          return false;
-        }
-        final confirmPassword = confirmPasswordController.text.trim();
-        if (password != confirmPassword) {
-          showSnackBar("Passwords do not match");
-          return false;
-        }
         if (state.userProfile?.gender == null ||
             state.userProfile?.program == null ||
             state.userProfile?.yearOfJoin == null) {
@@ -130,7 +119,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         );
         return true;
       case OnboardingStep.addPhotos:
-        final nonNullImagesCount = state.images!.where((element) => element != null).length;
+        final nonNullImagesCount =
+            state.images!.where((element) => element != null).length;
         if (nonNullImagesCount < 2) {
           showSnackBar("Please upload atleast 2 photos");
           return false;
@@ -159,29 +149,19 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     KeyPair keyPair = DiffieHellman.generateKeyPair();
     String publicKey = keyPair.publicKey.toString();
     String privateKey = keyPair.privateKey.toString();
-    final pass = passwordController.text.trim();
-    String encryptedPrivateKey = Encryption.bytesToHexadecimal(
-      Encryption.encryptAES(plainText: privateKey, key: pass),
-    );
 
     PersonalInfo personalInfo = PersonalInfo(
       email: LoginStore.email!,
-      hashedPassword: Encryption.bytesToHexadecimal(
-        Encryption.calculateSHA256(pass),
-      ),
-      encryptedPrivateKey: encryptedPrivateKey,
-      publicKey: publicKey,
-      crushes: [],
-      encryptedCrushes: [],
-      matches: [],
+      sharedSecretList: [],
+      matchedEmailList: [],
     );
 
-    await SharedPrefs.setDHPublicKey(publicKey);
-    await SharedPrefs.setDHPrivateKey(privateKey);
-    await SharedPrefs.setPassword(pass);
+    await SharedPrefService.setDHPublicKey(publicKey);
+    await SharedPrefService.setDHPrivateKey(privateKey);
 
     state = state.copyWith(
       personalInfo: personalInfo,
+      diffieHellmanPrivateKey: privateKey,
       userProfile: state.userProfile?.copyWith(
         name: LoginStore.displayName!,
         profilePicUrl: '',
@@ -190,14 +170,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         publicKey: publicKey,
       ),
     );
-  }
-
-  void togglePasswordVisibility() {
-    state = state.copyWith(passwordVisible: !state.passwordVisible);
-  }
-
-  void toggleConfirmPasswordVisibility() {
-    state = state.copyWith(confirmPasswordVisible: !state.confirmPasswordVisible);
   }
 
   void updateGender(Gender gender) {
@@ -221,7 +193,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateSexualOrientationDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        sexualOrientation: state.userProfile?.sexualOrientation?.copyWith(display: value),
+        sexualOrientation:
+            state.userProfile?.sexualOrientation?.copyWith(display: value),
       ),
     );
   }
@@ -254,7 +227,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
+        relationshipGoal:
+            state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -298,20 +272,27 @@ class OnboardingController extends StateNotifier<OnboardingState> {
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
-                loadingMessage: "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
+                loadingMessage:
+                    "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(
+              imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
-      state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
+      state = state.copyWith(
+          userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
-      await SharedPrefs.saveMyProfile(state.userProfile!.toJson());
+
+      await OneDriveRepository.uploadDHPrivateKey(state.dhPrivateKey!);
+      Logger().i("Private Key posted: ${state.dhPrivateKey}");
+
+      await SharedPrefService.saveMyProfile(state.userProfile!.toJson());
       await _ref.read(userProvider.notifier).initializeProfile();
       state = state.copyWith(loading: false);
       return true;
@@ -334,20 +315,12 @@ class OnboardingController extends StateNotifier<OnboardingState> {
 
   void reset() {
     state = OnboardingState(currentStep: 0);
-    passwordController.clear();
-    confirmPasswordController.clear();
-  }
-
-  @override
-  void dispose() {
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
   }
 }
 
 class OnboardingState {
   final PersonalInfo? personalInfo;
+  final String? dhPrivateKey;
   final int currentStep;
   late UserProfile? userProfile;
   late List<File?>? images;
@@ -356,13 +329,12 @@ class OnboardingState {
   final HeartState? yellow;
   final HeartState? blue;
   final HeartState? pink;
-  final bool passwordVisible;
-  final bool confirmPasswordVisible;
   final bool loading;
   final String? loadingMessage;
 
   OnboardingState({
     this.personalInfo,
+    this.dhPrivateKey,
     required this.currentStep,
     this.userProfile,
     this.images,
@@ -371,8 +343,6 @@ class OnboardingState {
     this.yellow,
     this.blue,
     this.pink,
-    this.passwordVisible = false,
-    this.confirmPasswordVisible = false,
     this.loading = false,
     this.loadingMessage,
   }) {
@@ -382,6 +352,7 @@ class OnboardingState {
 
   OnboardingState copyWith({
     PersonalInfo? personalInfo,
+    String? diffieHellmanPrivateKey,
     int? currentStep,
     UserProfile? userProfile,
     List<File?>? images,
@@ -398,6 +369,7 @@ class OnboardingState {
   }) {
     return OnboardingState(
       personalInfo: personalInfo ?? this.personalInfo,
+      dhPrivateKey: diffieHellmanPrivateKey ?? this.dhPrivateKey,
       currentStep: currentStep ?? this.currentStep,
       userProfile: userProfile ?? this.userProfile,
       images: images ?? this.images,
@@ -406,8 +378,6 @@ class OnboardingState {
       yellow: yellow ?? this.yellow,
       blue: blue ?? this.blue,
       pink: pink ?? this.pink,
-      passwordVisible: passwordVisible ?? this.passwordVisible,
-      confirmPasswordVisible: confirmPasswordVisible ?? this.confirmPasswordVisible,
       loading: loading ?? this.loading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
     );

@@ -62,13 +62,15 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                   );
                 }
               },
-              error: (err, st) => const Center(
-                child: Text(
-                  'Some error occurred\nPlease try again!',
-                  textAlign: TextAlign.center,
-                  style: CupidStyles.lightTextStyle,
-                ),
-              ),
+              error: (err, st) {
+                return const Center(
+                  child: Text(
+                    'Some error occurred\nPlease try again!',
+                    textAlign: TextAlign.center,
+                    style: CupidStyles.lightTextStyle,
+                  ),
+                );
+              },
               loading: () => const CustomLoader(),
             ),
           ),

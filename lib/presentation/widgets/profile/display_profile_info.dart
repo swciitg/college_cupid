@@ -1,10 +1,10 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/presentation/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:college_cupid/presentation/widgets/profile/basic_profile_info.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -17,7 +17,8 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool backButton;
 
-  const DisplayProfileInfo({required this.userProfile, this.backButton = false, super.key});
+  const DisplayProfileInfo(
+      {required this.userProfile, this.backButton = false, super.key});
 
   @override
   ConsumerState<DisplayProfileInfo> createState() => _DisplayProfileInfoState();
@@ -48,12 +49,14 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 ),
                 if (widget.userProfile.surpriseQuiz.isNotEmpty)
                   _surpriseQues(widget.userProfile.surpriseQuiz.first),
-                if (widget.userProfile.surpriseQuiz.isEmpty) const SizedBox(height: 16),
+                if (widget.userProfile.surpriseQuiz.isEmpty)
+                  const SizedBox(height: 16),
                 _image(null, width, 1),
                 const SizedBox(height: 8),
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
                 const SizedBox(height: 16),
-                if (widget.userProfile.images.length > 2) _image(null, width, 2),
+                if (widget.userProfile.images.length > 2)
+                  _image(null, width, 2),
                 if (widget.userProfile.surpriseQuiz.isNotEmpty)
                   _surpriseQues(widget.userProfile.surpriseQuiz[1]),
                 Row(
@@ -97,10 +100,12 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   children: [
                     Text(
                       ques.question,
-                      style: CupidStyles.normalTextStyle.setFontWeight(FontWeight.w500),
+                      style: CupidStyles.normalTextStyle
+                          .setFontWeight(FontWeight.w500),
                     ),
                     const SizedBox(height: 8),
-                    Text(ques.answer, style: CupidStyles.normalTextStyle.setFontSize(16)),
+                    Text(ques.answer,
+                        style: CupidStyles.normalTextStyle.setFontSize(16)),
                   ],
                 ),
               ),
@@ -129,7 +134,9 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 });
               },
               icon: Icon(
-                _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                _expanded
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
               ),
             )
           ],
@@ -138,7 +145,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           spacing: 8,
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: List.generate(_expanded ? widget.userProfile.interests.length : 4, (index) {
+          children: List.generate(
+              _expanded ? widget.userProfile.interests.length : 4, (index) {
             final extra = widget.userProfile.interests.length - 3;
             if (!_expanded && index == 3) {
               return GestureDetector(
@@ -197,15 +205,15 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
       child: FloatingActionButton(
         backgroundColor: const Color(0xFFFBA8AA),
         onPressed: () async {
-          String sharedSecret = DiffieHellman.generateSharedSecret(
-                  otherPublicKey: BigInt.parse(profile.publicKey),
-                  myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!))
-              .toString();
-          String encryptedCrushEmail = Encryption.bytesToHexadecimal(
-              Encryption.encryptAES(plainText: profile.email, key: LoginStore.password!));
-
-          bool success = await crushesRepo.addCrush(sharedSecret, encryptedCrushEmail);
+          final sharedSecret = DiffieHellman.generateSharedSecret(
+            otherPublicKey: BigInt.parse(profile.publicKey),
+            myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
+          ).toString();
+          // TODO: Add proper error handling
+          // TODO: These 3 requests should be atomic
+          bool success = await crushesRepo.addCrush(sharedSecret);
           if (success) {
+            await OneDriveRepository.addCrush(profile.email);
             await crushesRepo.increaseCrushesCount(profile.email);
           }
         },

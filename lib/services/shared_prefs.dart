@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:college_cupid/shared/database_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharedPrefs {
+class SharedPrefService {
   static Future<void> clearPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -68,14 +69,14 @@ class SharedPrefs {
     return prefs.getString(DatabaseStrings.dhPublicKey);
   }
 
-  static Future<void> setPassword(String value) async {
+  static Future<void> setOutlookAccessToken(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(DatabaseStrings.password, value);
+    await prefs.setString(DatabaseStrings.outlookAccessToken, value);
   }
 
-  static Future<String?> getPassword() async {
+  static Future<String?> getOutlookAccessToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(DatabaseStrings.password);
+    return prefs.getString(DatabaseStrings.outlookAccessToken);
   }
 
   static Future<void> setRollNumber(String value) async {
@@ -105,10 +106,13 @@ class SharedPrefs {
       required String refreshToken,
       required String email,
       required String displayName,
-      required String rollNumber}) async {
+      required String rollNumber,
+      required String outlookAccessToken}) async {
     SharedPreferences user = await SharedPreferences.getInstance();
     await user.setString(DatabaseStrings.accessToken, accessToken);
     await user.setString(DatabaseStrings.refreshToken, refreshToken);
+    await user.setString(
+        DatabaseStrings.outlookAccessToken, outlookAccessToken);
 
     await user.setString(DatabaseStrings.email, email);
     await user.setString(DatabaseStrings.displayName, displayName);
@@ -122,6 +126,8 @@ class SharedPrefs {
         user.getString(DatabaseStrings.accessToken) ?? '';
     info[DatabaseStrings.refreshToken] =
         user.getString(DatabaseStrings.refreshToken) ?? '';
+    info[DatabaseStrings.refreshToken] =
+        user.getString(DatabaseStrings.outlookAccessToken) ?? '';
 
     info[DatabaseStrings.email] = user.getString(DatabaseStrings.email) ?? '';
     info[DatabaseStrings.displayName] =

@@ -40,13 +40,10 @@ class CrushesRepository extends ApiRepository {
     }
   }
 
-  Future<bool> addCrush(String sharedSecret, String encryptedCrushEmail) async {
+  Future<bool> addCrush(String sharedSecret) async {
     try {
       Response res = await dio.put(Endpoints.addCrush,
-          data: jsonEncode({
-            'sharedSecret': sharedSecret,
-            'encryptedCrushEmail': encryptedCrushEmail
-          }));
+          data: jsonEncode({'sharedSecret': sharedSecret}));
 
       if (res.statusCode == 200) {
         showSnackBar(res.data['message']);
@@ -69,20 +66,6 @@ class CrushesRepository extends ApiRepository {
       }
     } catch (err) {
       return Future.error(err.toString());
-    }
-  }
-
-  Future<List<String>> getCrushes() async {
-    try {
-      Response res = await dio.get(Endpoints.getCrush);
-      if (res.statusCode == 200) {
-        List encryptedCrushes = res.data['encryptedCrushes'];
-        return encryptedCrushes.map((user) => user.toString()).toList();
-      } else {
-        return Future.error(res.statusMessage.toString());
-      }
-    } catch (e) {
-      return Future.error(e.toString());
     }
   }
 

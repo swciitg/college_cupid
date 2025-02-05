@@ -2,17 +2,16 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/widgets/authentication/password_alert_dialog.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
-
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/endpoints.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,12 +27,14 @@ class LoginWebview extends ConsumerStatefulWidget {
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
 
-  Future<String> getElementById(WebViewController controller, String elementId) async {
-    var element = await controller
-        .runJavaScriptReturningResult("document.querySelector('#$elementId').innerText");
+  Future<String> getElementById(
+      WebViewController controller, String elementId) async {
+    var element = await controller.runJavaScriptReturningResult(
+        "document.querySelector('#$elementId').innerText");
     String newString = element.toString();
     if (element.toString().startsWith('"')) {
-      newString = element.toString().substring(1, element.toString().length - 1);
+      newString =
+          element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }
@@ -61,34 +62,41 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
           onPageFinished: (String url) async {
             final goRouter = GoRouter.of(context);
 
-            if (url.startsWith('${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+            if (url.startsWith(
+                '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
               String authStatus = await getElementById(controller, 'status');
               if (authStatus == 'SUCCESS') {
                 if (!mounted) return;
                 String outlookInfoString =
-                    (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
+                    (await getElementById(controller, 'outlookInfo'))
+                        .replaceAll("\\", '"');
 
-                Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
+                Map<String, dynamic> outlookInfo =
+                    jsonDecode(outlookInfoString);
 
-                String displayName = outlookInfo['displayName']!.toString().toTitleCase();
-                String rollNumber = outlookInfo['rollNumber']!;
-                String accessToken = outlookInfo['accessToken']!;
-                String refreshToken = outlookInfo['refreshToken']!;
-                String email = outlookInfo['email']!;
+                final displayName =
+                    outlookInfo['displayName']!.toString().toTitleCase();
+                final rollNumber = outlookInfo['rollNumber']!;
+                final accessToken = outlookInfo['accessToken']!;
+                final refreshToken = outlookInfo['refreshToken']!;
+                final email = outlookInfo['email']!;
+                final outlookAccessToken = outlookInfo['outlookAccessToken'];
 
-                await SharedPrefs.setOutlookInfo(
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                    email: email,
-                    displayName: displayName,
-                    rollNumber: rollNumber);
+                await SharedPrefService.setOutlookInfo(
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                  email: email,
+                  displayName: displayName,
+                  rollNumber: rollNumber,
+                  outlookAccessToken: outlookAccessToken,
+                );
 
                 await LoginStore.initializeOutlookInfo();
 
                 debugPrint('DATA INITIALIZED');
 
-                Map<String, dynamic>? myProfile = await userProfileRepo.getUserProfile(email);
-                Map<String, dynamic>? myInfo = await personalInfoRepo.getPersonalInfo();
+                final myProfile = await userProfileRepo.getUserProfile(email);
+                final myInfo = await personalInfoRepo.getPersonalInfo();
 
                 await WebViewCookieManager().clearCookies();
 
@@ -99,23 +107,23 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                   debugPrint('USER ALREADY EXISTS');
                   debugPrint('LOGGING IN');
 
-                  String hashedPassword = myInfo['hashedPassword'];
-                  await getPasswordFromUser(hashedPassword);
-                  String password = ref.read(userProvider).password;
-                  await SharedPrefs.setPassword(password);
-                  final userProfileMap = await userProfileRepo.getUserProfile(email);
-                  final userProfile = UserProfile.fromJson(userProfileMap!);
-                  await userController.updateMyProfile(userProfile);
-                  LoginStore.password = password;
-                  await SharedPrefs.setDHPublicKey(userProfile.publicKey);
-                  final privateKey = BigInt.parse(
-                    Encryption.decryptAES(
-                        encryptedText: Encryption.hexadecimalToBytes(myInfo['encryptedPrivateKey']),
-                        key: LoginStore.password!),
-                  ).toString();
-                  await SharedPrefs.setDHPrivateKey(privateKey);
+                  final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
+                  if (dhPvtKey == null) {
+                    // SOMEONE CLEARED ONEDRIVE DATA
+                    // TODO: DO SOMETHING HERE
+                    LoginStore.logout();
+                    goRouter.goNamed(AppRoutes.splash.name);
+                  } else {
+                    final userProfileMap =
+                        await userProfileRepo.getUserProfile(email);
+                    final userProfile = UserProfile.fromJson(userProfileMap!);
+                    await userController.updateMyProfile(userProfile);
+                    await SharedPrefService.setDHPublicKey(
+                        userProfile.publicKey);
+                    await SharedPrefService.setDHPrivateKey(dhPvtKey);
 
-                  goRouter.goNamed(AppRoutes.splash.name);
+                    goRouter.goNamed(AppRoutes.splash.name);
+                  }
                 }
               }
             }

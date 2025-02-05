@@ -7,7 +7,6 @@ import '../shared/database_strings.dart';
 
 class LoginStore {
   static bool isProfileCompleted = false;
-  static bool isPasswordSaved = false;
 
   static String? email;
   static String? displayName;
@@ -15,7 +14,6 @@ class LoginStore {
   static String? dhPublicKey;
   static String? accessToken;
   static String? refreshToken;
-  static String? password;
   static String? rollNumber;
 
   static Future<bool> isAuthenticated() async {
@@ -24,12 +22,9 @@ class LoginStore {
     if (user.containsKey(DatabaseStrings.myProfile)) {
       debugPrint('USER CONTAINS KEY');
       await initializeStore();
-      if ((password ?? "").isNotEmpty) isPasswordSaved = true;
-      Map<String, dynamic>? data =
-          await UserProfileRepository().getUserProfile(email!);
+      final data = await UserProfileRepository().getUserProfile(email!);
       if (data != null) {
-        await SharedPrefs.saveMyProfile(data);
-        // await initializeMyProfile();
+        await SharedPrefService.saveMyProfile(data);
         isProfileCompleted = true;
       } else {
         // TODO: Don't logout if internet is turned-off
@@ -46,15 +41,13 @@ class LoginStore {
   static Future<bool> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isProfileCompleted = false;
-    isPasswordSaved = false;
-    // myProfile.clear();
+
     email = null;
     displayName = null;
     accessToken = null;
     refreshToken = null;
     dhPrivateKey = null;
     dhPublicKey = null;
-    password = null;
     rollNumber = null;
     return prefs.clear();
   }
@@ -65,11 +58,10 @@ class LoginStore {
     await initializeTokens();
     await initializeKeys();
     await initializeRollNumber();
-    await initializePassword();
   }
 
   static Future<void> initializeOutlookInfo() async {
-    Map<String, String> info = await SharedPrefs.getOutlookInfo();
+    Map<String, String> info = await SharedPrefService.getOutlookInfo();
     LoginStore.accessToken = info[DatabaseStrings.accessToken];
     LoginStore.refreshToken = info[DatabaseStrings.refreshToken];
     LoginStore.email = info[DatabaseStrings.email];
@@ -78,28 +70,24 @@ class LoginStore {
   }
 
   static Future<void> initializeRollNumber() async {
-    rollNumber = await SharedPrefs.getRollNumber();
+    rollNumber = await SharedPrefService.getRollNumber();
   }
 
   static Future<void> initializeTokens() async {
-    accessToken = await SharedPrefs.getAccessToken();
-    refreshToken = await SharedPrefs.getRefreshToken();
+    accessToken = await SharedPrefService.getAccessToken();
+    refreshToken = await SharedPrefService.getRefreshToken();
   }
 
   static Future<void> initializeKeys() async {
-    dhPrivateKey = await SharedPrefs.getDHPrivateKey();
-    dhPublicKey = await SharedPrefs.getDHPublicKey();
-  }
-
-  static Future<void> initializePassword() async {
-    password = await SharedPrefs.getPassword();
+    dhPrivateKey = await SharedPrefService.getDHPrivateKey();
+    dhPublicKey = await SharedPrefService.getDHPublicKey();
   }
 
   static Future<void> initializeEmail() async {
-    email = await SharedPrefs.getEmail();
+    email = await SharedPrefService.getEmail();
   }
 
   static Future<void> initializeDisplayName() async {
-    displayName = await SharedPrefs.getDisplayName();
+    displayName = await SharedPrefService.getDisplayName();
   }
 }

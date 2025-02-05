@@ -10,4 +10,5 @@ class DatabaseStrings {
   static const myProfile = 'myProfile';
   static const isProfileCompleted = 'isProfileCompleted';
   static const rollNumber = 'rollNumber';
+  static const outlookAccessToken = "outlookAccessToken";
 }

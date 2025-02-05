@@ -2,8 +2,8 @@ import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final userProvider =
-    StateNotifierProvider<UserController, UserProviderState>((ref) => UserController());
+final userProvider = StateNotifierProvider<UserController, UserProviderState>(
+    (ref) => UserController());
 
 class UserController extends StateNotifier<UserProviderState> {
   UserController() : super(UserProviderState());
@@ -13,12 +13,13 @@ class UserController extends StateNotifier<UserProviderState> {
   }
 
   Future<void> updateMyProfile(UserProfile userProfile) async {
-    await SharedPrefs.saveMyProfile(userProfile.toJson());
+    await SharedPrefService.saveMyProfile(userProfile.toJson());
     state = state.copyWith(myProfile: userProfile);
   }
 
   Future<void> initializeProfile() async {
-    final myProfile = UserProfile.fromJson(await SharedPrefs.getMyProfile());
+    final myProfile =
+        UserProfile.fromJson(await SharedPrefService.getMyProfile());
     state = state.copyWith(myProfile: myProfile);
   }
 }

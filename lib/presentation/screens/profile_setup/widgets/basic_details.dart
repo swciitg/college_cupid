@@ -4,10 +4,10 @@ import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
-import 'package:college_cupid/shared/enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BasicDetails extends ConsumerStatefulWidget {
@@ -43,20 +43,23 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final onboardingController = ref.read(onboardingControllerProvider.notifier);
-      final yearOfJoin =
-          DateTime.now().year % 100 - getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
+      final onboardingController =
+          ref.read(onboardingControllerProvider.notifier);
+      final yearOfJoin = DateTime.now().year % 100 -
+          getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
       log("Year of join : $yearOfJoin");
       onboardingController.updateYearOfJoin(yearOfJoin);
     });
   }
 
-  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
+  List<Program> programs =
+      Program.values.where((e) => e != Program.none).toList();
 
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -86,48 +89,6 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             labelStyle: const TextStyle(color: CupidColors.secondaryColor),
             enabled: false,
             fillColor: Colors.transparent,
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: onboardingController.passwordController,
-          obscureText: !onboardingState.passwordVisible,
-          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-            labelText: "Password",
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-            enabled: true,
-            fillColor: Colors.transparent,
-            suffixIcon: IconButton(
-              icon: Icon(
-                onboardingState.passwordVisible ? Icons.visibility : Icons.visibility_off,
-                color: CupidColors.secondaryColor,
-              ),
-              onPressed: () {
-                onboardingController.togglePasswordVisibility();
-              },
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: onboardingController.confirmPasswordController,
-          obscureText: !onboardingState.confirmPasswordVisible,
-          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-            labelText: "Confirm password",
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-            enabled: true,
-            fillColor: Colors.transparent,
-            suffixIcon: IconButton(
-              icon: Icon(
-                onboardingState.confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: CupidColors.secondaryColor,
-              ),
-              onPressed: () {
-                onboardingController.toggleConfirmPasswordVisibility();
-              },
-            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -176,8 +137,8 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           children: [
             ...List.generate(5, (index) {
               final year = index + 1;
-              return _buildChip(year.toString(), onboardingState.userProfile?.yearOfJoin == year,
-                  () {
+              return _buildChip(year.toString(),
+                  onboardingState.userProfile?.yearOfJoin == year, () {
                 // onboardingController.updateYearOfJoin(year);
               });
             }),

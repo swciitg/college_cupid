@@ -1,40 +1,27 @@
 class PersonalInfo {
-  late String email;
-  late String publicKey;
-  late List<String> crushes;
-  late List<String> matches;
-  late String hashedPassword;
-  late String encryptedPrivateKey;
-  late List<String> encryptedCrushes;
+  final String email;
+  final List<String> sharedSecretList;
+  final List<String> matchedEmailList;
 
-  PersonalInfo(
-      {required this.email,
-      required this.hashedPassword,
-      required this.encryptedPrivateKey,
-      required this.publicKey,
-      required this.crushes,
-      required this.encryptedCrushes,
-      required this.matches});
+  PersonalInfo({
+    required this.email,
+    required this.sharedSecretList,
+    required this.matchedEmailList,
+  });
 
-  PersonalInfo.fromJson(Map<String, dynamic> json) {
-    email = json['email'];
-    hashedPassword = json['hashedPassword'];
-    encryptedPrivateKey = json['encryptedPrivateKey'];
-    publicKey = json['publicKey'];
-    encryptedCrushes = json['encryptedCrushes'].cast<String>();
-    crushes = json['crushes'].cast<String>();
-    matches = json['matches'].cast<String>();
+  factory PersonalInfo.fromJson(Map<String, dynamic> json) {
+    return PersonalInfo(
+      email: json['email'],
+      sharedSecretList: json['sharedSecretList'].cast<String>(),
+      matchedEmailList: json['matchedEmailList'].cast<String>(),
+    );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['email'] = email;
-    data['hashedPassword'] = hashedPassword;
-    data['encryptedPrivateKey'] = encryptedPrivateKey;
-    data['publicKey'] = publicKey;
-    data['encryptedCrushes'] = encryptedCrushes;
-    data['crushes'] = crushes;
-    data['matches'] = matches;
+    data['sharedSecretList'] = sharedSecretList;
+    data['matchedEmailList'] = matchedEmailList;
     return data;
   }
 }
