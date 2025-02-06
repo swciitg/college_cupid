@@ -10,9 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(
-    const riverpod.ProviderScope(
-      child: CollegeCupidApp(),
-    ),
+    const riverpod.ProviderScope(child: CollegeCupidApp()),
   );
 }
 
@@ -33,8 +31,9 @@ class CollegeCupidApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         scaffoldMessengerKey: rootScaffoldMessengerKey,
         theme: ThemeData(
+          scaffoldBackgroundColor: CupidColors.backgroundColor,
           textSelectionTheme: TextSelectionThemeData(
-            selectionHandleColor: CupidColors.titleColor,
+            selectionHandleColor: CupidColors.secondaryColor,
             cursorColor: CupidColors.secondaryColor,
             selectionColor: CupidColors.secondaryColor.withValues(alpha: 0.75),
           ),

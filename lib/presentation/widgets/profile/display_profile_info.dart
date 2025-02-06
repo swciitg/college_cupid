@@ -30,7 +30,6 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width - 32;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: LayoutBuilder(builder: (context, constraints) {
@@ -54,11 +53,14 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 _image(null, width, 1),
                 const SizedBox(height: 8),
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
-                const SizedBox(height: 16),
+                if (widget.userProfile.surpriseQuiz.length < 2)
+                  const SizedBox(height: 16),
+                if (widget.userProfile.surpriseQuiz.length >= 2)
+                  _surpriseQues(widget.userProfile.surpriseQuiz[1]),
                 if (widget.userProfile.images.length > 2)
                   _image(null, width, 2),
-                if (widget.userProfile.surpriseQuiz.isNotEmpty)
-                  _surpriseQues(widget.userProfile.surpriseQuiz[1]),
+                if (widget.userProfile.surpriseQuiz.length >= 3)
+                  _surpriseQues(widget.userProfile.surpriseQuiz[2]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -100,12 +102,16 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   children: [
                     Text(
                       ques.question,
-                      style: CupidStyles.normalTextStyle
-                          .setFontWeight(FontWeight.w500),
+                      style: CupidStyles.normalTextStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    Text(ques.answer,
-                        style: CupidStyles.normalTextStyle.setFontSize(16)),
+                    Text(
+                      ques.answer,
+                      style: CupidStyles.normalTextStyle.setFontSize(16),
+                    ),
                   ],
                 ),
               ),
@@ -174,23 +180,32 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     if (profile.email == currentUser.email) return const SizedBox();
     return Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: FloatingActionButton(
-        backgroundColor: CupidColors.cupidBlue,
-        onPressed: () async {
+      child: GestureDetector(
+        onTap: () async {
           showModalBottomSheet(
             backgroundColor: Colors.transparent,
             elevation: 0,
             context: context,
             builder: (context) => ProfileOptionsBottomSheet(
+              name: widget.userProfile.name,
               userEmail: widget.userProfile.email,
             ),
           );
         },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        child: const Icon(
-          FluentIcons.filter_16_regular,
-          size: 24,
-          color: Colors.white,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            color: CupidColors.cupidBlue,
+            shape: BoxShape.circle,
+          ),
+          child: SizedBox(
+            height: 52,
+            width: 52,
+            child: Icon(
+              FluentIcons.filter_16_regular,
+              size: 24,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -202,9 +217,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     if (profile.email == LoginStore.email) return const SizedBox();
     return Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: FloatingActionButton(
-        backgroundColor: const Color(0xFFFBA8AA),
-        onPressed: () async {
+      child: GestureDetector(
+        onTap: () async {
           final sharedSecret = DiffieHellman.generateSharedSecret(
             otherPublicKey: BigInt.parse(profile.publicKey),
             myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
@@ -217,11 +231,20 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
             await crushesRepo.increaseCrushesCount(profile.email);
           }
         },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        child: const Icon(
-          Icons.favorite,
-          size: 24,
-          color: Colors.white,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            color: Color(0xFFFBA8AA),
+            shape: BoxShape.circle,
+          ),
+          child: SizedBox(
+            height: 52,
+            width: 52,
+            child: Icon(
+              Icons.favorite,
+              size: 24,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -229,7 +252,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
 
   DecoratedBox _interestChip(String label, int index) {
     final colors = {
-      0: CupidColors.pinkColor.withValues(alpha: 0.1),
+      0: CupidColors.cupidPeach.withValues(alpha: 0.4),
       1: CupidColors.cupidBlue.withValues(alpha: 0.4),
       2: CupidColors.cupidYellow.withValues(alpha: 0.4),
     };

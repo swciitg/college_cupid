@@ -1,4 +1,3 @@
-import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -35,10 +34,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: AppTitle(
-          fontSize: 40,
+        child: Image.asset(
+          'assets/images/college_cupid_rotated_image.png',
+          fit: BoxFit.cover,
+          height: 180,
+          width: 180,
         ),
       ),
     );

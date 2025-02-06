@@ -83,12 +83,14 @@ class SexualOrientationScreen extends ConsumerWidget {
                   : CupidColors.textColorBlack,
             ),
           ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: WidgetStateColor.resolveWith(
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return CupidColors.secondaryColor;
               }
-              return Colors.transparent;
+              return Colors.white;
             },
           ),
           checkmarkColor: Colors.white,

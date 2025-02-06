@@ -36,10 +36,10 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    final days = difference.inDays;
-    final hours = difference.inHours % 24;
-    final minutes = difference.inMinutes % 60;
-    final seconds = difference.inSeconds % 60;
+    final days = difference.inDays.toString().padLeft(2, '0');
+    final hours = (difference.inHours % 24).toString().padLeft(2, '0');
+    final minutes = (difference.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (difference.inSeconds % 60).toString().padLeft(2, '0');
     return Text("$days:$hours:$minutes:$seconds");
   }
 }

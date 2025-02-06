@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/shared/enums.dart';
 
-final filterProvider = StateNotifierProvider<FilterNotifier, FilterState>((ref) {
+final filterProvider =
+    StateNotifierProvider<FilterNotifier, FilterState>((ref) {
   return FilterNotifier();
 });
 

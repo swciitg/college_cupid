@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/stores/filter_store.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:get_storage/get_storage.dart';
 
-final pageViewProvider = StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
+final pageViewProvider =
+    StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
   return PageViewNotifier(ref: ref);
 });
 
@@ -47,8 +47,9 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
 
   void removeHomeTabProfile(String email) {
     state = state.copyWith(
-      homeTabProfileList:
-          state.homeTabProfileList.where((element) => element.email != email).toList(),
+      homeTabProfileList: state.homeTabProfileList
+          .where((element) => element.email != email)
+          .toList(),
     );
   }
 
@@ -75,7 +76,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     currentPage = value;
   }
 
-  Future<void> getInitialProfiles(BuildContext context, {bool search = false}) async {
+  Future<void> getInitialProfiles({bool search = false}) async {
     resetStore();
     final userProfileRepo = _ref.read(userProfileRepoProvider);
     final filterStore = _ref.read(filterProvider);
@@ -145,8 +146,9 @@ class PageViewState {
   factory PageViewState.fromJson(Map<String, dynamic> json) {
     return PageViewState(
       loading: json['loading'],
-      homeTabProfileList:
-          (json['homeTabProfileList'] as List).map((e) => UserProfile.fromJson(e)).toList(),
+      homeTabProfileList: (json['homeTabProfileList'] as List)
+          .map((e) => UserProfile.fromJson(e))
+          .toList(),
     );
   }
 }

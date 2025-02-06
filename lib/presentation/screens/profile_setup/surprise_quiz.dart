@@ -4,6 +4,7 @@ import 'package:college_cupid/presentation/controllers/onboarding_controller.dar
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,7 +44,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
   List<TextEditingController> textEditingControllers = [];
 
   /// Length = 2
-  List<int> randomQuestions = [0, 0];
+  List<int> randomQuestions = [0, 0, 0];
 
   @override
   void initState() {
@@ -51,11 +52,13 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
     textEditingControllers.addAll([
       TextEditingController(),
       TextEditingController(),
+      TextEditingController(),
     ]);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _swapSwapQuestion(0);
       _swapSwapQuestion(1);
+      _swapSwapQuestion(2);
     });
   }
 
@@ -63,13 +66,14 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
   void dispose() {
     _pageController.dispose();
     textEditingControllers.first.dispose();
+    textEditingControllers[1].dispose();
     textEditingControllers.last.dispose();
     super.dispose();
   }
 
   void _swapSwapQuestion(int index) {
     var rand = math.Random().nextInt(quizQuestions.length);
-    while (rand == randomQuestions.first || rand == randomQuestions.last) {
+    while (randomQuestions.any((e) => e == rand)) {
       rand = math.Random().nextInt(quizQuestions.length);
     }
     setState(() {
@@ -85,6 +89,9 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
       QuizQuestion(
           question: quizQuestions[randomQuestions[1]].question,
           answer: textEditingControllers[1].text),
+      QuizQuestion(
+          question: quizQuestions[randomQuestions[2]].question,
+          answer: textEditingControllers[2].text),
     ];
     onboardingController.updateSurpriseQuizAnswer(
       list,
@@ -94,7 +101,8 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     final size = MediaQuery.sizeOf(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,6 +128,12 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
                 color: _currentIndex == 1 ? Colors.black : Colors.grey,
                 height: 1,
               ),
+            ),
+            Expanded(
+              child: Divider(
+                color: _currentIndex == 2 ? Colors.black : Colors.grey,
+                height: 1,
+              ),
             )
           ],
         ),
@@ -135,7 +149,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
               });
             },
             children: List.generate(
-              2,
+              3,
               (index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -170,7 +184,8 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
                                 onSubmitted: (val) {
                                   if (_currentIndex == 0) {
                                     _pageController.nextPage(
-                                        duration: const Duration(milliseconds: 300),
+                                        duration:
+                                            const Duration(milliseconds: 300),
                                         curve: Curves.easeIn);
                                   }
                                 },
@@ -181,6 +196,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
                                   enabledBorder: InputBorder.none,
                                 ),
                               ),
+                              const SizedBox(height: 16),
                             ],
                           ),
                         ),
@@ -189,6 +205,18 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
                   ),
                 );
               },
+            ),
+          ),
+        ),
+        Center(
+          child: DotsIndicator(
+            dotsCount: 3,
+            position: _currentIndex,
+            mainAxisAlignment: MainAxisAlignment.center,
+            decorator: const DotsDecorator(
+              color: Colors.black38,
+              activeColor: Colors.black,
+              size: Size(4, 4),
             ),
           ),
         ),

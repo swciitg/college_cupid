@@ -24,55 +24,61 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
   @override
   Widget build(BuildContext context) {
     final crushesListState = ref.watch(crushesControllerProvider);
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text('Your Crushes', style: CupidStyles.headingStyle),
-          const SizedBox(height: 8),
-          Text(
-            'You can select a maximum of 5 crushes at a time.',
-            style: CupidStyles.lightTextStyle.setFontSize(13),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Your Crushes', style: CupidStyles.headingStyle),
+              const SizedBox(height: 8),
+              Text(
+                'You can select a maximum of 7 crushes at a time.',
+                style: CupidStyles.lightTextStyle.setFontSize(13),
+              ),
+            ],
           ),
-          Expanded(
-            child: crushesListState.when(
-              data: (crushesList) {
-                if (crushesList.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No Crushes as of now\nGet Rolling!!!',
-                      textAlign: TextAlign.center,
-                      style: CupidStyles.lightTextStyle,
-                    ),
-                  );
-                } else {
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: crushesList.length,
-                    itemBuilder: (context, index) => CrushInfoTile(
-                      profile: crushesList[index],
-                      index: index,
-                    ),
-                  );
-                }
-              },
-              error: (err, st) {
-                log(err.toString());
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: crushesListState.when(
+            data: (crushesList) {
+              if (crushesList.isEmpty) {
                 return const Center(
                   child: Text(
-                    'Some error occurred\nPlease try again!',
+                    'No Crushes as of now\nGet Rolling!!!',
                     textAlign: TextAlign.center,
                     style: CupidStyles.lightTextStyle,
                   ),
                 );
-              },
-              loading: () => const CustomLoader(),
-            ),
+              } else {
+                return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  itemCount: crushesList.length,
+                  itemBuilder: (context, index) => CrushInfoTile(
+                    profile: crushesList[index],
+                    index: index,
+                  ),
+                );
+              }
+            },
+            error: (err, st) {
+              log(err.toString());
+              return const Center(
+                child: Text(
+                  'Some error occurred\nPlease try again!',
+                  textAlign: TextAlign.center,
+                  style: CupidStyles.lightTextStyle,
+                ),
+              );
+            },
+            loading: () => const CustomLoader(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

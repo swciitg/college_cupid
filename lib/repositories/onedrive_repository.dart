@@ -45,7 +45,7 @@ class OneDriveRepository {
 
     final accessToken = await SecureStorageService.getOutlookAccessToken();
 
-    log("AccessToken: $accessToken");
+    // log("AccessToken: $accessToken");
 
     try {
       final res = await dio.get(
@@ -59,10 +59,11 @@ class OneDriveRepository {
         final data = OneDriveData.fromJSON(res.data);
         return data;
       } else {
-        log("here");
+        log("Onedrive Error: ${res.data}");
         return Future.error(res.data);
       }
     } on DioException catch (e) {
+      log("Onedrive Error: ${e.response?.data}");
       return Future.error(e.response?.data);
     }
   }
@@ -144,7 +145,6 @@ class AuthInterceptor extends Interceptor {
         late Response cloneReq;
         final opts = err.requestOptions;
         final options = Options(method: opts.method, headers: opts.headers);
-
         opts.headers['Authorization'] =
             'Bearer ${await SecureStorageService.getOutlookAccessToken()}';
         if (opts.method == "GET") {
@@ -175,7 +175,7 @@ class AuthInterceptor extends Interceptor {
     log("Refresh Token: $refreshToken");
 
     try {
-      final response = await Dio().post(
+      final response = await dio.post(
         'https://login.microsoftonline.com/$tenantID/oauth2/v2.0/token',
         options: Options(
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}),

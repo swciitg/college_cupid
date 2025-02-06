@@ -8,12 +8,15 @@ class Endpoints {
   static const postPersonalInfo = '/user/personalInfo';
   static const getPersonalInfo = '/user/personalInfo';
   static const postProfileImage = '/uploadImage';
+
   /// /deleteImage/photoId
   static const deleteProfileImage = '/deleteImage';
   static const postUserProfile = '/user/profile';
   static const getUserProfile = '/user/profile/email'; // + '/${email}'
-  static const getPaginatedUserProfiles = '/user/profile/page'; // + '/${pageNumber}'
+  static const getPaginatedUserProfiles =
+      '/user/profile/page'; // + '/${pageNumber}'
   static const updateUserProfile = '/user/profile';
+  static const deactivateAccount = '/user/deactivate';
 
   static const addCrush = '/crush/add';
   static const getCrush = '/crush';
@@ -31,6 +34,9 @@ class Endpoints {
   static const regenerateToken = '/auth/refreshToken';
 
   static getHeader() {
-    return {'Content-Type': 'application/json', 'security-key': Endpoints.apiSecurityKey};
+    return {
+      'Content-Type': 'application/json',
+      'security-key': Endpoints.apiSecurityKey
+    };
   }
 }

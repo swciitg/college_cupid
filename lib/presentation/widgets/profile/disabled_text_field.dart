@@ -15,9 +15,9 @@ class DisabledTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: const TextStyle(color: CupidColors.pinkColor),
+        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
         disabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: CupidColors.pinkColor),
+          borderSide: const BorderSide(color: CupidColors.secondaryColor),
           borderRadius: BorderRadius.circular(15),
         ),
       ),

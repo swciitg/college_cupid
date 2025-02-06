@@ -14,6 +14,7 @@ class CustomDropDown extends StatelessWidget {
   final bool? isNecessary;
   final Widget? icon;
   final int? flex;
+  final bool enabled;
 
   const CustomDropDown({
     super.key,
@@ -28,6 +29,7 @@ class CustomDropDown extends StatelessWidget {
     this.isNecessary = false,
     this.icon,
     this.flex = 1,
+    this.enabled = true,
   });
 
   @override
@@ -40,6 +42,7 @@ class CustomDropDown extends StatelessWidget {
         value: value,
         isExpanded: true,
         decoration: InputDecoration(
+          enabled: enabled,
           hintText: hintText,
           label: hintText == null
               ? RichText(
@@ -48,7 +51,7 @@ class CustomDropDown extends StatelessWidget {
                       TextSpan(
                         text: label,
                         style: CupidStyles.normalTextStyle
-                            .copyWith(color: CupidColors.pinkColor),
+                            .copyWith(color: CupidColors.secondaryColor),
                       ),
                       isNecessary!
                           ? TextSpan(
@@ -62,14 +65,14 @@ class CustomDropDown extends StatelessWidget {
                 )
               : null,
           labelStyle: CupidStyles.normalTextStyle
-              .copyWith(color: CupidColors.pinkColor),
+              .copyWith(color: CupidColors.secondaryColor),
           hintStyle: CupidStyles.normalTextStyle
-              .copyWith(color: CupidColors.pinkColor),
+              .copyWith(color: CupidColors.secondaryColor),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           focusedBorder: OutlineInputBorder(
             borderSide:
-                const BorderSide(color: CupidColors.pinkColor, width: 1),
+                const BorderSide(color: CupidColors.secondaryColor, width: 1),
             borderRadius: borderRadius ??
                 const BorderRadius.all(
                   Radius.circular(15),
@@ -77,7 +80,7 @@ class CustomDropDown extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderSide:
-                const BorderSide(color: CupidColors.pinkColor, width: 1),
+                const BorderSide(color: CupidColors.secondaryColor, width: 1),
             borderRadius: borderRadius ??
                 const BorderRadius.all(
                   Radius.circular(15),
@@ -92,6 +95,15 @@ class CustomDropDown extends StatelessWidget {
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.red, width: 1),
+            borderRadius: borderRadius ??
+                const BorderRadius.all(
+                  Radius.circular(15),
+                ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                width: 1),
             borderRadius: borderRadius ??
                 const BorderRadius.all(
                   Radius.circular(15),

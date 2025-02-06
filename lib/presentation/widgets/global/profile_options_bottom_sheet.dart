@@ -7,50 +7,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileOptionsBottomSheet extends ConsumerWidget {
+  final String name;
   final String userEmail;
 
-  const ProfileOptionsBottomSheet({required this.userEmail, super.key});
+  const ProfileOptionsBottomSheet({
+    required this.name,
+    required this.userEmail,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pageViewStore = ref.read(pageViewProvider.notifier);
-    return Padding(
-      padding: const EdgeInsets.all(16).copyWith(bottom: 24),
+    return SingleChildScrollView(
       child: Container(
+        margin: const EdgeInsets.all(16).copyWith(bottom: 24),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: Colors.white,
         ),
-        height: 80,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             GestureDetector(
               onTap: () async {
                 final nav = Navigator.of(context);
-                await showDialog(
-                  context: context,
-                  builder: (context) => ReportUserAlertDialog(userEmail: userEmail),
-                );
+                final result = await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => ReportUserAlertDialog(
+                          name: name, userEmail: userEmail),
+                    ) as bool? ??
+                    false;
                 nav.pop();
+                if (!result) return;
                 pageViewStore.removeHomeTabProfile(userEmail);
               },
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(width: 16),
-                  Icon(
-                    FluentIcons.flag_24_regular,
-                    color: CupidColors.titleColor,
+                  const SizedBox(width: 16),
+                  const Icon(
+                    FluentIcons.flag_16_regular,
+                    color: CupidColors.secondaryColor,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Report and Block User',
-                      style: CupidStyles.textButtonStyle,
+                      style: CupidStyles.normalTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                 ],
               ),
             )

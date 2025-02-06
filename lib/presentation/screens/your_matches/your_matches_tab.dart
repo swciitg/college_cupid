@@ -14,8 +14,8 @@ class YourMatches extends ConsumerWidget {
     final matchesRepo = ref.read(matchesRepoProvider);
     final crushesRepo = ref.read(crushesRepoProvider);
 
-    return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16),
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -43,7 +43,7 @@ class YourMatches extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CountdownTimer(),
+                        const CountdownTimer(),
                         Text(
                           "Admirer Count: ${snapshot.data ?? 0}",
                           style: CupidStyles.normalTextStyle.copyWith(

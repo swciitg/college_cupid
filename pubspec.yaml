@@ -68,6 +68,7 @@ dependencies:
   http: ^1.3.0
   logger: ^2.5.0
   flutter_secure_storage: ^4.2.1
+  dots_indicator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -138,19 +139,17 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: SedgwickAve
-      fonts:
-        - asset: assets/fonts/SedgwickAve-Regular.ttf
     - family: Sk-Modernist
       fonts:
         - asset: assets/fonts/Sk-Modernist-Regular.otf
+          weight: 400
         - asset: assets/fonts/Sk-Modernist-Bold.otf
           weight: 700
 
     - family: NeueMontreal
       fonts:
-            - asset: assets/fonts/NeueMontreal-Regular.otf
-              weight: 400
+        - asset: assets/fonts/NeueMontreal-Regular.otf
+          weight: 400
 
 
 

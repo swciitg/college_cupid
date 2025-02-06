@@ -30,11 +30,9 @@ class SelectionButton extends StatelessWidget {
         child: Container(
           padding: padding ?? const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isSelected
-                ? CupidColors.pinkColor
-                : Colors.white,
+            color: isSelected ? CupidColors.secondaryColor : Colors.white,
             borderRadius: borderRadius ?? BorderRadius.circular(15),
-            border: border ?? Border.all(color: CupidColors.pinkColor),
+            border: border ?? Border.all(color: CupidColors.secondaryColor),
           ),
           child: Center(
             child: Text(

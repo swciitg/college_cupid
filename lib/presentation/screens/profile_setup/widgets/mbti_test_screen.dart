@@ -112,7 +112,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       setState(() {
         _loading = false;
       });
-      ref.read(pageViewProvider.notifier).getInitialProfiles(context);
+      ref.read(pageViewProvider.notifier).getInitialProfiles();
       navigatorKey.currentState!.pop();
       showSnackBar("Updated personality type successfully");
     } catch (e) {
@@ -130,6 +130,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: Scaffold(
+        backgroundColor: CupidColors.backgroundColor,
         floatingActionButton: _submitButton(),
         body: SizedBox(
           height: size.height * 0.8,
@@ -165,7 +166,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       margin: const EdgeInsets.only(top: 16),
       decoration: BoxDecoration(
-        color: CupidColors.secondaryColor.withValues(alpha: 0.5),
+        color: CupidColors.cupidPeach.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10),
       ),
       child: RichText(
@@ -191,29 +192,33 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
   }
 
   Widget _errorMessageWidget() {
-    if (_errorMessage == null) return const SizedBox();
+    // if (_errorMessage == null) return const SizedBox();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        color: Colors.redAccent.withValues(alpha: 0.5),
+        color: CupidColors.backgroundColor,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.red),
       ),
       child: RichText(
         text: TextSpan(
           children: [
             const WidgetSpan(
               child: Icon(
-                Icons.info_outline,
-                size: 16,
-                color: CupidColors.lightTextColor,
+                FluentIcons.error_circle_16_regular,
+                size: 18,
+                color: Colors.red,
               ),
             ),
             const TextSpan(text: " "),
             TextSpan(
               text: "Error : $_errorMessage",
-              style: CupidStyles.lightTextStyle.copyWith(fontSize: 12.5),
+              style: CupidStyles.lightTextStyle.copyWith(
+                fontSize: 14,
+                color: Colors.red,
+              ),
             ),
           ],
         ),
@@ -221,19 +226,30 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     );
   }
 
-  FloatingActionButton _submitButton() {
-    return FloatingActionButton(
-      backgroundColor: CupidColors.secondaryColor,
-      onPressed: () {
-        _postMBTI();
+  Widget _submitButton() {
+    return Builder(
+      builder: (context) {
+        // final unanswered = ref
+        //     .watch(mbtiControllerProvider)
+        //     .questions
+        //     .any((e) => e.answer != null);
+        // if (unanswered) return const SizedBox();
+        return FloatingActionButton(
+          backgroundColor: CupidColors.cupidPeach,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          onPressed: () {
+            _postMBTI();
+          },
+          child: _loading
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Icon(
+                  Icons.check_rounded,
+                  size: 30,
+                  color: Colors.white,
+                ),
+        );
       },
-      child: _loading
-          ? const CircularProgressIndicator(color: Colors.white)
-          : const Icon(
-              FluentIcons.save_16_regular,
-              size: 30,
-              color: Colors.white,
-            ),
     );
   }
 
@@ -244,28 +260,28 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
         DecoratedBox(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: CupidColors.secondaryColor.withValues(alpha: 0.16),
+            color: CupidColors.cupidGreen.withValues(alpha: 0.25),
           ),
           child: IconButton(
             onPressed: () {
               _previousQuestion();
             },
             icon: const Icon(Icons.keyboard_arrow_up_rounded, size: 32),
-            color: CupidColors.secondaryColor,
+            color: CupidColors.cupidGreen,
           ),
         ),
         const SizedBox(width: 16),
         DecoratedBox(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: CupidColors.secondaryColor.withValues(alpha: 0.16),
+            color: CupidColors.cupidGreen.withValues(alpha: 0.25),
           ),
           child: IconButton(
             onPressed: () {
               _nextQuestion();
             },
             icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 32),
-            color: CupidColors.secondaryColor,
+            color: CupidColors.cupidGreen,
           ),
         )
       ],
@@ -308,10 +324,9 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
             Expanded(
               child: LinearProgressIndicator(
                 value: answered / mbtiQuestions.length,
-                backgroundColor:
-                    CupidColors.secondaryColor.withValues(alpha: 0.1),
+                backgroundColor: CupidColors.cupidPeach.withValues(alpha: 0.1),
                 valueColor: const AlwaysStoppedAnimation(
-                  CupidColors.secondaryColor,
+                  CupidColors.cupidPeach,
                 ),
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -320,7 +335,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
             Text(
               '$progress%',
               style: CupidStyles.lightTextStyle.copyWith(
-                color: CupidColors.secondaryColor,
+                color: CupidColors.cupidPeach,
               ),
             ),
           ],
@@ -341,8 +356,8 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.pinkAccent.withValues(alpha: 0.02),
-                Colors.pinkAccent.withValues(alpha: 0.1),
+                CupidColors.cupidGreen.withValues(alpha: 0.4),
+                CupidColors.cupidGreen.withValues(alpha: 0.2),
               ],
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
@@ -350,7 +365,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               width: 1.5,
-              color: Colors.pinkAccent.withValues(alpha: 0.1),
+              color: CupidColors.cupidGreen.withValues(alpha: 0.8),
             ),
           ),
           child: Column(
@@ -359,7 +374,8 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
               Text(
                 e.question,
                 style: CupidStyles.lightTextStyle.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -1,9 +1,8 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/presentation/widgets/global/profile_options_bottom_sheet.dart';
+import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
-import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -36,8 +35,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final crushesRepo = ref.read(crushesRepoProvider);
     final currentUser = ref.read(userProvider).myProfile!;
     return Scaffold(
+      endDrawer: currentUser.email == widget.userProfile.email
+          ? const DrawerWidget()
+          : null,
       backgroundColor: Colors.white,
-      appBar: _appBar(context),
+      appBar: _appBar(currentUser.email == widget.userProfile.email),
       floatingActionButton:
           widget.isMine ? _actionButton(context, crushesRepo) : null,
       body: SafeArea(
@@ -45,6 +47,27 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           userProfile: profile,
           backButton: profile.email != currentUser.email,
         ),
+      ),
+    );
+  }
+
+  PreferredSize _appBar(bool ownProfile) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(60),
+      child: AppBar(
+        scrolledUnderElevation: 0,
+        // foregroundColor: CupidColors.pinkColor,
+        systemOverlayStyle: CupidStyles.statusBarStyle,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        title: ownProfile
+            ? const Text(
+                "Your Profile",
+                style: CupidStyles.headingStyle,
+              )
+            : const Text(""),
       ),
     );
   }
@@ -65,45 +88,6 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         FluentIcons.edit_12_filled,
         size: 30,
         color: Colors.white,
-      ),
-    );
-  }
-
-  AppBar? _appBar(BuildContext context) {
-    if (widget.isMine) return null;
-    return AppBar(
-      actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.more_vert_rounded,
-            color: CupidColors.secondaryColor,
-          ),
-          onPressed: () {
-            showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              context: context,
-              builder: (context) => ProfileOptionsBottomSheet(
-                userEmail: widget.userProfile.email,
-              ),
-            );
-          },
-        ),
-      ],
-      systemOverlayStyle: CupidStyles.statusBarStyle,
-      backgroundColor: Colors.white,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false,
-      centerTitle: false,
-      title: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text('CollegeCupid',
-            style: TextStyle(
-              fontFamily: 'SedgwickAve',
-              color: CupidColors.titleColor,
-              fontSize: 32,
-            )),
       ),
     );
   }

@@ -5,7 +5,8 @@ class CupidTextButton extends StatelessWidget {
   final Color? fontColor;
   final String text;
   final void Function() onPressed;
-  const CupidTextButton({this.fontColor, required this.text, required this.onPressed, super.key});
+  const CupidTextButton(
+      {this.fontColor, required this.text, required this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class CupidTextButton extends StatelessWidget {
         text,
         style: CupidStyles.textButtonStyle.copyWith(
           color: fontColor,
-          fontSize: 20,
+          fontSize: 18,
         ),
       ),
     );

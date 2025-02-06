@@ -25,12 +25,21 @@ class CrushInfoTile extends ConsumerWidget {
     final crushesList = ref.read(crushesControllerProvider.notifier);
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 8),
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              spreadRadius: 4,
+            )
+          ],
         ),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             context.pushNamed(
               AppRoutes.userProfileScreen.name,
@@ -44,7 +53,10 @@ class CrushInfoTile extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _profileImage(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _profileImage(),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -72,7 +84,7 @@ class CrushInfoTile extends ConsumerWidget {
                 },
                 icon: const Icon(
                   Icons.close,
-                  color: CupidColors.pinkColor,
+                  color: CupidColors.secondaryColor,
                 ),
               )
             ],
@@ -90,14 +102,18 @@ class CrushInfoTile extends ConsumerWidget {
         imageUrl: profile.images.first.url,
         cacheManager: customCacheManager,
         placeholder: (context, url) {
-          if (profile.images.first.blurHash == null) return const CustomLoader();
+          if (profile.images.first.blurHash == null) {
+            return const CustomLoader();
+          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: BlurhashFfi(hash: profile.images.first.blurHash!),
           );
         },
         errorWidget: (context, url, error) {
-          if (profile.images.first.blurHash == null) return const CustomLoader();
+          if (profile.images.first.blurHash == null) {
+            return const CustomLoader();
+          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: BlurhashFfi(hash: profile.images.first.blurHash!),

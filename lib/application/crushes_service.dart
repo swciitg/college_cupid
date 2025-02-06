@@ -28,7 +28,8 @@ class CrushesService {
       List<UserProfile> crushesProfiles = [];
       for (String email in crushEmails) {
         final profileMap = await userProfileRepository.getUserProfile(email);
-        final profile = UserProfile.fromJson(profileMap!);
+        if (profileMap == null) continue;
+        final profile = UserProfile.fromJson(profileMap);
         crushesProfiles.add(profile);
       }
       return crushesProfiles;

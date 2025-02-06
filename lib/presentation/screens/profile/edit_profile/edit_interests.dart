@@ -9,6 +9,7 @@ class EditInterests extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: _appBar(context),
       body: const SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16),

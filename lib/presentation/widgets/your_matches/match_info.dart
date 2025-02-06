@@ -28,14 +28,24 @@ class MatchInfo extends ConsumerWidget {
           return Center(child: Text(snapshot.error.toString()));
         } else {
           final profile = UserProfile.fromJson(snapshot.data!);
-          final program = Program.values.firstWhere((p) => p == profile.program);
+          final program =
+              Program.values.firstWhere((p) => p == profile.program);
           return Padding(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(top: 8),
             child: DecoratedBox(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 8,
+                    spreadRadius: 4,
+                  )
+                ],
               ),
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   context.pushNamed(
                     AppRoutes.userProfileScreen.name,
@@ -49,7 +59,10 @@ class MatchInfo extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    _profileImage(profile),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _profileImage(profile),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -88,14 +101,18 @@ class MatchInfo extends ConsumerWidget {
         imageUrl: profile.images.first.url,
         cacheManager: customCacheManager,
         placeholder: (context, url) {
-          if (profile.images.first.blurHash == null) return const CustomLoader();
+          if (profile.images.first.blurHash == null) {
+            return const CustomLoader();
+          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: BlurhashFfi(hash: profile.images.first.blurHash!),
           );
         },
         errorWidget: (context, url, error) {
-          if (profile.images.first.blurHash == null) return const CustomLoader();
+          if (profile.images.first.blurHash == null) {
+            return const CustomLoader();
+          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: BlurhashFfi(hash: profile.images.first.blurHash!),

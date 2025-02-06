@@ -1,8 +1,8 @@
 import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/widgets/authentication/logout_button.dart';
-import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_text_button.dart';
+import 'package:college_cupid/presentation/widgets/global/deactivate_account_alert.dart';
 import 'package:college_cupid/routing/app_router.dart';
 
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class DrawerWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      width: screenWidth * 0.65,
+      width: screenWidth * 0.55,
       decoration: const BoxDecoration(color: Colors.white),
       child: SafeArea(
         child: Column(
@@ -25,7 +25,7 @@ class DrawerWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(child: AppTitle()),
+                  // TODO: App Logo
                   const Divider(),
                   CupidTextButton(
                     text: 'Blocked Users',
@@ -35,26 +35,39 @@ class DrawerWidget extends StatelessWidget {
                     },
                   ),
                   CupidTextButton(
-                      text: 'Terms of use',
-                      onPressed: () async {
-                        try {
-                          await launchURL(
-                            host: 'swc.iitg.ac.in',
-                            path: '/collegeCupid/terms',
-                          );
-                        } catch (e) {
-                          showSnackBar(e.toString());
-                        }
-                      }),
+                    text: 'Terms of use',
+                    onPressed: () async {
+                      try {
+                        await launchURL(
+                          host: 'swc.iitg.ac.in',
+                          path: '/collegeCupid/terms',
+                        );
+                      } catch (e) {
+                        showSnackBar(e.toString());
+                      }
+                    },
+                  ),
                   CupidTextButton(
-                      text: 'About us',
-                      onPressed: () async {
-                        try {
-                          await launchURL(host: 'swc.iitg.ac.in');
-                        } catch (e) {
-                          showSnackBar(e.toString());
-                        }
-                      }),
+                    text: 'About us',
+                    onPressed: () async {
+                      try {
+                        await launchURL(host: 'swc.iitg.ac.in');
+                      } catch (e) {
+                        showSnackBar(e.toString());
+                      }
+                    },
+                  ),
+                  // TODO: Deactivate account
+                  // CupidTextButton(
+                  //   text: 'Deactivate account',
+                  //   onPressed: () async {
+                  //     context.pop();
+                  //     await showDialog(
+                  //       context: context,
+                  //       builder: (context) => const DeactivateAccountAlert(),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),
@@ -64,10 +77,8 @@ class DrawerWidget extends StatelessWidget {
                 'assets/images/SWC_Logo_black.png',
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-              child: LogoutButton(),
-            ),
+            const LogoutButton(),
+            const SizedBox(height: 16),
           ],
         ),
       ),

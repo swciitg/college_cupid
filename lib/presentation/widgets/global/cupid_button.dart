@@ -34,7 +34,7 @@ class CupidButton extends StatelessWidget {
         height: height ?? 60,
         width: width ?? screenWidth,
         decoration: BoxDecoration(
-          color: backgroundColor ?? CupidColors.titleColor,
+          color: backgroundColor ?? CupidColors.secondaryColor,
           borderRadius: borderRadius ?? BorderRadius.circular(20),
         ),
         child: Center(

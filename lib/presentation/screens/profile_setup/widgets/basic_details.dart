@@ -167,12 +167,13 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
       selected: isSelected,
       selectedColor: CupidColors.secondaryColor,
       elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: WidgetStateColor.resolveWith(
         (states) {
           if (states.contains(WidgetState.selected)) {
             return CupidColors.secondaryColor;
           }
-          return Colors.transparent;
+          return Colors.white;
         },
       ),
       checkmarkColor: Colors.white,

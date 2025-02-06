@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:college_cupid/application/crushes_service.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
@@ -16,10 +17,14 @@ class CrushesController extends StateNotifier<AsyncValue<List<UserProfile>>> {
       : super(const AsyncLoading());
 
   Future<void> getCrushProfiles() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard<List<UserProfile>>(() {
-      return crushesService.getCrushProfiles();
-    });
+    try {
+      state = const AsyncLoading();
+      state = await AsyncValue.guard<List<UserProfile>>(() {
+        return crushesService.getCrushProfiles();
+      });
+    } catch (e) {
+      log("$e");
+    }
   }
 
   Future<void> removeCrush(int index, String email) async {

@@ -1,7 +1,5 @@
 import 'package:college_cupid/presentation/widgets/blocked_users/blocked_user_info_tile.dart';
-import 'package:college_cupid/presentation/widgets/global/app_title.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
-import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:flutter/material.dart';
@@ -28,12 +26,6 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              'Blocked Users',
-              style: CupidStyles.headingStyle.copyWith(
-                color: CupidColors.titleColor,
-              ),
-            ),
             Expanded(
                 child: FutureBuilder(
               future: blockedUsersStore.getBlockedUsers(),
@@ -60,7 +52,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                         );
                       }
                       return ListView.builder(
-                          padding: EdgeInsets.zero,
+                          padding: const EdgeInsets.only(bottom: 16),
                           itemCount: blockedUsersStore.blockedUserList.length,
                           itemBuilder: (BuildContext context, int index) {
                             return BlockedUserInfoTile(
@@ -82,13 +74,16 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
 
   AppBar _appBar() {
     return AppBar(
-      foregroundColor: CupidColors.pinkColor,
       systemOverlayStyle: CupidStyles.statusBarStyle,
       backgroundColor: Colors.white,
       elevation: 0,
+      scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: false,
-      title: const AppTitle(),
+      title: const Text(
+        'Blocked Users',
+        style: CupidStyles.headingStyle,
+      ),
     );
   }
 }

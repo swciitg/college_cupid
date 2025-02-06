@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/helpers.dart';
-import 'package:college_cupid/presentation/widgets/authentication/password_alert_dialog.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
@@ -41,15 +40,15 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
     return newString.replaceAll('\\', '');
   }
 
-  Future<void> getPasswordFromUser(String hashedPassword) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PasswordAlertDialog(hashedPassword: hashedPassword);
-      },
-    );
-  }
+  // Future<void> getPasswordFromUser(String hashedPassword) async {
+  //   await showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return PasswordAlertDialog(hashedPassword: hashedPassword);
+  //     },
+  //   );
+  // }
 
   @override
   void initState() {
@@ -85,9 +84,12 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
             final refreshToken = outlookInfo['refreshToken']!;
             final email = outlookInfo['email']!;
             final outlookAccessToken = outlookInfo['outlookAccessToken'];
+            final outlookRefreshToken = outlookInfo['outlookRefreshToken'];
 
             await SecureStorageService.setOutlookAccessToken(
                 outlookAccessToken);
+            await SecureStorageService.setOutlookRefreshToken(
+                outlookRefreshToken);
 
             await SharedPrefService.setOutlookInfo(
               accessToken: accessToken,
@@ -113,21 +115,25 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               debugPrint('USER ALREADY EXISTS');
               debugPrint('LOGGING IN');
 
-              final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
-              if (dhPvtKey == null) {
-                // SOMEONE CLEARED ONEDRIVE DATA
-                // TODO: DO SOMETHING HERE
-                LoginStore.logout();
-                goRouter.goNamed(AppRoutes.splash.name);
-              } else {
-                final userProfileMap =
-                    await userProfileRepo.getUserProfile(email);
-                final userProfile = UserProfile.fromJson(userProfileMap!);
-                await userController.updateMyProfile(userProfile);
-                await SharedPrefService.setDHPublicKey(userProfile.publicKey);
-                await SharedPrefService.setDHPrivateKey(dhPvtKey);
+              try {
+                final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
+                if (dhPvtKey == null) {
+                  // SOMEONE CLEARED ONEDRIVE DATA
+                  // TODO: DO SOMETHING HERE
+                  LoginStore.logout();
+                  goRouter.goNamed(AppRoutes.splash.name);
+                } else {
+                  final userProfileMap =
+                      await userProfileRepo.getUserProfile(email);
+                  final userProfile = UserProfile.fromJson(userProfileMap!);
+                  await userController.updateMyProfile(userProfile);
+                  await SharedPrefService.setDHPublicKey(userProfile.publicKey);
+                  await SharedPrefService.setDHPrivateKey(dhPvtKey);
 
-                goRouter.goNamed(AppRoutes.splash.name);
+                  goRouter.goNamed(AppRoutes.splash.name);
+                }
+              } catch (e) {
+                // TODO: Handle onedrive data clear
               }
             }
           },

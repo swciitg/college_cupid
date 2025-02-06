@@ -121,8 +121,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       case OnboardingStep.addPhotos:
         final nonNullImagesCount =
             state.images!.where((element) => element != null).length;
-        if (nonNullImagesCount < 2) {
-          showSnackBar("Please upload atleast 2 photos");
+        if (nonNullImagesCount < 3) {
+          showSnackBar("Select all images!");
           return false;
         }
         return true;
@@ -273,7 +273,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
                 loadingMessage:
-                    "Uploading Profile Images ${imageProgress.toStringAsFixed(2)}%",
+                    "Uploading Profile Images ${imageProgress.toInt()}%",
               );
             },
           );
@@ -369,7 +369,7 @@ class OnboardingState {
   }) {
     return OnboardingState(
       personalInfo: personalInfo ?? this.personalInfo,
-      dhPrivateKey: diffieHellmanPrivateKey ?? this.dhPrivateKey,
+      dhPrivateKey: diffieHellmanPrivateKey ?? dhPrivateKey,
       currentStep: currentStep ?? this.currentStep,
       userProfile: userProfile ?? this.userProfile,
       images: images ?? this.images,

@@ -16,8 +16,10 @@ class SelectableInterestCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     return ChoiceChip(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       label: Text(
         text,
         style: CupidStyles.normalTextStyle.setColor(
@@ -25,14 +27,13 @@ class SelectableInterestCard extends ConsumerWidget {
         ),
       ),
       selected: selected,
-      selectedColor: CupidColors.secondaryColor,
       elevation: 0,
       color: WidgetStateColor.resolveWith(
         (states) {
           if (states.contains(WidgetState.selected)) {
             return CupidColors.secondaryColor;
           }
-          return Colors.transparent;
+          return Colors.white;
         },
       ),
       checkmarkColor: Colors.white,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/domain/models/mbti_model.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +19,10 @@ class MbtiController extends StateNotifier<MBTIModel> {
       currentQuestion: index + 1,
       questions: [
         for (final question in state.questions)
-          if (question.id == index) question.copyWith(answer: answer) else question
+          if (question.id == index)
+            question.copyWith(answer: answer)
+          else
+            question
       ],
     );
   }
@@ -30,7 +35,8 @@ class MbtiController extends StateNotifier<MBTIModel> {
   }
 
   PersonalityType? getPersonalityType() {
-    final answeredQuestions = state.questions.where((question) => question.answer != null).toList();
+    final answeredQuestions =
+        state.questions.where((question) => question.answer != null).toList();
     if (answeredQuestions.length < mbtiQuestions.length) return null;
     int energy = 0;
     int mind = 0;
@@ -55,11 +61,11 @@ class MbtiController extends StateNotifier<MBTIModel> {
     }
 
     var personalityString = '';
-    personalityString += energy >= 3 ? 'e' : 'i';
-    personalityString += mind >= 3 ? 's' : 'n';
-    personalityString += nature >= 3 ? 't' : 'f';
-    personalityString += tactics >= 3 ? 'j' : 'p';
-    print("Personality String: $personalityString");
+    personalityString += energy / 5 >= 3 ? 'e' : 'i';
+    personalityString += mind / 5 >= 3 ? 's' : 'n';
+    personalityString += nature / 5 >= 3 ? 't' : 'f';
+    personalityString += tactics / 5 >= 3 ? 'j' : 'p';
+    log("Personality String: $personalityString");
     return PersonalityType.fromString(personalityString);
   }
 }

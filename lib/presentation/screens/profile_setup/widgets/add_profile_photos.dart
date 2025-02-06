@@ -73,11 +73,6 @@ class AddPhotos extends ConsumerWidget {
           "Selfies are good",
         ),
         _buildTextRow(
-          Icons.check,
-          const Color(0xFF7AEAA9),
-          "Atleast 2 photos",
-        ),
-        _buildTextRow(
           Icons.close,
           const Color(0xFFFBA8AA),
           "Avoid group shots",
