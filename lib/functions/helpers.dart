@@ -40,3 +40,22 @@ List<Program> getProgramListFromRollNumber(String rollNumber) {
       .where((element) => element.rollNumberCode == code)
       .toList();
 }
+
+String getAdmirerCountMessage(int count) {
+  if (count <= 0) {
+    return "You never know who’s crushing on you from afar :)";
+  }
+  if (count == 1) {
+    return "Someone’s got their eye on you!";
+  }
+  if (count > 1 && count <= 5) {
+    return "A few hearts are beating for you ;)";
+  }
+  if (count > 5 && count <= 10) {
+    return "Crush alert...your fan club is growing!";
+  }
+  if (count > 10 && count <= 100) {
+    return "So many people are crushing on you—feeling the love?";
+  }
+  return "You are the obsession of many.\nA legend in the making!";
+}

@@ -1,7 +1,8 @@
+import 'dart:developer';
+
 import 'package:college_cupid/presentation/controllers/crushes_controller.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/your_crushes/crush_info_tile.dart';
-import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,12 +30,7 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            'Your Crushes',
-            style: CupidStyles.headingStyle.copyWith(
-              color: CupidColors.titleColor,
-            ),
-          ),
+          const Text('Your Crushes', style: CupidStyles.headingStyle),
           const SizedBox(height: 8),
           Text(
             'You can select a maximum of 5 crushes at a time.',
@@ -63,6 +59,7 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                 }
               },
               error: (err, st) {
+                log(err.toString());
                 return const Center(
                   child: Text(
                     'Some error occurred\nPlease try again!',

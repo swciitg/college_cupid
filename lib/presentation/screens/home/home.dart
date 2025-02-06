@@ -99,7 +99,8 @@ class _HomeState extends ConsumerState<Home> {
               surfaceTintColor: CupidColors.navBarBackgroundColor,
               iconTheme: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return const IconThemeData(color: CupidColors.navBarIconColor);
+                  return const IconThemeData(
+                      color: CupidColors.navBarIconColor);
                 } else {
                   return const IconThemeData(color: Colors.grey);
                 }
@@ -113,7 +114,8 @@ class _HomeState extends ConsumerState<Home> {
                   _pageController.jumpToPage(i);
                 } else {
                   _pageController.animateToPage(i,
-                      duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeIn);
                 }
                 _selectedIndex = i;
               }),

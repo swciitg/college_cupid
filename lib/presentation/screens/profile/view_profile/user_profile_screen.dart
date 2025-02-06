@@ -3,7 +3,6 @@ import 'package:college_cupid/presentation/widgets/global/profile_options_bottom
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
-
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -16,7 +15,8 @@ class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
 
-  const UserProfileScreen({required this.isMine, required this.userProfile, super.key});
+  const UserProfileScreen(
+      {required this.isMine, required this.userProfile, super.key});
 
   @override
   ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -38,7 +38,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _appBar(context),
-      floatingActionButton: widget.isMine ? _actionButton(context, crushesRepo) : null,
+      floatingActionButton:
+          widget.isMine ? _actionButton(context, crushesRepo) : null,
       body: SafeArea(
         child: DisplayProfileInfo(
           userProfile: profile,
@@ -48,7 +49,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
-  FloatingActionButton _actionButton(BuildContext context, CrushesRepository crushesRepo) {
+  FloatingActionButton _actionButton(
+      BuildContext context, CrushesRepository crushesRepo) {
     return FloatingActionButton(
       backgroundColor: const Color(0xFFFBA8AA),
       onPressed: () async {
@@ -74,7 +76,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         IconButton(
           icon: const Icon(
             Icons.more_vert_rounded,
-            color: CupidColors.pinkColor,
+            color: CupidColors.secondaryColor,
           ),
           onPressed: () {
             showModalBottomSheet(

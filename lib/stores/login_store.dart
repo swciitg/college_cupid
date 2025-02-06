@@ -1,4 +1,5 @@
 import 'package:college_cupid/repositories/user_profile_repository.dart';
+import 'package:college_cupid/services/secure_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,6 +50,8 @@ class LoginStore {
     dhPrivateKey = null;
     dhPublicKey = null;
     rollNumber = null;
+
+    await SecureStorageService.clear();
     return prefs.clear();
   }
 

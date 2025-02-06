@@ -8,7 +8,9 @@ import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
+import 'package:college_cupid/services/secure_storage_service.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/endpoints.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -27,12 +29,14 @@ class LoginWebview extends ConsumerStatefulWidget {
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
 
-  Future<String> getElementById(WebViewController controller, String elementId) async {
-    var element = await controller
-        .runJavaScriptReturningResult("document.querySelector('#$elementId').innerText");
+  Future<String> getElementById(
+      WebViewController controller, String elementId) async {
+    var element = await controller.runJavaScriptReturningResult(
+        "document.querySelector('#$elementId').innerText");
     String newString = element.toString();
     if (element.toString().startsWith('"')) {
-      newString = element.toString().substring(1, element.toString().length - 1);
+      newString =
+          element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }
@@ -60,7 +64,8 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
           onPageFinished: (String url) async {
             final goRouter = GoRouter.of(context);
 
-            if (!url.startsWith('${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+            if (!url.startsWith(
+                '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
               return;
             }
 
@@ -68,16 +73,21 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
             if (authStatus != 'SUCCESS') return;
             if (!mounted) return;
             String outlookInfoString =
-                (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
+                (await getElementById(controller, 'outlookInfo'))
+                    .replaceAll("\\", '"');
 
             Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
-            final displayName = outlookInfo['displayName']!.toString().toTitleCase();
+            final displayName =
+                outlookInfo['displayName']!.toString().toTitleCase();
             final rollNumber = outlookInfo['rollNumber']!;
             final accessToken = outlookInfo['accessToken']!;
             final refreshToken = outlookInfo['refreshToken']!;
             final email = outlookInfo['email']!;
             final outlookAccessToken = outlookInfo['outlookAccessToken'];
+
+            await SecureStorageService.setOutlookAccessToken(
+                outlookAccessToken);
 
             await SharedPrefService.setOutlookInfo(
               accessToken: accessToken,
@@ -85,7 +95,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               email: email,
               displayName: displayName,
               rollNumber: rollNumber,
-              outlookAccessToken: outlookAccessToken,
             );
 
             await LoginStore.initializeOutlookInfo();
@@ -111,7 +120,8 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                 LoginStore.logout();
                 goRouter.goNamed(AppRoutes.splash.name);
               } else {
-                final userProfileMap = await userProfileRepo.getUserProfile(email);
+                final userProfileMap =
+                    await userProfileRepo.getUserProfile(email);
                 final userProfile = UserProfile.fromJson(userProfileMap!);
                 await userController.updateMyProfile(userProfile);
                 await SharedPrefService.setDHPublicKey(userProfile.publicKey);
@@ -129,6 +139,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CupidColors.backgroundColor,
       body: SafeArea(
         child: WebViewWidget(
           controller: controller,

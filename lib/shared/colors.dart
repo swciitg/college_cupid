@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CupidColors {
-  static const backgroundColor = Color(0xFFA8CEFA);
+  // static const backgroundColor = Color(0xFFA8CEFA);
   static const titleColor = Color.fromRGBO(255, 44, 100, 1);
   static const navBarIconColor = Color.fromRGBO(255, 44, 100, 1);
   static const navBarBackgroundColor = Color.fromRGBO(254, 254, 254, 1);
@@ -18,10 +18,11 @@ class CupidColors {
   static const normalTextColor = Color.fromRGBO(0, 0, 0, 1);
 
   ///New UI
+  static const backgroundColor = Color(0xFFFFFFFF);
   static const navBarSelectedColor = Color(0xFFFBA8AA);
-  static const navBarUnseleectedColor = Color(0xFFA8CEFA);
+  static const navBarUnselectedColor = Color(0xFFA8CEFA);
   static const glassWhite = Color(0xFFFDFDFF);
-  static const semiGlasswhite = Color(0x4F000203);
+  static const semiGlassWhite = Color(0x4F000203);
   static const textColorBlack = Color(0xFF11142A);
   static const cupidBlue = Color(0xFFA8CEFA);
   static const cupidYellow = Color(0x99EAE27A);
