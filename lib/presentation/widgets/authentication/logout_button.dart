@@ -5,6 +5,7 @@ import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 
 class LogoutButton extends ConsumerWidget {
@@ -16,6 +17,7 @@ class LogoutButton extends ConsumerWidget {
       onPressed: () async {
         final goRouter = GoRouter.of(context);
         bool cleared = await LoginStore.logout();
+        await GetStorage().erase();
         if (cleared) {
           ref.read(onboardingControllerProvider.notifier).reset();
           goRouter.goNamed(AppRoutes.splash.name);

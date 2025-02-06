@@ -27,14 +27,12 @@ class LoginWebview extends ConsumerStatefulWidget {
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
 
-  Future<String> getElementById(
-      WebViewController controller, String elementId) async {
-    var element = await controller.runJavaScriptReturningResult(
-        "document.querySelector('#$elementId').innerText");
+  Future<String> getElementById(WebViewController controller, String elementId) async {
+    var element = await controller
+        .runJavaScriptReturningResult("document.querySelector('#$elementId').innerText");
     String newString = element.toString();
     if (element.toString().startsWith('"')) {
-      newString =
-          element.toString().substring(1, element.toString().length - 1);
+      newString = element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }
@@ -62,69 +60,64 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
           onPageFinished: (String url) async {
             final goRouter = GoRouter.of(context);
 
-            if (url.startsWith(
-                '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
-              String authStatus = await getElementById(controller, 'status');
-              if (authStatus == 'SUCCESS') {
-                if (!mounted) return;
-                String outlookInfoString =
-                    (await getElementById(controller, 'outlookInfo'))
-                        .replaceAll("\\", '"');
+            if (!url.startsWith('${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+              return;
+            }
 
-                Map<String, dynamic> outlookInfo =
-                    jsonDecode(outlookInfoString);
+            String authStatus = await getElementById(controller, 'status');
+            if (authStatus != 'SUCCESS') return;
+            if (!mounted) return;
+            String outlookInfoString =
+                (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
 
-                final displayName =
-                    outlookInfo['displayName']!.toString().toTitleCase();
-                final rollNumber = outlookInfo['rollNumber']!;
-                final accessToken = outlookInfo['accessToken']!;
-                final refreshToken = outlookInfo['refreshToken']!;
-                final email = outlookInfo['email']!;
-                final outlookAccessToken = outlookInfo['outlookAccessToken'];
+            Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
-                await SharedPrefService.setOutlookInfo(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  email: email,
-                  displayName: displayName,
-                  rollNumber: rollNumber,
-                  outlookAccessToken: outlookAccessToken,
-                );
+            final displayName = outlookInfo['displayName']!.toString().toTitleCase();
+            final rollNumber = outlookInfo['rollNumber']!;
+            final accessToken = outlookInfo['accessToken']!;
+            final refreshToken = outlookInfo['refreshToken']!;
+            final email = outlookInfo['email']!;
+            final outlookAccessToken = outlookInfo['outlookAccessToken'];
 
-                await LoginStore.initializeOutlookInfo();
+            await SharedPrefService.setOutlookInfo(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              email: email,
+              displayName: displayName,
+              rollNumber: rollNumber,
+              outlookAccessToken: outlookAccessToken,
+            );
 
-                debugPrint('DATA INITIALIZED');
+            await LoginStore.initializeOutlookInfo();
 
-                final myProfile = await userProfileRepo.getUserProfile(email);
-                final myInfo = await personalInfoRepo.getPersonalInfo();
+            debugPrint('DATA INITIALIZED');
 
-                await WebViewCookieManager().clearCookies();
+            final myProfile = await userProfileRepo.getUserProfile(email);
+            final myInfo = await personalInfoRepo.getPersonalInfo();
 
-                if (myProfile == null || myInfo == null) {
-                  log('NEW USER');
-                  goRouter.goNamed(AppRoutes.profileSetup.name);
-                } else {
-                  debugPrint('USER ALREADY EXISTS');
-                  debugPrint('LOGGING IN');
+            await WebViewCookieManager().clearCookies();
 
-                  final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
-                  if (dhPvtKey == null) {
-                    // SOMEONE CLEARED ONEDRIVE DATA
-                    // TODO: DO SOMETHING HERE
-                    LoginStore.logout();
-                    goRouter.goNamed(AppRoutes.splash.name);
-                  } else {
-                    final userProfileMap =
-                        await userProfileRepo.getUserProfile(email);
-                    final userProfile = UserProfile.fromJson(userProfileMap!);
-                    await userController.updateMyProfile(userProfile);
-                    await SharedPrefService.setDHPublicKey(
-                        userProfile.publicKey);
-                    await SharedPrefService.setDHPrivateKey(dhPvtKey);
+            if (myProfile == null || myInfo == null) {
+              log('NEW USER');
+              goRouter.goNamed(AppRoutes.profileSetup.name);
+            } else {
+              debugPrint('USER ALREADY EXISTS');
+              debugPrint('LOGGING IN');
 
-                    goRouter.goNamed(AppRoutes.splash.name);
-                  }
-                }
+              final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
+              if (dhPvtKey == null) {
+                // SOMEONE CLEARED ONEDRIVE DATA
+                // TODO: DO SOMETHING HERE
+                LoginStore.logout();
+                goRouter.goNamed(AppRoutes.splash.name);
+              } else {
+                final userProfileMap = await userProfileRepo.getUserProfile(email);
+                final userProfile = UserProfile.fromJson(userProfileMap!);
+                await userController.updateMyProfile(userProfile);
+                await SharedPrefService.setDHPublicKey(userProfile.publicKey);
+                await SharedPrefService.setDHPrivateKey(dhPvtKey);
+
+                goRouter.goNamed(AppRoutes.splash.name);
               }
             }
           },
