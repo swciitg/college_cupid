@@ -64,7 +64,7 @@ class UserProfile {
               (e) => e.name == json['personalityType'],
             )
           : null,
-      deactivated: json['deactivated'] ?? false,
+      deactivated: json['email'] == 'deactivatedUser@iitg.ac.in',
       surpriseQuiz:
           (json['surpriseQuiz'] as List? ?? []).map((e) => QuizQuestion.fromJson(e)).toList(),
     );

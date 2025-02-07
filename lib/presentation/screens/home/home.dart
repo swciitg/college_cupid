@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
@@ -62,7 +64,7 @@ class _HomeState extends ConsumerState<Home> {
       ),
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final userController = ref.watch(userProvider);
@@ -81,18 +83,27 @@ class _HomeState extends ConsumerState<Home> {
               ..._heartShapes(
                 HeartState(
                   size: 200,
-                  left: -60,
+                  left: -50,
                   bottom: size.height * 0.25,
+                  rotation: Random().nextDouble() * pi / 4,
                 ),
                 HeartState(
                   size: 200,
-                  right: 75,
+                  right: 50,
                   bottom: size.height * 0.09,
+                  rotation: Random().nextDouble() * pi / 4,
                 ),
                 HeartState(
                   size: 180,
                   right: -50,
                   top: size.height * 0.25,
+                  rotation: Random().nextDouble() * pi / 4,
+                ),
+                HeartState(
+                  size: 180,
+                  left: 50,
+                  top: size.height * 0.15,
+                  rotation: Random().nextDouble() * pi / 4,
                 ),
               ),
               SizedBox(
@@ -120,7 +131,7 @@ class _HomeState extends ConsumerState<Home> {
                       }),
                     ),
                     child: NavigationBar(
-                      backgroundColor: CupidColors.navBarBackgroundColor,
+                      backgroundColor: CupidColors.backgroundColor,
                       selectedIndex: _selectedIndex,
                       onDestinationSelected: (i) => setState(() {
                         if ((i - _selectedIndex).abs() != 1) {
@@ -170,7 +181,7 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   List<Widget> _heartShapes(
-      HeartState yellow, HeartState blue, HeartState pink) {
+      HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
     return [
       AnimatedPositioned(
         duration: const Duration(milliseconds: 2000),
@@ -179,10 +190,13 @@ class _HomeState extends ConsumerState<Home> {
         right: yellow.right,
         bottom: yellow.bottom,
         left: yellow.left,
-        child: HeartShape(
-          size: yellow.size,
-          asset: CupidIcons.heartOutline,
-          color: const Color(0x99EAE27A),
+        child: Transform.rotate(
+          angle: yellow.rotation!,
+          child: HeartShape(
+            size: yellow.size,
+            asset: CupidIcons.heartOutline,
+            color: const Color(0x99EAE27A),
+          ),
         ),
       ),
       AnimatedPositioned(
@@ -192,10 +206,13 @@ class _HomeState extends ConsumerState<Home> {
         right: blue.right,
         bottom: blue.bottom,
         left: blue.left,
-        child: HeartShape(
-          size: blue.size,
-          asset: CupidIcons.heartOutline,
-          color: const Color(0x99A8CEFA),
+        child: Transform.rotate(
+          angle: blue.rotation!,
+          child: HeartShape(
+            size: blue.size,
+            asset: CupidIcons.heartOutline,
+            color: const Color(0x99A8CEFA),
+          ),
         ),
       ),
       AnimatedPositioned(
@@ -205,10 +222,29 @@ class _HomeState extends ConsumerState<Home> {
         right: pink.right,
         bottom: pink.bottom,
         left: pink.left,
-        child: HeartShape(
-          size: pink.size,
-          asset: CupidIcons.heartOutline,
-          color: const Color(0x99F9A8D4),
+        child: Transform.rotate(
+          angle: pink.rotation!,
+          child: HeartShape(
+            size: pink.size,
+            asset: CupidIcons.heartOutline,
+            color: const Color(0x99F9A8D4),
+          ),
+        ),
+      ),
+      AnimatedPositioned(
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeInOut,
+        top: green.top,
+        right: green.right,
+        bottom: green.bottom,
+        left: green.left,
+        child: Transform.rotate(
+          angle: green.rotation!,
+          child: HeartShape(
+            size: green.size,
+            asset: CupidIcons.heartOutline,
+            color: CupidColors.cupidGreen,
+          ),
         ),
       ),
     ];

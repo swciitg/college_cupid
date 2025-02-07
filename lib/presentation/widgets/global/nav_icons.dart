@@ -1,3 +1,4 @@
+import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
@@ -37,6 +38,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.search_48_filled,
       size: 30,
+      color: CupidColors.cupidBlue,
     ),
     label: 'Select Crushes',
   ),
@@ -44,6 +46,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.heart_48_filled,
       size: 30,
+      color: CupidColors.cupidGreen,
     ),
     label: 'Your Crushes',
   ),
@@ -51,6 +54,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.people_48_filled,
       size: 30,
+      color: CupidColors.cupidPeach,
     ),
     label: 'Your Matches',
   ),
@@ -58,6 +62,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.person_48_filled,
       size: 30,
+      color: CupidColors.cupidYellow,
     ),
     label: 'Profile',
   ),

@@ -117,7 +117,8 @@ Map<String, List<String>> interestsMap = {
 
 List<QuizQuestion> quizQuestions = [
   QuizQuestion(question: "What's the most spontaneous thing you've ever done?"),
-  QuizQuestion(question: "A mail from DOSA with my name will probably be about..."),
+  QuizQuestion(
+      question: "A mail from DOSA with my name will probably be about..."),
   QuizQuestion(question: "I am struggling with my attendance because..."),
   QuizQuestion(question: "My ideal date spot in campus will be..."),
   QuizQuestion(question: "A shower thought I recently had..."),
@@ -142,5 +143,6 @@ List<QuizQuestion> quizQuestions = [
   QuizQuestion(question: "My go-to Lohit canteen order..."),
   QuizQuestion(question: "I would wake up for an 8 AM class if..."),
   QuizQuestion(question: "I wouldn't ignore a mail if..."),
-  QuizQuestion(question: "If you couldn't find me anywhere, you would find me at..."),
+  QuizQuestion(
+      question: "If you couldn't find me anywhere, you would find me at..."),
 ];

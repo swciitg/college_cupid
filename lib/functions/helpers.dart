@@ -1,4 +1,6 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:math' hide log;
 
 import 'package:college_cupid/shared/enums.dart';
 
@@ -58,4 +60,17 @@ String getAdmirerCountMessage(int count) {
     return "So many people are crushing on you—feeling the love?";
   }
   return "You are the obsession of many.\nA legend in the making!";
+}
+
+Future<bool> checkInternetConnection() async {
+  try {
+    final result = await InternetAddress.lookup('example.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      return true;
+    }
+    return false;
+  } on SocketException catch (_) {
+    log("NOT INTERNET CONNECTION");
+    return false;
+  }
 }

@@ -14,7 +14,8 @@ class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
 
-  const UserProfileScreen({required this.isMine, required this.userProfile, super.key});
+  const UserProfileScreen(
+      {required this.isMine, required this.userProfile, super.key});
 
   @override
   ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -34,9 +35,14 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final crushesRepo = ref.read(crushesRepoProvider);
     final currentUser = ref.read(userProvider).myProfile!;
     return Scaffold(
-      endDrawer: currentUser.email == widget.userProfile.email ? const DrawerWidget() : null,
+      endDrawer: currentUser.email == widget.userProfile.email
+          ? const DrawerWidget()
+          : null,
       appBar: _appBar(currentUser.email == widget.userProfile.email),
-      floatingActionButton: widget.isMine ? _actionButton(context, crushesRepo) : null,
+      floatingActionButton:
+          widget.isMine && currentUser.email != 'deactivatedUser@iitg.ac.in'
+              ? _actionButton(context, crushesRepo)
+              : null,
       body: SafeArea(
         child: DisplayProfileInfo(
           userProfile: profile,
@@ -66,7 +72,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           );
   }
 
-  FloatingActionButton _actionButton(BuildContext context, CrushesRepository crushesRepo) {
+  FloatingActionButton _actionButton(
+      BuildContext context, CrushesRepository crushesRepo) {
     return FloatingActionButton(
       backgroundColor: const Color(0xFFFBA8AA),
       onPressed: () async {

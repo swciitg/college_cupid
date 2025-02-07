@@ -192,7 +192,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
   }
 
   Widget _errorMessageWidget() {
-    // if (_errorMessage == null) return const SizedBox();
+    if (_errorMessage == null) return const SizedBox();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),

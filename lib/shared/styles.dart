@@ -35,16 +35,18 @@ class CupidStyles {
   static const textButtonStyle = TextStyle(
       fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
 
+  static TextStyle countdownStyle(double size) {
+    return TextStyle(
+      fontFamily: 'Zain-ExtraBold',
+      fontSize: size,
+      fontWeight: FontWeight.bold,
+    );
+  }
+
   static const statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.white,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
-  );
-
-  static const countdownStyle = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w700,
-    color: CupidColors.navBarBackgroundColor,
   );
 
   static const countdownLabelStyle =

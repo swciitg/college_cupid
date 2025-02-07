@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/stores/filter_store.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:get_storage/get_storage.dart';
@@ -81,6 +82,8 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     final userProfileRepo = _ref.read(userProfileRepoProvider);
     final filterStore = _ref.read(filterProvider);
     final pageViewStore = _ref.read(pageViewProvider.notifier);
+    final user = _ref.read(userProvider).myProfile;
+    if (user?.deactivated == true) return;
     try {
       pageViewStore.setLoading(true);
       final ls = GetStorage();
@@ -99,6 +102,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
         pageViewStore.setLoading(false);
         return;
       }
+      if (user?.personalityType == null) return;
       final profiles = await userProfileRepo.getPaginatedUsers(0, {
         //don't want it to be triggered when pageNumber is changed
         'gender': filterStore.interestedInGender.databaseString,

@@ -211,6 +211,10 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   }
 
   void addInterest(String interest) {
+    if ((state.interests ?? []).length >= 20) {
+      showSnackBar("Only 20 interests are allowed!");
+      return;
+    }
     var interests = state.interests;
     interests ??= [];
     interests.add(interest);

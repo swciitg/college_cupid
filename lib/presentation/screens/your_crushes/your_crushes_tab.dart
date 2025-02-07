@@ -55,11 +55,13 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                   ),
                 );
               } else {
+                final activeUsers =
+                    crushesList.where((e) => !e.deactivated).toList();
                 return ListView.builder(
                   padding: const EdgeInsets.only(bottom: 16),
-                  itemCount: crushesList.length,
+                  itemCount: activeUsers.length,
                   itemBuilder: (context, index) => CrushInfoTile(
-                    profile: crushesList[index],
+                    profile: activeUsers[index],
                     index: index,
                   ),
                 );

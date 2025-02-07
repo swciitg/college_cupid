@@ -214,7 +214,10 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   Widget _likeButton(BuildContext context) {
     final crushesRepo = ref.read(crushesRepoProvider);
     final profile = widget.userProfile;
-    if (profile.email == LoginStore.email) return const SizedBox();
+    if (profile.email == LoginStore.email ||
+        profile.email == 'deactivatedUser@iitg.ac.in') {
+      return const SizedBox();
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 24),
       child: GestureDetector(

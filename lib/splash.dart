@@ -36,11 +36,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset(
-          'assets/images/college_cupid_rotated_image.png',
-          fit: BoxFit.cover,
-          height: 180,
-          width: 180,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(90),
+          child: Image.asset(
+            'assets/images/app_logo.jpg',
+            fit: BoxFit.cover,
+            height: 180,
+            width: 180,
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
@@ -13,9 +14,11 @@ import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,7 +34,8 @@ class EditProfile extends ConsumerStatefulWidget {
 }
 
 class _EditProfileState extends ConsumerState<EditProfile> {
-  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
+  List<Program> programs =
+      Program.values.where((e) => e != Program.none).toList();
   late Gender _selectedGender;
   late Program _selectedProgram;
   late int _yearOfJoin;
@@ -44,28 +48,46 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   List<File?> newImages = [null, null, null];
   List<String> deletedImages = [];
   late UserProfile profileSave;
+  List<QuizQuestion> surprizeQuiz = [];
+  List<TextEditingController> textEditingControllers = [];
+  final questionScrollController = ScrollController();
+  var _currentQuestion = 0;
+  double? screenWidth;
 
   @override
   void initState() {
     final userState = ref.read(userProvider);
     profileSave = userState.myProfile!;
+    surprizeQuiz.addAll(profileSave.surpriseQuiz);
+    textEditingControllers.addAll(profileSave.surpriseQuiz
+        .map((e) => TextEditingController(text: e.answer))
+        .toList());
     _selectedProgram = userState.myProfile!.program!;
     _selectedGender = userState.myProfile!.gender!;
     _selectedSexualOrientation = userState.myProfile!.sexualOrientation!.type;
     _displaySexualOrientation = userState.myProfile!.sexualOrientation!.display;
     _yearOfJoin = DateTime.now().year % 100 - userState.myProfile!.yearOfJoin!;
-    _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ?? LookingFor.longTermPartner;
-    _displayRelationshipGoal = userState.myProfile!.relationshipGoal?.display ?? true;
+    _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ??
+        LookingFor.longTermPartner;
+    _displayRelationshipGoal =
+        userState.myProfile!.relationshipGoal?.display ?? true;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(onboardingControllerProvider.notifier).setInterests(
             userState.myProfile!.interests,
           );
     });
+    questionScrollController.addListener(() {
+      if (screenWidth == null) return;
+      _currentQuestion =
+          (questionScrollController.offset / (screenWidth! - 60)).toInt();
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    questionScrollController.dispose();
     super.dispose();
   }
 
@@ -102,6 +124,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       showSnackBar("Please select at least 5 interests");
       return;
     }
+    final answers = textEditingControllers.map((e) => e.text.trim()).toList();
+    if (answers.any((e) => e.isEmpty)) {
+      showSnackBar("Please all the quiz questions!");
+      return;
+    }
     setState(() {
       _loading = true;
     });
@@ -123,16 +150,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         for (int i = 0; i < newImages.length; i++) {
           final image = newImages[i];
           if (image == null) continue;
-          final url = await ref.read(userProfileRepoProvider).postUserProfileImage(image,
-              onSendProgress: (val) {
+          final url = await ref
+              .read(userProfileRepoProvider)
+              .postUserProfileImage(image, onSendProgress: (val) {
             final imageProgress = (count + val) / newImagesLenth * 100;
             setState(
               () {
-                _loadingMessage = "Uploading Image(s) : ${imageProgress.toInt()}%";
+                _loadingMessage =
+                    "Uploading Image(s) : ${imageProgress.toInt()}%";
               },
             );
           });
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(
+              imageProvider: FileImage(image));
           if (i <= profile.images.length - 1) {
             updatedImages[i] = ImageModel(url: url, blurHash: blurHash);
           } else {
@@ -141,6 +171,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           count++;
         }
       }
+
       final userProfile = profile.copyWith(
         gender: _selectedGender,
         program: _selectedProgram,
@@ -153,6 +184,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           display: _displayRelationshipGoal,
         ),
         images: updatedImages,
+        surpriseQuiz: List.generate(
+          3,
+          (index) => surprizeQuiz[index].copyWith(answer: answers[index]),
+        ),
       );
       await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
       ref.read(userProvider.notifier).updateMyProfile(userProfile);
@@ -185,6 +220,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    screenWidth = size.width;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -207,11 +244,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TextField(
-                    controller: TextEditingController(text: LoginStore.displayName),
+                    controller:
+                        TextEditingController(text: LoginStore.displayName),
                     decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: "Name",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                      labelStyle:
+                          const TextStyle(color: CupidColors.secondaryColor),
                       enabled: false,
                       fillColor: Colors.transparent,
                     ),
@@ -222,7 +261,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: "Email",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                      labelStyle:
+                          const TextStyle(color: CupidColors.secondaryColor),
                       enabled: false,
                       fillColor: Colors.transparent,
                     ),
@@ -293,7 +333,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     children: [
                       ...List.generate(5, (index) {
                         final year = index + 1;
-                        return _buildChip(year.toString(), _yearOfJoin == year, () {});
+                        return _buildChip(
+                            year.toString(), _yearOfJoin == year, () {});
                       }),
                       _buildChip("beyond", _yearOfJoin == 6, () {}),
                     ],
@@ -302,7 +343,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Interests", style: CupidStyles.subHeadingTextStyle),
+                      const Text("Interests",
+                          style: CupidStyles.subHeadingTextStyle),
                       IconButton(
                         onPressed: () {
                           context.goNamed(AppRoutes.editInterests.name);
@@ -344,8 +386,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       Switch(
                         inactiveTrackColor: WidgetStateColor.transparent,
                         activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        inactiveThumbColor:
+                            CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        activeTrackColor:
+                            CupidColors.secondaryColor.withValues(alpha: 0.4),
                         value: _displaySexualOrientation,
                         onChanged: (value) {
                           setState(() {
@@ -356,14 +400,33 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
+                  const Text("Surprise quiz",
+                      style: CupidStyles.subHeadingTextStyle),
+                  const SizedBox(height: 8),
+                  _buildQuestions(size.width - 40),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: DotsIndicator(
+                      dotsCount: 3,
+                      position: _currentQuestion,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      decorator: const DotsDecorator(
+                        color: Colors.black38,
+                        activeColor: Colors.black,
+                        size: Size(4, 4),
+                      ),
+                    ),
+                  ),
+                  const Text("Looking for",
+                      style: CupidStyles.subHeadingTextStyle),
                   const SizedBox(height: 4),
                   const Text(
                     "The profiles showed to you will be based on this",
                     style: CupidStyles.normalTextStyle,
                   ),
                   const SizedBox(height: 16),
-                  _buildLookingForChoiceChips(_relationshipGoal, onSelected: (value) {
+                  _buildLookingForChoiceChips(_relationshipGoal,
+                      onSelected: (value) {
                     setState(() {
                       _relationshipGoal = value;
                     });
@@ -386,8 +449,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         },
                         inactiveTrackColor: WidgetStateColor.transparent,
                         activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        inactiveThumbColor:
+                            CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        activeTrackColor:
+                            CupidColors.secondaryColor.withValues(alpha: 0.4),
                       ),
                     ],
                   ),
@@ -403,14 +468,16 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   ),
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: CupidColors.secondaryColor,
                       ),
                       child: Text(
                         _loadingMessage!,
-                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                        style:
+                            CupidStyles.normalTextStyle.setColor(Colors.white),
                       ),
                     ),
                   ),
@@ -422,13 +489,100 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     );
   }
 
+  Widget _buildQuestions(double width) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const PageScrollPhysics(),
+      controller: questionScrollController,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(
+          3,
+          (index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: SizedBox(
+                          width: width,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  surprizeQuiz[index].question,
+                                  style: CupidStyles.normalTextStyle,
+                                ),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: textEditingControllers[index],
+                                  maxLength: 120,
+                                  maxLines: 4,
+                                  style: CupidStyles.normalTextStyle.copyWith(
+                                    color: CupidColors.lightTextColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 4,
+                        child: IconButton(
+                          onPressed: () {
+                            var rand =
+                                math.Random().nextInt(quizQuestions.length);
+                            while (surprizeQuiz.any((e) =>
+                                e.question == quizQuestions[rand].question)) {
+                              rand =
+                                  math.Random().nextInt(quizQuestions.length);
+                            }
+                            print(quizQuestions[rand].question);
+                            surprizeQuiz[index] = quizQuestions[rand];
+                            // textEditingControllers[index].clear();
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.refresh_rounded,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Wrap _buildInterests() {
     return Wrap(
       spacing: 8,
       children: List.generate(
         ref.watch(onboardingControllerProvider).interests?.length ?? 0,
         (index) {
-          final interest = ref.watch(onboardingControllerProvider).interests?[index] ?? "";
+          final interest =
+              ref.watch(onboardingControllerProvider).interests?[index] ?? "";
           return _buildChip(interest, false, () {});
         },
       ),
@@ -491,10 +645,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag
+                  ? Colors.white
+                  : CupidColors.textColorBlack,
             ),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: WidgetStateColor.resolveWith(
             (states) {
               if (states.contains(WidgetState.selected)) {
@@ -522,7 +679,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag
+                  ? Colors.white
+                  : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(
@@ -619,11 +778,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           onTap: () async {
                             final image = await imageHelpers.pickImage();
                             if (image == null) return;
-                            final pickedImage = await imageHelpers.xFileToImage(xFile: image);
+                            final pickedImage =
+                                await imageHelpers.xFileToImage(xFile: image);
                             if (!mounted) return;
-                            final croppedImage =
-                                await Navigator.of(context).push<File>(MaterialPageRoute(
-                              builder: (context) => CropImageScreen(image: pickedImage),
+                            final croppedImage = await Navigator.of(context)
+                                .push<File>(MaterialPageRoute(
+                              builder: (context) =>
+                                  CropImageScreen(image: pickedImage),
                             ));
                             if (croppedImage == null) return;
                             setState(() {

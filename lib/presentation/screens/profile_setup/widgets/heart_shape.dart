@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class HeartShape extends StatelessWidget {
+class HeartShape extends StatefulWidget {
   final double size;
   final String asset;
   final Color color;
@@ -16,18 +16,23 @@ class HeartShape extends StatelessWidget {
   });
 
   @override
+  State<HeartShape> createState() => _HeartShapeState();
+}
+
+class _HeartShapeState extends State<HeartShape> {
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: size,
-      width: size,
+      height: widget.size,
+      width: widget.size,
       child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(20),
             child: SvgPicture.asset(
-              asset,
+              widget.asset,
               fit: BoxFit.scaleDown,
-              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(widget.color, BlendMode.srcIn),
             ),
           ),
           ClipRect(

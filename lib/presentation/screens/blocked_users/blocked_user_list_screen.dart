@@ -51,13 +51,16 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                           ),
                         );
                       }
+                      final activeUsers = blockedUsersStore.blockedUserList
+                          .where((e) => e != 'deactivatedUser@iitg.ac.in')
+                          .toList();
                       return ListView.builder(
                           padding: const EdgeInsets.only(bottom: 16),
-                          itemCount: blockedUsersStore.blockedUserList.length,
+                          itemCount: activeUsers.length,
                           itemBuilder: (BuildContext context, int index) {
                             return BlockedUserInfoTile(
                               blockedUsersStore: blockedUsersStore,
-                              email: blockedUsersStore.blockedUserList[index],
+                              email: activeUsers[index],
                               index: index,
                             );
                           });
