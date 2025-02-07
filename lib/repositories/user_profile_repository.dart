@@ -9,14 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
-final userProfileRepoProvider =
-    Provider<UserProfileRepository>((ref) => UserProfileRepository());
+final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserProfileRepository());
 
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
 
-  Future<String> postUserProfileImage(File? image,
-      {Function(double)? onSendProgress}) async {
+  Future<String> postUserProfileImage(File? image, {Function(double)? onSendProgress}) async {
     try {
       final formData = FormData.fromMap({
         'dp': await MultipartFile.fromFile(
@@ -90,8 +88,7 @@ class UserProfileRepository extends ApiRepository {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }
     try {
-      Response res = await dio.get(
-          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+      Response res = await dio.get('${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];
@@ -110,16 +107,15 @@ class UserProfileRepository extends ApiRepository {
 
   Future<bool> deactivateAccount(UserProfile user) async {
     try {
-      final res =
-          await dio.delete('${Endpoints.deactivateAccount}/${user.email}');
+      final res = await dio.delete('${Endpoints.deactivateAccount}/${user.email}');
       if (!(res.data?['success'] == true)) {
         return false;
       }
-      for (var e in user.images) {
-        Uri uri = Uri.parse(e.url);
-        final id = uri.queryParameters['photoId']!.split('-compressed').first;
-        deleteProfileImage(id);
-      }
+      // for (var e in user.images) {
+      //   Uri uri = Uri.parse(e.url);
+      //   final id = uri.queryParameters['photoId']!.split('-compressed').first;
+      //   deleteProfileImage(id);
+      // }
       return true;
     } catch (e) {
       return false;

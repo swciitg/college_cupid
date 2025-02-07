@@ -117,75 +117,30 @@ Map<String, List<String>> interestsMap = {
 
 List<QuizQuestion> quizQuestions = [
   QuizQuestion(question: "What's the most spontaneous thing you've ever done?"),
-  QuizQuestion(question: "What's your go-to karaoke song?"),
-  QuizQuestion(question: "What's your idea of a perfect day?"),
-  QuizQuestion(question: "What's the best trip you've ever taken?"),
-  QuizQuestion(question: "What's your favorite way to spend a weekend?"),
-  QuizQuestion(
-      question:
-          "What's the most embarrassing thing you've ever done to impress someone?"),
-  QuizQuestion(question: "What's your favorite comfort food?"),
-  QuizQuestion(question: "What's something you're weirdly good at?"),
-  QuizQuestion(question: "What's the best gift you've ever received?"),
-  QuizQuestion(
-      question: "What's your favorite way to unwind after a long day?"),
-  QuizQuestion(
-      question: "What's the last thing that made you laugh uncontrollably?"),
-  QuizQuestion(question: "What's your favorite childhood memory?"),
-  QuizQuestion(question: "What's your dream vacation destination?"),
-  QuizQuestion(question: "What's your favorite book or movie and why?"),
-  QuizQuestion(
-      question:
-          "What's something you've always wanted to try but haven't yet?"),
-  QuizQuestion(question: "What's your favorite hobby or pastime?"),
-  QuizQuestion(
-      question: "What's the best piece of advice you've ever received?"),
-  QuizQuestion(question: "What's your favorite way to show someone you care?"),
-  QuizQuestion(question: "What's your guilty pleasure?"),
-  QuizQuestion(question: "What's the most adventurous thing you've ever done?"),
-  QuizQuestion(question: "What's your favorite season and why?"),
-  QuizQuestion(question: "What's your favorite way to stay active?"),
-  QuizQuestion(
-      question: "What's the best concert or live event you've ever attended?"),
-  QuizQuestion(question: "What's your favorite thing about yourself?"),
-  QuizQuestion(question: "What's your favorite way to connect with others?"),
-  QuizQuestion(question: "What's your favorite type of cuisine?"),
-  QuizQuestion(question: "What's your favorite way to spend a rainy day?"),
-  QuizQuestion(question: "What's your favorite quote or mantra?"),
-  QuizQuestion(question: "What's your favorite thing to do outdoors?"),
-  QuizQuestion(
-      question: "What's your favorite way to celebrate your birthday?"),
-  QuizQuestion(question: "What's your favorite thing to cook or bake?"),
-  QuizQuestion(question: "What's your favorite way to give back to others?"),
-  QuizQuestion(question: "What's your favorite thing about where you live?"),
-  QuizQuestion(question: "What's your favorite way to start your day?"),
-  QuizQuestion(question: "What's your favorite way to end your day?"),
-  QuizQuestion(question: "What's your favorite thing to do with friends?"),
-  QuizQuestion(question: "What's your favorite way to learn something new?"),
-  QuizQuestion(
-      question: "What's your favorite way to express your creativity?"),
-  QuizQuestion(question: "What's your favorite way to surprise someone?"),
-  QuizQuestion(question: "What's your favorite thing to do on a date?"),
-  QuizQuestion(question: "What's your favorite thing to do when you're alone?"),
-  QuizQuestion(
-      question: "What's your favorite thing to do when you're stressed?"),
-  QuizQuestion(question: "What's your favorite thing to do when you're happy?"),
-  QuizQuestion(question: "What's your favorite thing to do when you're bored?"),
-  QuizQuestion(
-      question:
-          "What's your favorite thing to do when you're feeling adventurous?"),
-  QuizQuestion(
-      question: "What's your favorite thing to do when you're feeling lazy?"),
-  QuizQuestion(
-      question:
-          "What's your favorite thing to do when you're feeling nostalgic?"),
-  QuizQuestion(
-      question:
-          "What's your favorite thing to do when you're feeling inspired?"),
-  QuizQuestion(
-      question:
-          "What's your favorite thing to do when you're feeling competitive?"),
-  QuizQuestion(
-      question:
-          "What's your favorite thing to do when you're feeling romantic?"),
+  QuizQuestion(question: "A mail from DOSA with my name will probably be about..."),
+  QuizQuestion(question: "I am struggling with my attendance because..."),
+  QuizQuestion(question: "My ideal date spot in campus will be..."),
+  QuizQuestion(question: "A shower thought I recently had..."),
+  QuizQuestion(question: "Mess food tastes better when..."),
+  QuizQuestion(question: "Campus guards know me because..."),
+  QuizQuestion(question: "You are a red flag if in campus, you hang out in..."),
+  QuizQuestion(question: "People in this club are a red flag..."),
+  QuizQuestion(question: "We are the same type of weird if..."),
+  QuizQuestion(question: "In campus, I can get you access to..."),
+  QuizQuestion(question: "2 truths and a lie..."),
+  QuizQuestion(question: "A campus goal of my life..."),
+  QuizQuestion(question: "I would write this in my letter..."),
+  QuizQuestion(question: "Unusual skills..."),
+  QuizQuestion(question: "You might not know about this but..."),
+  QuizQuestion(question: "My best prof joke..."),
+  QuizQuestion(question: "My autobiography would end with..."),
+  QuizQuestion(question: "If I was a prof, my TAs would have..."),
+  QuizQuestion(question: "You should choose me over your TA because..."),
+  QuizQuestion(question: "If you see me around animals..."),
+  QuizQuestion(question: "If I was Cinderella, you would find my shoe at..."),
+  QuizQuestion(question: "My profs call me..."),
+  QuizQuestion(question: "My go-to Lohit canteen order..."),
+  QuizQuestion(question: "I would wake up for an 8 AM class if..."),
+  QuizQuestion(question: "I wouldn't ignore a mail if..."),
+  QuizQuestion(question: "If you couldn't find me anywhere, you would find me at..."),
 ];

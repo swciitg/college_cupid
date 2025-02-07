@@ -14,8 +14,7 @@ class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
 
-  const UserProfileScreen(
-      {required this.isMine, required this.userProfile, super.key});
+  const UserProfileScreen({required this.isMine, required this.userProfile, super.key});
 
   @override
   ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -35,13 +34,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final crushesRepo = ref.read(crushesRepoProvider);
     final currentUser = ref.read(userProvider).myProfile!;
     return Scaffold(
-      endDrawer: currentUser.email == widget.userProfile.email
-          ? const DrawerWidget()
-          : null,
-      backgroundColor: Colors.white,
+      endDrawer: currentUser.email == widget.userProfile.email ? const DrawerWidget() : null,
       appBar: _appBar(currentUser.email == widget.userProfile.email),
-      floatingActionButton:
-          widget.isMine ? _actionButton(context, crushesRepo) : null,
+      floatingActionButton: widget.isMine ? _actionButton(context, crushesRepo) : null,
       body: SafeArea(
         child: DisplayProfileInfo(
           userProfile: profile,
@@ -51,29 +46,27 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
-  PreferredSize _appBar(bool ownProfile) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
-      child: AppBar(
-        scrolledUnderElevation: 0,
-        // foregroundColor: CupidColors.pinkColor,
-        systemOverlayStyle: CupidStyles.statusBarStyle,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        title: ownProfile
-            ? const Text(
+  PreferredSize? _appBar(bool ownProfile) {
+    return !ownProfile
+        ? null
+        : PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: AppBar(
+              scrolledUnderElevation: 0,
+              systemOverlayStyle: CupidStyles.statusBarStyle,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              centerTitle: false,
+              title: const Text(
                 "Your Profile",
                 style: CupidStyles.headingStyle,
-              )
-            : const Text(""),
-      ),
-    );
+              ),
+            ),
+          );
   }
 
-  FloatingActionButton _actionButton(
-      BuildContext context, CrushesRepository crushesRepo) {
+  FloatingActionButton _actionButton(BuildContext context, CrushesRepository crushesRepo) {
     return FloatingActionButton(
       backgroundColor: const Color(0xFFFBA8AA),
       onPressed: () async {

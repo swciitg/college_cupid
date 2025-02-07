@@ -101,8 +101,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final size = MediaQuery.sizeOf(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,76 +137,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
           ],
         ),
         const SizedBox(height: 24),
-        SizedBox(
-          width: size.width,
-          height: size.width * 0.8,
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (value) {
-              setState(() {
-                _currentIndex = value;
-              });
-            },
-            children: List.generate(
-              3,
-              (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Column(
-                    children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                quizQuestions[randomQuestions[index]].question,
-                                style: CupidStyles.normalTextStyle,
-                              ),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: textEditingControllers[index],
-                                maxLength: 120,
-                                maxLines: 4,
-                                style: CupidStyles.normalTextStyle.copyWith(
-                                  color: CupidColors.lightTextColor,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                onChanged: (val) {
-                                  onChange(val, onboardingController);
-                                },
-                                onSubmitted: (val) {
-                                  if (_currentIndex == 0) {
-                                    _pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeIn);
-                                  }
-                                },
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.zero,
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+        _questionsPageView(size, onboardingController),
         Center(
           child: DotsIndicator(
             dotsCount: 3,
@@ -249,6 +179,78 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
           ),
         )
       ],
+    );
+  }
+
+  SizedBox _questionsPageView(Size size, OnboardingController onboardingController) {
+    return SizedBox(
+      width: size.width,
+      height: size.width * 0.8,
+      child: PageView(
+        controller: _pageController,
+        onPageChanged: (value) {
+          setState(() {
+            _currentIndex = value;
+          });
+        },
+        children: List.generate(
+          3,
+          (index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            quizQuestions[randomQuestions[index]].question,
+                            style: CupidStyles.normalTextStyle,
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: textEditingControllers[index],
+                            maxLength: 120,
+                            maxLines: 4,
+                            style: CupidStyles.normalTextStyle.copyWith(
+                              color: CupidColors.lightTextColor,
+                              decoration: TextDecoration.underline,
+                            ),
+                            onChanged: (val) {
+                              onChange(val, onboardingController);
+                            },
+                            onSubmitted: (val) {
+                              if (_currentIndex == 0) {
+                                _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeIn);
+                              }
+                            },
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

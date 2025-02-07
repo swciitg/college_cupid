@@ -16,12 +16,10 @@ class DeactivateAccountAlert extends ConsumerStatefulWidget {
   const DeactivateAccountAlert({super.key});
 
   @override
-  ConsumerState<DeactivateAccountAlert> createState() =>
-      _DeactivateAccountAlertState();
+  ConsumerState<DeactivateAccountAlert> createState() => _DeactivateAccountAlertState();
 }
 
-class _DeactivateAccountAlertState
-    extends ConsumerState<DeactivateAccountAlert> {
+class _DeactivateAccountAlertState extends ConsumerState<DeactivateAccountAlert> {
   final reportingReasonController = TextEditingController();
 
   @override
@@ -33,8 +31,7 @@ class _DeactivateAccountAlertState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Deactivate Account',
-          style: CupidStyles.subHeadingTextStyle),
+      title: const Text('Deactivate Account', style: CupidStyles.subHeadingTextStyle),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
@@ -59,28 +56,27 @@ class _DeactivateAccountAlertState
       ),
       actions: [
         CupidButton(
-            text: 'Submit',
-            onTap: () async {
-              try {
-                final goRouter = GoRouter.of(context);
-                final user = ref.read(userProvider).myProfile!;
-                final deactivated = await ref
-                    .read(userProfileRepoProvider)
-                    .deactivateAccount(user);
-                if (!deactivated) {
-                  goRouter.pop();
-                  showSnackBar("Couldn't deactivate your account");
-                }
-                bool cleared = await LoginStore.logout();
-                await GetStorage().erase();
-                if (cleared) {
-                  ref.read(onboardingControllerProvider.notifier).reset();
-                  goRouter.goNamed(AppRoutes.splash.name);
-                }
-              } catch (e) {
-                showSnackBar(e.toString());
+          text: 'Submit',
+          onTap: () async {
+            try {
+              final goRouter = GoRouter.of(context);
+              final user = ref.read(userProvider).myProfile!;
+              final deactivated = await ref.read(userProfileRepoProvider).deactivateAccount(user);
+              if (!deactivated) {
+                goRouter.pop();
+                showSnackBar("Couldn't deactivate your account");
               }
-            })
+              bool cleared = await LoginStore.logout();
+              await GetStorage().erase();
+              if (cleared) {
+                ref.read(onboardingControllerProvider.notifier).reset();
+                goRouter.goNamed(AppRoutes.splash.name);
+              }
+            } catch (e) {
+              showSnackBar(e.toString());
+            }
+          },
+        )
       ],
     );
   }

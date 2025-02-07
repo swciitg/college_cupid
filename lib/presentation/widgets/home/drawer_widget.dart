@@ -2,7 +2,6 @@ import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/widgets/authentication/logout_button.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_text_button.dart';
-import 'package:college_cupid/presentation/widgets/global/deactivate_account_alert.dart';
 import 'package:college_cupid/routing/app_router.dart';
 
 import 'package:flutter/material.dart';
@@ -26,7 +25,7 @@ class DrawerWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // TODO: App Logo
-                  const Divider(),
+                  // const Divider(),
                   CupidTextButton(
                     text: 'Blocked Users',
                     onPressed: () {

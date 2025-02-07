@@ -38,8 +38,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     final userProfileRepo = ref.read(userProfileRepoProvider);
     filterState = ref.watch(filterProvider);
     pageViewState = ref.watch(pageViewProvider);
-    _pageController = PageController(
-        initialPage: ref.read(pageViewProvider.notifier).currentPage);
+    _pageController = PageController(initialPage: ref.read(pageViewProvider.notifier).currentPage);
     if (pageViewState.homeTabProfileList.isEmpty) {
       return const Center(
         child: Text(
@@ -55,23 +54,22 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       allowImplicitScrolling: false,
       controller: _pageController,
       scrollDirection: Axis.horizontal,
+      physics: const PageScrollPhysics(),
       onPageChanged: (value) async {
         final pageViewController = ref.read(pageViewProvider.notifier);
         ref.read(pageViewProvider.notifier).setCurrentPage(value);
         if (pageViewController.isLastPage) return;
         if (pageViewState.homeTabProfileList.length - value <= 4) {
-          ref
-              .read(pageViewProvider.notifier)
-              .setPageNumber(pageViewController.pageNumber + 1);
+          ref.read(pageViewProvider.notifier).setPageNumber(pageViewController.pageNumber + 1);
           final filter = {
             'gender': filterState.interestedInGender.databaseString,
             'program': filterState.program.databaseString,
             'yearOfJoin': filterState.yearOfJoin,
             'name': filterState.name
           };
-          print("Filter : $filter");
-          final List<UserProfile> users = await userProfileRepo
-              .getPaginatedUsers(pageViewController.pageNumber, filter);
+          // print("Filter : $filter");
+          final List<UserProfile> users =
+              await userProfileRepo.getPaginatedUsers(pageViewController.pageNumber, filter);
           if (users.length < 10) {
             ref.read(pageViewProvider.notifier).setIsLastPage(true);
           }
