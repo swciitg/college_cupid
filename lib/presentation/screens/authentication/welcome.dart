@@ -19,79 +19,69 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 3 * kToolbarHeight),
-            _cupidImage(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 64),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Ready to find your',
-                    textAlign: TextAlign.left,
-                    style: _headingStyle(),
-                  ),
-                  Text(
-                    'perfect campus',
-                    textAlign: TextAlign.left,
-                    style: _headingStyle(),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'match?',
-                        textAlign: TextAlign.left,
-                        style: _headingStyle(),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Image.asset(
-                            'assets/images/curved_arrow.png',
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              'Yes of course!',
-              style: CupidStyles.lightTextStyle.setColor(
-                const Color.fromARGB(255, 148, 187, 233),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                context.goNamed(AppRoutes.loginWebview.name);
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                foregroundColor: CupidColors.offWhiteColor,
-                backgroundColor: CupidColors.blackColor,
-                textStyle: const TextStyle(
-                  fontFamily: 'NeueMontreal',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-                splashFactory: InkRipple.splashFactory,
-              ),
-              child: Text(
-                'Sign in with Outlook',
-                style: CupidStyles.lightTextStyle.semiBold.setColor(
-                  CupidColors.offWhiteColor,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 2 * kToolbarHeight),
+              _cupidImage(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 64),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Ready to find your\nperfect campus\nmatch?',
+                      textAlign: TextAlign.left,
+                      style: _headingStyle(),
+                    ),
+                    // ConstrainedBox(
+                    //   constraints: const BoxConstraints(maxWidth: 200),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(top: 20),
+                    //     child: Image.asset(
+                    //       'assets/images/curved_arrow.png',
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              Text(
+                'Yes of course!',
+                style: CupidStyles.lightTextStyle.setColor(
+                  const Color.fromARGB(255, 148, 187, 233),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context.goNamed(AppRoutes.loginWebview.name);
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  foregroundColor: CupidColors.offWhiteColor,
+                  backgroundColor: CupidColors.blackColor,
+                  textStyle: const TextStyle(
+                    fontFamily: 'NeueMontreal',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                  splashFactory: InkRipple.splashFactory,
+                ),
+                child: Text(
+                  'Sign in with Outlook',
+                  style: CupidStyles.lightTextStyle.semiBold.setColor(
+                    CupidColors.offWhiteColor,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );

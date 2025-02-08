@@ -106,7 +106,8 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final onboardingController =
+        ref.read(onboardingControllerProvider.notifier);
     final size = MediaQuery.sizeOf(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +171,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Suffle question",
+                "Shuffle question",
                 style: CupidStyles.normalTextStyle.copyWith(
                   decoration: TextDecoration.underline,
                 ),
@@ -187,7 +188,8 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
     );
   }
 
-  SizedBox _questionsPageView(Size size, OnboardingController onboardingController) {
+  SizedBox _questionsPageView(
+      Size size, OnboardingController onboardingController) {
     return SizedBox(
       width: size.width,
       height: size.width * 0.8,

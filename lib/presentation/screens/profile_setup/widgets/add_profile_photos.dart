@@ -47,18 +47,18 @@ class AddPhotos extends ConsumerWidget {
             children: [
               Positioned(
                 top: 0,
-                right: 60,
-                child: _profilePic(0, ref, context),
+                right: size.width * 0.2,
+                child: _profilePic(0, ref, context, size.height),
               ),
               Positioned(
                 top: 70,
-                left: 0,
-                child: _profilePic(1, ref, context),
+                left: size.width * 0.1,
+                child: _profilePic(1, ref, context, size.height),
               ),
               Positioned(
                 bottom: 10,
-                right: 10,
-                child: _profilePic(2, ref, context),
+                right: size.width * 0.1,
+                child: _profilePic(2, ref, context, size.height),
               ),
             ],
           ),
@@ -81,11 +81,12 @@ class AddPhotos extends ConsumerWidget {
     );
   }
 
-  Widget _profilePic(int index, WidgetRef ref, BuildContext context) {
+  Widget _profilePic(
+      int index, WidgetRef ref, BuildContext context, double height) {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final image = onboardingState.images?[index];
-    const height = 230.0;
-    const width = 230 * 0.75;
+    final updatedHeight = height > 1000.0 ? 300.0 : 230.0;
+    final width = updatedHeight * 0.75;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -104,7 +105,7 @@ class AddPhotos extends ConsumerWidget {
           borderRadius: const BorderRadius.all(Radius.circular(30)),
         ),
         child: SizedBox(
-          height: height,
+          height: updatedHeight,
           width: width,
           child: image == null
               ? const Center(child: Icon(Icons.add, size: 40))
