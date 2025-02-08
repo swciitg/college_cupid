@@ -34,8 +34,7 @@ class EditProfile extends ConsumerStatefulWidget {
 }
 
 class _EditProfileState extends ConsumerState<EditProfile> {
-  List<Program> programs =
-      Program.values.where((e) => e != Program.none).toList();
+  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
   late Gender _selectedGender;
   late Program _selectedProgram;
   late int _yearOfJoin;
@@ -59,18 +58,15 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     final userState = ref.read(userProvider);
     profileSave = userState.myProfile!;
     surprizeQuiz.addAll(profileSave.surpriseQuiz);
-    textEditingControllers.addAll(profileSave.surpriseQuiz
-        .map((e) => TextEditingController(text: e.answer))
-        .toList());
+    textEditingControllers.addAll(
+        profileSave.surpriseQuiz.map((e) => TextEditingController(text: e.answer)).toList());
     _selectedProgram = userState.myProfile!.program!;
     _selectedGender = userState.myProfile!.gender!;
     _selectedSexualOrientation = userState.myProfile!.sexualOrientation!.type;
     _displaySexualOrientation = userState.myProfile!.sexualOrientation!.display;
     _yearOfJoin = DateTime.now().year % 100 - userState.myProfile!.yearOfJoin!;
-    _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ??
-        LookingFor.longTermPartner;
-    _displayRelationshipGoal =
-        userState.myProfile!.relationshipGoal?.display ?? true;
+    _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ?? LookingFor.longTermPartner;
+    _displayRelationshipGoal = userState.myProfile!.relationshipGoal?.display ?? true;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(onboardingControllerProvider.notifier).setInterests(
@@ -79,8 +75,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     });
     questionScrollController.addListener(() {
       if (screenWidth == null) return;
-      _currentQuestion =
-          (questionScrollController.offset / (screenWidth! - 60)).toInt();
+      _currentQuestion = (questionScrollController.offset / (screenWidth! - 60)).toInt();
       setState(() {});
     });
   }
@@ -92,10 +87,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   }
 
   void _deleteImage(int index) {
-    if (newImages[index] != null) {
-      newImages[index] == null;
-      return;
-    }
+    newImages[index] = null;
+    setState(() {});
     if (index < ref.read(userProvider).myProfile!.images.length) {
       final image = ref.read(userProvider).myProfile!.images[index];
       if (!deletedImages.contains(image.url)) {
@@ -134,8 +127,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     });
     var profile = ref.read(userProvider).myProfile!;
     var newImagesLenth = newImages.where((e) => e != null).length;
-    if (newImagesLenth + profile.images.length < 2) {
-      showSnackBar("You need at least 2 images");
+    if (newImagesLenth + profile.images.length < 3) {
+      showSnackBar("Select all 3 images");
       setState(() {
         _loading = false;
       });
@@ -150,19 +143,16 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         for (int i = 0; i < newImages.length; i++) {
           final image = newImages[i];
           if (image == null) continue;
-          final url = await ref
-              .read(userProfileRepoProvider)
-              .postUserProfileImage(image, onSendProgress: (val) {
+          final url = await ref.read(userProfileRepoProvider).postUserProfileImage(image,
+              onSendProgress: (val) {
             final imageProgress = (count + val) / newImagesLenth * 100;
             setState(
               () {
-                _loadingMessage =
-                    "Uploading Image(s) : ${imageProgress.toInt()}%";
+                _loadingMessage = "Uploading Image(s) : ${imageProgress.toInt()}%";
               },
             );
           });
-          final blurHash = await imageHelpers.encodeBlurHash(
-              imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
           if (i <= profile.images.length - 1) {
             updatedImages[i] = ImageModel(url: url, blurHash: blurHash);
           } else {
@@ -244,13 +234,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TextField(
-                    controller:
-                        TextEditingController(text: LoginStore.displayName),
+                    controller: TextEditingController(text: LoginStore.displayName),
                     decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: "Name",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle:
-                          const TextStyle(color: CupidColors.secondaryColor),
+                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
                       enabled: false,
                       fillColor: Colors.transparent,
                     ),
@@ -261,8 +249,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     decoration: CupidStyles.textFieldInputDecoration.copyWith(
                       labelText: "Email",
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle:
-                          const TextStyle(color: CupidColors.secondaryColor),
+                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
                       enabled: false,
                       fillColor: Colors.transparent,
                     ),
@@ -333,8 +320,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     children: [
                       ...List.generate(5, (index) {
                         final year = index + 1;
-                        return _buildChip(
-                            year.toString(), _yearOfJoin == year, () {});
+                        return _buildChip(year.toString(), _yearOfJoin == year, () {});
                       }),
                       _buildChip("beyond", _yearOfJoin == 6, () {}),
                     ],
@@ -343,8 +329,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Interests",
-                          style: CupidStyles.subHeadingTextStyle),
+                      const Text("Interests", style: CupidStyles.subHeadingTextStyle),
                       IconButton(
                         onPressed: () {
                           context.goNamed(AppRoutes.editInterests.name);
@@ -386,10 +371,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       Switch(
                         inactiveTrackColor: WidgetStateColor.transparent,
                         activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor:
-                            CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor:
-                            CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
                         value: _displaySexualOrientation,
                         onChanged: (value) {
                           setState(() {
@@ -400,8 +383,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text("Surprise quiz",
-                      style: CupidStyles.subHeadingTextStyle),
+                  const Text("Surprise quiz", style: CupidStyles.subHeadingTextStyle),
                   const SizedBox(height: 8),
                   _buildQuestions(size.width - 40),
                   const SizedBox(height: 16),
@@ -417,16 +399,14 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       ),
                     ),
                   ),
-                  const Text("Looking for",
-                      style: CupidStyles.subHeadingTextStyle),
+                  const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
                   const SizedBox(height: 4),
                   const Text(
                     "The profiles showed to you will be based on this",
                     style: CupidStyles.normalTextStyle,
                   ),
                   const SizedBox(height: 16),
-                  _buildLookingForChoiceChips(_relationshipGoal,
-                      onSelected: (value) {
+                  _buildLookingForChoiceChips(_relationshipGoal, onSelected: (value) {
                     setState(() {
                       _relationshipGoal = value;
                     });
@@ -449,10 +429,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         },
                         inactiveTrackColor: WidgetStateColor.transparent,
                         activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor:
-                            CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor:
-                            CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
                       ),
                     ],
                   ),
@@ -468,16 +446,14 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   ),
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: CupidColors.secondaryColor,
                       ),
                       child: Text(
                         _loadingMessage!,
-                        style:
-                            CupidStyles.normalTextStyle.setColor(Colors.white),
+                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
                       ),
                     ),
                   ),
@@ -548,20 +524,17 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         right: 4,
                         child: IconButton(
                           onPressed: () {
-                            var rand =
-                                math.Random().nextInt(quizQuestions.length);
-                            while (surprizeQuiz.any((e) =>
-                                e.question == quizQuestions[rand].question)) {
-                              rand =
-                                  math.Random().nextInt(quizQuestions.length);
+                            var rand = math.Random().nextInt(quizQuestions.length);
+                            while (surprizeQuiz
+                                .any((e) => e.question == quizQuestions[rand].question)) {
+                              rand = math.Random().nextInt(quizQuestions.length);
                             }
                             print(quizQuestions[rand].question);
                             surprizeQuiz[index] = quizQuestions[rand];
                             // textEditingControllers[index].clear();
                             setState(() {});
                           },
-                          icon: const Icon(Icons.refresh_rounded,
-                              color: Colors.black),
+                          icon: const Icon(Icons.refresh_rounded, color: Colors.black),
                         ),
                       ),
                     ],
@@ -581,8 +554,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       children: List.generate(
         ref.watch(onboardingControllerProvider).interests?.length ?? 0,
         (index) {
-          final interest =
-              ref.watch(onboardingControllerProvider).interests?[index] ?? "";
+          final interest = ref.watch(onboardingControllerProvider).interests?[index] ?? "";
           return _buildChip(interest, false, () {});
         },
       ),
@@ -645,13 +617,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag
-                  ? Colors.white
-                  : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
             ),
           ),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: WidgetStateColor.resolveWith(
             (states) {
               if (states.contains(WidgetState.selected)) {
@@ -679,9 +648,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidStyles.normalTextStyle.copyWith(
-              color: selectedChoice == tag
-                  ? Colors.white
-                  : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
             ),
           ),
           color: WidgetStateColor.resolveWith(
@@ -706,7 +673,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   }
 
   Widget _profilePic(int index, BuildContext context) {
-    final image = newImages[index];
     String? url;
     String? blurHash;
     if (index <= ref.read(userProvider).myProfile!.images.length - 1) {
@@ -725,7 +691,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             ),
             child: SizedBox(
               height: height,
-              child: image != null
+              child: newImages[index] != null
                   ? Stack(
                       children: [
                         Positioned.fill(
@@ -733,7 +699,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             borderRadius: const BorderRadius.all(
                               Radius.circular(20),
                             ),
-                            child: Image.file(image, fit: BoxFit.cover),
+                            child: Image.file(newImages[index]!, fit: BoxFit.cover),
                           ),
                         ),
                         _deleteImageButton(index),
@@ -778,13 +744,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           onTap: () async {
                             final image = await imageHelpers.pickImage();
                             if (image == null) return;
-                            final pickedImage =
-                                await imageHelpers.xFileToImage(xFile: image);
+                            final pickedImage = await imageHelpers.xFileToImage(xFile: image);
                             if (!mounted) return;
-                            final croppedImage = await Navigator.of(context)
-                                .push<File>(MaterialPageRoute(
-                              builder: (context) =>
-                                  CropImageScreen(image: pickedImage),
+                            final croppedImage =
+                                await Navigator.of(context).push<File>(MaterialPageRoute(
+                              builder: (context) => CropImageScreen(image: pickedImage),
                             ));
                             if (croppedImage == null) return;
                             setState(() {
@@ -802,24 +766,26 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     );
   }
 
-  GestureDetector _deleteImageButton(int index) {
+  Widget _deleteImageButton(int index) {
     return GestureDetector(
       onTap: () => _deleteImage(index),
       child: Align(
         alignment: Alignment.center,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.red.withValues(
-              alpha: 0.5,
+        child: SizedBox(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.red.withValues(
+                alpha: 0.5,
+              ),
             ),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.delete,
-              size: 20,
-              color: CupidColors.secondaryColor,
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.delete,
+                size: 20,
+                color: CupidColors.secondaryColor,
+              ),
             ),
           ),
         ),

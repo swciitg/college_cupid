@@ -43,7 +43,7 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
   late PageController _pageController;
   List<TextEditingController> textEditingControllers = [];
 
-  /// Length = 2
+  /// Length = 3
   List<int> randomQuestions = [0, 0, 0];
 
   @override
@@ -59,6 +59,11 @@ class _SurpriseQuizState extends ConsumerState<SurpriseQuiz> {
       _swapSwapQuestion(0);
       _swapSwapQuestion(1);
       _swapSwapQuestion(2);
+      ref.read(onboardingControllerProvider.notifier).setSurpriseQuiz([
+        quizQuestions[randomQuestions[0]],
+        quizQuestions[randomQuestions[1]],
+        quizQuestions[randomQuestions[2]],
+      ]);
     });
   }
 

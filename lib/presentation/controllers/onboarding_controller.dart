@@ -28,8 +28,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 
-final onboardingControllerProvider =
-    StateNotifierProvider<OnboardingController, OnboardingState>(
+final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
 );
 
@@ -119,8 +118,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         );
         return true;
       case OnboardingStep.addPhotos:
-        final nonNullImagesCount =
-            state.images!.where((element) => element != null).length;
+        final nonNullImagesCount = state.images!.where((element) => element != null).length;
         if (nonNullImagesCount < 3) {
           showSnackBar("Select all images!");
           return false;
@@ -133,13 +131,11 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         }
         return await createUser();
       case OnboardingStep.surpriseQuiz:
-        final anyEmpty = state.userProfile?.surpriseQuiz.any((element) {
-              return element.answer.isEmpty;
-            }) ??
-            true;
-        if (anyEmpty) {
-          showSnackBar("Please answer these questions");
-          return false;
+        for (var e in state.userProfile!.surpriseQuiz) {
+          if (e.answer.isEmpty) {
+            showSnackBar("Please answer all questions");
+            return false;
+          }
         }
         return true;
     }
@@ -193,8 +189,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateSexualOrientationDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        sexualOrientation:
-            state.userProfile?.sexualOrientation?.copyWith(display: value),
+        sexualOrientation: state.userProfile?.sexualOrientation?.copyWith(display: value),
       ),
     );
   }
@@ -231,8 +226,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoal:
-            state.userProfile?.relationshipGoal?.copyWith(display: value),
+        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -276,19 +270,16 @@ class OnboardingController extends StateNotifier<OnboardingState> {
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
-                loadingMessage:
-                    "Uploading Profile Images ${imageProgress.toInt()}%",
+                loadingMessage: "Uploading Profile Images ${imageProgress.toInt()}%",
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(
-              imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
-      state = state.copyWith(
-          userProfile: state.userProfile?.copyWith(images: imageModels));
+      state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
@@ -310,6 +301,11 @@ class OnboardingController extends StateNotifier<OnboardingState> {
 
   void setInterests(List<String> interests) {
     state = state.copyWith(interests: interests);
+  }
+
+  void setSurpriseQuiz(List<QuizQuestion> ques) {
+    final user = state.userProfile!.copyWith(surpriseQuiz: ques);
+    state = state.copyWith(userProfile: user);
   }
 
   void updateSurpriseQuizAnswer(List<QuizQuestion> ques, int index) {
