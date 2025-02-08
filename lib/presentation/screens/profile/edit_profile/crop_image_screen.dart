@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:ui' as ui;
-
 import 'package:college_cupid/presentation/widgets/global/cupid_text_button.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/services/image_helpers.dart';
@@ -97,7 +94,8 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '1 : 1',
-                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                    style: CupidStyles.textButtonStyle
+                        .copyWith(color: Colors.white),
                   ),
                 ),
                 TextButton(
@@ -106,7 +104,8 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '3 : 4',
-                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                    style: CupidStyles.textButtonStyle
+                        .copyWith(color: Colors.white),
                   ),
                 ),
                 TextButton(
@@ -115,7 +114,8 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '9 : 16',
-                    style: CupidStyles.textButtonStyle.copyWith(color: Colors.white),
+                    style: CupidStyles.textButtonStyle
+                        .copyWith(color: Colors.white),
                   ),
                 ),
               ],
@@ -143,8 +143,8 @@ class _CropImageScreenState extends State<CropImageScreen> {
       });
     }
     final nav = Navigator.of(context);
-    ui.Image image = await controller.croppedBitmap();
-    File croppedFile = await imageHelpers.imageToFile(image: image);
+    final image = await controller.croppedBitmap();
+    final croppedFile = await imageHelpers.imageToFile(image: image);
     nav.pop(croppedFile);
   }
 }

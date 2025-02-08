@@ -55,16 +55,19 @@ class _HomeState extends ConsumerState<Home> {
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
-      builder: (context) => const ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        child: Padding(
-          padding: EdgeInsets.only(top: kToolbarHeight),
-          child: MbtiTestScreen(),
+      builder: (context) => const PopScope(
+        canPop: false,
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: Padding(
+            padding: EdgeInsets.only(top: kToolbarHeight),
+            child: MbtiTestScreen(),
+          ),
         ),
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final userController = ref.watch(userProvider);

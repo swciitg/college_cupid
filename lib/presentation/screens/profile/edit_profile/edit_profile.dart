@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
+
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
@@ -19,7 +20,6 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -839,7 +839,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       child: _loading
           ? const CircularProgressIndicator(color: Colors.white)
           : const Icon(
-              FluentIcons.save_16_regular,
+              Icons.check,
               size: 30,
               color: Colors.white,
             ),
