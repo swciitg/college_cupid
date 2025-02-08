@@ -8,8 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:get_storage/get_storage.dart';
 
-final pageViewProvider =
-    StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
+final pageViewProvider = StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
   return PageViewNotifier(ref: ref);
 });
 
@@ -31,6 +30,16 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     state = state.copyWith(
       homeTabProfileList: [...state.homeTabProfileList, ...value],
     );
+    if (value.length < 10) {
+      if (search) {
+        setIsLastPage(true);
+      } else {
+        setPageNumber(0);
+      }
+    } else {
+      setPageNumber(pageNumber + 1);
+      setIsLastPage(false);
+    }
     if (!search) {
       final ls = GetStorage();
       final newAddition = PageViewState(
@@ -39,7 +48,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
       );
       final data = {
         'state': newAddition.toJson(),
-        'pageNumber': isLastPage ? 0 : pageNumber,
+        'pageNumber': pageNumber,
       };
       log("pageNumber: ${data['pageNumber']}", name: 'PageViewNotifier');
       ls.write('pageViewState', data);
@@ -48,9 +57,8 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
 
   void removeHomeTabProfile(String email) {
     state = state.copyWith(
-      homeTabProfileList: state.homeTabProfileList
-          .where((element) => element.email != email)
-          .toList(),
+      homeTabProfileList:
+          state.homeTabProfileList.where((element) => element.email != email).toList(),
     );
   }
 
@@ -65,7 +73,6 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
   void resetStore() {
     currentPage = 0;
     pageNumber = 0;
-    isLastPage = false;
     state = state.copyWith(loading: false, homeTabProfileList: []);
   }
 
@@ -81,11 +88,10 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     resetStore();
     final userProfileRepo = _ref.read(userProfileRepoProvider);
     final filterStore = _ref.read(filterProvider);
-    final pageViewStore = _ref.read(pageViewProvider.notifier);
     final user = _ref.read(userProvider).myProfile;
     if (user?.deactivated == true) return;
     try {
-      pageViewStore.setLoading(true);
+      setLoading(true);
       final ls = GetStorage();
       final data = ls.read('pageViewState');
       if (data != null && !search) {
@@ -99,7 +105,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
         state = current.copyWith(
           homeTabProfileList: previousProfiles,
         );
-        pageViewStore.setLoading(false);
+        setLoading(false);
         return;
       }
       if (user?.personalityType == null) return;
@@ -110,13 +116,13 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
         'yearOfJoin': filterStore.yearOfJoin,
         'name': filterStore.name,
       });
-      pageViewStore.setHomeTabProfiles(profiles);
-      pageViewStore.setIsLastPage(profiles.length < 10);
-      pageViewStore.setLoading(false);
+      setHomeTabProfiles(profiles);
+      setPageNumber(profiles.length < 10 && !search ? 0 : 1);
+      setLoading(false);
     } catch (e) {
       showSnackBar("Something went wrong! try again later.");
       log("Error fetching initial profiles: ${e.toString()}");
-      pageViewStore.setLoading(false);
+      setLoading(false);
     }
   }
 }
@@ -150,9 +156,8 @@ class PageViewState {
   factory PageViewState.fromJson(Map<String, dynamic> json) {
     return PageViewState(
       loading: json['loading'],
-      homeTabProfileList: (json['homeTabProfileList'] as List)
-          .map((e) => UserProfile.fromJson(e))
-          .toList(),
+      homeTabProfileList:
+          (json['homeTabProfileList'] as List).map((e) => UserProfile.fromJson(e)).toList(),
     );
   }
 }

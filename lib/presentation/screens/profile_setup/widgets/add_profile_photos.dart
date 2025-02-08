@@ -47,17 +47,17 @@ class AddPhotos extends ConsumerWidget {
             children: [
               Positioned(
                 top: 0,
-                right: size.width * 0.2,
+                right: size.width * 0.08,
                 child: _profilePic(0, ref, context, size.height),
               ),
               Positioned(
                 top: 70,
-                left: size.width * 0.1,
+                left: size.width * 0.08,
                 child: _profilePic(1, ref, context, size.height),
               ),
               Positioned(
                 bottom: 10,
-                right: size.width * 0.1,
+                right: size.width * 0.12,
                 child: _profilePic(2, ref, context, size.height),
               ),
             ],
@@ -81,8 +81,7 @@ class AddPhotos extends ConsumerWidget {
     );
   }
 
-  Widget _profilePic(
-      int index, WidgetRef ref, BuildContext context, double height) {
+  Widget _profilePic(int index, WidgetRef ref, BuildContext context, double height) {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final image = onboardingState.images?[index];
     final updatedHeight = height > 1000.0 ? 300.0 : 230.0;

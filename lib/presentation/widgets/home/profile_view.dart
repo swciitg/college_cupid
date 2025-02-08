@@ -58,9 +58,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       onPageChanged: (value) async {
         final pageViewController = ref.read(pageViewProvider.notifier);
         ref.read(pageViewProvider.notifier).setCurrentPage(value);
-        if (pageViewController.isLastPage) return;
+        if (ref.read(pageViewProvider.notifier).isLastPage && filterState.name.isNotEmpty) return;
         if (pageViewState.homeTabProfileList.length - value <= 4) {
-          ref.read(pageViewProvider.notifier).setPageNumber(pageViewController.pageNumber + 1);
           final filter = {
             'gender': filterState.interestedInGender.databaseString,
             'program': filterState.program.databaseString,
@@ -70,9 +69,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           // print("Filter : $filter");
           final List<UserProfile> users =
               await userProfileRepo.getPaginatedUsers(pageViewController.pageNumber, filter);
-          if (users.length < 10) {
-            ref.read(pageViewProvider.notifier).setIsLastPage(true);
-          }
           ref.read(pageViewProvider.notifier).addHomeTabProfiles(
                 users,
                 search: filterState.name.isNotEmpty,

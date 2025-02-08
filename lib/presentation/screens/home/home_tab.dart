@@ -110,13 +110,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 textInputAction: TextInputAction.search,
                 onFieldSubmitted: (value) {
                   filterController.setName(value);
-                  pageViewController.getInitialProfiles( search: true);
+                  pageViewController.getInitialProfiles(search: true);
                 },
                 onChanged: (value) {
                   if (timer != null) timer!.cancel();
                   timer = Timer(const Duration(seconds: 1), () {
                     filterController.setName(value);
-                    pageViewController.getInitialProfiles( search: value.isNotEmpty);
+                    pageViewController.getInitialProfiles(search: value.isNotEmpty);
                     if (value.isEmpty) {
                       FocusScope.of(context).unfocus();
                     }
@@ -143,9 +143,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear),
                     onPressed: () {
+                      if (_searchController.text.isEmpty) return;
                       _searchController.clear();
                       filterController.setName('');
-                      pageViewController.getInitialProfiles( search: false);
+                      pageViewController.getInitialProfiles(search: false);
                     },
                   ),
                 ),
