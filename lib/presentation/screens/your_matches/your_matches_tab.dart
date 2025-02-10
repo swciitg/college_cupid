@@ -84,8 +84,8 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            // getAdmirerCountMessage(snapshot.data ?? 0),
-                            getAdmirerCountMessage(0),
+                            getAdmirerCountMessage(snapshot.data ?? 0),
+                            // getAdmirerCountMessage(0),
                             style: CupidStyles.normalTextStyle.copyWith(
                               fontSize: 18,
                             ),

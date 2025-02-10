@@ -31,14 +31,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(filterProvider.notifier).resetStore();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     filterStore = ref.watch(filterProvider);
     filterController = ref.read(filterProvider.notifier);
@@ -110,13 +102,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 textInputAction: TextInputAction.search,
                 onFieldSubmitted: (value) {
                   filterController.setName(value);
-                  pageViewController.getInitialProfiles(search: true);
+                  pageViewController.getInitialProfiles();
                 },
                 onChanged: (value) {
                   if (timer != null) timer!.cancel();
                   timer = Timer(const Duration(seconds: 1), () {
                     filterController.setName(value);
-                    pageViewController.getInitialProfiles(search: value.isNotEmpty);
+                    pageViewController.getInitialProfiles();
                     if (value.isEmpty) {
                       FocusScope.of(context).unfocus();
                     }
@@ -146,7 +138,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       if (_searchController.text.isEmpty) return;
                       _searchController.clear();
                       filterController.setName('');
-                      pageViewController.getInitialProfiles(search: false);
+                      pageViewController.getInitialProfiles();
                     },
                   ),
                 ),

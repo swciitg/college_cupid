@@ -103,37 +103,31 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
             children: [
               SelectionButton(
                 onTap: () {
-                  filterController
-                      .setInterestedInGender(InterestedInGender.girls);
+                  filterController.setInterestedInGender(InterestedInGender.girls);
                 },
                 label: InterestedInGender.girls.displayString,
                 borderRadius: const BorderRadius.horizontal(
                   left: Radius.circular(15),
                 ),
-                isSelected:
-                    filterStore.interestedInGender == InterestedInGender.girls,
+                isSelected: filterStore.interestedInGender == InterestedInGender.girls,
               ),
               SelectionButton(
                 onTap: () {
-                  filterController
-                      .setInterestedInGender(InterestedInGender.boys);
+                  filterController.setInterestedInGender(InterestedInGender.boys);
                 },
                 label: InterestedInGender.boys.displayString,
                 borderRadius: const BorderRadius.all(Radius.zero),
-                isSelected:
-                    filterStore.interestedInGender == InterestedInGender.boys,
+                isSelected: filterStore.interestedInGender == InterestedInGender.boys,
               ),
               SelectionButton(
                 onTap: () {
-                  filterController
-                      .setInterestedInGender(InterestedInGender.both);
+                  filterController.setInterestedInGender(InterestedInGender.both);
                 },
                 label: InterestedInGender.both.displayString,
                 borderRadius: const BorderRadius.horizontal(
                   right: Radius.circular(15),
                 ),
-                isSelected:
-                    filterStore.interestedInGender == InterestedInGender.both,
+                isSelected: filterStore.interestedInGender == InterestedInGender.both,
               ),
             ],
           ),
@@ -145,16 +139,15 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 label: 'Programs',
                 value: filterStore.program.displayString,
                 onChanged: (selectedProgram) {
-                  filterController.setProgram(Program.values
-                      .firstWhere((p) => p.displayString == selectedProgram));
+                  filterController.setProgram(
+                      Program.values.firstWhere((p) => p.displayString == selectedProgram));
                   if (selectedProgram == Program.none.displayString) {
                     filterController.setYearOfJoin(null);
                   }
                 },
                 icon: dropDownIcon,
               ),
-              if (ref.watch(filterProvider).program != Program.none)
-                const SizedBox(width: 12),
+              if (ref.watch(filterProvider).program != Program.none) const SizedBox(width: 12),
               if (ref.watch(filterProvider).program != Program.none)
                 CustomDropDown(
                   enabled: ref.watch(filterProvider).program != Program.none,
@@ -162,8 +155,8 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                       .toList()
                       .sublist(0, (filterStore.program.numberOfYears ?? 4) + 2),
                   label: "Year of join",
-                  value: yearOfJoinMap.keys.firstWhere(
-                      (key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
+                  value: yearOfJoinMap.keys
+                      .firstWhere((key) => yearOfJoinMap[key] == filterStore.yearOfJoin),
                   onChanged: (selectedYear) {
                     if (ref.read(filterProvider).program == Program.none) {
                       setState(() {
@@ -189,9 +182,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
           CupidButton(
             text: "Apply",
             onTap: () {
-              ref
-                  .read(pageViewProvider.notifier)
-                  .getInitialProfiles(search: true);
+              ref.read(pageViewProvider.notifier).getInitialProfiles();
               Navigator.pop(context);
             },
             backgroundColor: CupidColors.secondaryColor,

@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/shared/enums.dart';
 
-final filterProvider =
-    StateNotifierProvider<FilterNotifier, FilterState>((ref) {
+final filterProvider = StateNotifierProvider<FilterNotifier, FilterState>((ref) {
   return FilterNotifier();
 });
 
@@ -64,6 +63,12 @@ class FilterNotifier extends StateNotifier<FilterState> {
       interestedInGender: InterestedInGender.both,
     );
   }
+
+  bool get hasFilters =>
+      state.program != Program.none ||
+      state.yearOfJoin != null ||
+      state.interestedInGender != InterestedInGender.both ||
+      state.name.isNotEmpty;
 
   void setFilters({
     required InterestedInGender gender,

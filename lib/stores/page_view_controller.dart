@@ -26,7 +26,8 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     isLastPage = value;
   }
 
-  void addHomeTabProfiles(List<UserProfile> value, {bool search = false}) {
+  void addHomeTabProfiles(List<UserProfile> value) {
+    final search = _ref.read(filterProvider.notifier).hasFilters;
     state = state.copyWith(
       homeTabProfileList: [...state.homeTabProfileList, ...value],
     );
@@ -42,15 +43,10 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     }
     if (!search) {
       final ls = GetStorage();
-      final newAddition = PageViewState(
-        loading: false,
-        homeTabProfileList: state.homeTabProfileList.sublist(currentPage),
-      );
       final data = {
-        'state': newAddition.toJson(),
         'pageNumber': pageNumber,
       };
-      log("pageNumber: ${data['pageNumber']}", name: 'PageViewNotifier');
+      log("pageNumber (write): ${data['pageNumber']}", name: 'PageViewNotifier');
       ls.write('pageViewState', data);
     }
   }
@@ -84,8 +80,9 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     currentPage = value;
   }
 
-  Future<void> getInitialProfiles({bool search = false}) async {
+  Future<void> getInitialProfiles() async {
     resetStore();
+    final search = _ref.read(filterProvider.notifier).hasFilters;
     final userProfileRepo = _ref.read(userProfileRepoProvider);
     final filterStore = _ref.read(filterProvider);
     final user = _ref.read(userProvider).myProfile;
@@ -95,21 +92,15 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
       final ls = GetStorage();
       final data = ls.read('pageViewState');
       if (data != null && !search) {
-        log("pageNumber: ${data['pageNumber']}", name: 'PageViewNotifier');
-        final pageNumber = data['pageNumber'] as int;
-        final current = PageViewState.fromJson(data['state']);
-        final previousProfiles = current.homeTabProfileList;
-        log("profiles: ${previousProfiles.length}", name: 'PageViewNotifier');
+        var pageNumber = data['pageNumber'] as int;
+        pageNumber = (pageNumber - 2).clamp(0, pageNumber);
         setPageNumber(pageNumber);
+        log("pageNumber (read): $pageNumber", name: 'PageViewNotifier');
         setCurrentPage(0);
-        state = current.copyWith(
-          homeTabProfileList: previousProfiles,
-        );
         setLoading(false);
-        return;
       }
       if (user?.personalityType == null) return;
-      final profiles = await userProfileRepo.getPaginatedUsers(0, {
+      final profiles = await userProfileRepo.getPaginatedUsers(pageNumber, {
         //don't want it to be triggered when pageNumber is changed
         'gender': filterStore.interestedInGender.databaseString,
         'program': filterStore.program.databaseString,
@@ -117,7 +108,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
         'name': filterStore.name,
       });
       setHomeTabProfiles(profiles);
-      setPageNumber(profiles.length < 10 && !search ? 0 : 1);
+      setPageNumber(profiles.length < 10 ? 0 : pageNumber + 1);
       setLoading(false);
     } catch (e) {
       showSnackBar("Something went wrong! try again later.");
@@ -143,21 +134,6 @@ class PageViewState {
     return PageViewState(
       loading: loading ?? this.loading,
       homeTabProfileList: homeTabProfileList ?? this.homeTabProfileList,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'loading': loading,
-      'homeTabProfileList': homeTabProfileList.map((e) => e.toJson()).toList(),
-    };
-  }
-
-  factory PageViewState.fromJson(Map<String, dynamic> json) {
-    return PageViewState(
-      loading: json['loading'],
-      homeTabProfileList:
-          (json['homeTabProfileList'] as List).map((e) => UserProfile.fromJson(e)).toList(),
     );
   }
 }

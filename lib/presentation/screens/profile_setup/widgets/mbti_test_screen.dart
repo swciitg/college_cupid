@@ -94,8 +94,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       setState(() {
         _loading = true;
       });
-      final personality =
-          ref.read(mbtiControllerProvider.notifier).getPersonalityType();
+      final personality = ref.read(mbtiControllerProvider.notifier).getPersonalityType();
       if (personality == null) {
         setState(() {
           _loading = false;
@@ -229,15 +228,9 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
   Widget _submitButton() {
     return Builder(
       builder: (context) {
-        // final unanswered = ref
-        //     .watch(mbtiControllerProvider)
-        //     .questions
-        //     .any((e) => e.answer != null);
-        // if (unanswered) return const SizedBox();
         return FloatingActionButton(
           backgroundColor: CupidColors.cupidPeach,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
           onPressed: () {
             _postMBTI();
           },
@@ -316,8 +309,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     return Consumer(
       builder: (context, ref, child) {
         final mbtiModel = ref.watch(mbtiControllerProvider);
-        final answered =
-            mbtiModel.questions.where((e) => e.answer != null).length;
+        final answered = mbtiModel.questions.where((e) => e.answer != null).length;
         final progress = (answered / 20 * 100).toInt();
         return Row(
           children: [
@@ -368,56 +360,57 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
               color: CupidColors.cupidGreen.withValues(alpha: 0.8),
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                e.question,
-                style: CupidStyles.lightTextStyle.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Row(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  5,
-                  (index) {
-                    return MBTIOptionButton(
-                      index: index,
-                      selected: e.answer == index,
-                      onTap: () async {
-                        if (_loading) return;
-                        final lastAnswered = mbtiModel.questions
-                                .where((e) => e.answer != null)
-                                .lastOrNull
-                                ?.id ??
-                            0;
-                        if (e.id > lastAnswered + 1) {
-                          setState(() {
-                            _errorMessage =
-                                "Please answer the previous questions first!";
-                          });
-                          return;
-                        }
-                        if (_errorMessage != null) {
-                          setState(() {
-                            _errorMessage = null;
-                          });
-                        }
-                        controller.answerQuestion(e.id, index);
-                        await Future.delayed(
-                          const Duration(milliseconds: 300),
+                children: [
+                  Text(
+                    e.question,
+                    style: CupidStyles.lightTextStyle.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      5,
+                      (index) {
+                        return MBTIOptionButton(
+                          index: index,
+                          selected: e.answer == index,
+                          onTap: () async {
+                            if (_loading) return;
+                            final lastAnswered =
+                                mbtiModel.questions.where((e) => e.answer != null).lastOrNull?.id ??
+                                    0;
+                            if (e.id > lastAnswered + 1) {
+                              setState(() {
+                                _errorMessage = "Please answer the previous questions first!";
+                              });
+                              return;
+                            }
+                            if (_errorMessage != null) {
+                              setState(() {
+                                _errorMessage = null;
+                              });
+                            }
+                            controller.answerQuestion(e.id, index);
+                            await Future.delayed(
+                              const Duration(milliseconds: 300),
+                            );
+                            _nextQuestion();
+                          },
                         );
-                        _nextQuestion();
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

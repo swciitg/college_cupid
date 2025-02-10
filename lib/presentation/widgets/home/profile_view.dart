@@ -69,10 +69,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           // print("Filter : $filter");
           final List<UserProfile> users =
               await userProfileRepo.getPaginatedUsers(pageViewController.pageNumber, filter);
-          ref.read(pageViewProvider.notifier).addHomeTabProfiles(
-                users,
-                search: filterState.name.isNotEmpty,
-              );
+          ref.read(pageViewProvider.notifier).addHomeTabProfiles(users);
         }
       },
       children: List.generate(
