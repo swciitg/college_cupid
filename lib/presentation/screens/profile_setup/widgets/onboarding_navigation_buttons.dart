@@ -11,16 +11,11 @@ class OnboaringNavigationButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final onboardingState = ref.watch(onboardingControllerProvider);
     final currentStep = onboardingState.currentStep;
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: Platform.isIOS ? kBottomNavigationBarHeight : 8,
-        left: 16,
-        right: 16,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: currentStep == 0 || currentStep == 2
             ? MainAxisAlignment.end
@@ -30,27 +25,22 @@ class OnboaringNavigationButtons extends ConsumerWidget {
             ElevatedButton(
               key: const Key('back_button'),
               style: ButtonStyle(
-                backgroundColor:
-                    WidgetStateProperty.all(CupidColors.secondaryColor),
+                backgroundColor: WidgetStateProperty.all(CupidColors.secondaryColor),
                 elevation: WidgetStateProperty.all(0),
-                overlayColor:
-                    WidgetStateProperty.all(CupidColors.secondaryColor),
+                overlayColor: WidgetStateProperty.all(CupidColors.secondaryColor),
               ),
               onPressed: () => onboardingController.previousStep(),
-              child: Text('Back',
-                  style: CupidStyles.normalTextStyle.setColor(Colors.white)),
+              child: Text('Back', style: CupidStyles.normalTextStyle.setColor(Colors.white)),
             ),
           ElevatedButton(
             key: const Key('next_button'),
             style: ButtonStyle(
-              backgroundColor:
-                  WidgetStateProperty.all(CupidColors.secondaryColor),
+              backgroundColor: WidgetStateProperty.all(CupidColors.secondaryColor),
               elevation: WidgetStateProperty.all(0),
               overlayColor: WidgetStateProperty.all(CupidColors.secondaryColor),
             ),
             onPressed: () => onboardingController.nextStep(),
-            child: Text('Next',
-                style: CupidStyles.normalTextStyle.setColor(Colors.white)),
+            child: Text('Next', style: CupidStyles.normalTextStyle.setColor(Colors.white)),
           ),
         ],
       ),

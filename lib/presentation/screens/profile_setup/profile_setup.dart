@@ -34,8 +34,7 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final onboardingController =
-          ref.read(onboardingControllerProvider.notifier);
+      final onboardingController = ref.read(onboardingControllerProvider.notifier);
       onboardingController.updateHeartStates(context);
     });
   }
@@ -46,61 +45,64 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final loading = onboardingState.loading;
     final loadingMessage = onboardingState.loadingMessage;
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: CupidColors.backgroundColor,
-        body: Stack(
-          children: [
-            ..._heartShapes(),
-            SizedBox(
-              height: size.height,
-              width: size.width,
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: steps[onboardingState.currentStep],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: CupidColors.backgroundColor,
+          body: Stack(
+            children: [
+              ..._heartShapes(),
+              SizedBox(
+                height: size.height,
+                width: size.width,
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: steps[onboardingState.currentStep],
+                  ),
                 ),
               ),
-            ),
-            if (loading)
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: CupidColors.secondaryColor,
-                        ),
-                      ),
-                      if (loadingMessage != null) const SizedBox(height: 16),
-                      if (loadingMessage != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+              if (loading)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Center(
+                          child: CircularProgressIndicator(
                             color: CupidColors.secondaryColor,
                           ),
-                          child: Text(
-                            loadingMessage,
-                            style: CupidStyles.normalTextStyle
-                                .setColor(Colors.white),
-                          ),
-                        )
-                    ],
+                        ),
+                        if (loadingMessage != null) const SizedBox(height: 16),
+                        if (loadingMessage != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: CupidColors.secondaryColor,
+                            ),
+                            child: Text(
+                              loadingMessage,
+                              style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                            ),
+                          )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
+          floatingActionButton: !loading ? const OnboaringNavigationButtons() : null,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          extendBody: true,
         ),
-        bottomNavigationBar:
-            !loading ? const OnboaringNavigationButtons() : null,
-        extendBody: true,
       ),
     );
   }

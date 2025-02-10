@@ -45,11 +45,15 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                 future: crushesRepo.getCrushesCount(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox();
-                  } else if (snapshot.hasError || snapshot.hasData == false) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: CupidColors.secondaryColor,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
                     return const Center(
                       child: Text(
-                        'Some error occurred!',
+                        'Please try again later!',
                         textAlign: TextAlign.center,
                         style: CupidStyles.lightTextStyle,
                       ),

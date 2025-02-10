@@ -212,254 +212,259 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     screenWidth = size.width;
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop) {
-          if (!_loading) return;
-          await ref.read(userProvider.notifier).updateMyProfile(profileSave);
-          navigatorKey.currentState?.pop();
-        }
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: _appBar(context),
-        floatingActionButton: _submitButton(),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: TextEditingController(text: LoginStore.displayName),
-                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                      labelText: "Name",
-                      floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-                      enabled: false,
-                      fillColor: Colors.transparent,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (!didPop) {
+            if (!_loading) return;
+            await ref.read(userProvider.notifier).updateMyProfile(profileSave);
+            navigatorKey.currentState?.pop();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: _appBar(context),
+          floatingActionButton: _submitButton(),
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: TextEditingController(text: LoginStore.displayName),
+                      decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                        labelText: "Name",
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                        enabled: false,
+                        fillColor: Colors.transparent,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: TextEditingController(text: LoginStore.email),
-                    decoration: CupidStyles.textFieldInputDecoration.copyWith(
-                      labelText: "Email",
-                      floatingLabelAlignment: FloatingLabelAlignment.start,
-                      labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-                      enabled: false,
-                      fillColor: Colors.transparent,
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: TextEditingController(text: LoginStore.email),
+                      decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                        labelText: "Email",
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+                        enabled: false,
+                        fillColor: Colors.transparent,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Profile Pictures",
-                    style: CupidStyles.subHeadingTextStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _profilePic(0, context),
-                      const SizedBox(width: 16),
-                      _profilePic(1, context),
-                      const SizedBox(width: 16),
-                      _profilePic(2, context),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Gender",
-                    style: CupidStyles.subHeadingTextStyle,
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 8,
-                    alignment: WrapAlignment.start,
-                    children: List.generate(Gender.values.length, (index) {
-                      final gender = Gender.values[index];
-                      final selected = _selectedGender == gender;
-                      return _buildChip(gender.displayString, selected, () {
-                        setState(() {
-                          _selectedGender = gender;
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Profile Pictures",
+                      style: CupidStyles.subHeadingTextStyle,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _profilePic(0, context),
+                        const SizedBox(width: 16),
+                        _profilePic(1, context),
+                        const SizedBox(width: 16),
+                        _profilePic(2, context),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Gender",
+                      style: CupidStyles.subHeadingTextStyle,
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      alignment: WrapAlignment.start,
+                      children: List.generate(Gender.values.length, (index) {
+                        final gender = Gender.values[index];
+                        final selected = _selectedGender == gender;
+                        return _buildChip(gender.displayString, selected, () {
+                          setState(() {
+                            _selectedGender = gender;
+                          });
                         });
-                      });
-                    }),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Program",
-                    style: CupidStyles.subHeadingTextStyle,
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 8,
-                    alignment: WrapAlignment.start,
-                    children: List.generate(programs.length, (index) {
-                      final program = programs[index];
-                      final selected = _selectedProgram == program;
-                      return _buildChip(program.displayString, selected, () {
-                        setState(() {
-                          _selectedProgram = program;
-                        });
-                      });
-                    }),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Year",
-                    style: CupidStyles.subHeadingTextStyle,
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 8,
-                    alignment: WrapAlignment.start,
-                    children: [
-                      ...List.generate(5, (index) {
-                        final year = index + 1;
-                        return _buildChip(year.toString(), _yearOfJoin == year, () {});
                       }),
-                      _buildChip("beyond", _yearOfJoin == 6, () {}),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Interests", style: CupidStyles.subHeadingTextStyle),
-                      IconButton(
-                        onPressed: () {
-                          context.goNamed(AppRoutes.editInterests.name);
-                        },
-                        icon: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 16,
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  _buildInterests(),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Sexual orientation',
-                    style: CupidStyles.subHeadingTextStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Your results will be based on your preference',
-                    style: CupidStyles.normalTextStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildSexualOrientationChoiceChips(_selectedSexualOrientation,
-                      onSelected: (value) {
-                    setState(() {
-                      _selectedSexualOrientation = value;
-                    });
-                  }),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Display on profile',
-                        style: CupidStyles.lightTextStyle,
-                      ),
-                      Switch(
-                        inactiveTrackColor: WidgetStateColor.transparent,
-                        activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        value: _displaySexualOrientation,
-                        onChanged: (value) {
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Program",
+                      style: CupidStyles.subHeadingTextStyle,
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      alignment: WrapAlignment.start,
+                      children: List.generate(programs.length, (index) {
+                        final program = programs[index];
+                        final selected = _selectedProgram == program;
+                        return _buildChip(program.displayString, selected, () {
                           setState(() {
-                            _displaySexualOrientation = value;
+                            _selectedProgram = program;
                           });
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Text("Surprise quiz", style: CupidStyles.subHeadingTextStyle),
-                  const SizedBox(height: 8),
-                  _buildQuestions(size.width - 40),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: DotsIndicator(
-                      dotsCount: 3,
-                      position: _currentQuestion,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      decorator: const DotsDecorator(
-                        color: Colors.black38,
-                        activeColor: Colors.black,
-                        size: Size(4, 4),
+                        });
+                      }),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Year",
+                      style: CupidStyles.subHeadingTextStyle,
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 8,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        ...List.generate(5, (index) {
+                          final year = index + 1;
+                          return _buildChip(year.toString(), _yearOfJoin == year, () {});
+                        }),
+                        _buildChip("beyond", _yearOfJoin == 6, () {}),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Interests", style: CupidStyles.subHeadingTextStyle),
+                        IconButton(
+                          onPressed: () {
+                            context.goNamed(AppRoutes.editInterests.name);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    _buildInterests(),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Sexual orientation',
+                      style: CupidStyles.subHeadingTextStyle,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Your results will be based on your preference',
+                      style: CupidStyles.normalTextStyle,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildSexualOrientationChoiceChips(_selectedSexualOrientation,
+                        onSelected: (value) {
+                      setState(() {
+                        _selectedSexualOrientation = value;
+                      });
+                    }),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Display on profile',
+                          style: CupidStyles.lightTextStyle,
+                        ),
+                        Switch(
+                          inactiveTrackColor: WidgetStateColor.transparent,
+                          activeColor: CupidColors.secondaryColor,
+                          inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                          activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                          value: _displaySexualOrientation,
+                          onChanged: (value) {
+                            setState(() {
+                              _displaySexualOrientation = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text("Surprise quiz", style: CupidStyles.subHeadingTextStyle),
+                    const SizedBox(height: 8),
+                    _buildQuestions(size.width - 40),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: DotsIndicator(
+                        dotsCount: 3,
+                        position: _currentQuestion,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        decorator: const DotsDecorator(
+                          color: Colors.black38,
+                          activeColor: Colors.black,
+                          size: Size(4, 4),
+                        ),
                       ),
                     ),
-                  ),
-                  const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "The profiles showed to you will be based on this",
-                    style: CupidStyles.normalTextStyle,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildLookingForChoiceChips(_relationshipGoal, onSelected: (value) {
-                    setState(() {
-                      _relationshipGoal = value;
-                    });
-                  }),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Display on profile",
-                        style: CupidStyles.lightTextStyle,
-                      ),
-                      const SizedBox(width: 8),
-                      Switch(
-                        value: _displayRelationshipGoal,
-                        onChanged: (value) {
-                          setState(() {
-                            _displayRelationshipGoal = value;
-                          });
-                        },
-                        inactiveTrackColor: WidgetStateColor.transparent,
-                        activeColor: CupidColors.secondaryColor,
-                        inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                        activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 120)
-                ],
+                    const Text("Looking for", style: CupidStyles.subHeadingTextStyle),
+                    const SizedBox(height: 4),
+                    const Text(
+                      "The profiles showed to you will be based on this",
+                      style: CupidStyles.normalTextStyle,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildLookingForChoiceChips(_relationshipGoal, onSelected: (value) {
+                      setState(() {
+                        _relationshipGoal = value;
+                      });
+                    }),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Display on profile",
+                          style: CupidStyles.lightTextStyle,
+                        ),
+                        const SizedBox(width: 8),
+                        Switch(
+                          value: _displayRelationshipGoal,
+                          onChanged: (value) {
+                            setState(() {
+                              _displayRelationshipGoal = value;
+                            });
+                          },
+                          inactiveTrackColor: WidgetStateColor.transparent,
+                          activeColor: CupidColors.secondaryColor,
+                          inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                          activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 120)
+                  ],
+                ),
               ),
-            ),
-            if (_loadingMessage != null)
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: CupidColors.secondaryColor,
-                      ),
-                      child: Text(
-                        _loadingMessage!,
-                        style: CupidStyles.normalTextStyle.setColor(Colors.white),
+              if (_loadingMessage != null)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: CupidColors.secondaryColor,
+                        ),
+                        child: Text(
+                          _loadingMessage!,
+                          style: CupidStyles.normalTextStyle.setColor(Colors.white),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
