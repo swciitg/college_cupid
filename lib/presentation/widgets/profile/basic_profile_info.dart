@@ -1,5 +1,4 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/presentation/widgets/profile/overlay_chip.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_match_score.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -30,26 +29,14 @@ class BasicProfileInfo extends ConsumerWidget {
     String programAndYearDisplayString =
         "$programString ${DateTime.now().year % 100 - userProfile.yearOfJoin!}";
     final showRelationshipGoal = userProfile.relationshipGoal?.display == true;
-    final showSexualOrientation = userProfile.sexualOrientation?.display == true;
+    final showSexualOrientation =
+        userProfile.sexualOrientation?.display == true;
     return SizedBox(
       height: maxHeight,
       width: width,
       child: Column(
         children: [
-          Expanded(
-            child: ProfileImage(
-              height: maxHeight,
-              width: width,
-              index: 0,
-              overlay: showRelationshipGoal
-                  ? OverlayChip(label: userProfile.relationshipGoal!.goal.displayString)
-                  : null,
-              url: userProfile.images.first.url,
-              blurHash: userProfile.images.first.blurHash,
-              backButton: backButton,
-            ),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 18),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -61,7 +48,8 @@ class BasicProfileInfo extends ConsumerWidget {
                     Text(
                       userProfile.name,
                       overflow: TextOverflow.ellipsis,
-                      style: CupidStyles.subHeadingTextStyle.setFontWeight(FontWeight.bold),
+                      style: CupidStyles.subHeadingTextStyle
+                          .setFontWeight(FontWeight.bold),
                     ),
                     Row(
                       children: [
@@ -71,13 +59,31 @@ class BasicProfileInfo extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
                             child: Text(
                               programAndYearDisplayString,
                               style: CupidStyles.normalTextStyle,
                             ),
                           ),
                         ),
+                        if (showRelationshipGoal) const SizedBox(width: 8),
+                        if (showRelationshipGoal)
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: CupidColors.cupidYellow,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
+                              child: Text(
+                                userProfile
+                                    .relationshipGoal!.goal.displayString,
+                                style: CupidStyles.normalTextStyle,
+                              ),
+                            ),
+                          ),
                         if (showSexualOrientation) const SizedBox(width: 8),
                         if (showSexualOrientation)
                           DecoratedBox(
@@ -86,9 +92,11 @@ class BasicProfileInfo extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 8),
                               child: Text(
-                                userProfile.sexualOrientation!.type.displayString,
+                                userProfile
+                                    .sexualOrientation!.type.displayString,
                                 style: CupidStyles.normalTextStyle,
                               ),
                             ),
@@ -98,10 +106,24 @@ class BasicProfileInfo extends ConsumerWidget {
                   ],
                 ),
               ),
-              if (currentUser.email != userProfile.email) _buildMatchScore(currentUser),
+              if (currentUser.email != userProfile.email)
+                _buildMatchScore(currentUser),
               const SizedBox(width: 8),
             ],
           ),
+          const SizedBox(height: 18),
+          Expanded(
+            child: ProfileImage(
+              height: maxHeight,
+              width: width,
+              index: 0,
+              overlay: null,
+              url: userProfile.images.first.url,
+              blurHash: userProfile.images.first.blurHash,
+              backButton: backButton,
+            ),
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -112,8 +134,8 @@ class BasicProfileInfo extends ConsumerWidget {
     if (matchScore == null) {
       return const SizedBox();
     }
-    final myPreferredGender =
-        currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
+    final myPreferredGender = currentUser.sexualOrientation!.type
+        .preferredGender(currentUser.gender!);
     final otherGender = userProfile.gender!;
     if (myPreferredGender != null && myPreferredGender != otherGender) {
       return const SizedBox();

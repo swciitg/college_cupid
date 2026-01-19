@@ -9,6 +9,7 @@ import 'package:college_cupid/presentation/screens/profile/view_profile/user_pro
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:flutter/material.dart';
+import 'package:college_cupid/presentation/screens/confessions/create_confession_screen.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoutes {
@@ -21,6 +22,7 @@ enum AppRoutes {
   userProfileScreen,
   editProfile,
   editInterests,
+  createConfession,
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();

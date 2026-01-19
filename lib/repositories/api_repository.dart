@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/services/backend_helper.dart';
 import 'package:college_cupid/shared/endpoints.dart';

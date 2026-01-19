@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
+import 'package:college_cupid/presentation/screens/confessions/confessions_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
@@ -118,14 +119,16 @@ class _HomeState extends ConsumerState<Home> {
                     data: NavigationBarThemeData(
                       backgroundColor: Colors.transparent,
                       indicatorColor: Colors.transparent,
-                      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                      labelBehavior:
+                          NavigationDestinationLabelBehavior.alwaysHide,
                       height: 60,
                       elevation: 0,
                       shadowColor: Colors.black,
                       surfaceTintColor: CupidColors.navBarBackgroundColor,
                       iconTheme: WidgetStateProperty.resolveWith((states) {
                         if (states.contains(WidgetState.selected)) {
-                          return const IconThemeData(color: CupidColors.secondaryColor);
+                          return const IconThemeData(
+                              color: CupidColors.secondaryColor);
                         } else {
                           return const IconThemeData(color: Colors.grey);
                         }
@@ -139,12 +142,15 @@ class _HomeState extends ConsumerState<Home> {
                           _pageController.jumpToPage(i);
                         } else {
                           _pageController.animateToPage(i,
-                              duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+                              duration: const Duration(milliseconds: 150),
+                              curve: Curves.easeIn);
                         }
                         _selectedIndex = i;
                       }),
-                      destinations: List.generate(4, (index) {
-                        return _selectedIndex == index ? filledNavIcons[index] : navIcons[index];
+                      destinations: List.generate(5, (index) {
+                        return _selectedIndex == index
+                            ? filledNavIcons[index]
+                            : navIcons[index];
                       }),
                     ),
                   ),
@@ -160,6 +166,7 @@ class _HomeState extends ConsumerState<Home> {
                         children: [
                           const HomeTab(),
                           const YourCrushesTab(),
+                          const ConfessionsScreen(),
                           const YourMatches(),
                           UserProfileScreen(
                             isMine: true,
@@ -178,7 +185,8 @@ class _HomeState extends ConsumerState<Home> {
     );
   }
 
-  List<Widget> _heartShapes(HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
+  List<Widget> _heartShapes(
+      HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
     return [
       AnimatedPositioned(
         duration: const Duration(milliseconds: 2000),

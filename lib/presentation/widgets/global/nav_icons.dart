@@ -19,6 +19,13 @@ List<NavigationDestination> navIcons = [
   ),
   const NavigationDestination(
     icon: Icon(
+      FluentIcons.chat_24_regular,
+      size: 30,
+    ),
+    label: 'Confessions',
+  ),
+  const NavigationDestination(
+    icon: Icon(
       FluentIcons.people_48_regular,
       size: 30,
     ),
@@ -49,6 +56,14 @@ List<NavigationDestination> filledNavIcons = [
       color: CupidColors.cupidGreen,
     ),
     label: 'Your Crushes',
+  ),
+  const NavigationDestination(
+    icon: Icon(
+      FluentIcons.chat_24_filled,
+      size: 30,
+      color: Color(0xFF8B5CF6), // Purple
+    ),
+    label: 'Confessions',
   ),
   const NavigationDestination(
     icon: Icon(

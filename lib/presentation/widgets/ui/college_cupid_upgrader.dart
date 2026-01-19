@@ -19,7 +19,7 @@ class CollegeCupidUpgrader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        dialogTheme: const DialogTheme(
+        dialogTheme: const DialogThemeData(
           backgroundColor: CupidColors.backgroundColor,
           titleTextStyle: CupidStyles.pageHeadingStyle,
           contentTextStyle: CupidStyles.normalTextStyle,

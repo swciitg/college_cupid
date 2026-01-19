@@ -1,14 +1,8 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/presentation/widgets/global/profile_options_bottom_sheet.dart';
 import 'package:college_cupid/presentation/widgets/profile/basic_profile_info.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
-import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,9 +10,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool backButton;
+  final VoidCallback? onPass;
+  final VoidCallback? onSmash;
 
   const DisplayProfileInfo(
-      {required this.userProfile, this.backButton = false, super.key});
+      {required this.userProfile,
+      this.backButton = false,
+      this.onPass,
+      this.onSmash,
+      super.key});
 
   @override
   ConsumerState<DisplayProfileInfo> createState() => _DisplayProfileInfoState();
@@ -61,13 +61,68 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   _image(null, width, 2),
                 if (widget.userProfile.surpriseQuiz.length >= 3)
                   _surpriseQues(widget.userProfile.surpriseQuiz[2]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _menuButton(context),
-                    _likeButton(context),
-                  ],
-                ),
+                const SizedBox(height: 24),
+                // Smash or Pass Buttons
+                if (!widget.backButton) // Only show on home screen
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: widget.onPass,
+                          child: Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: CupidColors.offWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(FluentIcons.dismiss_24_filled,
+                                    color: Colors.black),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Pass",
+                                  style: CupidStyles.headingStyle.copyWith(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: widget.onSmash,
+                          child: Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: CupidColors.offWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(FluentIcons.heart_24_filled,
+                                    color: Colors.black),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Smash",
+                                  style: CupidStyles.headingStyle.copyWith(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 const SizedBox(height: 100),
               ],
             ),
@@ -127,7 +182,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "Loves",
@@ -171,85 +226,6 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           }),
         ),
       ],
-    );
-  }
-
-  Widget _menuButton(BuildContext context) {
-    final profile = widget.userProfile;
-    final currentUser = ref.read(userProvider).myProfile!;
-    if (profile.email == currentUser.email) return const SizedBox();
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      child: GestureDetector(
-        onTap: () async {
-          showModalBottomSheet(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            context: context,
-            builder: (context) => ProfileOptionsBottomSheet(
-              name: widget.userProfile.name,
-              userEmail: widget.userProfile.email,
-            ),
-          );
-        },
-        child: const DecoratedBox(
-          decoration: BoxDecoration(
-            color: CupidColors.cupidBlue,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox(
-            height: 52,
-            width: 52,
-            child: Icon(
-              FluentIcons.filter_16_regular,
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _likeButton(BuildContext context) {
-    final crushesRepo = ref.read(crushesRepoProvider);
-    final profile = widget.userProfile;
-    if (profile.email == LoginStore.email ||
-        profile.email == 'deactivatedUser@iitg.ac.in') {
-      return const SizedBox();
-    }
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      child: GestureDetector(
-        onTap: () async {
-          final sharedSecret = DiffieHellman.generateSharedSecret(
-            otherPublicKey: BigInt.parse(profile.publicKey),
-            myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
-          ).toString();
-          // TODO: Add proper error handling
-          // TODO: These 3 requests should be atomic
-          bool success = await crushesRepo.addCrush(sharedSecret);
-          if (success) {
-            await OneDriveRepository.addCrush(profile.email);
-            await crushesRepo.increaseCrushesCount(profile.email);
-          }
-        },
-        child: const DecoratedBox(
-          decoration: BoxDecoration(
-            color: Color(0xFFFBA8AA),
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox(
-            height: 52,
-            width: 52,
-            child: Icon(
-              Icons.favorite,
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
     );
   }
 

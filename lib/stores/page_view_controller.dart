@@ -8,7 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:get_storage/get_storage.dart';
 
-final pageViewProvider = StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
+final pageViewProvider =
+    StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
   return PageViewNotifier(ref: ref);
 });
 
@@ -46,15 +47,17 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
       final data = {
         'pageNumber': pageNumber,
       };
-      log("pageNumber (write): ${data['pageNumber']}", name: 'PageViewNotifier');
+      log("pageNumber (write): ${data['pageNumber']}",
+          name: 'PageViewNotifier');
       ls.write('pageViewState', data);
     }
   }
 
   void removeHomeTabProfile(String email) {
     state = state.copyWith(
-      homeTabProfileList:
-          state.homeTabProfileList.where((element) => element.email != email).toList(),
+      homeTabProfileList: state.homeTabProfileList
+          .where((element) => element.email != email)
+          .toList(),
     );
   }
 
@@ -114,6 +117,32 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
       showSnackBar("Something went wrong! try again later.");
       log("Error fetching initial profiles: ${e.toString()}");
       setLoading(false);
+    }
+  }
+
+  Future<void> nextProfile() async {
+    final nextIndex = currentPage + 1;
+    setCurrentPage(nextIndex);
+
+    // Fetch more if needed
+    final filterStore = _ref.read(filterProvider);
+    if (!isLastPage &&
+        state.homeTabProfileList.length - nextIndex <= 4 &&
+        filterStore.name.isEmpty) {
+      final userProfileRepo = _ref.read(userProfileRepoProvider);
+      final filter = {
+        'gender': filterStore.interestedInGender.databaseString,
+        'program': filterStore.program.databaseString,
+        'yearOfJoin': filterStore.yearOfJoin,
+        'name': filterStore.name
+      };
+      try {
+        final List<UserProfile> users =
+            await userProfileRepo.getPaginatedUsers(pageNumber, filter);
+        addHomeTabProfiles(users);
+      } catch (e) {
+        log("Error fetching more profiles: $e");
+      }
     }
   }
 }
