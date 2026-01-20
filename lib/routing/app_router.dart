@@ -86,5 +86,10 @@ final goRouter = GoRouter(
         ),
       ],
     ),
+    GoRoute(
+      path: '/${AppRoutes.createConfession.name}',
+      name: AppRoutes.createConfession.name,
+      builder: (context, state) => const CreateConfessionScreen(),
+    ),
   ],
 );

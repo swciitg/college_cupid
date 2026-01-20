@@ -1,33 +1,39 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_match_score.dart';
-import 'package:college_cupid/shared/colors.dart';
+
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:college_cupid/routing/app_router.dart';
+import 'package:college_cupid/presentation/widgets/profile/profile_attribute.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
   final double width;
   final UserProfile userProfile;
   final bool backButton;
+  final bool isMine;
   const BasicProfileInfo({
     super.key,
     required this.maxHeight,
     required this.width,
     required this.userProfile,
     this.backButton = false,
+    this.isMine = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Keep currentUser for other checks if needed, or remove if isMine covers it.
+    // However, isMine is explicitly passed now.
     final currentUser = ref.watch(userProvider).myProfile!;
     Program program = userProfile.program!;
-    final programString = program.displayString.toLowerCase();
-    String programAndYearDisplayString =
-        "$programString ${DateTime.now().year % 100 - userProfile.yearOfJoin!}";
+
     final showRelationshipGoal = userProfile.relationshipGoal?.display == true;
     final showSexualOrientation =
         userProfile.sexualOrientation?.display == true;
@@ -45,70 +51,87 @@ class BasicProfileInfo extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      userProfile.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: CupidStyles.subHeadingTextStyle
-                          .setFontWeight(FontWeight.bold),
-                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: CupidColors.secondaryColor,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            child: Text(
-                              programAndYearDisplayString,
-                              style: CupidStyles.normalTextStyle,
-                            ),
+                        Expanded(
+                          child: Text(
+                            userProfile.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: CupidStyles.subHeadingTextStyle
+                                .setFontWeight(FontWeight.bold),
                           ),
                         ),
-                        if (showRelationshipGoal) const SizedBox(width: 8),
-                        if (showRelationshipGoal)
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: CupidColors.cupidYellow,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Padding(
+                        const SizedBox(width: 28),
+                        if (isMine)
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed(AppRoutes.editProfile.name);
+                            },
+                            child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
-                              child: Text(
-                                userProfile
-                                    .relationshipGoal!.goal.displayString,
-                                style: CupidStyles.normalTextStyle,
+                                  horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Edit Profile',
+                                    style: CupidStyles.normalTextStyle.copyWith(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(FluentIcons.edit_16_regular,
+                                      size: 14),
+                                ],
                               ),
                             ),
-                          ),
-                        if (showSexualOrientation) const SizedBox(width: 8),
-                        if (showSexualOrientation)
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: CupidColors.cupidYellow,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 8),
-                              child: Text(
-                                userProfile
-                                    .sexualOrientation!.type.displayString,
-                                style: CupidStyles.normalTextStyle,
-                              ),
-                            ),
-                          ),
+                          )
+                        else if (!isMine)
+                          _buildMatchScore(currentUser)
                       ],
+                    ),
+                    //Show Gender
+                    if (userProfile.gender != null)
+                      Text(userProfile.gender!.displayString,style: CupidStyles.normalTextStyle.copyWith(fontSize: 13,fontWeight: FontWeight.bold),),
+                    SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          if (showSexualOrientation || isMine) ...[
+                            ProfileAttribute(
+                              icon: FluentIcons.person_24_regular,
+                              text: userProfile
+                                      .sexualOrientation?.type.displayString ??
+                                  '',
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          ProfileAttribute(
+                            icon: FluentIcons.hat_graduation_24_regular,
+                            text: '${program.displayString} ${userProfile.yearOfJoin}',
+                          ),
+                          if (showRelationshipGoal || isMine) ...[
+                            const SizedBox(width: 12),
+                            ProfileAttribute(
+                              icon: FluentIcons.handshake_24_regular,
+                              text: userProfile
+                                      .relationshipGoal?.goal.displayString ??
+                                  '',
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              if (currentUser.email != userProfile.email)
-                _buildMatchScore(currentUser),
-              const SizedBox(width: 8),
             ],
           ),
           const SizedBox(height: 18),
@@ -123,7 +146,6 @@ class BasicProfileInfo extends ConsumerWidget {
               backButton: backButton,
             ),
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );

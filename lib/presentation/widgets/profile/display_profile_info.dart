@@ -12,10 +12,12 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
   final bool backButton;
   final VoidCallback? onPass;
   final VoidCallback? onSmash;
+  final bool isMine;
 
   const DisplayProfileInfo(
       {required this.userProfile,
       this.backButton = false,
+      this.isMine = false,
       this.onPass,
       this.onSmash,
       super.key});
@@ -45,6 +47,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   width: width,
                   userProfile: widget.userProfile,
                   backButton: widget.backButton,
+                  isMine: widget.isMine,
                 ),
                 if (widget.userProfile.surpriseQuiz.isNotEmpty)
                   _surpriseQues(widget.userProfile.surpriseQuiz.first),
@@ -63,7 +66,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   _surpriseQues(widget.userProfile.surpriseQuiz[2]),
                 const SizedBox(height: 24),
                 // Smash or Pass Buttons
-                if (!widget.backButton) // Only show on home screen
+                if (!widget.backButton &&
+                    !widget.isMine) // Only show on home screen
                   Row(
                     children: [
                       Expanded(
@@ -78,7 +82,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(FluentIcons.dismiss_24_filled,
+                                const Icon(FluentIcons.diamond_24_filled,
                                     color: Colors.black),
                                 const SizedBox(width: 8),
                                 Text(
@@ -106,7 +110,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(FluentIcons.heart_24_filled,
+                                const Icon(FluentIcons.diamond_24_filled,
                                     color: Colors.black),
                                 const SizedBox(width: 8),
                                 Text(

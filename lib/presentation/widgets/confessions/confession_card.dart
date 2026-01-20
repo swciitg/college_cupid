@@ -49,7 +49,7 @@ class ConfessionCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  confession.category.displayName,
+                  confession.typeOfConfession.displayName,
                   style: CupidStyles.normalTextStyle.copyWith(
                     color: CupidColors.cupidBlue, // Reuse existing color
                     fontWeight: FontWeight.bold,
@@ -58,21 +58,21 @@ class ConfessionCard extends StatelessWidget {
                 ),
               ),
               Text(
-                DateFormat('d MMM, yyyy').format(confession.timestamp),
+                DateFormat('d MMM, yyyy').format(confession.createdAt),
                 style: CupidStyles.lightTextStyle.copyWith(fontSize: 12),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
-            confession.content,
+            confession.text,
             style: CupidStyles.normalTextStyle.copyWith(
               fontSize: 16,
               height: 1.5,
               color: CupidColors.blackColor,
             ),
           ),
-          if (confession.songAttachment != null) ...[
+          if (confession.song.isNotEmpty) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -85,19 +85,14 @@ class ConfessionCard extends StatelessWidget {
                   const Icon(FluentIcons.music_note_2_24_filled,
                       size: 20, color: CupidColors.cupidGreen),
                   const SizedBox(width: 8),
-                  Text(
-                    confession.songAttachment!.songName,
-                    style: CupidStyles.normalTextStyle.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: CupidColors.cupidGreen,
-                    ),
-                  ),
-                  const Text(' - '),
-                  Text(
-                    confession.songAttachment!.artistName,
-                    style: CupidStyles.normalTextStyle.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: CupidColors.cupidPeach,
+                  Expanded(
+                    child: Text(
+                      confession.song,
+                      overflow: TextOverflow.ellipsis,
+                      style: CupidStyles.normalTextStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: CupidColors.cupidGreen,
+                      ),
                     ),
                   ),
                 ],
@@ -141,12 +136,12 @@ class ConfessionCard extends StatelessWidget {
                             Positioned(
                               left: 16,
                               child: Text(
-                                confession.reactions.last,
+                                confession.reactions.last.reaction,
                                 style: const TextStyle(fontSize: 18),
                               ),
                             ),
                           Text(
-                            confession.reactions.first,
+                            confession.reactions.first.reaction,
                             style: const TextStyle(fontSize: 18),
                           ),
                         ],
@@ -164,7 +159,7 @@ class ConfessionCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              if (confession.userId == 'me') ...[
+              if (confession.encryptedEmail == 'me') ...[
                 _ActionButton(
                   icon: FluentIcons.delete_24_regular,
                   color: Colors.red.withOpacity(0.7),

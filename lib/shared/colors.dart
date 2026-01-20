@@ -29,4 +29,5 @@ class CupidColors {
   static const cupidYellow = Color(0x99EAE27A);
   static const cupidGreen = Color(0xFF7AEAA9);
   static const cupidPeach = Color(0xFFFBA8AA);
+  static const cupidPurple = Color(0xFF6F61FF);
 }

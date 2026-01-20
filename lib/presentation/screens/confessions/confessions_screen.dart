@@ -1,10 +1,9 @@
 import 'package:college_cupid/domain/models/confession.dart';
-import 'package:college_cupid/presentation/screens/confessions/create_confession_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/confessions/confession_card.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
-// Drawer widget import removed
-
 import 'package:college_cupid/stores/confessions_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -59,8 +58,8 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         elevation: 0,
         centerTitle: false,
         automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+        title: const Padding(
+          padding:  EdgeInsets.only(left: 8.0),
           child: Text(
             'Confessions',
             style: CupidStyles.headingStyle,
@@ -91,9 +90,8 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFF8B5CF6) // Purple from SS
-                          : Colors.white,
+                      color:
+                          isSelected ? CupidColors.cupidPurple : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
@@ -119,7 +117,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
       body: state.isLoading
           ? const Center(child: CustomLoader())
           : state.confessions == null || state.confessions!.isEmpty
-              ? Center(
+              ? const Center(
                   child: Text(
                     'No confessions found!',
                     style: CupidStyles.normalTextStyle,
@@ -152,20 +150,16 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                 ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const CreateConfessionScreen()),
-          );
+          context.pushNamed(AppRoutes.createConfession.name);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFF8B5CF6),
+            color: CupidColors.cupidPurple,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8B5CF6).withOpacity(0.4),
+                color: CupidColors.cupidPurple.withOpacity(0.4),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

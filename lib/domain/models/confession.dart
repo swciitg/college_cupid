@@ -22,34 +22,26 @@ extension ConfessionCategoryExtension on ConfessionCategory {
   }
 }
 
-class SongAttachment {
-  final String songName;
-  final String artistName;
-  final String albumArtUrl; // Optional for UI
-  final String previewUrl; // Optional for playback
+class Reaction {
+  final String reaction;
+  final String user; // encryptedEmail or ObjectId
 
-  SongAttachment({
-    required this.songName,
-    required this.artistName,
-    this.albumArtUrl = '',
-    this.previewUrl = '',
+  Reaction({
+    required this.reaction,
+    required this.user,
   });
 
-  factory SongAttachment.fromJson(Map<String, dynamic> json) {
-    return SongAttachment(
-      songName: json['songName'] ?? '',
-      artistName: json['artistName'] ?? '',
-      albumArtUrl: json['albumArtUrl'] ?? '',
-      previewUrl: json['previewUrl'] ?? '',
+  factory Reaction.fromJson(Map<String, dynamic> json) {
+    return Reaction(
+      reaction: json['reaction'] ?? '',
+      user: json['user']?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'songName': songName,
-      'artistName': artistName,
-      'albumArtUrl': albumArtUrl,
-      'previewUrl': previewUrl,
+      'reaction': reaction,
+      'user': user,
     };
   }
 }
@@ -57,10 +49,10 @@ class SongAttachment {
 class Reply {
   final String id;
   final String confessionId;
-  final String userId; // Or author name if anonymous
+  final String userId;
   final String content;
   final DateTime timestamp;
-  final String? profilePicUrl; // For UI
+  final String? profilePicUrl;
 
   Reply({
     required this.id,
@@ -77,7 +69,9 @@ class Reply {
       confessionId: json['confessionId'] ?? '',
       userId: json['userId'] ?? '',
       content: json['content'] ?? '',
-      timestamp: DateTime.parse(json['timestamp']),
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'])
+          : DateTime.now(),
       profilePicUrl: json['profilePicUrl'],
     );
   }
@@ -96,42 +90,47 @@ class Reply {
 
 class Confession {
   final String id;
-  final String userId;
-  final String content;
-  final ConfessionCategory category;
-  final DateTime timestamp;
-  final List<String> reactions;
-  final SongAttachment? songAttachment;
+  final String encryptedEmail; // Backend: encryptedEmail
+  final String text; // Backend: text
+  final ConfessionCategory typeOfConfession; // Backend: typeOfConfession
+  final DateTime createdAt; // Backend: timestamps -> createdAt
+  final List<Reaction> reactions;
+  final String song; // Backend: song (url string)
   final List<Reply> replies;
 
   Confession({
     required this.id,
-    required this.userId,
-    required this.content,
-    required this.category,
-    required this.timestamp,
+    required this.encryptedEmail,
+    required this.text,
+    required this.typeOfConfession,
+    required this.createdAt,
     this.reactions = const [],
-    this.songAttachment,
+    this.song = '',
     this.replies = const [],
   });
 
   factory Confession.fromJson(Map<String, dynamic> json) {
     return Confession(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      content: json['content'] ?? '',
-      category: ConfessionCategory.values.firstWhere(
-        (e) => e.name == json['category'],
-        orElse: () => ConfessionCategory.gossip,
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+      encryptedEmail: json['encryptedEmail'] ?? '',
+      text: json['text'] ?? '',
+      typeOfConfession: ConfessionCategory.values.firstWhere(
+        (e) => e.name == json['typeOfConfession'],
+        orElse: () => ConfessionCategory.values.firstWhere(
+            (e) =>
+                e.name == json['category'], 
+            orElse: () => ConfessionCategory.gossip),
       ),
-      timestamp: DateTime.parse(json['timestamp']),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : (json['timestamp'] != null
+              ? DateTime.parse(json['timestamp'])
+              : DateTime.now()),
       reactions: (json['reactions'] as List<dynamic>?)
-              ?.map((e) => e.toString())
+              ?.map((e) => Reaction.fromJson(e))
               .toList() ??
           [],
-      songAttachment: json['songAttachment'] != null
-          ? SongAttachment.fromJson(json['songAttachment'])
-          : null,
+      song: json['song'] ?? '',
       replies: (json['replies'] as List<dynamic>?)
               ?.map((e) => Reply.fromJson(e))
               .toList() ??
@@ -142,34 +141,34 @@ class Confession {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'userId': userId,
-      'content': content,
-      'category': category.name,
-      'timestamp': timestamp.toIso8601String(),
-      'reactions': reactions,
-      'songAttachment': songAttachment?.toJson(),
+      'encryptedEmail': encryptedEmail,
+      'text': text,
+      'typeOfConfession': typeOfConfession.name,
+      'createdAt': createdAt.toIso8601String(),
+      'reactions': reactions.map((e) => e.toJson()).toList(),
+      'song': song,
       'replies': replies.map((e) => e.toJson()).toList(),
     };
   }
 
   Confession copyWith({
     String? id,
-    String? userId,
-    String? content,
-    ConfessionCategory? category,
-    DateTime? timestamp,
-    List<String>? reactions,
-    SongAttachment? songAttachment,
+    String? encryptedEmail,
+    String? text,
+    ConfessionCategory? typeOfConfession,
+    DateTime? createdAt,
+    List<Reaction>? reactions,
+    String? song,
     List<Reply>? replies,
   }) {
     return Confession(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
-      content: content ?? this.content,
-      category: category ?? this.category,
-      timestamp: timestamp ?? this.timestamp,
+      encryptedEmail: encryptedEmail ?? this.encryptedEmail,
+      text: text ?? this.text,
+      typeOfConfession: typeOfConfession ?? this.typeOfConfession,
+      createdAt: createdAt ?? this.createdAt,
       reactions: reactions ?? this.reactions,
-      songAttachment: songAttachment ?? this.songAttachment,
+      song: song ?? this.song,
       replies: replies ?? this.replies,
     );
   }

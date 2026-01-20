@@ -28,10 +28,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    // filterStore and filterController are not used in build but kept for logic if needed
-    // filterStore = ref.watch(filterProvider);
-    // filterController = ref.read(filterProvider.notifier);
-
     final pageViewState = ref.watch(pageViewProvider);
     final pageViewNotifier = ref.read(pageViewProvider.notifier);
 
@@ -82,18 +78,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             await crushesRepo.increaseCrushesCount(profile.email);
           }
         } catch (e) {
-          // Handle error (maybe undo? or just snackbar)
+          // Handle error 
           print("Error adding crush: $e");
         }
       },
     );
   }
-
-  // Helper methods _filters and _buildSearchField are removed from usage but kept in file if you prefer,
-  // or I can delete them as they are no longer used.
-  // The user asked to "remove search and filtering functionalities" but "utilize existing widgets... avoiding hardcoded colors".
-  // The prompt said: "Remove search and filtering functionalities"
-  // "Maintain code scalability and the app's core functionality."
-
-  // I will just remove the methods to clean up the code.
 }

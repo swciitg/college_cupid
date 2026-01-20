@@ -65,8 +65,23 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
         state = state.copyWith(
           confessions: state.confessions!.map((c) {
             if (c.id == id) {
-              final newReactions = List<String>.from(c.reactions);
-              newReactions.add(reaction);
+              final newReactions = List<Reaction>.from(c.reactions);
+              final existingIndex =
+                  newReactions.indexWhere((r) => r.user == 'me');
+
+              if (existingIndex != -1) {
+                // User already reacted
+                if (newReactions[existingIndex].reaction == reaction) {
+                  newReactions.removeAt(existingIndex);
+                } else {
+                  // Change reaction
+                  newReactions[existingIndex] =
+                      Reaction(reaction: reaction, user: 'me');
+                }
+              } else {
+                // New reaction
+                newReactions.add(Reaction(reaction: reaction, user: 'me'));
+              }
               return c.copyWith(reactions: newReactions);
             }
             return c;
