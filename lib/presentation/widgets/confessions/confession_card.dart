@@ -5,6 +5,7 @@ import 'package:college_cupid/presentation/widgets/confessions/reaction_picker.d
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 
 class ConfessionCard extends StatelessWidget {
   final Confession confession;
@@ -167,32 +168,9 @@ class ConfessionCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
               ],
-              GestureDetector(
-                onTap: onReply,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: CupidColors.backgroundColor,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: CupidColors.greyColor.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Reply',
-                        style: CupidStyles.normalTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(FluentIcons.send_24_regular, size: 18),
-                    ],
-                  ),
-                ),
-              ),
+              ReplyButton(onTap: () {
+                if (onReply != null) onReply!();
+              }),
             ],
           )
         ],

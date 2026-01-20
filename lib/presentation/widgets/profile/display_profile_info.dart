@@ -6,6 +6,9 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:college_cupid/presentation/widgets/global/like_button.dart';
+import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
+import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
@@ -171,6 +174,30 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       ques.answer,
                       style: CupidStyles.normalTextStyle.setFontSize(16),
                     ),
+                    const SizedBox(height: 8),
+                    if (!widget.isMine)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ReplyButton(onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => ReplyBottomSheet(
+                                title: 'Reply to Answer',
+                                onSend: (message) {
+                                  // TODO: Implement reply logic for profile
+                                },
+                              ),
+                            );
+                          }),
+                          const SizedBox(width: 8),
+                          LikeButton(onTap: () {
+                            // TODO: Implement like logic
+                          }),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -259,12 +286,43 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   Widget _image(double? height, double width, int index) {
     final url = widget.userProfile.images[index].url;
     final blurHash = widget.userProfile.images[index].blurHash;
-    return ProfileImage(
-      height: height,
-      width: width,
-      index: index,
-      url: url,
-      blurHash: blurHash,
+    return Stack(
+      children: [
+        ProfileImage(
+          height: height,
+          width: width,
+          index: index,
+          url: url,
+          blurHash: blurHash,
+        ),
+        if (!widget.isMine)
+          Positioned(
+            bottom: 12,
+            right: 12,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ReplyButton(onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => ReplyBottomSheet(
+                      title: 'Reply to Profile',
+                      onSend: (message) {
+                        // TODO: Implement reply logic for profile
+                      },
+                    ),
+                  );
+                }),
+                const SizedBox(width: 8),
+                LikeButton(onTap: () {
+                  // TODO: Implement like logic
+                }),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

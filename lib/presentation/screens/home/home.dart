@@ -1,16 +1,11 @@
-import 'dart:math';
-
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/confessions/confessions_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_shape.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/presentation/screens/your_matches/your_matches_tab.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
-import 'package:college_cupid/shared/assets.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -84,32 +79,32 @@ class _HomeState extends ConsumerState<Home> {
           ),
           child: Stack(
             children: [
-              ..._heartShapes(
-                HeartState(
-                  size: 200,
-                  left: -50,
-                  bottom: size.height * 0.25,
-                  rotation: Random().nextDouble() * pi / 4,
-                ),
-                HeartState(
-                  size: 200,
-                  right: 50,
-                  bottom: size.height * 0.09,
-                  rotation: Random().nextDouble() * pi / 4,
-                ),
-                HeartState(
-                  size: 180,
-                  right: -50,
-                  top: size.height * 0.25,
-                  rotation: Random().nextDouble() * pi / 4,
-                ),
-                HeartState(
-                  size: 180,
-                  left: 50,
-                  top: size.height * 0.15,
-                  rotation: Random().nextDouble() * pi / 4,
-                ),
-              ),
+              // ..._heartShapes(
+              //   HeartState(
+              //     size: 200,
+              //     left: -50,
+              //     bottom: size.height * 0.25,
+              //     rotation: Random().nextDouble() * pi / 4,
+              //   ),
+              //   HeartState(
+              //     size: 200,
+              //     right: 50,
+              //     bottom: size.height * 0.09,
+              //     rotation: Random().nextDouble() * pi / 4,
+              //   ),
+              //   HeartState(
+              //     size: 180,
+              //     right: -50,
+              //     top: size.height * 0.25,
+              //     rotation: Random().nextDouble() * pi / 4,
+              //   ),
+              //   HeartState(
+              //     size: 180,
+              //     left: 50,
+              //     top: size.height * 0.15,
+              //     rotation: Random().nextDouble() * pi / 4,
+              //   ),
+              // ),
               SizedBox(
                 height: size.height,
                 width: size.width,
@@ -184,74 +179,74 @@ class _HomeState extends ConsumerState<Home> {
       ),
     );
   }
-
-  List<Widget> _heartShapes(
-      HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
-    return [
-      AnimatedPositioned(
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeInOut,
-        top: yellow.top,
-        right: yellow.right,
-        bottom: yellow.bottom,
-        left: yellow.left,
-        child: Transform.rotate(
-          angle: yellow.rotation!,
-          child: HeartShape(
-            size: yellow.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99EAE27A),
-          ),
-        ),
-      ),
-      AnimatedPositioned(
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeInOut,
-        top: blue.top,
-        right: blue.right,
-        bottom: blue.bottom,
-        left: blue.left,
-        child: Transform.rotate(
-          angle: blue.rotation!,
-          child: HeartShape(
-            size: blue.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99A8CEFA),
-          ),
-        ),
-      ),
-      AnimatedPositioned(
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeInOut,
-        top: pink.top,
-        right: pink.right,
-        bottom: pink.bottom,
-        left: pink.left,
-        child: Transform.rotate(
-          angle: pink.rotation!,
-          child: HeartShape(
-            size: pink.size,
-            asset: CupidIcons.heartOutline,
-            color: const Color(0x99F9A8D4),
-          ),
-        ),
-      ),
-      AnimatedPositioned(
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeInOut,
-        top: green.top,
-        right: green.right,
-        bottom: green.bottom,
-        left: green.left,
-        child: Transform.rotate(
-          angle: green.rotation!,
-          child: HeartShape(
-            size: green.size,
-            asset: CupidIcons.heartOutline,
-            color: CupidColors.cupidGreen,
-          ),
-        ),
-      ),
-    ];
-  }
 }
+//   List<Widget> _heartShapes(
+//       HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
+//     return [
+//       AnimatedPositioned(
+//         duration: const Duration(milliseconds: 2000),
+//         curve: Curves.easeInOut,
+//         top: yellow.top,
+//         right: yellow.right,
+//         bottom: yellow.bottom,
+//         left: yellow.left,
+//         child: Transform.rotate(
+//           angle: yellow.rotation!,
+//           child: HeartShape(
+//             size: yellow.size,
+//             asset: CupidIcons.heartOutline,
+//             color: const Color(0x99EAE27A),
+//           ),
+//         ),
+//       ),
+//       AnimatedPositioned(
+//         duration: const Duration(milliseconds: 2000),
+//         curve: Curves.easeInOut,
+//         top: blue.top,
+//         right: blue.right,
+//         bottom: blue.bottom,
+//         left: blue.left,
+//         child: Transform.rotate(
+//           angle: blue.rotation!,
+//           child: HeartShape(
+//             size: blue.size,
+//             asset: CupidIcons.heartOutline,
+//             color: const Color(0x99A8CEFA),
+//           ),
+//         ),
+//       ),
+//       AnimatedPositioned(
+//         duration: const Duration(milliseconds: 2000),
+//         curve: Curves.easeInOut,
+//         top: pink.top,
+//         right: pink.right,
+//         bottom: pink.bottom,
+//         left: pink.left,
+//         child: Transform.rotate(
+//           angle: pink.rotation!,
+//           child: HeartShape(
+//             size: pink.size,
+//             asset: CupidIcons.heartOutline,
+//             color: const Color(0x99F9A8D4),
+//           ),
+//         ),
+//       ),
+//       AnimatedPositioned(
+//         duration: const Duration(milliseconds: 2000),
+//         curve: Curves.easeInOut,
+//         top: green.top,
+//         right: green.right,
+//         bottom: green.bottom,
+//         left: green.left,
+//         child: Transform.rotate(
+//           angle: green.rotation!,
+//           child: HeartShape(
+//             size: green.size,
+//             asset: CupidIcons.heartOutline,
+//             color: CupidColors.cupidGreen,
+//           ),
+//         ),
+//       ),
+//     ];
+//   }
+// }

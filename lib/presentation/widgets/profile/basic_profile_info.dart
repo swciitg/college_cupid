@@ -11,6 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_attribute.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:college_cupid/presentation/widgets/global/like_button.dart';
+import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
+import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 
 class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
@@ -98,7 +101,11 @@ class BasicProfileInfo extends ConsumerWidget {
                     ),
                     //Show Gender
                     if (userProfile.gender != null)
-                      Text(userProfile.gender!.displayString,style: CupidStyles.normalTextStyle.copyWith(fontSize: 13,fontWeight: FontWeight.bold),),
+                      Text(
+                        userProfile.gender!.displayString,
+                        style: CupidStyles.normalTextStyle.copyWith(
+                            fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
                     SizedBox(height: 8),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -115,7 +122,8 @@ class BasicProfileInfo extends ConsumerWidget {
                           ],
                           ProfileAttribute(
                             icon: FluentIcons.hat_graduation_24_regular,
-                            text: '${program.displayString} ${userProfile.yearOfJoin}',
+                            text:
+                                '${program.displayString} ${userProfile.yearOfJoin}',
                           ),
                           if (showRelationshipGoal || isMine) ...[
                             const SizedBox(width: 12),
@@ -136,14 +144,45 @@ class BasicProfileInfo extends ConsumerWidget {
           ),
           const SizedBox(height: 18),
           Expanded(
-            child: ProfileImage(
-              height: maxHeight,
-              width: width,
-              index: 0,
-              overlay: null,
-              url: userProfile.images.first.url,
-              blurHash: userProfile.images.first.blurHash,
-              backButton: backButton,
+            child: Stack(
+              children: [
+                ProfileImage(
+                  height: maxHeight,
+                  width: width,
+                  index: 0,
+                  overlay: null,
+                  url: userProfile.images.first.url,
+                  blurHash: userProfile.images.first.blurHash,
+                  backButton: backButton,
+                ),
+                if (!isMine)
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ReplyButton(onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => ReplyBottomSheet(
+                              title: 'Reply to Profile',
+                              onSend: (message) {
+                                // TODO: Implement reply logic for profile
+                              },
+                            ),
+                          );
+                        }),
+                        const SizedBox(width: 8),
+                        LikeButton(onTap: () {
+                          // TODO: Implement like logic
+                        }),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class ReplyBottomSheet extends StatefulWidget {
-  final String confessionId;
+  final String? confessionId;
+  final String title;
+  final void Function(String message) onSend;
 
-  const ReplyBottomSheet({super.key, required this.confessionId});
+  const ReplyBottomSheet({
+    super.key,
+    this.confessionId,
+    required this.title,
+    required this.onSend,
+  });
 
   @override
   State<ReplyBottomSheet> createState() => _ReplyBottomSheetState();
@@ -39,7 +46,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Reply to Confession',
+            widget.title,
             style: CupidStyles.headingStyle.copyWith(fontSize: 20),
           ),
           const SizedBox(height: 12),
@@ -105,7 +112,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Implement reply logic
+                    widget.onSend(_controller.text);
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(

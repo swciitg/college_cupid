@@ -59,7 +59,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         centerTitle: false,
         automaticallyImplyLeading: false,
         title: const Padding(
-          padding:  EdgeInsets.only(left: 8.0),
+          padding: EdgeInsets.only(left: 8.0),
           child: Text(
             'Confessions',
             style: CupidStyles.headingStyle,
@@ -142,6 +142,10 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                           backgroundColor: Colors.transparent,
                           builder: (context) => ReplyBottomSheet(
                             confessionId: confession.id,
+                            title: 'Reply to Confession',
+                            onSend: (message) {
+                              // TODO: Implement reply logic for confessions
+                            },
                           ),
                         );
                       },
