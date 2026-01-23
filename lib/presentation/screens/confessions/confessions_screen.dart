@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/confessions/confession_card.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
+import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/stores/confessions_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -67,49 +68,16 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: Container(
+          child: SizedBox(
             height: 50,
-            alignment: Alignment.centerLeft,
-            child: TabBar(
+            child: CupidTabBar(
               controller: _tabController,
-              isScrollable: true,
-              indicatorColor: Colors.transparent,
-              dividerColor: Colors.transparent,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              tabAlignment: TabAlignment.start,
+              tabs: _tabs.map((e) => e.displayName).toList(),
               onTap: (index) {
                 ref
                     .read(confessionsProvider.notifier)
                     .setCategory(_tabs[index]);
               },
-              tabs: _tabs.map((category) {
-                final isSelected = state.selectedCategory == category;
-                return Tab(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected ? CupidColors.cupidPurple : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected
-                            ? Colors.transparent
-                            : CupidColors.greyColor.withOpacity(0.2),
-                      ),
-                    ),
-                    child: Text(
-                      category.displayName,
-                      style: CupidStyles.normalTextStyle.copyWith(
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
             ),
           ),
         ),
