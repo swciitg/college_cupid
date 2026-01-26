@@ -11,7 +11,8 @@ class Encryption {
   static Uint8List hexadecimalToBytes(String hexString) {
     List<int> decimalList = [];
     for (int i = 0; i < hexString.length; i += 2) {
-      decimalList.add(int.parse(hexString.substring(i, i + 2).toUpperCase(), radix: 16));
+      decimalList.add(
+          int.parse(hexString.substring(i, i + 2).toUpperCase(), radix: 16));
     }
     return Uint8List.fromList(decimalList);
   }
@@ -30,7 +31,8 @@ class Encryption {
     return md5Digest;
   }
 
-  static Uint8List encryptAES({required String plainText, required String key}) {
+  static Uint8List encryptAES(
+      {required String plainText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     // Uint8List keyBytes2 = calculateSHA256(key);
     // print(key);
@@ -47,7 +49,8 @@ class Encryption {
     return encrypted;
   }
 
-  static String decryptAES({required Uint8List encryptedText, required String key}) {
+  static String decryptAES(
+      {required Uint8List encryptedText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     Uint8List iv = Uint8List(16);
 
@@ -56,5 +59,10 @@ class Encryption {
 
     Uint8List decryptedData = crypt.aesDecrypt(encryptedText);
     return String.fromCharCodes(decryptedData);
+  }
+
+  static String encryptEmail(String email, String key) {
+    final encryptedEmailBytes = encryptAES(plainText: email, key: key);
+    return bytesToHexadecimal(encryptedEmailBytes);
   }
 }

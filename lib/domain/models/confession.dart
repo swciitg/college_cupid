@@ -1,23 +1,36 @@
 // UserProfile import removed
 
-enum ConfessionCategory {
-  all,
-  spottedInCampus,
-  gossip,
-  byYou,
+enum ConfessionCategory { SPOTTED_IN_CAMPUS, GOSSIP }
+
+enum ConfessionReportCategory {
+  HATE_SPEECH,
+  SPAM,
+  INAPPROPRIATE,
+  OTHER,
+}
+
+extension ConfessionReportCategoryExtension on ConfessionReportCategory {
+  String get displayName {
+    switch (this) {
+      case ConfessionReportCategory.HATE_SPEECH:
+        return 'Hate Speech';
+      case ConfessionReportCategory.SPAM:
+        return 'Spam';
+      case ConfessionReportCategory.INAPPROPRIATE:
+        return 'Inappropriate Content';
+      case ConfessionReportCategory.OTHER:
+        return 'Other';
+    }
+  }
 }
 
 extension ConfessionCategoryExtension on ConfessionCategory {
   String get displayName {
     switch (this) {
-      case ConfessionCategory.spottedInCampus:
+      case ConfessionCategory.SPOTTED_IN_CAMPUS:
         return 'Spotted in Campus';
-      case ConfessionCategory.gossip:
+      case ConfessionCategory.GOSSIP:
         return 'Gossip';
-      case ConfessionCategory.byYou:
-        return 'By You';
-      case ConfessionCategory.all:
-        return 'All';
     }
   }
 }
@@ -95,7 +108,6 @@ class Confession {
   final ConfessionCategory typeOfConfession; // Backend: typeOfConfession
   final DateTime createdAt; // Backend: timestamps -> createdAt
   final List<Reaction> reactions;
-  final String song; // Backend: song (url string)
   final List<Reply> replies;
 
   Confession({
@@ -105,7 +117,6 @@ class Confession {
     required this.typeOfConfession,
     required this.createdAt,
     this.reactions = const [],
-    this.song = '',
     this.replies = const [],
   });
 
@@ -117,9 +128,8 @@ class Confession {
       typeOfConfession: ConfessionCategory.values.firstWhere(
         (e) => e.name == json['typeOfConfession'],
         orElse: () => ConfessionCategory.values.firstWhere(
-            (e) =>
-                e.name == json['category'], 
-            orElse: () => ConfessionCategory.gossip),
+            (e) => e.name == json['category'],
+            orElse: () => ConfessionCategory.GOSSIP),
       ),
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
@@ -130,7 +140,6 @@ class Confession {
               ?.map((e) => Reaction.fromJson(e))
               .toList() ??
           [],
-      song: json['song'] ?? '',
       replies: (json['replies'] as List<dynamic>?)
               ?.map((e) => Reply.fromJson(e))
               .toList() ??
@@ -146,7 +155,6 @@ class Confession {
       'typeOfConfession': typeOfConfession.name,
       'createdAt': createdAt.toIso8601String(),
       'reactions': reactions.map((e) => e.toJson()).toList(),
-      'song': song,
       'replies': replies.map((e) => e.toJson()).toList(),
     };
   }
@@ -158,7 +166,6 @@ class Confession {
     ConfessionCategory? typeOfConfession,
     DateTime? createdAt,
     List<Reaction>? reactions,
-    String? song,
     List<Reply>? replies,
   }) {
     return Confession(
@@ -168,7 +175,6 @@ class Confession {
       typeOfConfession: typeOfConfession ?? this.typeOfConfession,
       createdAt: createdAt ?? this.createdAt,
       reactions: reactions ?? this.reactions,
-      song: song ?? this.song,
       replies: replies ?? this.replies,
     );
   }

@@ -1,10 +1,10 @@
 import 'package:college_cupid/domain/models/update_model.dart';
-import 'package:college_cupid/repositories/mock_updates_repository.dart';
+
 import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final updatesRepositoryProvider = Provider<UpdatesRepository>((ref) {
-  return MockUpdatesRepository();
+  return ref.read(updatesRepoProvider);
 });
 
 final updatesControllerProvider =

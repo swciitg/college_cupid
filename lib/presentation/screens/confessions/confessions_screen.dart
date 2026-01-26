@@ -1,15 +1,17 @@
-import 'package:college_cupid/domain/models/confession.dart';
 import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/confessions/confession_card.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
+import 'package:college_cupid/presentation/widgets/confessions/report_confession_dialog.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/stores/confessions_controller.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:college_cupid/domain/models/confession.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfessionsScreen extends ConsumerStatefulWidget {
@@ -22,11 +24,11 @@ class ConfessionsScreen extends ConsumerStatefulWidget {
 class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<ConfessionCategory> _tabs = [
-    ConfessionCategory.all,
-    ConfessionCategory.spottedInCampus,
-    ConfessionCategory.gossip,
-    ConfessionCategory.byYou,
+  final List<ConfessionsFilter> _tabs = [
+    ConfessionsFilter.all,
+    ConfessionsFilter.spottedInCampus,
+    ConfessionsFilter.gossip,
+    ConfessionsFilter.byYou,
   ];
 
   @override
@@ -37,7 +39,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
       if (!_tabController.indexIsChanging) {
         ref
             .read(confessionsProvider.notifier)
-            .setCategory(_tabs[_tabController.index]);
+            .setFilter(_tabs[_tabController.index]);
       }
     });
   }
@@ -51,6 +53,15 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(confessionsProvider);
+
+    ref.listen<ConfessionsState>(confessionsProvider, (previous, next) {
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.errorMessage!)),
+        );
+      }
+    });
 
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
@@ -74,15 +85,14 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
               controller: _tabController,
               tabs: _tabs.map((e) => e.displayName).toList(),
               onTap: (index) {
-                ref
-                    .read(confessionsProvider.notifier)
-                    .setCategory(_tabs[index]);
+                ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
               },
             ),
           ),
         ),
       ),
-      body: state.isLoading
+      body: state.isLoading &&
+              (state.confessions == null || state.confessions!.isEmpty)
           ? const Center(child: CustomLoader())
           : state.confessions == null || state.confessions!.isEmpty
               ? const Center(
@@ -91,34 +101,113 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                     style: CupidStyles.normalTextStyle,
                   ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  itemCount: state.confessions!.length,
-                  itemBuilder: (context, index) {
-                    final confession = state.confessions![index];
-                    return ConfessionCard(
-                      confession: confession,
-                      onReact: (reaction) {
-                        ref
-                            .read(confessionsProvider.notifier)
-                            .reactToConfession(confession.id, reaction);
-                      },
-                      onReply: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => ReplyBottomSheet(
-                            confessionId: confession.id,
-                            title: 'Reply to Confession',
-                            onSend: (message) {
-                              // TODO: Implement reply logic for confessions
-                            },
-                          ),
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    await ref.read(confessionsProvider.notifier).refresh();
+                  },
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (!state.isLoading &&
+                          scrollInfo.metrics.pixels >=
+                              scrollInfo.metrics.maxScrollExtent - 200) {
+                        ref.read(confessionsProvider.notifier).loadMore();
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      key: PageStorageKey(state.selectedFilter.name),
+                      padding: const EdgeInsets.only(bottom: 100),
+                      itemCount: state.confessions!.length + 1, // +1 for loader
+                      itemBuilder: (context, index) {
+                        if (index == state.confessions!.length) {
+                          return state.isLoading
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                        }
+                        final confession = state.confessions![index];
+                        final myReaction = confession.reactions.firstWhere((r) {
+                          return r.user == LoginStore.userId;
+                        },
+                            orElse: () =>
+                                Reaction(reaction: '', user: '')).reaction;
+                        final isMine =
+                            state.selectedFilter == ConfessionsFilter.byYou ||
+                                state.myConfessionIds.contains(confession.id);
+
+                        return ConfessionCard(
+                          confession: confession,
+                          myReaction: myReaction.isNotEmpty ? myReaction : null,
+                          isMine: isMine,
+                          onDelete: () {
+                            debugPrint(
+                                'DEBUG UI: Tapped delete for ${confession.id}');
+                            ref
+                                .read(confessionsProvider.notifier)
+                                .deleteConfession(confession.id);
+                          },
+                          onReport: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => ReportConfessionDialog(
+                                onReport: (category) {
+                                  ref
+                                      .read(confessionsProvider.notifier)
+                                      .reportConfession(
+                                          confession.id, category);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Confession reported')),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          onReact: (reaction) {
+                            final myReaction = confession.reactions
+                                .firstWhere(
+                                  (r) => r.user == LoginStore.userId,
+                                  orElse: () =>
+                                      Reaction(reaction: '', user: ''),
+                                )
+                                .reaction;
+
+                            if (myReaction == reaction) {
+                              ref
+                                  .read(confessionsProvider.notifier)
+                                  .removeReaction(confession.id);
+                            } else {
+                              ref
+                                  .read(confessionsProvider.notifier)
+                                  .reactToConfession(confession.id, reaction);
+                            }
+                          },
+                          onReply: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => ReplyBottomSheet(
+                                confessionId: confession.id,
+                                title: 'Reply to Confession',
+                                onSend: (message) {
+                                  ref
+                                      .read(confessionsProvider.notifier)
+                                      .replyToConfession(
+                                          confession.id, message);
+                                },
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
       floatingActionButton: GestureDetector(
         onTap: () {

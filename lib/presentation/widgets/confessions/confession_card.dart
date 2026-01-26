@@ -11,12 +11,20 @@ class ConfessionCard extends StatelessWidget {
   final Confession confession;
   final Function(String)? onReact;
   final VoidCallback? onReply;
+  final VoidCallback? onDelete;
+  final VoidCallback? onReport;
+  final String? myReaction;
+  final bool isMine;
 
   const ConfessionCard({
     super.key,
     required this.confession,
     this.onReact,
     this.onReply,
+    this.onDelete,
+    this.onReport,
+    this.myReaction,
+    this.isMine = false,
   });
 
   @override
@@ -58,9 +66,23 @@ class ConfessionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                DateFormat('d MMM, yyyy').format(confession.createdAt),
-                style: CupidStyles.lightTextStyle.copyWith(fontSize: 12),
+              Row(
+                children: [
+                  Text(
+                    DateFormat('d MMM, yyyy').format(confession.createdAt),
+                    style: CupidStyles.lightTextStyle.copyWith(fontSize: 12),
+                  ),
+                  if (!isMine) ...[
+                    const SizedBox(width: 4),
+                    IconButton(
+                      icon: const Icon(Icons.report_problem,
+                          size: 20, color: CupidColors.cupidPeach),
+                      onPressed: () {
+                        onReport!();
+                      },
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
@@ -73,38 +95,11 @@ class ConfessionCard extends StatelessWidget {
               color: CupidColors.blackColor,
             ),
           ),
-          if (confession.song.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: CupidColors.offWhiteColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(FluentIcons.music_note_2_24_filled,
-                      size: 20, color: CupidColors.cupidGreen),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      confession.song,
-                      overflow: TextOverflow.ellipsis,
-                      style: CupidStyles.normalTextStyle.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: CupidColors.cupidGreen,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
           const SizedBox(height: 16),
           Row(
             children: [
               _ActionButton(
-                icon: FluentIcons.add_24_regular,
+                icon: FluentIcons.add_12_regular,
                 onTap: () {
                   showDialog(
                     context: context,
@@ -112,6 +107,7 @@ class ConfessionCard extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                       child: ReactionPicker(
+                        selectedReaction: myReaction,
                         onReactionSelected: (reaction) {
                           if (onReact != null) onReact!(reaction);
                           Navigator.pop(context);
@@ -127,7 +123,7 @@ class ConfessionCard extends StatelessWidget {
                   if (confession.reactions.isNotEmpty) ...[
                     SizedBox(
                       height: 24,
-                      width: 40 +
+                      width: 30 +
                           (confession.reactions.length > 1
                               ? 10.0
                               : 0.0), // Dynamic width
@@ -153,18 +149,18 @@ class ConfessionCard extends StatelessWidget {
                       style: CupidStyles.normalTextStyle,
                     ),
                   ] else ...[
-                    const Icon(FluentIcons.heart_24_regular, size: 24),
-                    const SizedBox(width: 4),
-                    const Text('Like'),
+                    
                   ]
                 ],
               ),
               const Spacer(),
-              if (confession.encryptedEmail == 'me') ...[
+              if (isMine) ...[
                 _ActionButton(
                   icon: FluentIcons.delete_24_regular,
                   color: Colors.red.withOpacity(0.7),
-                  onTap: () {}, // Delete logic if "By You"
+                  onTap: () {
+                    if (onDelete != null) onDelete!();
+                  },
                 ),
                 const SizedBox(width: 12),
               ],
@@ -198,7 +194,7 @@ class _ActionButton extends StatelessWidget {
             color: CupidColors.greyColor.withOpacity(0.2),
           ),
         ),
-        child: Icon(icon, size: 20, color: color ?? CupidColors.greyColor),
+        child: Icon(icon, size: 14, color: color ?? CupidColors.greyColor),
       ),
     );
   }

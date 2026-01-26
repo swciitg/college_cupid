@@ -2,22 +2,27 @@ import 'package:college_cupid/domain/models/confession.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/confessions_controller.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateConfessionScreen extends StatefulWidget {
+class CreateConfessionScreen extends ConsumerStatefulWidget {
   const CreateConfessionScreen({super.key});
 
   @override
-  State<CreateConfessionScreen> createState() => _CreateConfessionScreenState();
+  ConsumerState<CreateConfessionScreen> createState() =>
+      _CreateConfessionScreenState();
 }
 
-class _CreateConfessionScreenState extends State<CreateConfessionScreen> {
+class _CreateConfessionScreenState
+    extends ConsumerState<CreateConfessionScreen> {
   // ... (controller init)
   final TextEditingController _confessionController = TextEditingController();
-  ConfessionCategory _selectedCategory = ConfessionCategory.spottedInCampus;
-  String? _selectedSong; // Null initially
+  ConfessionCategory _selectedCategory = ConfessionCategory.SPOTTED_IN_CAMPUS;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -38,7 +43,6 @@ class _CreateConfessionScreenState extends State<CreateConfessionScreen> {
           onPressed: () => context.pop(),
         ),
       ),
-      // ... (body content)
       body: SafeArea(
         child: CustomScrollView(
           physics: const ClampingScrollPhysics(),
@@ -70,11 +74,11 @@ class _CreateConfessionScreenState extends State<CreateConfessionScreen> {
                         _CategoryChip(
                           label: 'Spotted in Campus',
                           isSelected: _selectedCategory ==
-                              ConfessionCategory.spottedInCampus,
+                              ConfessionCategory.SPOTTED_IN_CAMPUS,
                           onTap: () {
                             setState(() {
                               _selectedCategory =
-                                  ConfessionCategory.spottedInCampus;
+                                  ConfessionCategory.SPOTTED_IN_CAMPUS;
                             });
                           },
                         ),
@@ -82,110 +86,16 @@ class _CreateConfessionScreenState extends State<CreateConfessionScreen> {
                         _CategoryChip(
                           label: 'Gossip',
                           isSelected:
-                              _selectedCategory == ConfessionCategory.gossip,
+                              _selectedCategory == ConfessionCategory.GOSSIP,
                           onTap: () {
                             setState(() {
-                              _selectedCategory = ConfessionCategory.gossip;
+                              _selectedCategory = ConfessionCategory.GOSSIP;
                             });
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    if (_selectedSong == null)
-                      GestureDetector(
-                        onTap: () {
-                          // TODO: Implement song selection
-                          setState(() {
-                            _selectedSong = 'Song Name Here - Artist';
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: CupidColors.greyColor),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(FluentIcons.play_24_filled, size: 16),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Select Music',
-                                style: CupidStyles.normalTextStyle
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    else
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: CupidColors.offWhiteColor,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color:
-                                  CupidColors.greyColor.withValues(alpha: 0.3)),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(FluentIcons.music_note_2_24_filled,
-                                size: 20, color: CupidColors.cupidGreen),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _selectedSong!,
-                                overflow: TextOverflow.ellipsis,
-                                style: CupidStyles.normalTextStyle.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: CupidColors.cupidGreen,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                                onTap: () {
-                                  // Change Logic
-                                },
-                                child: Row(children: [
-                                  const Icon(FluentIcons.play_24_filled,
-                                      size: 14),
-                                  const SizedBox(width: 4),
-                                  Text("Change",
-                                      style: CupidStyles.normalTextStyle
-                                          .copyWith(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold)),
-                                ])),
-                            const SizedBox(width: 12),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedSong = null;
-                                });
-                              },
-                              child: Row(
-                                children: [
-                                  Text("Remove",
-                                      style: CupidStyles.normalTextStyle
-                                          .copyWith(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold)),
-                                  const SizedBox(width: 2),
-                                  const Icon(FluentIcons.dismiss_24_regular,
-                                      size: 14, color: Colors.red),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
                   ],
                 ),
               ),
@@ -218,10 +128,45 @@ class _CreateConfessionScreenState extends State<CreateConfessionScreen> {
                     ),
                     const SizedBox(height: 20),
                     CupidButton(
-                      text: 'Post ->',
-                      onTap: () {
-                        // TODO: Connect to backend
-                        context.pop();
+                      text: _isLoading ? 'Posting...' : 'Post ->',
+                      onTap: () async {
+                        debugPrint('DEBUG: Tapped Post');
+                        debugPrint('DEBUG: Email: ${LoginStore.email}');
+
+                        if (_isLoading) return;
+                        if (_confessionController.text.trim().isEmpty) return;
+
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        final success = await ref
+                            .read(confessionsProvider.notifier)
+                            .postConfession(
+                              _confessionController.text,
+                              _selectedCategory,
+                            );
+
+                        debugPrint('DEBUG: Success: $success');
+                        if (!success) {
+                          debugPrint(
+                              'DEBUG: Error: ${ref.read(confessionsProvider).errorMessage}');
+                        }
+
+                        if (success && mounted) {
+                          context.pop();
+                        } else if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          final error =
+                              ref.read(confessionsProvider).errorMessage;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text(error ?? 'Failed to post confession')),
+                          );
+                        }
                       },
                       backgroundColor: CupidColors.cupidPurple,
                       style: CupidStyles.normalTextStyle.copyWith(

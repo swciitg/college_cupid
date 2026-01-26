@@ -1,10 +1,15 @@
-// Imports removed
+import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 class ReactionPicker extends StatelessWidget {
   final Function(String) onReactionSelected;
+  final String? selectedReaction;
 
-  const ReactionPicker({super.key, required this.onReactionSelected});
+  const ReactionPicker({
+    super.key,
+    required this.onReactionSelected,
+    this.selectedReaction,
+  });
 
   final List<String> _reactions = const ['❤️', '😂', '🔥', '😢', '😡', '👍'];
 
@@ -28,10 +33,17 @@ class ReactionPicker extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: _reactions.map((reaction) {
+            final isSelected = reaction == selectedReaction;
             return GestureDetector(
               onTap: () => onReactionSelected(reaction),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color:
+                      isSelected ? CupidColors.cupidPurple.withOpacity(0.7) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Text(
                   reaction,
                   style: const TextStyle(fontSize: 24),
