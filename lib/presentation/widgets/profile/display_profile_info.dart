@@ -192,10 +192,6 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               ),
                             );
                           }),
-                          const SizedBox(width: 8),
-                          LikeButton(onTap: () {
-                            // TODO: Implement like logic
-                          }),
                         ],
                       ),
                   ],
@@ -314,10 +310,6 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       },
                     ),
                   );
-                }),
-                const SizedBox(width: 8),
-                LikeButton(onTap: () {
-                  // TODO: Implement like logic
                 }),
               ],
             ),

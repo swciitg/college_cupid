@@ -81,16 +81,20 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
     try {
       if (LoginStore.email == null) return;
 
-      final encryptedEmailBytes = Encryption.encryptAES(
-        plainText: LoginStore.email!,
-        key: Endpoints.apiSecurityKey,
-      );
-      final encryptedEmail = Encryption.bytesToHexadecimal(encryptedEmailBytes);
+      final encryptedEmail =
+          Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
 
       final myConfessions = await _repository.getMyConfessions(encryptedEmail);
       final myIds = myConfessions.map((c) => c.id).toSet();
 
-      state = state.copyWith(myConfessionIds: myIds);
+      // Optimize: Populate the 'byYou' list since we have the data
+      // This avoids a second fetch when user clicks the tab
+      final updatedMap =
+          Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
+      updatedMap[ConfessionsFilter.byYou] = myConfessions;
+
+      state =
+          state.copyWith(myConfessionIds: myIds, confessionsMap: updatedMap);
     } catch (e) {
       debugPrint('Error fetching my confession IDs: $e');
     }
@@ -124,9 +128,14 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
           return;
         }
 
+        debugPrint(
+            'DEBUG: Fetching "By You" confessions for email: ${LoginStore.email}');
         final encryptedEmail = Encryption.encryptEmail(
             LoginStore.email!, Endpoints.apiSecurityKey);
+        debugPrint('DEBUG: Encrypted Email: $encryptedEmail');
+
         newConfessions = await _repository.getMyConfessions(encryptedEmail);
+        debugPrint('DEBUG: Fetched ${newConfessions.length} my confessions');
       } else {
         ConfessionCategory? category;
         if (targetFilter == ConfessionsFilter.spottedInCampus) {
@@ -167,7 +176,9 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
           pages: updatedPages,
           hasMore: updatedHasMore,
           selectedFilter: targetFilter);
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('DEBUG CONTROLLER: Error in getConfessions: $e');
+      debugPrint('Stack trace: $st');
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
@@ -183,7 +194,6 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
 
       List<Confession> newConfessions;
       if (currentFilter == ConfessionsFilter.byYou) {
-        // No pagination for 'byYou' yet
         state = state.copyWith(isLoading: false);
         return;
       } else {
@@ -330,7 +340,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
     }
   }
 
-  Future<void> deleteConfession(String id) async {
+  Future<bool> deleteConfession(String id) async {
     try {
       debugPrint('DEBUG CONTROLLER: Deleting confession $id');
       final encryptedEmail =
@@ -344,9 +354,11 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
       } else {
         state = state.copyWith(errorMessage: 'Failed to delete confession');
       }
+      return success;
     } catch (e) {
       debugPrint('DEBUG CONTROLLER: Error deleting: $e');
       state = state.copyWith(errorMessage: e.toString());
+      return false;
     }
   }
 
@@ -412,14 +424,17 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
   }
 
   void setFilter(ConfessionsFilter filter) {
+    debugPrint('DEBUG CONTROLLER: setFilter called with $filter');
     // If selecting same filter, do nothing
     if (state.selectedFilter == filter) return;
 
     // If we already have data for this filter, just switch view
     if (state.confessionsMap.containsKey(filter)) {
+      debugPrint('DEBUG CONTROLLER: Switching to cached data for $filter');
       state = state.copyWith(selectedFilter: filter);
     } else {
       // Else fetch data for this filter
+      debugPrint('DEBUG CONTROLLER: Fetching data for $filter');
       getConfessions(filter: filter);
     }
   }

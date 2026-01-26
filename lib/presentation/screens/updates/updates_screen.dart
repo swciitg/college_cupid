@@ -1,4 +1,4 @@
-import 'package:college_cupid/presentation/screens/updates/widgets/update_item_builder.dart';
+import 'package:college_cupid/presentation/widgets/updates/update_item_builder.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';

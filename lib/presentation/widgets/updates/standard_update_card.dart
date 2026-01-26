@@ -1,18 +1,23 @@
 import 'package:college_cupid/domain/models/update_model.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class StandardUpdateCard extends StatelessWidget {
+class StandardUpdateCard extends ConsumerWidget {
   final UpdateModel update;
 
   const StandardUpdateCard({super.key, required this.update});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -37,7 +42,7 @@ class StandardUpdateCard extends StatelessWidget {
           const Divider(
               height: 1, color: Color(0xFFEEEEEE)), // Light grey divider
           const SizedBox(height: 12),
-          _buildFooter(),
+          _buildFooter(ref),
         ],
       ),
     );
@@ -141,15 +146,19 @@ class StandardUpdateCard extends StatelessWidget {
     }
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(WidgetRef ref) {
     return Row(
       children: [
         SizedBox(
           width: 32,
           height: 32,
           child: ProfileImage(
-            url: update.senderUser.images.first.url,
-            blurHash: update.senderUser.images.first.blurHash,
+            url: update.senderUser.images.isNotEmpty
+                ? update.senderUser.images.first.url
+                : '', // Handle empty URL safely in ProfileImage or here
+            blurHash: update.senderUser.images.isNotEmpty
+                ? update.senderUser.images.first.blurHash
+                : null,
             width: 32,
             height: 32,
             index: 0,
@@ -163,25 +172,52 @@ class StandardUpdateCard extends StatelessWidget {
                 .copyWith(fontWeight: FontWeight.w600),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            children: [
-              Text(
-                'Smash',
-                style: CupidStyles.normalTextStyle
-                    .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(width: 4),
-              const Icon(
-                FluentIcons.heart_24_regular,
-                size: 14,
-              )
-            ],
+        GestureDetector(
+          onTap: () async {
+            final crushesRepo = ref.read(crushesRepoProvider);
+            final profile = update.senderUser;
+
+            if (LoginStore.dhPrivateKey == null) {
+              // Handle missing key error if necessary
+              return;
+            }
+
+            final sharedSecret = DiffieHellman.generateSharedSecret(
+              otherPublicKey: BigInt.parse(profile.publicKey),
+              myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
+            ).toString();
+
+            try {
+              bool success = await crushesRepo.addCrush(sharedSecret);
+              if (success) {
+                await OneDriveRepository.addCrush(profile.email);
+                await crushesRepo.increaseCrushesCount(profile.email);
+              }
+            } catch (e) {
+              // Handle error
+              debugPrint("Error adding crush: $e");
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'Smash',
+                  style: CupidStyles.normalTextStyle
+                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  FluentIcons.heart_24_regular,
+                  size: 14,
+                )
+              ],
+            ),
           ),
         )
       ],

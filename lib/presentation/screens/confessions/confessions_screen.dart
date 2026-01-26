@@ -1,3 +1,4 @@
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/confessions/confession_card.dart';
@@ -53,6 +54,9 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(confessionsProvider);
+    debugPrint(
+        'DEBUG UI: Build. Filter: ${state.selectedFilter}, Loading: ${state.isLoading}');
+    debugPrint('DEBUG UI: Confessions count: ${state.confessions?.length}');
 
     ref.listen<ConfessionsState>(confessionsProvider, (previous, next) {
       if (next.errorMessage != null &&
@@ -138,17 +142,19 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                         final isMine =
                             state.selectedFilter == ConfessionsFilter.byYou ||
                                 state.myConfessionIds.contains(confession.id);
+                        debugPrint('DEBUG UI: isMine: $isMine');
 
                         return ConfessionCard(
                           confession: confession,
                           myReaction: myReaction.isNotEmpty ? myReaction : null,
                           isMine: isMine,
-                          onDelete: () {
-                            debugPrint(
-                                'DEBUG UI: Tapped delete for ${confession.id}');
-                            ref
+                          onDelete: () async {
+                            final success = await ref
                                 .read(confessionsProvider.notifier)
                                 .deleteConfession(confession.id);
+                            if (success && context.mounted) {
+                              showSnackBar('Confession Deleted Successfully');
+                            }
                           },
                           onReport: () {
                             showModalBottomSheet(
@@ -160,10 +166,8 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                       .read(confessionsProvider.notifier)
                                       .reportConfession(
                                           confession.id, category);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Confession reported')),
-                                  );
+                                  showSnackBar(
+                                      'Confession Reported Successfully');
                                 },
                               ),
                             );
@@ -200,6 +204,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                       .read(confessionsProvider.notifier)
                                       .replyToConfession(
                                           confession.id, message);
+                                  showSnackBar('Reply Sent Successfully');
                                 },
                               ),
                             );

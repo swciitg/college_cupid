@@ -137,11 +137,13 @@ class Confession {
               ? DateTime.parse(json['timestamp'])
               : DateTime.now()),
       reactions: (json['reactions'] as List<dynamic>?)
-              ?.map((e) => Reaction.fromJson(e))
+              ?.whereType<Map<String, dynamic>>()
+              .map((e) => Reaction.fromJson(e))
               .toList() ??
           [],
       replies: (json['replies'] as List<dynamic>?)
-              ?.map((e) => Reply.fromJson(e))
+              ?.whereType<Map<String, dynamic>>()
+              .map((e) => Reply.fromJson(e))
               .toList() ??
           [],
     );

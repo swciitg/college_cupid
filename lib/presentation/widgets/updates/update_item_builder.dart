@@ -1,6 +1,6 @@
 import 'package:college_cupid/domain/models/update_model.dart';
-import 'package:college_cupid/presentation/screens/updates/widgets/match_update_card.dart';
-import 'package:college_cupid/presentation/screens/updates/widgets/standard_update_card.dart';
+import 'package:college_cupid/presentation/widgets/updates/match_update_card.dart';
+import 'package:college_cupid/presentation/widgets/updates/standard_update_card.dart';
 import 'package:flutter/material.dart';
 
 class UpdateItemBuilder extends StatelessWidget {

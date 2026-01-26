@@ -69,9 +69,19 @@ class ConfessionsRepositoryImpl implements ConfessionsRepository {
 
       debugPrint(
           'DEBUG REPO: getMyConfessions Response status: ${response.statusCode}');
+      debugPrint(
+          'DEBUG REPO: getMyConfessions Response data length: ${(response.data['data'] as List?)?.length}');
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> data = response.data['data'];
-        return data.map((json) => Confession.fromJson(json)).toList();
+        return data.map((json) {
+          try {
+            return Confession.fromJson(json);
+          } catch (e) {
+            debugPrint('DEBUG REPO: Error parsing confession JSON: $e');
+            debugPrint('JSON: $json');
+            rethrow;
+          }
+        }).toList();
       } else {
         debugPrint(
             'DEBUG REPO: getMyConfessions Response data: ${response.data}');

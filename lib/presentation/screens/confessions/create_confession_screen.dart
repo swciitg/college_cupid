@@ -1,4 +1,5 @@
 import 'package:college_cupid/domain/models/confession.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -19,7 +20,6 @@ class CreateConfessionScreen extends ConsumerStatefulWidget {
 
 class _CreateConfessionScreenState
     extends ConsumerState<CreateConfessionScreen> {
-  // ... (controller init)
   final TextEditingController _confessionController = TextEditingController();
   ConfessionCategory _selectedCategory = ConfessionCategory.SPOTTED_IN_CAMPUS;
   bool _isLoading = false;
@@ -53,13 +53,13 @@ class _CreateConfessionScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Write your confession',
                       style: CupidStyles.headingStyle,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Consequat proident voluptate id adipisicing quis consequat fugiat eu duis velit in ut nisi.',
+                      'Share your thoughts anonymously with the IITG community.',
                       style: CupidStyles.lightTextStyle.copyWith(fontSize: 14),
                     ),
                     const SizedBox(height: 30),
@@ -154,6 +154,7 @@ class _CreateConfessionScreenState
                         }
 
                         if (success && mounted) {
+                          showSnackBar('Confession Uploaded Successfully!');
                           context.pop();
                         } else if (mounted) {
                           setState(() {
@@ -161,11 +162,7 @@ class _CreateConfessionScreenState
                           });
                           final error =
                               ref.read(confessionsProvider).errorMessage;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text(error ?? 'Failed to post confession')),
-                          );
+                          showSnackBar(error ?? 'Failed to post confession');
                         }
                       },
                       backgroundColor: CupidColors.cupidPurple,

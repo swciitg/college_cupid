@@ -175,10 +175,6 @@ class BasicProfileInfo extends ConsumerWidget {
                             ),
                           );
                         }),
-                        const SizedBox(width: 8),
-                        LikeButton(onTap: () {
-                          // TODO: Implement like logic
-                        }),
                       ],
                     ),
                   ),
