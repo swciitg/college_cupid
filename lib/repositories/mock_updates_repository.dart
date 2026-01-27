@@ -45,7 +45,7 @@ class MockUpdatesRepository implements UpdatesRepository {
         headerText: 'Replied to your voice note',
         mediaUrl: 'https://example.com/voice.mp3', // Mock URL
         timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-        contentPayload:
+        replyText:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       ),
       UpdateModel(
@@ -53,7 +53,7 @@ class MockUpdatesRepository implements UpdatesRepository {
         senderUser: dummyUser,
         type: UpdateType.textReply,
         headerText: 'Replied to your answer',
-        contentPayload:
+        replyText:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         timestamp: DateTime.now().subtract(const Duration(hours: 1)),
       ),
@@ -70,7 +70,7 @@ class MockUpdatesRepository implements UpdatesRepository {
         senderUser: dummyUser,
         type: UpdateType.confessionReply,
         headerText: 'Replied to your confession',
-        contentPayload:
+        replyText:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
@@ -81,7 +81,7 @@ class MockUpdatesRepository implements UpdatesRepository {
         headerText: 'Replied to your voice note',
         mediaUrl: 'https://example.com/voice.mp3',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
-        contentPayload:
+        replyText:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       ),
     ];

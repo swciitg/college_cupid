@@ -9,9 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 
+import 'package:college_cupid/repositories/confessions_repository.dart';
+
 final updatesRepoProvider = Provider<UpdatesRepository>((ref) =>
-    UpdatesRepositoryImpl(
-        ref.read(apiRepositoryProvider), ref.read(userProfileRepoProvider)));
+    UpdatesRepositoryImpl(ref.read(apiRepositoryProvider),
+        ref.read(userProfileRepoProvider), ref.read(confessionsRepoProvider)));
 
 abstract class UpdatesRepository {
   Future<List<UpdateModel>> fetchUpdates({String? filter});
@@ -20,8 +22,10 @@ abstract class UpdatesRepository {
 class UpdatesRepositoryImpl implements UpdatesRepository {
   final ApiRepository _apiRepository;
   final UserProfileRepository _userProfileRepository;
+  final ConfessionsRepository _confessionsRepository;
 
-  UpdatesRepositoryImpl(this._apiRepository, this._userProfileRepository);
+  UpdatesRepositoryImpl(this._apiRepository, this._userProfileRepository,
+      this._confessionsRepository);
 
   @override
   Future<List<UpdateModel>> fetchUpdates({String? filter}) async {
@@ -59,22 +63,37 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
           }
         }));
 
-        final allUpdates = data.map((json) {
+        // Concurrent fetching for updates logic (profiles AND confessions)
+        final List<UpdateModel> processedUpdates =
+            await Future.wait(data.map((json) async {
           final senderEmail = json['senderEmail'] as String? ?? '';
           final userProfile = userProfileMap[senderEmail] ??
               UserProfile.fromEmail(
                   senderEmail.isEmpty ? 'Unknown User' : senderEmail);
 
+          String? replyToText = json['repliedContent'];
+          if (replyToText == null && json['confessionId'] != null) {
+            final confessionId = json['confessionId'] as String;
+            final confession = await _confessionsRepository.getConfessionById(
+                confessionId, encryptedEmail);
+            if (confession != null) {
+              replyToText = confession.text;
+            }
+          }
+
           return UpdateModel(
             id: json['_id'] ?? '',
             senderUser: userProfile,
-            type: UpdateType.textReply,
-            headerText: "Replied to your confession",
-            contentPayload: json['replyContent'] ?? '',
+            type: UpdateType.textReply, //TODO: Update type based on update type
+            headerText: "Replied to your confession", //TODO: Update header text based on update type
+            replyText: json['replyContent'] ?? '',
+            replyTo: replyToText,
             timestamp:
                 DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
           );
-        }).toList();
+        }));
+
+        final allUpdates = processedUpdates.toList();
 
         if (filter == 'All') {
           return allUpdates;

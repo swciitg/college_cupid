@@ -20,6 +20,7 @@ abstract class ConfessionsRepository {
   Future<bool> deleteConfession(String id, String encryptedEmail);
   Future<bool> reportConfession(String id, ConfessionReportCategory category);
   Future<bool> removeReaction(String id);
+  Future<Confession?> getConfessionById(String id, String encryptedEmail);
 }
 
 class ConfessionsRepositoryImpl implements ConfessionsRepository {
@@ -226,5 +227,21 @@ class ConfessionsRepositoryImpl implements ConfessionsRepository {
       debugPrint('DEBUG REPO: Error removing reaction: $e');
       return false;
     }
+  }
+
+  @override
+  Future<Confession?> getConfessionById(
+      String id, String encryptedEmail) async {
+    try {
+      final myConfessions = await getMyConfessions(encryptedEmail);
+      try {
+        return myConfessions.firstWhere((c) => c.id == id);
+      } catch (e) {
+        return null;
+      }
+    } catch (e) {
+      debugPrint('DEBUG REPO: Error getting confession by id: $e');
+    }
+    return null;
   }
 }

@@ -5,6 +5,7 @@ enum UpdateType {
   textReply,
   match,
   confessionReply,
+  profileReply,
 }
 
 class UpdateModel {
@@ -12,8 +13,10 @@ class UpdateModel {
   final UserProfile senderUser;
   final UpdateType type;
   final String headerText;
-  final String? contentPayload;
-  final String? mediaUrl;
+  final String? replyText;
+  final String?
+      replyTo; // Content that was replied to(valid for confession and text answers)
+  final String? mediaUrl; //Voice notes and photo urls will be stored here(valid for voice and profile replies)
   final DateTime timestamp;
   final UserProfile? matchedUser; // Only for match type
 
@@ -23,7 +26,8 @@ class UpdateModel {
     required this.type,
     required this.headerText,
     required this.timestamp,
-    this.contentPayload,
+    this.replyText,
+    this.replyTo,
     this.mediaUrl,
     this.matchedUser,
   });
