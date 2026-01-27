@@ -1,7 +1,6 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_match_score.dart';
-
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -11,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_attribute.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:college_cupid/presentation/widgets/global/like_button.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 
@@ -32,8 +30,6 @@ class BasicProfileInfo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Keep currentUser for other checks if needed, or remove if isMine covers it.
-    // However, isMine is explicitly passed now.
     final currentUser = ref.watch(userProvider).myProfile!;
     Program program = userProfile.program!;
 
@@ -106,12 +102,13 @@ class BasicProfileInfo extends ConsumerWidget {
                         style: CupidStyles.normalTextStyle.copyWith(
                             fontSize: 13, fontWeight: FontWeight.bold),
                       ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          if (showSexualOrientation || isMine) ...[
+                          if ((showSexualOrientation || isMine) &&
+                              userProfile.sexualOrientation != null) ...[
                             ProfileAttribute(
                               icon: FluentIcons.person_24_regular,
                               text: userProfile
@@ -125,7 +122,8 @@ class BasicProfileInfo extends ConsumerWidget {
                             text:
                                 '${program.displayString} ${userProfile.yearOfJoin}',
                           ),
-                          if (showRelationshipGoal || isMine) ...[
+                          if ((showRelationshipGoal || isMine) &&
+                              userProfile.relationshipGoal != null) ...[
                             const SizedBox(width: 12),
                             ProfileAttribute(
                               icon: FluentIcons.handshake_24_regular,
