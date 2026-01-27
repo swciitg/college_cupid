@@ -63,8 +63,10 @@ final goRouter = GoRouter(
           builder: (context, state) {
             final props = state.extra as Map<String, dynamic>;
             return UserProfileScreen(
-                isMine: props['isMine'] as bool,
-                userProfile: props['userProfile'] as UserProfile);
+              isMine: props['isMine'] as bool,
+              userProfile: props['userProfile'] as UserProfile,
+              showPass: props['showPass'] as bool? ?? true,
+            );
           },
         ),
         GoRoute(

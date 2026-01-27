@@ -59,7 +59,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         final profile = currentUser;
 
         if (LoginStore.dhPrivateKey == null) {
-          // Handle missing key error if necessary
           return;
         }
 
@@ -70,6 +69,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
         // Optimistically move to next profile
         pageViewNotifier.nextProfile();
+
 
         try {
           bool success = await crushesRepo.addCrush(sharedSecret);

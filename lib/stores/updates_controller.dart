@@ -20,8 +20,14 @@ class UpdatesController extends StateNotifier<AsyncValue<List<UpdateModel>>> {
     fetchUpdates();
   }
 
-  Future<void> fetchUpdates({String filter = 'All'}) async {
-    state = const AsyncValue.loading();
+  Future<void> fetchUpdates(
+      {String filter = 'All', bool isRefresh = false}) async {
+    if (isRefresh) {
+      state =
+          const AsyncValue<List<UpdateModel>>.loading().copyWithPrevious(state);
+    } else {
+      state = const AsyncValue<List<UpdateModel>>.loading();
+    }
     try {
       final updates = await _repository.fetchUpdates(filter: filter);
       state = AsyncValue.data(updates);

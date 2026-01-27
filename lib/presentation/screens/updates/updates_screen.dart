@@ -70,26 +70,47 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: updatesState.when(
-                data: (updates) {
-                  if (updates.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No updates found',
-                        style: CupidStyles.lightTextStyle,
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: updates.length,
-                    itemBuilder: (context, index) {
-                      return UpdateItemBuilder(update: updates[index]);
-                    },
-                  );
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .read(updatesControllerProvider.notifier)
+                      .fetchUpdates(
+                          filter: _tabs[_tabController.index], isRefresh: true);
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, s) => Center(child: Text('Error: $e')),
+                child: updatesState.when(
+                  data: (updates) {
+                    if (updates.isEmpty) {
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'No updates found',
+                                  style: CupidStyles.lightTextStyle,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: updates.length,
+                      itemBuilder: (context, index) {
+                        return UpdateItemBuilder(update: updates[index]);
+                      },
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, s) => Center(child: Text('Error: $e')),
+                ),
               ),
             ),
           ],

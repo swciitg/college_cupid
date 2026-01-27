@@ -3,11 +3,13 @@ import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class UpdateCardFooter extends ConsumerWidget {
   final UpdateModel update;
@@ -35,10 +37,22 @@ class UpdateCardFooter extends ConsumerWidget {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            update.senderUser.name,
-            style: CupidStyles.normalTextStyle
-                .copyWith(fontWeight: FontWeight.w600),
+          child: GestureDetector(
+            onTap: () {
+              context.pushNamed(
+                AppRoutes.userProfileScreen.name,
+                extra: {
+                  'userProfile': update.senderUser,
+                  'isMine': false,
+                  'showPass': false,
+                },
+              );
+            },
+            child: Text(
+              update.senderUser.name,
+              style: CupidStyles.normalTextStyle
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ),
         GestureDetector(

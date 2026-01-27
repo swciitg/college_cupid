@@ -64,7 +64,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
         }));
 
         // Concurrent fetching for updates logic (profiles AND confessions)
-        final List<UpdateModel> processedUpdates =
+        final List<UpdateModel?> processedUpdates =
             await Future.wait(data.map((json) async {
           final senderEmail = json['senderEmail'] as String? ?? '';
           final userProfile = userProfileMap[senderEmail] ??
@@ -78,6 +78,8 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
                 confessionId, encryptedEmail);
             if (confession != null) {
               replyToText = confession.text;
+            } else {
+              return null;
             }
           }
 
@@ -85,7 +87,8 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             id: json['_id'] ?? '',
             senderUser: userProfile,
             type: UpdateType.textReply, //TODO: Update type based on update type
-            headerText: "Replied to your confession", //TODO: Update header text based on update type
+            headerText:
+                "Replied to your confession", //TODO: Update header text based on update type
             replyText: json['replyContent'] ?? '',
             replyTo: replyToText,
             timestamp:
@@ -93,7 +96,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
           );
         }));
 
-        final allUpdates = processedUpdates.toList();
+        final allUpdates = processedUpdates.whereType<UpdateModel>().toList();
 
         if (filter == 'All') {
           return allUpdates;

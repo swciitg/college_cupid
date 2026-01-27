@@ -6,7 +6,6 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:college_cupid/presentation/widgets/global/like_button.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 
@@ -16,11 +15,13 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
   final VoidCallback? onPass;
   final VoidCallback? onSmash;
   final bool isMine;
+  final bool showPass;
 
   const DisplayProfileInfo(
       {required this.userProfile,
       this.backButton = false,
       this.isMine = false,
+      this.showPass = true,
       this.onPass,
       this.onSmash,
       super.key});
@@ -68,39 +69,39 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 if (widget.userProfile.surpriseQuiz.length >= 3)
                   _surpriseQues(widget.userProfile.surpriseQuiz[2]),
                 const SizedBox(height: 24),
-                // Smash or Pass Buttons
-                if (!widget.backButton &&
-                    !widget.isMine) // Only show on home screen
+                if (!widget.isMine) // Only show if not my profile
                   Row(
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: widget.onPass,
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: CupidColors.offWhiteColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(FluentIcons.diamond_24_filled,
-                                    color: Colors.black),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Pass",
-                                  style: CupidStyles.headingStyle.copyWith(
-                                    fontSize: 18,
-                                    color: Colors.black,
+                      if (widget.showPass) ...[
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: widget.onPass,
+                            child: Container(
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: CupidColors.offWhiteColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(FluentIcons.diamond_24_filled,
+                                      color: Colors.black),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Pass",
+                                    style: CupidStyles.headingStyle.copyWith(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
+                        const SizedBox(width: 16),
+                      ],
                       Expanded(
                         child: GestureDetector(
                           onTap: widget.onSmash,
@@ -113,7 +114,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(FluentIcons.diamond_24_filled,
+                                const Icon(FluentIcons.heart_24_filled,
                                     color: Colors.black),
                                 const SizedBox(width: 8),
                                 Text(
