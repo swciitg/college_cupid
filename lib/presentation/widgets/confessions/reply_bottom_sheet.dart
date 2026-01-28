@@ -112,11 +112,12 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
+                    debugPrint("DEBUG UI: ReplyBottomSheet Send Pressed");
                     widget.onSend(_controller.text);
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8B5CF6), // Purple from SS
+                    backgroundColor: CupidColors.cupidPurple, // Purple from SS
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

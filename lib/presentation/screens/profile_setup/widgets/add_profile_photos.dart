@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
-import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,9 +1,10 @@
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/confessions/confessions_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/presentation/screens/your_matches/your_matches_tab.dart';
+import 'package:college_cupid/presentation/screens/updates/updates_screen.dart';
+import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -142,7 +143,7 @@ class _HomeState extends ConsumerState<Home> {
                         }
                         _selectedIndex = i;
                       }),
-                      destinations: List.generate(5, (index) {
+                      destinations: List.generate(navIcons.length, (index) {
                         return _selectedIndex == index
                             ? filledNavIcons[index]
                             : navIcons[index];
@@ -162,6 +163,8 @@ class _HomeState extends ConsumerState<Home> {
                           const HomeTab(),
                           const YourCrushesTab(),
                           const ConfessionsScreen(),
+                          const UpdatesScreen(),
+                          const EventsScreen(),
                           const YourMatches(),
                           UserProfileScreen(
                             isMine: true,

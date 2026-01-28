@@ -6,13 +6,7 @@ import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/add_profile_photos.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/basic_details.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_interests.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/looking_for_screen.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/sexual_orientation_screen.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
@@ -28,7 +22,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 
-final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
+final onboardingControllerProvider =
+    StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
 );
 
@@ -122,7 +117,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         );
         return true;
       case OnboardingStep.addPhotos:
-        final nonNullImagesCount = state.images!.where((element) => element != null).length;
+        final nonNullImagesCount =
+            state.images!.where((element) => element != null).length;
         if (nonNullImagesCount < 3) {
           showSnackBar("Select all images!");
           return false;
@@ -206,7 +202,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateSexualOrientationDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        sexualOrientation: state.userProfile?.sexualOrientation?.copyWith(display: value),
+        sexualOrientation:
+            state.userProfile?.sexualOrientation?.copyWith(display: value),
       ),
     );
   }
@@ -243,7 +240,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateLookingForDisplay(bool value) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(
-        relationshipGoal: state.userProfile?.relationshipGoal?.copyWith(display: value),
+        relationshipGoal:
+            state.userProfile?.relationshipGoal?.copyWith(display: value),
       ),
     );
   }
@@ -305,20 +303,19 @@ class OnboardingController extends StateNotifier<OnboardingState> {
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
-                loadingMessage: "Uploading Profile Images ${imageProgress.toInt()}%",
+                loadingMessage:
+                    "Uploading Profile Images ${imageProgress.toInt()}%",
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+          final blurHash = await imageHelpers.encodeBlurHash(
+              imageProvider: FileImage(image));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
-      
-      log("USER PROFILE BEFORE UPDATE: ${state.userProfile}", name: "OnboardingController");
-      state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
-      log("USER PROFILE AFTER IMAGE UPDATE: ${state.userProfile}", name: "OnboardingController");
-      
+      state = state.copyWith(
+          userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
       log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
       await userProfileRepo.postUserProfile(state.userProfile!);

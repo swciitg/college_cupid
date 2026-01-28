@@ -53,6 +53,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
   @override
   void initState() {
     super.initState();
+    debugPrint('BASE URL: ${Endpoints.baseUrl}');
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
     final userController = ref.read(userProvider.notifier);

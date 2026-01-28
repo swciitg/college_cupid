@@ -10,6 +10,7 @@ class LoginStore {
   static bool isProfileCompleted = false;
 
   static String? email;
+  static String? userId;
   static String? displayName;
   static String? dhPrivateKey;
   static String? dhPublicKey;
@@ -27,6 +28,10 @@ class LoginStore {
       if (data != null) {
         await SharedPrefService.saveMyProfile(data);
         isProfileCompleted = true;
+        if (data.containsKey('_id')) {
+          userId = data['_id'];
+        }
+        debugPrint('DEBUG: LoginStore.userId from API set to: ${data['_id']}');
       } else {
         // TODO: Don't logout if internet is turned-off
         await logout();
@@ -56,11 +61,24 @@ class LoginStore {
   }
 
   static Future<void> initializeStore() async {
+    await initializeUserId();
     await initializeDisplayName();
     await initializeEmail();
     await initializeTokens();
     await initializeKeys();
     await initializeRollNumber();
+  }
+
+  static Future<void> initializeUserId() async {
+    try {
+      final myProfile = await SharedPrefService.getMyProfile();
+      if (myProfile.containsKey('_id')) {
+        userId = myProfile['_id'];
+      }
+      debugPrint('DEBUG: LoginStore initialized userId from prefs: $userId');
+    } catch (e) {
+      debugPrint('Error initializing userId: $e');
+    }
   }
 
   static Future<void> initializeOutlookInfo() async {

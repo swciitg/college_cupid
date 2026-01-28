@@ -5,6 +5,7 @@ import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
 
 class UserProfile {
+  String id;
   String name;
   Gender? gender;
   String email;
@@ -31,6 +32,7 @@ class UserProfile {
 
   UserProfile({
     this.zodiac = Zodiac.aries,
+    this.id = '',
     this.name = '',
     this .age = 20,
     this.hometown = '',
@@ -50,8 +52,13 @@ class UserProfile {
     this.instaUserName = '',
   });
 
+  factory UserProfile.fromEmail(String email) {
+    return UserProfile(email: email, name: email.split('@')[0], id: '');
+  }
+
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
+      id: json['_id'] ?? json['id'] ?? '',
       name: json['name'],
       gender: Gender.fromDatabaseString(json['gender']),
       email: json['email'],
@@ -83,6 +90,7 @@ class UserProfile {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = id;
     data['name'] = name;
     data['gender'] = gender?.databaseString;
     data['email'] = email;

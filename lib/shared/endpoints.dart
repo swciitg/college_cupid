@@ -32,6 +32,20 @@ class Endpoints {
   static const getBlockedUsers = '/report/blockedUsers';
   static const unblockUser = '/report/unblock';
 
+  // Confessions
+  static const getConfessions = '/confession';
+  static const getMyConfessions = '/confession/self';
+  static const postConfession = '/confession';
+  static const deleteConfession = '/confession'; // + '/:id'
+  static const deleteConfessionAdmin = '/confession/admin'; // + '/:id'
+  static const reportConfession = '/confession/report'; // + '/:id'
+  static const reactToConfession = '/confession/react'; // + '/:id'
+  static const removeReaction = '/confession/react'; // + '/:id' (DELETE)
+
+  // Replies
+  static const postReply = '/reply/add';
+  static const getUpdates = '/reply/updates';
+
   static const regenerateToken = '/auth/refreshToken';
 
   static getHeader() {
