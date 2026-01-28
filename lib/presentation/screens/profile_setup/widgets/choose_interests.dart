@@ -11,13 +11,6 @@ class ChooseInterests extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: kToolbarHeight),
-        Text("Choose your Interests", style: CupidStyles.headingStyle),
-        Text(
-          "This will be displayed on your profile",
-          style: CupidStyles.lightTextStyle,
-        ),
-        SizedBox(height: 8),
         DisplayInterests(),
         SizedBox(height: 2 * kBottomNavigationBarHeight),
       ],

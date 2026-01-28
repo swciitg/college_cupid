@@ -3,6 +3,106 @@ import 'package:flutter/services.dart';
 
 import './colors.dart';
 
+class CupidTextStyles {
+  static const TextStyle brandTitle1 = TextStyle(
+    color: Colors.black,
+    fontSize: 28,
+    fontFamily: 'Doughy',
+    fontWeight: FontWeight.w700,
+    height: 1.29,
+    letterSpacing: 1,
+  );
+  static const TextStyle brandTitle2 = TextStyle(
+    color: Colors.black,
+    fontSize: 20,
+    fontFamily: 'Doughy',
+    fontWeight: FontWeight.w700,
+    height: 1.40,
+    letterSpacing: 1,
+  );
+
+  static const TextStyle title1 = TextStyle(
+    color: Colors.black,
+    fontSize: 25,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w600,
+    height: 1.44,
+    letterSpacing: -0.20,
+  );
+
+  static const TextStyle title2 = TextStyle(
+    color: const Color(0xFF0A0C11) /* Color-Gray-950 */,
+    fontSize: 20,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w600,
+    height: 1.40,
+    letterSpacing: -0.20,
+  );
+
+  static const TextStyle label1 = TextStyle(
+    color: Color(0xFF8C929C) /* Text-low_em */,
+    fontSize: 15,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w600,
+    height: 1.60,
+  );
+
+  static const TextStyle label2 = TextStyle(
+    color: const Color(0xFF5B616D) /* Text-med_em */,
+    fontSize: 13,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w600,
+    height: 1.54,
+  );
+
+  static const TextStyle label3 = TextStyle(
+    color: const Color(0xFF5B616D) /* Text-med_em */,
+    fontSize: 12,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w600,
+    height: 1.33,
+  );
+
+  static const TextStyle body1 = TextStyle(
+    color: const Color(0xFF5B616D) /* Text-med_em */,
+    fontSize: 13,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w400,
+    height: 1.54,
+  );
+
+  static const TextStyle body2 = TextStyle(
+    color: const Color(0xFF5B616D) /* Text-med_em */,
+    fontSize: 12,
+    fontFamily: 'OpenSauceTwo',
+    fontWeight: FontWeight.w400,
+    height: 1.33,
+  );
+
+  ///old
+
+  static const TextStyle normalTextStyle = TextStyle(
+    fontFamily: 'OpenSauceTwo',
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: CupidColors.grey950,
+  );
+  static const TextStyle headingStyle = TextStyle(
+      fontFamily: 'OpenSauceTwo',
+      fontSize: 25,
+      fontWeight: FontWeight.w700,
+      color: Colors.black,
+      height: 1.44,
+      letterSpacing: -.20);
+  static const TextStyle subHeadingTextStyle = TextStyle(
+    fontFamily: 'OpenSauceTwo',
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+    height: 1.85,
+  );
+}
+
 class CupidStyles {
   static const textFieldInputDecoration = InputDecoration(
     fillColor: Colors.white,
@@ -76,7 +176,7 @@ class CupidStyles {
   );
   static const subHeadingTextStyle = TextStyle(
     fontFamily: 'Neue Montreal',
-    fontSize: 26,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
     color: CupidColors.normalTextColor,
   );

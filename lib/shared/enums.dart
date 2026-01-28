@@ -37,6 +37,33 @@ enum InterestedInGender {
   const InterestedInGender(this.displayString, this.databaseString);
 }
 
+enum Zodiac {
+  aries("Aries", "ARIES"),
+  taurus("Taurus", "TAURUS"),
+  gemini("Gemini", "GEMINI"),
+  cancer("Cancer", "CANCER"),
+  leo("Leo", "LEO"),
+  virgo("Virgo", "VIRGO"),
+  libra("Libra", "LIBRA"),
+  scorpio("Scorpio", "SCORPIO"),
+  sagittarius("Sagittarius", "SAGITTARIUS"),
+  capricorn("Capricorn", "CAPRICORN"),
+  aquarius("Aquarius", "AQUARIUS"),
+  pisces("Pisces", "PISCES");
+
+  final String displayString;
+  final String databaseString;
+
+  const Zodiac(this.displayString, this.databaseString);
+
+  static Zodiac fromDatabaseString(String databaseString) {
+    final zodiac = Zodiac.values.firstWhere((e) => e.databaseString == databaseString, orElse: () {
+      return Zodiac.aries;
+    });
+    return zodiac;
+  }
+}
+
 enum Gender {
   male("Male", "MALE"),
   female("Female", "FEMALE"),
@@ -57,14 +84,10 @@ enum Gender {
 
 enum SexualOrientation {
   straight("Straight", "STRAIGHT"),
-  gay("Gay", "GAY"),
-  lesbian("Lesbian", "LESBIAN"),
   bisexual("Bisexual", "BISEXUAL"),
-  asexual("Asexual", "ASEXUAL"),
-  demiSexual("Demi-sexual", "DEMISEXUAL"),
-  pansexual("Pansexual", "PANSEXUAL"),
-  queer("Queer", "QUEER"),
-  stillFiguringItOut("Still figuring it out", "STILLFIGURINGITOUT");
+  lesbian("Lesbian", "LESBIAN"),
+  gay("Gay", "GAY"),
+  others("Others", "OTHERS");
 
   final String displayString;
   final String databaseString;
@@ -95,12 +118,11 @@ enum SexualOrientation {
 }
 
 enum LookingFor {
-  longTermPartner("Long-Term Partner", "LONGTERMPARTNER"),
-  shortTermFun("Short-Term Fun", "SHORTTERMFUN"),
-  longTermOpenToShort("Long-Term, Open to Short", "LONGTERM_OPENTOSHORT"),
-  newFriends("New Friends", "NEWFRIENDS"),
-  shortTermOpenToLong("Short-Term, Open to Long", "SHORTTERM_OPENTOLONG"),
-  stillFiguringItOut("Still Figuring It Out", "STILLFIGURINGITOUT");
+  longTermPartner("Long term", "LONG TERM"),
+  shortTermFun("Short term", "SHORT TERM"),
+  longTermOpenToShort("Casual", "CASUAL"),
+  newFriends("Not looking to date", "NOT LOOOKING TO DATE"),
+  shortTermOpenToLong("Casual- Open to long term", "CASUAL - OPEN TO LONG TERM");
 
   final String displayString;
   final String databaseString;

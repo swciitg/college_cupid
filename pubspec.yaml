@@ -66,6 +66,9 @@ dependencies:
   dots_indicator: ^3.0.0
   image: ^4.5.2
   intl: ^0.20.2
+  waveform_recorder: ^1.8.0
+  record: ^6.1.2
+  audioplayers: ^6.5.1
 
 dev_dependencies:
   flutter_test:
@@ -150,6 +153,15 @@ flutter:
       fonts:
         - asset: assets/fonts/NeueMontreal-Regular.otf
           weight: 400
+    - family: Doughy
+      fonts:
+        - asset: assets/fonts/Doughy.otf
+    - family: OpenSauceTwo
+      fonts:
+        - asset: assets/fonts/open-sauce-two-latin-500-normal.ttf
+          weight: 500
+        - asset: assets/fonts/open-sauce-two-latin-600-normal.ttf
+          weight: 600
 
 
 

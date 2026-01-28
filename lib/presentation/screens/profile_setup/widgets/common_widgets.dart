@@ -1,0 +1,225 @@
+import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
+import 'package:flutter/material.dart';
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final String? hintText;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
+  final bool obscureText;
+  final Widget? suffixIcon;
+  final int? maxLines;
+  final bool? enabled;
+  final TextStyle? textStyle;
+  final Function(String)? onChanged;
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    this.hintText,
+    this.controller,
+    this.keyboardType = TextInputType.text,
+    this.obscureText = false,
+    this.suffixIcon,
+    this.maxLines = 1,
+    this.onChanged,
+    this.enabled = true, this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label.isNotEmpty) ...[
+          Text(
+            label,
+            style: CupidTextStyles.label1
+          ),
+          const SizedBox(height: 8),
+        ],
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: TextField(
+            enabled: enabled,
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            maxLines: maxLines,
+            onChanged: onChanged,
+            style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: CupidTextStyles.label2,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              suffixIcon: suffixIcon,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SelectionChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final IconData? icon;
+  final TextStyle? textStyle;
+  final TextStyle? selectedTextStyle;
+
+  const SelectionChip({
+    super.key,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.icon, this.textStyle, this.selectedTextStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF6F61FF).withValues(alpha: 0.22) : Colors.grey[200],
+          borderRadius: BorderRadius.circular(12),
+          //border: isSelected ? Border.all(color: const Color(0xFF6C5DD3), width: 1.5) : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected ? const Color(0xFF6C5DD3) : Colors.black87,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              label,
+              style: (isSelected ? selectedTextStyle : textStyle) ?? CupidTextStyles.label2.copyWith(
+                color: isSelected ? const Color(0xFF6C5DD3) : Colors.black87,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BottomNavButtons extends StatelessWidget {
+  final VoidCallback? onBack;
+  final VoidCallback onNext;
+  final bool isNextEnabled;
+  final String nextLabel;
+
+  const BottomNavButtons({
+    super.key,
+    this.onBack,
+    required this.onNext,
+    this.isNextEnabled = true,
+    this.nextLabel = 'Next',
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.white,
+      child: Row(
+        children: [
+          if (onBack != null)
+            Expanded(
+              flex: 1,
+              child: TextButton(
+                onPressed: onBack,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'Go Back',
+                  style: CupidStyles.normalTextStyle.copyWith(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          if (onBack != null) const SizedBox(width: 16),
+          Expanded(
+            flex: 2,
+            child: ElevatedButton(
+              onPressed: isNextEnabled ? onNext : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C5DD3),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    nextLabel,
+                    style: CupidStyles.normalTextStyle.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProfileProgressBar extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+
+  const ProfileProgressBar({
+    super.key,
+    required this.currentStep,
+    required this.totalSteps,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(totalSteps, (index) {
+        return Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            height: 4,
+            decoration: BoxDecoration(
+              color: index <= currentStep ? const Color(0xFF6F61FF) : Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}

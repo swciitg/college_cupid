@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/common_widgets.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -15,41 +15,45 @@ class BasicDetails extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<BasicDetails> createState() => _BasicDetailsState();
-
-  static Map<String, HeartState> heartStates(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    return {
-      "yellow": HeartState(
-        size: 200,
-        left: 0,
-        bottom: -size.height * .15,
-      ),
-      "blue": HeartState(
-        size: 200,
-        right: size.width * 0.27,
-        top: size.height * 0.07,
-      ),
-      "pink": HeartState(
-        size: 125,
-        right: 0,
-        bottom: size.height * 0.07,
-      ),
-    };
-  }
 }
 
 class _BasicDetailsState extends ConsumerState<BasicDetails> {
+  // Controllers for fields present in design but not in current model (Mock integration)
+  late TextEditingController _ageController;
+  late TextEditingController _zodiacController;
+  late TextEditingController _hometownController;
+  
+  // Controller for Name (from LoginStore)
+  late TextEditingController _nameController;
+  Zodiac? selectedZodiac;
+
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController(text: LoginStore.displayName);
+    _ageController = TextEditingController();
+    _zodiacController = TextEditingController();
+    _hometownController = TextEditingController();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final onboardingController =
-          ref.read(onboardingControllerProvider.notifier);
-      final yearOfJoin = DateTime.now().year % 100 -
-          getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
-      log("Year of join : $yearOfJoin");
-      onboardingController.updateYearOfJoin(yearOfJoin);
+      final onboardingController = ref.read(onboardingControllerProvider.notifier);
+      // Auto-calculate year of join if possible, or keep existing logic
+      if (LoginStore.rollNumber != null) {
+        final yearOfJoin = DateTime.now().year % 100 -
+            getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
+        // log("Year of join : $yearOfJoin");
+        onboardingController.updateYearOfJoin(yearOfJoin);
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _ageController.dispose();
+    _zodiacController.dispose();
+    _hometownController.dispose();
+    super.dispose();
   }
 
   List<Program> programs =
@@ -58,128 +62,105 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const SizedBox(height: kToolbarHeight),
+        
+
+        CustomTextField(
+          label: "Your Full Name",
+          controller: _nameController,
+          enabled: false,
+        ),
+        const SizedBox(height: 16),
+
+        CustomTextField(
+          label: "Age",
+          hintText: "20", // Placeholder from design
+          controller: _ageController,
+          keyboardType: TextInputType.number,
+          onChanged:(age){
+            onboardingController.updateAge(age);
+          }
+        ),
+        const SizedBox(height: 16),
+
         const Text(
-          "About you",
-          style: CupidStyles.headingStyle,
+          "Zodiac",
+          style: CupidTextStyles.label1,
+        ),
+        const SizedBox(height: 8),
+        DropdownButton<Zodiac>(
+          hint: const Text("Select Zodiac"),
+          value: selectedZodiac,
+          isExpanded: true,
+          items: Zodiac.values.map((Zodiac zodiac) {
+            return DropdownMenuItem<Zodiac>(
+              value: zodiac,
+              child: Text(zodiac.displayString),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              selectedZodiac = value;
+              onboardingController.updateZodiac(value);
+              setState((){});
+            }
+          },
         ),
         const SizedBox(height: 16),
-        TextField(
-          controller: TextEditingController(text: LoginStore.displayName),
-          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-            labelText: "Name",
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-            enabled: false,
-            fillColor: Colors.transparent,
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: TextEditingController(text: LoginStore.email),
-          decoration: CupidStyles.textFieldInputDecoration.copyWith(
-            labelText: "Email",
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-            enabled: false,
-            fillColor: Colors.transparent,
-          ),
-        ),
-        const SizedBox(height: 16),
+        
         const Text(
           "Gender",
-          style: CupidStyles.subHeadingTextStyle,
+          style: CupidTextStyles.label1
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
-          alignment: WrapAlignment.start,
-          children: List.generate(Gender.values.length, (index) {
-            final gender = Gender.values[index];
-            final selected = onboardingState.userProfile?.gender == gender;
-            return _buildChip(gender.displayString, selected, () {
-              onboardingController.updateGender(gender);
-            });
-          }),
+          spacing: 10,
+          runSpacing: 10,
+          children: Gender.values.map((gender) {
+            return SelectionChip(
+              label: gender.displayString,
+              isSelected: onboardingState.userProfile?.gender == gender,
+              onTap: () => onboardingController.updateGender(gender),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 16),
-        const Text(
-          "Program",
-          style: CupidStyles.subHeadingTextStyle,
-        ),
-        const SizedBox(height: 4),
-        Wrap(
-          spacing: 8,
-          alignment: WrapAlignment.start,
-          children: List.generate(programs.length, (index) {
-            final program = programs[index];
-            final selected = onboardingState.userProfile?.program == program;
-            return _buildChip(program.displayString, selected, () {
-              onboardingController.updateProgram(program);
-            });
-          }),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          "Year",
-          style: CupidStyles.subHeadingTextStyle,
-        ),
-        const SizedBox(height: 4),
-        Wrap(
-          spacing: 8,
-          alignment: WrapAlignment.start,
-          children: [
-            ...List.generate(5, (index) {
-              final year = index + 1;
-              return _buildChip(year.toString(),
-                  onboardingState.userProfile?.yearOfJoin == year, () {
-                // onboardingController.updateYearOfJoin(year);
-              });
-            }),
-            _buildChip(
-              "beyond",
-              onboardingState.userProfile?.yearOfJoin == 6,
-              () {
-                // onboardingController.updateYearOfJoin(6);
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 2 * kBottomNavigationBarHeight),
-      ],
-    );
-  }
 
-  Widget _buildChip(String option, bool isSelected, VoidCallback onSelected) {
-    return ChoiceChip(
-      label: Text(
-        option,
-        style: CupidStyles.normalTextStyle.setColor(
-          isSelected ? Colors.white : CupidColors.textColorBlack,
+        CustomTextField(
+          label: "Hometown",
+          hintText: "Banglore",
+          controller: _hometownController,
+          onChanged: (city){
+            onboardingController.updateHometown(city);
+          },
         ),
-      ),
-      selected: isSelected,
-      selectedColor: CupidColors.secondaryColor,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: WidgetStateColor.resolveWith(
-        (states) {
-          if (states.contains(WidgetState.selected)) {
-            return CupidColors.secondaryColor;
-          }
-          return Colors.white;
-        },
-      ),
-      checkmarkColor: Colors.white,
-      onSelected: (bool selected) {
-        onSelected();
-      },
+        const SizedBox(height: 16),
+
+        const Text(
+          "Degree",
+          style: CupidTextStyles.label1
+        ),
+        const SizedBox(height: 8),
+         Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: programs.map((program) {
+            return SelectionChip(
+              label: program.displayString,
+              isSelected: onboardingState.userProfile?.program == program,
+              onTap: () => onboardingController.updateProgram(program),
+            );
+          }).toList(),
+        ),
+        // Note: The design asked for "Bachelors, Masters, PhD". 
+        // We are showing actual programs to maintain data integrity with the backend.
+        
+        const SizedBox(height: 20),
+      ],
     );
   }
 }

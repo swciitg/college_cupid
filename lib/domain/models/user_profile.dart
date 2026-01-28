@@ -8,6 +8,9 @@ class UserProfile {
   String name;
   Gender? gender;
   String email;
+  String hometown;
+  int age;
+  Zodiac zodiac;
   String publicKey;
   int? yearOfJoin;
   Program? program;
@@ -18,6 +21,8 @@ class UserProfile {
   PersonalityType? personalityType;
   bool deactivated;
   List<QuizQuestion> surpriseQuiz;
+  int whatsappNumber;
+  String instaUserName;
 
   static const personalityWeight = 30;
   static const interestsWeight = 30;
@@ -25,7 +30,10 @@ class UserProfile {
   static const relationshipGoalsWeight = 20;
 
   UserProfile({
+    this.zodiac = Zodiac.aries,
     this.name = '',
+    this .age = 20,
+    this.hometown = '',
     this.gender,
     this.email = '',
     this.yearOfJoin,
@@ -38,6 +46,8 @@ class UserProfile {
     this.personalityType,
     this.deactivated = false,
     this.surpriseQuiz = const [],
+    this.whatsappNumber = 0,
+    this.instaUserName = '',
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -76,16 +86,24 @@ class UserProfile {
     data['name'] = name;
     data['gender'] = gender?.databaseString;
     data['email'] = email;
-    data['yearOfJoin'] = yearOfJoin;
+    data['age'] = age;
+    data['hometown'] = hometown;
     data['program'] = program?.databaseString;
-    data['publicKey'] = publicKey;
-    data['interests'] = interests;
+    data['zodiac'] = zodiac.databaseString;
     data['sexualOrientation'] = sexualOrientation?.toJson();
-    data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
+    data['typeOfRelationship'] = relationshipGoal?.goal.databaseString;
+    data['interests'] = interests;
+    data['publicKey'] = publicKey;
     data['relationshipGoals'] = relationshipGoal?.toJson();
+    data['surpriseQuiz'] = surpriseQuiz
+        .where((e) => e.audioPath == null)
+        .map((e) => e.toJson())
+        .toList();
+    data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
     data['personalityType'] = personalityType?.name;
+
+    data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
-    data['surpriseQuiz'] = surpriseQuiz.map((e) => e.toJson()).toList();
     return data;
   }
 
@@ -105,6 +123,9 @@ class UserProfile {
     PersonalityType? personalityType,
     bool? deactivated,
     List<QuizQuestion>? surpriseQuiz,
+    String? hometown,
+    int? age,
+    Zodiac? zodiac,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -120,6 +141,9 @@ class UserProfile {
       personalityType: personalityType ?? this.personalityType,
       deactivated: deactivated ?? this.deactivated,
       surpriseQuiz: surpriseQuiz ?? this.surpriseQuiz,
+      hometown: hometown ?? this.hometown,
+      age: age ?? this.age, 
+      zodiac: zodiac ?? this.zodiac,
     );
   }
 
@@ -284,11 +308,11 @@ class SexualOrientationModel {
     required this.display,
   });
 
-  Map<String, dynamic> toJson() {
+  String toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['type'] = type.databaseString;
     data['display'] = display;
-    return data;
+    return type.databaseString;
   }
 
   SexualOrientationModel.fromJson(Map<String, dynamic> json)
@@ -367,17 +391,20 @@ class RelationshipGoal {
 
 class QuizQuestion {
   final String question;
+  final String? audioPath;
   final String answer;
 
   QuizQuestion({
     required this.question,
     this.answer = '',
+    this.audioPath,
   });
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['question'] = question;
     data['answer'] = answer;
+    // data['audioPath'] = audioPath;
     return data;
   }
 
@@ -385,16 +412,19 @@ class QuizQuestion {
     return QuizQuestion(
       question: json['question'],
       answer: json['answer'],
+      audioPath: json['audioPath'],
     );
   }
 
   QuizQuestion copyWith({
     String? question,
     String? answer,
+    String? audioPath,
   }) {
     return QuizQuestion(
       question: question ?? this.question,
       answer: answer ?? this.answer,
+      audioPath: audioPath ?? this.audioPath,
     );
   }
 }

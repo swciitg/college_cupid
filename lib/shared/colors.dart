@@ -30,4 +30,13 @@ class CupidColors {
   static const cupidGreen = Color(0xFF7AEAA9);
   static const cupidPeach = Color(0xFFFBA8AA);
   static const cupidPurple = Color(0xFF6F61FF);
+
+  //2026
+  static const Color surfacePrimaryMedEm = Color(0xFF6F61FF);
+  static const Color brandPurple600 = Color(0xFF5548D8);
+  static const Color grey700 = Color(0xFF5B616D);
+  static const Color grey600 = Color(0xFF8C929C);
+  static const Color grey950 = Color(0xFF0A0C11);
+  
+
 }

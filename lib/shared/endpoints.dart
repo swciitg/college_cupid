@@ -1,7 +1,7 @@
 class Endpoints {
-  static const baseUrl = String.fromEnvironment('BASE_URL');
-  static const apiUrl = String.fromEnvironment('API_URL');
-  static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
+  static const baseUrl = "https://swc.iitg.ac.in/test/collegeCupid";//String.fromEnvironment('BASE_URL');
+  static const apiUrl ="https://swc.iitg.ac.in/test/collegeCupid/api/v2"; //String.fromEnvironment('API_URL');
+  static const apiSecurityKey ="eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc2OTExMDU2NCwiaWF0IjoxNzY5MTEwNTY0fQ.jqhxdZG5Er4M57Lv_ZeNgtx1d1ubRN1QgAnoOpROLXI"; //String.fromEnvironment('SECURITY_KEY');
 
   static const microsoftAuth = '/auth/microsoft';
 

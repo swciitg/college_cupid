@@ -69,7 +69,9 @@ class BasicProfileInfo extends ConsumerWidget {
                         if (isMine)
                           GestureDetector(
                             onTap: () {
-                              context.pushNamed(AppRoutes.editProfile.name);
+                              // context.pushNamed(AppRoutes.editProfile.name);
+                              //TODO: Change to edit profile route when ready
+                              goRouter.goNamed(AppRoutes.profileSetup.name);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(

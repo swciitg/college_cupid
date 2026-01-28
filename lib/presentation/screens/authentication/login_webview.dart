@@ -71,9 +71,10 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
             String authStatus = await getElementById(controller, 'status');
             if (authStatus != 'SUCCESS') return;
             if (!mounted) return;
-            String outlookInfoString =
+             String outlookInfoString =
                 (await getElementById(controller, 'outlookInfo'))
                     .replaceAll("\\", '"');
+              // print(outlookInfoString);
 
             Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
@@ -117,6 +118,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
               try {
                 final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
+                debugPrint('DH PVT KEY FETCHED: $dhPvtKey');
                 if (dhPvtKey == null) {
                   // SOMEONE CLEARED ONEDRIVE DATA
                   // TODO: DO SOMETHING HERE

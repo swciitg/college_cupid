@@ -6,127 +6,160 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'heart_state.dart';
 
 class AddPhotos extends ConsumerWidget {
   const AddPhotos({super.key});
 
-  static Map<String, HeartState> heartStates(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    return {
-      "yellow": HeartState(
-        size: 200,
-        left: -60,
-        bottom: size.height * 0.25,
-      ),
-      "blue": HeartState(
-        size: 200,
-        right: 75,
-        bottom: size.height * 0.09,
-      ),
-      "pink": HeartState(
-        size: 180,
-        right: -50,
-        top: size.height * 0.25,
-      ),
-    };
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.sizeOf(context);
+    final onboardingState = ref.watch(onboardingControllerProvider);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
+    final images = onboardingState.images ?? [];
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Add Photos", style: CupidStyles.headingStyle),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: size.height * 0.5,
-          width: double.infinity,
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                right: size.width * 0.08,
-                child: _profilePic(0, ref, context, size.height),
-              ),
-              Positioned(
-                top: 70,
-                left: size.width * 0.08,
-                child: _profilePic(1, ref, context, size.height),
-              ),
-              Positioned(
-                bottom: 10,
-                right: size.width * 0.12,
-                child: _profilePic(2, ref, context, size.height),
-              ),
-            ],
+        
+        ...List.generate(images.length, (index) {
+          return Padding(
+             padding: const EdgeInsets.only(bottom: 16),
+             child: _buildPhotoSlot(context, ref, index, images[index]),
+          );
+        }),
+
+        // Add Photo Slot Button
+        GestureDetector(
+          onTap: () {
+            onboardingController.addPhotoSlot();
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Add Photo Slot",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.add_circle, color: Colors.black87, size: 20),
+              ],
+            ),
           ),
         ),
-        const Text(
-          "Pro tips:",
-          style: CupidStyles.subHeadingTextStyle,
-        ),
-        _buildTextRow(
-          Icons.check,
-          const Color(0xFF7AEAA9),
-          "Selfies are good",
-        ),
-        _buildTextRow(
-          Icons.close,
-          const Color(0xFFFBA8AA),
-          "Avoid group shots",
-        )
+        
+        const SizedBox(height: 100), // Bottom padding for nav buttons
       ],
     );
   }
 
-  Widget _profilePic(int index, WidgetRef ref, BuildContext context, double height) {
-    final onboardingState = ref.watch(onboardingControllerProvider);
-    final image = onboardingState.images?[index];
-    final updatedHeight = height > 1000.0 ? 300.0 : 230.0;
-    final width = updatedHeight * 0.75;
+  Widget _buildPhotoSlot(BuildContext context, WidgetRef ref, int index, File? image) {
+    // Aspect ratio 1:1 or 4:5? Design looks like square or slightly tall.
+    // Using simple container with height.
+    final height = 350.0; 
+
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
       onTap: () {
-        ref.read(onboardingControllerProvider.notifier).pickImage((val) {
-          return Navigator.of(context).push<File>(
-            MaterialPageRoute(
-              builder: (context) => CropImageScreen(image: val),
-            ),
-          );
-        }, index);
+         _pickImage(context, ref, index);
       },
-      child: DecoratedBox(
+      child: Container(
+        height: height,
+        width: double.infinity,
         decoration: BoxDecoration(
-          color: CupidColors.glassWhite,
-          border: Border.all(color: const Color(0xFF11142A), width: 1.5),
-          borderRadius: const BorderRadius.all(Radius.circular(30)),
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(16),
+          // border: Border.all(color: Colors.grey[300]!),
         ),
-        child: SizedBox(
-          height: updatedHeight,
-          width: width,
-          child: image == null
-              ? const Center(child: Icon(Icons.add, size: 40))
-              : ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(30)),
-                  child: Image.file(image, fit: BoxFit.cover),
-                ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (image != null)
+                Image.file(image, fit: BoxFit.cover)
+              else
+                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                     const Text("Image Preview", style: TextStyle(color: Colors.grey)),
+                     const Spacer(),
+                     Container(
+                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                       decoration: BoxDecoration(
+                         color: Colors.white,
+                         borderRadius: BorderRadius.circular(20),
+                         boxShadow: [
+                           BoxShadow(
+                             color: Colors.black.withValues(alpha: 0.05),
+                             blurRadius: 4,
+                           )
+                         ]
+                       ),
+                       child: Row(
+                         mainAxisSize: MainAxisSize.min,
+                         children: const [
+                           Text("Add Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                           SizedBox(width: 4),
+                           Icon(Icons.add_circle, size: 16),
+                         ],
+                       ),
+                     ),
+                     const SizedBox(height: 20),
+                  ],
+                 ),
+              
+              if (image != null)
+                 Positioned(
+                   bottom: 16,
+                   left: 0, 
+                   right: 0,
+                   child: Center(
+                     child: Container(
+                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                       decoration: BoxDecoration(
+                         color: Colors.white,
+                         borderRadius: BorderRadius.circular(20),
+                         boxShadow: [
+                           BoxShadow(
+                             color: Colors.black.withValues(alpha: 0.1),
+                             blurRadius: 4,
+                           )
+                         ]
+                       ),
+                       child: Row(
+                         mainAxisSize: MainAxisSize.min,
+                         children: const [
+                           Text("Replace Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                           SizedBox(width: 4),
+                           Icon(Icons.refresh, size: 16),
+                         ],
+                       ),
+                     ),
+                   ),
+                 ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTextRow(IconData icon, Color color, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: color),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: CupidStyles.lightTextStyle,
-        )
-      ],
-    );
+  void _pickImage(BuildContext context, WidgetRef ref, int index) {
+    ref.read(onboardingControllerProvider.notifier).pickImage((val) {
+      return Navigator.of(context).push<File>(
+        MaterialPageRoute(
+          builder: (context) => CropImageScreen(image: val),
+        ),
+      );
+    }, index);
   }
 }

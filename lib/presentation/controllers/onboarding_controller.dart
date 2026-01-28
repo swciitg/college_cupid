@@ -34,11 +34,10 @@ final onboardingControllerProvider = StateNotifierProvider<OnboardingController,
 
 enum OnboardingStep {
   basicDetails,
-  sexualOrientation,
+  datingPreference,
   surpriseQuiz,
   chooseInterests,
   addPhotos,
-  lookingFor;
 }
 
 class OnboardingController extends StateNotifier<OnboardingState> {
@@ -48,31 +47,31 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       : _ref = ref,
         super(OnboardingState(currentStep: 0));
 
-  final List<Map<String, HeartState>> _heartStates = [];
+  // final List<Map<String, HeartState>> _heartStates = [];
 
-  void updateHeartStates(BuildContext context) {
-    if (_heartStates.isEmpty) {
-      _heartStates.addAll(
-        [
-          BasicDetails.heartStates(context),
-          SexualOrientationScreen.heartStates(context),
-          ChooseInterests.heartStates(context),
-          AddPhotos.heartStates(context),
-          LookingForScreen.heartStates(context),
-          MbtiTestScreen.heartStates(context),
-        ],
-      );
-    }
-    final yellow = _heartStates[state.currentStep]['yellow'];
-    final blue = _heartStates[state.currentStep]['blue'];
-    final pink = _heartStates[state.currentStep]['pink'];
+  // void updateHeartStates(BuildContext context) {
+  //   if (_heartStates.isEmpty) {
+  //     _heartStates.addAll(
+  //       [
+  //         // BasicDetails.heartStates(context),
+  //         SexualOrientationScreen.heartStates(context),
+  //         ChooseInterests.heartStates(context),
+  //         AddPhotos.heartStates(context),
+  //         LookingForScreen.heartStates(context),
+  //         MbtiTestScreen.heartStates(context),
+  //       ],
+  //     );
+  //   }
+  //   final yellow = _heartStates[state.currentStep]['yellow'];
+  //   final blue = _heartStates[state.currentStep]['blue'];
+  //   final pink = _heartStates[state.currentStep]['pink'];
 
-    state = state.copyWith(
-      yellow: yellow,
-      blue: blue,
-      pink: pink,
-    );
-  }
+  //   state = state.copyWith(
+  //     yellow: yellow,
+  //     blue: blue,
+  //     pink: pink,
+  //   );
+  // }
 
   void nextStep() async {
     final valid = await validateSubmit();
@@ -94,17 +93,22 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   Future<bool> validateSubmit() async {
     switch (OnboardingStep.values[state.currentStep]) {
       case OnboardingStep.basicDetails:
-        if (state.userProfile?.gender == null ||
-            state.userProfile?.program == null ||
-            state.userProfile?.yearOfJoin == null) {
+        if (state.userProfile?.gender == null 
+              || state.userProfile?.program == null 
+              // || state.userProfile?.yearOfJoin == null
+            ) {
           showSnackBar("Please fill in all fields");
           return false;
         }
         _initNewUser();
         return true;
-      case OnboardingStep.sexualOrientation:
+      case OnboardingStep.datingPreference:
         if (state.userProfile?.sexualOrientation == null) {
           showSnackBar("Please select a sexual orientation");
+          return false;
+        }
+        if (state.userProfile?.relationshipGoal == null) {
+          showSnackBar("Please select what you're looking for");
           return false;
         }
         return true;
@@ -123,17 +127,12 @@ class OnboardingController extends StateNotifier<OnboardingState> {
           showSnackBar("Select all images!");
           return false;
         }
-        return true;
-      case OnboardingStep.lookingFor:
-        if (state.userProfile?.relationshipGoal == null) {
-          showSnackBar("Please select what you're looking for");
-          return false;
-        }
-        return await createUser();
+        return await createUser(); // Create user logic moved here as it's the last step now?
       case OnboardingStep.surpriseQuiz:
         for (var e in state.userProfile!.surpriseQuiz) {
-          if (e.answer.isEmpty) {
+          if (e.answer.isEmpty && (e.audioPath == null || e.audioPath!.isEmpty)) {
             showSnackBar("Please answer all questions");
+            
             return false;
           }
         }
@@ -167,10 +166,28 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       ),
     );
   }
+  void updateAge(String ageStr) {
+    int? age = int.tryParse(ageStr);
+    if (age != null) {
+      state = state.copyWith(
+        userProfile: state.userProfile?.copyWith(age: age),
+      );
+    }
+  }
 
   void updateGender(Gender gender) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(gender: gender),
+    );
+  }
+  void updateHometown(String hometown) {
+    state = state.copyWith(
+      userProfile: state.userProfile?.copyWith(hometown: hometown),
+    );
+  }
+  void updateZodiac(Zodiac value) {
+    state = state.copyWith(
+      userProfile: state.userProfile?.copyWith(zodiac: value),
     );
   }
 
@@ -252,19 +269,37 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     state = state.copyWith(images: images);
   }
 
+  void addPhotoSlot() {
+    final images = List<File?>.from(state.images ?? []);
+    if (images.length < 9) { // Limit to reasonable number
+      images.add(null);
+      state = state.copyWith(images: images);
+    } else {
+       showSnackBar("Maximum 9 photos allowed");
+    }
+  }
+
   Future<bool> createUser() async {
     state = state.copyWith(loading: true);
+    log(state.dhPrivateKey!=null ? "DH Private Key exists" : "DH Private Key is null");
+    log(state.userProfile!=null ? "User Profile exists" : "User Profile is null");
     try {
       final personalInfoRepo = _ref.read(personalInfoRepoProvider);
       final userProfileRepo = _ref.read(userProfileRepoProvider);
+      
+      log("BEFORE POST - PersonalInfo: ${state.personalInfo}", name: "OnboardingController");
       await personalInfoRepo.postPersonalInfo(state.personalInfo!);
       log("PERSONAL INFO POSTED", name: "OnboardingController");
+      
       state = state.copyWith(loadingMessage: "Uploading Profile Images");
       var imageProgress = 0.0;
       final imageModels = <ImageModel>[];
+      
+      log("IMAGES COUNT: ${state.images?.length}, Images: $state.images", name: "OnboardingController");
       for (int i = 0; i < state.images!.length; i++) {
         final image = state.images![i];
         if (image != null) {
+          log("UPLOADING IMAGE $i", name: "OnboardingController");
           final imageUrl = await userProfileRepo.postUserProfileImage(
             image,
             onSendProgress: (val) {
@@ -279,11 +314,17 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
+      
+      log("USER PROFILE BEFORE UPDATE: ${state.userProfile}", name: "OnboardingController");
       state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
+      log("USER PROFILE AFTER IMAGE UPDATE: ${state.userProfile}", name: "OnboardingController");
+      
       state = state.copyWith(loadingMessage: "Creating User Profile");
+      log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
 
+      log("BEFORE DH KEY UPLOAD - Key: ${state.dhPrivateKey}", name: "OnboardingController");
       await OneDriveRepository.uploadDHPrivateKey(state.dhPrivateKey!);
       Logger().i("Private Key posted: ${state.dhPrivateKey}");
 
@@ -291,8 +332,9 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       await _ref.read(userProvider.notifier).initializeProfile();
       state = state.copyWith(loading: false);
       return true;
-    } catch (e) {
-      log("CREATE USER ERROR: $e");
+    } catch (e, stackTrace) {
+      log("CREATE USER ERROR: $e, StackTrace: $stackTrace");
+      log("STATE AT ERROR - DH Key: ${state.dhPrivateKey}, UserProfile: ${state.userProfile}, Images: ${state.images}", name: "OnboardingController");
       showSnackBar("Something went wrong. Please try again");
       state = state.copyWith(loading: false);
       return false;
@@ -316,6 +358,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void reset() {
     state = OnboardingState(currentStep: 0);
   }
+
+  
 }
 
 class OnboardingState {
