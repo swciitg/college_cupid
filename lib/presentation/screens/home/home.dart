@@ -5,6 +5,7 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_te
 import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/presentation/screens/your_matches/your_matches_tab.dart';
 import 'package:college_cupid/presentation/screens/updates/updates_screen.dart';
+import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -164,6 +165,7 @@ class _HomeState extends ConsumerState<Home> {
                           const YourCrushesTab(),
                           const ConfessionsScreen(),
                           const UpdatesScreen(),
+                          const EventsScreen(),
                           const YourMatches(),
                           UserProfileScreen(
                             isMine: true,

@@ -33,6 +33,13 @@ List<NavigationDestination> navIcons = [
   ),
   const NavigationDestination(
     icon: Icon(
+      FluentIcons.calendar_star_24_regular,
+      size: 30,
+    ),
+    label: 'Events',
+  ),
+  const NavigationDestination(
+    icon: Icon(
       FluentIcons.people_48_regular,
       size: 30,
     ),
@@ -79,6 +86,14 @@ List<NavigationDestination> filledNavIcons = [
       color: CupidColors.cupidPurple,
     ),
     label: 'Updates',
+  ),
+  const NavigationDestination(
+    icon: Icon(
+      FluentIcons.calendar_star_24_filled,
+      size: 30,
+      color: Color(0xFF8B5CF6),
+    ),
+    label: 'Events',
   ),
   const NavigationDestination(
     icon: Icon(
