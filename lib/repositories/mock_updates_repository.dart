@@ -104,4 +104,11 @@ class MockUpdatesRepository implements UpdatesRepository {
 
     return allUpdates;
   }
+
+  @override
+  Future<bool> replyToUser(String receiverEmail, String content,
+      String entityType, int entitySerial) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return true;
+  }
 }

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
+import 'package:college_cupid/repositories/updates_repository.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
@@ -54,7 +56,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   isMine: widget.isMine,
                 ),
                 if (widget.userProfile.surpriseQuiz.isNotEmpty)
-                  _surpriseQues(widget.userProfile.surpriseQuiz.first),
+                  _surpriseQues(widget.userProfile.surpriseQuiz.first, 0),
                 if (widget.userProfile.surpriseQuiz.isEmpty)
                   const SizedBox(height: 16),
                 _image(null, width, 1),
@@ -63,11 +65,11 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 if (widget.userProfile.surpriseQuiz.length < 2)
                   const SizedBox(height: 16),
                 if (widget.userProfile.surpriseQuiz.length >= 2)
-                  _surpriseQues(widget.userProfile.surpriseQuiz[1]),
+                  _surpriseQues(widget.userProfile.surpriseQuiz[1], 1),
                 if (widget.userProfile.images.length > 2)
                   _image(null, width, 2),
                 if (widget.userProfile.surpriseQuiz.length >= 3)
-                  _surpriseQues(widget.userProfile.surpriseQuiz[2]),
+                  _surpriseQues(widget.userProfile.surpriseQuiz[2], 2),
                 const SizedBox(height: 24),
                 if (!widget.isMine) // Only show if not my profile
                   Row(
@@ -140,7 +142,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     );
   }
 
-  Widget _surpriseQues(QuizQuestion ques) {
+  Widget _surpriseQues(QuizQuestion ques, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       child: DecoratedBox(
@@ -187,8 +189,16 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               backgroundColor: Colors.transparent,
                               builder: (context) => ReplyBottomSheet(
                                 title: 'Reply to Answer',
-                                onSend: (message) {
-                                  // TODO: Implement reply logic for profile
+                                onSend: (message) async {
+                                  final success = await ref
+                                      .read(updatesRepoProvider)
+                                      .replyToUser(widget.userProfile.email,
+                                          message, "QUESTIONS", index);
+                                  if (success) {
+                                    showSnackBar("Reply sent successfully!");
+                                  } else {
+                                    showSnackBar("Failed to send reply");
+                                  }
                                 },
                               ),
                             );
@@ -306,8 +316,25 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                     backgroundColor: Colors.transparent,
                     builder: (context) => ReplyBottomSheet(
                       title: 'Reply to Profile',
-                      onSend: (message) {
-                        // TODO: Implement reply logic for profile
+                      onSend: (message) async {
+                        print(
+                            "DEBUG UI: Reply button pressed for IMAGES index $index");
+                        print(
+                            "DEBUG UI: Sending to ${widget.userProfile.email}");
+                        try {
+                          final success = await ref
+                              .read(updatesRepoProvider)
+                              .replyToUser(widget.userProfile.email, message,
+                                  "IMAGES", index);
+                          print("DEBUG UI: Result success=$success");
+                          if (success) {
+                            showSnackBar("Reply sent successfully!");
+                          } else {
+                            showSnackBar("Failed to send reply");
+                          }
+                        } catch (e) {
+                          print("DEBUG UI: Error calling repo: $e");
+                        }
                       },
                     ),
                   );

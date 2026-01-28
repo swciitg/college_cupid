@@ -12,6 +12,8 @@ import 'package:college_cupid/presentation/widgets/profile/profile_attribute.dar
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
+import 'package:college_cupid/repositories/updates_repository.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 
 class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
@@ -167,8 +169,16 @@ class BasicProfileInfo extends ConsumerWidget {
                             backgroundColor: Colors.transparent,
                             builder: (context) => ReplyBottomSheet(
                               title: 'Reply to Profile',
-                              onSend: (message) {
-                                // TODO: Implement reply logic for profile
+                              onSend: (message) async {
+                                final success = await ref
+                                    .read(updatesRepoProvider)
+                                    .replyToUser(userProfile.email, message,
+                                        "IMAGES", 0);
+                                if (success) {
+                                  showSnackBar("Reply sent successfully!");
+                                } else {
+                                  showSnackBar("Failed to send reply");
+                                }
                               },
                             ),
                           );

@@ -73,9 +73,34 @@ class ProfileReplyCard extends StatelessWidget {
         Container(
           width: 80,
           height: 100,
-          decoration: BoxDecoration(
-            color: Colors.grey[400],
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
+            child: update.mediaUrl != null
+                ? Image.network(
+                    update.mediaUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error_outline),
+                    ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    color: Colors.grey[400],
+                  ),
           ),
         ),
         const SizedBox(width: 12),
