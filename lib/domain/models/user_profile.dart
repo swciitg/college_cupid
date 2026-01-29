@@ -22,8 +22,8 @@ class UserProfile {
   PersonalityType? personalityType;
   bool deactivated;
   List<QuizQuestion> surpriseQuiz;
-  int whatsappNumber;
-  String instaUserName;
+  // int whatsappNumber;
+  // String instaUserName;
 
   static const personalityWeight = 30;
   static const interestsWeight = 30;
@@ -48,8 +48,8 @@ class UserProfile {
     this.personalityType,
     this.deactivated = false,
     this.surpriseQuiz = const [],
-    this.whatsappNumber = 0,
-    this.instaUserName = '',
+    // this.whatsappNumber = 0,
+    // this.instaUserName = '',
   });
 
   factory UserProfile.fromEmail(String email) {
@@ -90,7 +90,7 @@ class UserProfile {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['_id'] = id;
+    // data['_id'] = id;
     data['name'] = name;
     data['gender'] = gender?.databaseString;
     data['email'] = email;
@@ -109,6 +109,8 @@ class UserProfile {
         .toList();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
     data['personalityType'] = personalityType?.name;
+    data['whatsappNumber'] = '12345679'; //whatsappNumber;
+    data['insta'] = 'ganesh_sinnur'; //instaUserName;
 
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
@@ -316,11 +318,11 @@ class SexualOrientationModel {
     required this.display,
   });
 
-  String toJson() {
+  Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['type'] = type.databaseString;
     data['display'] = display;
-    return type.databaseString;
+    return data;
   }
 
   SexualOrientationModel.fromJson(Map<String, dynamic> json)
