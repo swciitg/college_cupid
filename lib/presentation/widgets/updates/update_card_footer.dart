@@ -50,8 +50,8 @@ class UpdateCardFooter extends ConsumerWidget {
             },
             child: Text(
               update.senderUser.name,
-              style: CupidStyles.normalTextStyle
-                  .copyWith(fontWeight: FontWeight.w600),
+              style:
+                  CupidTextStyles.label2.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -89,7 +89,7 @@ class UpdateCardFooter extends ConsumerWidget {
               children: [
                 Text(
                   'Smash',
-                  style: CupidStyles.normalTextStyle
+                  style: CupidTextStyles.label3
                       .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(width: 4),

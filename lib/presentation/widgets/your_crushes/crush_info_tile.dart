@@ -65,15 +65,14 @@ class CrushInfoTile extends ConsumerWidget {
                   children: [
                     Text(
                       profile.name,
-                      style: CupidStyles.normalTextStyle.copyWith(
+                      style: CupidTextStyles.title2.copyWith(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "${program.displayString} '${profile.yearOfJoin}",
-                      style: CupidStyles.normalTextStyle,
+                      style: CupidTextStyles.label2,
                     ),
                   ],
                 ),

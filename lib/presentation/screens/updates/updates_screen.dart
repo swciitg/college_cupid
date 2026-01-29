@@ -53,7 +53,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Text(
                 'Updates',
-                style: CupidStyles.headingStyle,
+                style: CupidTextStyles.brandTitle1,
               ),
             ),
             SizedBox(
@@ -91,7 +91,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                               child: const Center(
                                 child: Text(
                                   'No updates found',
-                                  style: CupidStyles.lightTextStyle,
+                                  style: CupidTextStyles.body1,
                                 ),
                               ),
                             ),

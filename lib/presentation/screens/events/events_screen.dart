@@ -28,7 +28,7 @@ class EventsScreen extends ConsumerWidget {
             children: [
               const Text(
                 'Events',
-                style: CupidStyles.headingStyle,
+                style: CupidTextStyles.brandTitle1,
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -40,7 +40,7 @@ class EventsScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
-                              Icons.event_busy_rounded, 
+                              Icons.event_busy_rounded,
                               size: 64,
                               color: Colors.grey,
                             ),
@@ -48,8 +48,8 @@ class EventsScreen extends ConsumerWidget {
                             Text(
                               "No events right now,\ntune in later",
                               textAlign: TextAlign.center,
-                              style: CupidStyles.lightTextStyle
-                                  .copyWith(fontSize: 18),
+                              style:
+                                  CupidTextStyles.body1.copyWith(fontSize: 18),
                             ),
                           ],
                         ),

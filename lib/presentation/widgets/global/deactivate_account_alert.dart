@@ -78,7 +78,7 @@ class _DeactivateAccountAlertState
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('${widget.activateBack ? "Activate" : "Deactivate"} Account',
-          style: CupidStyles.subHeadingTextStyle),
+          style: CupidTextStyles.title2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
@@ -86,7 +86,7 @@ class _DeactivateAccountAlertState
           ? null
           : const Text(
               "Your account will not visible to anyone.",
-              style: CupidStyles.normalTextStyle,
+              style: CupidTextStyles.body1,
             ),
       actions: [
         GestureDetector(
@@ -102,7 +102,7 @@ class _DeactivateAccountAlertState
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               child: Text(
                 "Cancel",
-                style: CupidStyles.normalTextStyle.copyWith(fontSize: 16),
+                style: CupidTextStyles.title2.copyWith(fontSize: 16),
               ),
             ),
           ),
@@ -118,7 +118,7 @@ class _DeactivateAccountAlertState
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               child: Text(
                 "Submit",
-                style: CupidStyles.normalTextStyle.copyWith(
+                style: CupidTextStyles.title2.copyWith(
                   fontSize: 16,
                   color: Colors.white,
                 ),

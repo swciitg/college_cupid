@@ -21,7 +21,7 @@ class ProfileAttribute extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: CupidStyles.normalTextStyle.copyWith(
+          style: CupidTextStyles.label2.copyWith(
             color: CupidColors.cupidPurple,
             fontWeight: FontWeight.w600,
             fontSize: 14,

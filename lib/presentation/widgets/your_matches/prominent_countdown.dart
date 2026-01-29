@@ -136,7 +136,8 @@ class _ProminentCountdownState extends State<ProminentCountdown> {
                           alignment: Alignment.bottomRight,
                           child: Text(
                             _firstLetters[index].toString(),
-                            style: CupidStyles.countdownStyle(width),
+                            style: CupidTextStyles.brandTitle1
+                                .copyWith(fontSize: width),
                           ),
                         ),
                       );
@@ -159,7 +160,8 @@ class _ProminentCountdownState extends State<ProminentCountdown> {
                           alignment: Alignment.bottomLeft,
                           child: Text(
                             _secondLetters[index].toString(),
-                            style: CupidStyles.countdownStyle(width),
+                            style: CupidTextStyles.brandTitle1
+                                .copyWith(fontSize: width),
                           ),
                         ),
                       );
@@ -172,7 +174,7 @@ class _ProminentCountdownState extends State<ProminentCountdown> {
         ),
         Text(
           "$_prominent${_firstLetters[_firstLetterIndex!] == 0 && _secondLetters[_secondLetterIndex!] <= 1 ? "" : "s"}",
-          style: CupidStyles.subHeadingTextStyle,
+          style: CupidTextStyles.label2,
         ),
       ],
     );

@@ -38,12 +38,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     final userProfileRepo = ref.read(userProfileRepoProvider);
     filterState = ref.watch(filterProvider);
     pageViewState = ref.watch(pageViewProvider);
-    _pageController = PageController(initialPage: ref.read(pageViewProvider.notifier).currentPage);
+    _pageController = PageController(
+        initialPage: ref.read(pageViewProvider.notifier).currentPage);
     if (pageViewState.homeTabProfileList.isEmpty) {
       return const Center(
         child: Text(
           'No users as of now...',
-          style: CupidStyles.lightTextStyle,
+          style: CupidTextStyles.body1,
         ),
       );
     }
@@ -58,7 +59,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       onPageChanged: (value) async {
         final pageViewController = ref.read(pageViewProvider.notifier);
         ref.read(pageViewProvider.notifier).setCurrentPage(value);
-        if (ref.read(pageViewProvider.notifier).isLastPage && filterState.name.isNotEmpty) return;
+        if (ref.read(pageViewProvider.notifier).isLastPage &&
+            filterState.name.isNotEmpty) return;
         if (pageViewState.homeTabProfileList.length - value <= 4) {
           final filter = {
             'gender': filterState.interestedInGender.databaseString,
@@ -67,8 +69,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             'name': filterState.name
           };
           // print("Filter : $filter");
-          final List<UserProfile> users =
-              await userProfileRepo.getPaginatedUsers(pageViewController.pageNumber, filter);
+          final List<UserProfile> users = await userProfileRepo
+              .getPaginatedUsers(pageViewController.pageNumber, filter);
           ref.read(pageViewProvider.notifier).addHomeTabProfiles(users);
         }
       },

@@ -50,13 +50,13 @@ class CustomDropDown extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: label,
-                        style: CupidStyles.normalTextStyle
+                        style: CupidTextStyles.body1
                             .copyWith(color: CupidColors.secondaryColor),
                       ),
                       isNecessary!
                           ? TextSpan(
                               text: ' * ',
-                              style: CupidStyles.normalTextStyle
+                              style: CupidTextStyles.body1
                                   .copyWith(color: Colors.red),
                             )
                           : const TextSpan(),
@@ -64,10 +64,10 @@ class CustomDropDown extends StatelessWidget {
                   ),
                 )
               : null,
-          labelStyle: CupidStyles.normalTextStyle
-              .copyWith(color: CupidColors.secondaryColor),
-          hintStyle: CupidStyles.normalTextStyle
-              .copyWith(color: CupidColors.secondaryColor),
+          labelStyle:
+              CupidTextStyles.body1.copyWith(color: CupidColors.secondaryColor),
+          hintStyle:
+              CupidTextStyles.body1.copyWith(color: CupidColors.secondaryColor),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           focusedBorder: OutlineInputBorder(
@@ -118,7 +118,7 @@ class CustomDropDown extends StatelessWidget {
               size: 28,
             ),
         elevation: 16,
-        style: CupidStyles.normalTextStyle,
+        style: CupidTextStyles.body1,
         onChanged: onChanged,
         items: items.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(

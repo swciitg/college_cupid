@@ -17,7 +17,7 @@ class CupidTextButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: CupidStyles.textButtonStyle.copyWith(
+        style: CupidTextStyles.title2.copyWith(
           color: fontColor,
           fontSize: 18,
         ),

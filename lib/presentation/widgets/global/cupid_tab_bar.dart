@@ -47,7 +47,7 @@ class CupidTabBar extends StatelessWidget {
                 ),
                 child: Text(
                   title,
-                  style: CupidStyles.normalTextStyle.copyWith(
+                  style: CupidTextStyles.label2.copyWith(
                     color: isSelected ? Colors.white : Colors.black,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,

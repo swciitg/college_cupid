@@ -6,7 +6,6 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_attribute.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -59,8 +58,7 @@ class BasicProfileInfo extends ConsumerWidget {
                           child: Text(
                             userProfile.name,
                             overflow: TextOverflow.ellipsis,
-                            style: CupidStyles.subHeadingTextStyle
-                                .setFontWeight(FontWeight.bold),
+                            style: CupidTextStyles.title2.bold,
                           ),
                         ),
                         const SizedBox(width: 28),
@@ -83,7 +81,7 @@ class BasicProfileInfo extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'Edit Profile',
-                                    style: CupidStyles.normalTextStyle.copyWith(
+                                    style: CupidTextStyles.label2.copyWith(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -103,7 +101,7 @@ class BasicProfileInfo extends ConsumerWidget {
                     if (userProfile.gender != null)
                       Text(
                         userProfile.gender!.displayString,
-                        style: CupidStyles.normalTextStyle.copyWith(
+                        style: CupidTextStyles.label2.copyWith(
                             fontSize: 13, fontWeight: FontWeight.bold),
                       ),
                     const SizedBox(height: 8),

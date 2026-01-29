@@ -28,7 +28,7 @@ class EventCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            // TODO: Add Actual Image when ready 
+            // TODO: Add Actual Image when ready
             height: 150,
             width: double.infinity,
             decoration: BoxDecoration(
@@ -39,12 +39,13 @@ class EventCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             event.title,
-            style: CupidStyles.normalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+            style: CupidTextStyles.title2
+                .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             event.description,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.body1.copyWith(
               color: Colors.grey[600],
               fontSize: 14,
             ),

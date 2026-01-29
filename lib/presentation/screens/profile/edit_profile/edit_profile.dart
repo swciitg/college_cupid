@@ -251,7 +251,34 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     TextField(
                       controller:
                           TextEditingController(text: LoginStore.displayName),
-                      decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            width: 1.2,
+                            color: CupidColors.blackColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(color: CupidColors.blackColor),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.2),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.5),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.greyColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                      ).copyWith(
                         labelText: "Name",
                         floatingLabelAlignment: FloatingLabelAlignment.start,
                         labelStyle:
@@ -263,7 +290,34 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: TextEditingController(text: LoginStore.email),
-                      decoration: CupidStyles.textFieldInputDecoration.copyWith(
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            width: 1.2,
+                            color: CupidColors.blackColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(color: CupidColors.blackColor),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.2),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.5),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: CupidColors.greyColor, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                      ).copyWith(
                         labelText: "Email",
                         floatingLabelAlignment: FloatingLabelAlignment.start,
                         labelStyle:
@@ -275,7 +329,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     const Text(
                       "Profile Pictures",
-                      style: CupidStyles.subHeadingTextStyle,
+                      style: CupidTextStyles.title2,
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -291,7 +345,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     const Text(
                       "Gender",
-                      style: CupidStyles.subHeadingTextStyle,
+                      style: CupidTextStyles.title2,
                     ),
                     const SizedBox(height: 4),
                     Wrap(
@@ -310,7 +364,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     const Text(
                       "Program",
-                      style: CupidStyles.subHeadingTextStyle,
+                      style: CupidTextStyles.title2,
                     ),
                     const SizedBox(height: 4),
                     Wrap(
@@ -329,7 +383,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     const Text(
                       "Year",
-                      style: CupidStyles.subHeadingTextStyle,
+                      style: CupidTextStyles.title2,
                     ),
                     const SizedBox(height: 4),
                     Wrap(
@@ -348,8 +402,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Interests",
-                            style: CupidStyles.subHeadingTextStyle),
+                        const Text("Interests", style: CupidTextStyles.title2),
                         IconButton(
                           onPressed: () {
                             context.goNamed(AppRoutes.editInterests.name);
@@ -366,12 +419,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 16),
                     const Text(
                       'Sexual orientation',
-                      style: CupidStyles.subHeadingTextStyle,
+                      style: CupidTextStyles.title2,
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'Your results will be based on your preference',
-                      style: CupidStyles.normalTextStyle,
+                      style: CupidTextStyles.body1,
                     ),
                     const SizedBox(height: 8),
                     _buildSexualOrientationChoiceChips(
@@ -386,7 +439,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       children: [
                         const Text(
                           'Display on profile',
-                          style: CupidStyles.lightTextStyle,
+                          style: CupidTextStyles.body1,
                         ),
                         Switch(
                           inactiveTrackColor: WidgetStateColor.transparent,
@@ -405,8 +458,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text("Surprise quiz",
-                        style: CupidStyles.subHeadingTextStyle),
+                    const Text("Surprise quiz", style: CupidTextStyles.title2),
                     const SizedBox(height: 8),
                     _buildQuestions(size.width - 40),
                     const SizedBox(height: 16),
@@ -422,12 +474,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         ),
                       ),
                     ),
-                    const Text("Looking for",
-                        style: CupidStyles.subHeadingTextStyle),
+                    const Text("Looking for", style: CupidTextStyles.title2),
                     const SizedBox(height: 4),
                     const Text(
                       "The profiles showed to you will be based on this",
-                      style: CupidStyles.normalTextStyle,
+                      style: CupidTextStyles.body1,
                     ),
                     const SizedBox(height: 16),
                     _buildLookingForChoiceChips(_relationshipGoal,
@@ -442,7 +493,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       children: [
                         const Text(
                           "Display on profile",
-                          style: CupidStyles.lightTextStyle,
+                          style: CupidTextStyles.body1,
                         ),
                         const SizedBox(width: 8),
                         Switch(
@@ -481,8 +532,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         ),
                         child: Text(
                           _loadingMessage!,
-                          style: CupidStyles.normalTextStyle
-                              .setColor(Colors.white),
+                          style: CupidTextStyles.body1.setColor(Colors.white),
                         ),
                       ),
                     ),
@@ -525,14 +575,14 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                               children: [
                                 Text(
                                   surprizeQuiz[index].question,
-                                  style: CupidStyles.normalTextStyle,
+                                  style: CupidTextStyles.body1,
                                 ),
                                 const SizedBox(height: 8),
                                 TextField(
                                   controller: textEditingControllers[index],
                                   maxLength: 120,
                                   maxLines: 4,
-                                  style: CupidStyles.normalTextStyle.copyWith(
+                                  style: CupidTextStyles.body1.copyWith(
                                     color: CupidColors.lightTextColor,
                                     decoration: TextDecoration.underline,
                                   ),
@@ -609,7 +659,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       scrolledUnderElevation: 0,
       title: const Text(
         "Edit Profile",
-        style: CupidStyles.headingStyle,
+        style: CupidTextStyles.brandTitle1,
       ),
       centerTitle: false,
     );
@@ -619,7 +669,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     return ChoiceChip(
       label: Text(
         option,
-        style: CupidStyles.normalTextStyle.setColor(
+        style: CupidTextStyles.label2.setColor(
           isSelected ? Colors.white : CupidColors.textColorBlack,
         ),
       ),
@@ -650,7 +700,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         return ChoiceChip(
           label: Text(
             tag.displayString,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.label2.copyWith(
               color: selectedChoice == tag
                   ? Colors.white
                   : CupidColors.textColorBlack,
@@ -684,7 +734,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         return ChoiceChip(
           label: Text(
             tag.displayString,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.label2.copyWith(
               color: selectedChoice == tag
                   ? Colors.white
                   : CupidColors.textColorBlack,

@@ -92,7 +92,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                   const SizedBox(width: 8),
                                   Text(
                                     "Pass",
-                                    style: CupidStyles.headingStyle.copyWith(
+                                    style: CupidTextStyles.brandTitle2.copyWith(
                                       fontSize: 18,
                                       color: Colors.black,
                                     ),
@@ -121,7 +121,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                 const SizedBox(width: 8),
                                 Text(
                                   "Smash",
-                                  style: CupidStyles.headingStyle.copyWith(
+                                  style: CupidTextStyles.brandTitle1.copyWith(
                                     fontSize: 18,
                                     color: Colors.black,
                                   ),
@@ -167,7 +167,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   children: [
                     Text(
                       ques.question,
-                      style: CupidStyles.normalTextStyle.copyWith(
+                      style: CupidTextStyles.body1.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
@@ -224,7 +224,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           children: [
             Text(
               "Loves",
-              style: CupidStyles.normalTextStyle.setFontSize(16),
+              style: CupidTextStyles.title2.copyWith(fontSize: 16),
             ),
             IconButton(
               onPressed: () {
@@ -256,7 +256,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 },
                 child: Text(
                   "+$extra more",
-                  style: CupidStyles.normalTextStyle,
+                  style: CupidTextStyles.body1,
                 ),
               );
             }
@@ -284,7 +284,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
         child: Text(
           label,
-          style: CupidStyles.normalTextStyle,
+          style: CupidTextStyles.label2,
         ),
       ),
     );

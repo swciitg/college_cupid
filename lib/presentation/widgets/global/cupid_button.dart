@@ -43,7 +43,7 @@ class CupidButton extends StatelessWidget {
               : Text(
                   text,
                   style: style ??
-                      CupidStyles.headingStyle.copyWith(
+                      CupidTextStyles.title2.copyWith(
                         color: CupidColors.backgroundColor,
                         fontSize: 16,
                       ),

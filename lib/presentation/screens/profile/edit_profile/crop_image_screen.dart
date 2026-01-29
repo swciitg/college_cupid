@@ -28,7 +28,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
         foregroundColor: Colors.white,
         title: Text(
           'Edit Image',
-          style: CupidStyles.pageHeadingStyle.copyWith(color: Colors.white),
+          style: CupidTextStyles.brandTitle1.copyWith(color: Colors.white),
         ),
         actions: [
           CupidTextButton(
@@ -94,8 +94,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '1 : 1',
-                    style: CupidStyles.textButtonStyle
-                        .copyWith(color: Colors.white),
+                    style: CupidTextStyles.title1.copyWith(color: Colors.white),
                   ),
                 ),
                 TextButton(
@@ -104,8 +103,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '3 : 4',
-                    style: CupidStyles.textButtonStyle
-                        .copyWith(color: Colors.white),
+                    style: CupidTextStyles.title1.copyWith(color: Colors.white),
                   ),
                 ),
                 TextButton(
@@ -114,8 +112,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
                   },
                   child: Text(
                     '9 : 16',
-                    style: CupidStyles.textButtonStyle
-                        .copyWith(color: Colors.white),
+                    style: CupidTextStyles.title1.copyWith(color: Colors.white),
                   ),
                 ),
               ],

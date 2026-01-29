@@ -3,6 +3,7 @@ import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                       child: Text(
                     'Some error occurred!\nPlease try again later!',
                     textAlign: TextAlign.center,
-                    style: CupidStyles.lightTextStyle,
+                    style: CupidTextStyles.body1,
                   ));
                 } else {
                   return Observer(
@@ -47,7 +48,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
                           child: Text(
                             'No Blocked Users as of now!',
                             textAlign: TextAlign.center,
-                            style: CupidStyles.lightTextStyle,
+                            style: CupidTextStyles.body1,
                           ),
                         );
                       }
@@ -77,7 +78,11 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
 
   AppBar _appBar() {
     return AppBar(
-      systemOverlayStyle: CupidStyles.statusBarStyle,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
       backgroundColor: Colors.white,
       elevation: 0,
       scrolledUnderElevation: 0,
@@ -85,7 +90,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
       centerTitle: false,
       title: const Text(
         'Blocked Users',
-        style: CupidStyles.headingStyle,
+        style: CupidTextStyles.brandTitle1,
       ),
     );
   }

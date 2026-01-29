@@ -59,7 +59,7 @@ class ConfessionCard extends StatelessWidget {
                 ),
                 child: Text(
                   confession.typeOfConfession.displayName,
-                  style: CupidStyles.normalTextStyle.copyWith(
+                  style: CupidTextStyles.label3.copyWith(
                     color: CupidColors.cupidBlue, // Reuse existing color
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -70,7 +70,7 @@ class ConfessionCard extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat('d MMM, yyyy').format(confession.createdAt),
-                    style: CupidStyles.lightTextStyle.copyWith(fontSize: 12),
+                    style: CupidTextStyles.label3.copyWith(fontSize: 12),
                   ),
                   if (!isMine) ...[
                     const SizedBox(width: 4),
@@ -89,7 +89,7 @@ class ConfessionCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             confession.text,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.title1.copyWith(
               fontSize: 16,
               height: 1.5,
               color: CupidColors.blackColor,
@@ -146,11 +146,10 @@ class ConfessionCard extends StatelessWidget {
                     ),
                     Text(
                       '${confession.reactions.length}',
-                      style: CupidStyles.normalTextStyle,
+                      style: CupidTextStyles.label2,
                     ),
-                  ] else ...[
-                    
-                  ]
+                  ] else
+                    ...[]
                 ],
               ),
               const Spacer(),

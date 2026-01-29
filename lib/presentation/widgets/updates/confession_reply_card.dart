@@ -51,7 +51,7 @@ class ConfessionReplyCard extends StatelessWidget {
         Expanded(
           child: Text(
             update.headerText, // "Replied to your confession"
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.label3.copyWith(
                 color: CupidColors.cupidPurple,
                 fontWeight: FontWeight.w600,
                 fontSize: 12),
@@ -59,7 +59,7 @@ class ConfessionReplyCard extends StatelessWidget {
         ),
         Text(
           DateFormat('d MMM, yyyy').format(update.timestamp),
-          style: CupidStyles.lightTextStyle.copyWith(fontSize: 10),
+          style: CupidTextStyles.label3.copyWith(fontSize: 10),
         ),
       ],
     );
@@ -75,7 +75,7 @@ class ConfessionReplyCard extends StatelessWidget {
       ),
       child: Text(
         update.replyTo ?? '',
-        style: CupidStyles.normalTextStyle.copyWith(fontSize: 13),
+        style: CupidTextStyles.body1.copyWith(fontSize: 13),
       ),
     );
   }
@@ -86,7 +86,7 @@ class ConfessionReplyCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Text(
         update.replyText ?? '',
-        style: CupidStyles.normalTextStyle.copyWith(fontSize: 13),
+        style: CupidTextStyles.body1.copyWith(fontSize: 13),
       ),
     );
   }

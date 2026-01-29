@@ -41,7 +41,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       return const Center(
         child: Text(
           'No users as of now...',
-          style: CupidStyles.lightTextStyle,
+          style: CupidTextStyles.body1,
         ),
       );
     }
@@ -70,7 +70,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         // Optimistically move to next profile
         pageViewNotifier.nextProfile();
 
-
         try {
           bool success = await crushesRepo.addCrush(sharedSecret);
           if (success) {
@@ -78,7 +77,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             await crushesRepo.increaseCrushesCount(profile.email);
           }
         } catch (e) {
-          // Handle error 
+          // Handle error
           print("Error adding crush: $e");
         }
       },

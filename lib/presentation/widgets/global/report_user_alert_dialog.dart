@@ -31,7 +31,7 @@ class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
     return AlertDialog(
       title: Text(
         'Reason for reporting ${widget.name}',
-        style: CupidStyles.subHeadingTextStyle.copyWith(
+        style: CupidTextStyles.title2.copyWith(
           fontSize: 22,
         ),
       ),
@@ -70,7 +70,7 @@ class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               child: Text(
                 "Cancel",
-                style: CupidStyles.normalTextStyle.copyWith(fontSize: 16),
+                style: CupidTextStyles.title2.copyWith(fontSize: 16),
               ),
             ),
           ),
@@ -100,7 +100,7 @@ class _ReportUserAlertDialogState extends ConsumerState<ReportUserAlertDialog> {
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               child: Text(
                 "Submit",
-                style: CupidStyles.normalTextStyle.copyWith(fontSize: 16),
+                style: CupidTextStyles.title2.copyWith(fontSize: 16),
               ),
             ),
           ),

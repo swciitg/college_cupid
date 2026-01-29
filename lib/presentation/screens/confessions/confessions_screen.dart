@@ -74,11 +74,11 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         elevation: 0,
         centerTitle: false,
         automaticallyImplyLeading: false,
-        title: const Padding(
+        title: Padding(
           padding: EdgeInsets.only(left: 8.0),
           child: Text(
             'Confessions',
-            style: CupidStyles.headingStyle,
+            style: CupidTextStyles.brandTitle1,
           ),
         ),
         bottom: PreferredSize(
@@ -102,7 +102,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
               ? const Center(
                   child: Text(
                     'No confessions found!',
-                    style: CupidStyles.normalTextStyle,
+                    style: CupidTextStyles.brandTitle2,
                   ),
                 )
               : RefreshIndicator(
@@ -236,7 +236,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
             children: [
               Text(
                 'Confess',
-                style: CupidStyles.normalTextStyle.copyWith(
+                style: CupidTextStyles.body2.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

@@ -37,7 +37,7 @@ class EditInterests extends StatelessWidget {
       scrolledUnderElevation: 0,
       title: const Text(
         "Edit Interests",
-        style: CupidStyles.headingStyle,
+        style: CupidTextStyles.brandTitle1,
       ),
       centerTitle: false,
     );

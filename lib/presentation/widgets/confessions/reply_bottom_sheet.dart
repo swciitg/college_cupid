@@ -47,7 +47,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
         children: [
           Text(
             widget.title,
-            style: CupidStyles.headingStyle.copyWith(fontSize: 20),
+            style: CupidTextStyles.title2.copyWith(fontSize: 20),
           ),
           const SizedBox(height: 12),
           Container(
@@ -63,9 +63,9 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Recording at least 1 voice note increases your chances of matchmaking.',
-                    style: CupidStyles.normalTextStyle.copyWith(
-                      color: const Color(0xFF9747FF),
+                    'The confession holder will be able to view your profile',
+                    style: CupidTextStyles.label3.copyWith(
+                      color: CupidColors.brandPurple600,
                       fontSize: 12,
                     ),
                   ),
@@ -79,7 +79,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
             maxLines: 4,
             decoration: InputDecoration(
               hintText: 'Type your reply here',
-              hintStyle: CupidStyles.lightTextStyle,
+              hintStyle: CupidTextStyles.body1,
               filled: true,
               fillColor: CupidColors.offWhiteColor,
               border: OutlineInputBorder(
@@ -103,7 +103,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                   ),
                   child: Text(
                     'Cancel',
-                    style: CupidStyles.normalTextStyle.copyWith(
+                    style: CupidTextStyles.label2.copyWith(
                         fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                 ),
@@ -125,7 +125,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                   ),
                   child: Text(
                     'Send',
-                    style: CupidStyles.normalTextStyle.copyWith(
+                    style: CupidTextStyles.label1.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),

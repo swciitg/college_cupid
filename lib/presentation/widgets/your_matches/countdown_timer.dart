@@ -55,7 +55,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
         ? const SizedBox()
         : Text(
             text,
-            style: CupidStyles.normalTextStyle,
+            style: CupidTextStyles.body1,
             textAlign: TextAlign.center,
           );
   }

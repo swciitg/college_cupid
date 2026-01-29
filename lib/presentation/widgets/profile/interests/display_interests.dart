@@ -11,12 +11,13 @@ class DisplayInterests extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedInterests = ref.watch(onboardingControllerProvider).interests ?? [];
+    final selectedInterests =
+        ref.watch(onboardingControllerProvider).interests ?? [];
     return Column(
       children: [
         const Text(
           "Select a few of your interests and let everyone know what you’re passionate about.",
-          style: CupidStyles.lightTextStyle,
+          style: CupidTextStyles.body1,
         ),
         const SizedBox(height: 16),
         ...interestsMap.keys
@@ -27,7 +28,9 @@ class DisplayInterests extends ConsumerWidget {
                   Text(
                     key,
                     style: const TextStyle(
-                        fontSize: 20, color: CupidColors.greyColor, fontWeight: FontWeight.w600),
+                        fontSize: 20,
+                        color: CupidColors.greyColor,
+                        fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   SelectableInterestList(

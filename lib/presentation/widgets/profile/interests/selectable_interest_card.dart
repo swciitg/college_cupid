@@ -22,7 +22,7 @@ class SelectableInterestCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       label: Text(
         text,
-        style: CupidStyles.normalTextStyle.setColor(
+        style: CupidTextStyles.label2.setColor(
           selected ? Colors.white : CupidColors.textColorBlack,
         ),
       ),

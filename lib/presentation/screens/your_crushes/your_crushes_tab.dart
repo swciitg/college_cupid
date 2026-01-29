@@ -33,11 +33,11 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Your Crushes', style: CupidStyles.headingStyle),
+              const Text('Your Crushes', style: CupidTextStyles.brandTitle1),
               const SizedBox(height: 8),
               Text(
                 'You can select a maximum of 7 crushes at a time.',
-                style: CupidStyles.lightTextStyle.setFontSize(13),
+                style: CupidTextStyles.body1,
               ),
             ],
           ),
@@ -51,7 +51,7 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                   child: Text(
                     'No Crushes as of now\nGet Rolling!!!',
                     textAlign: TextAlign.center,
-                    style: CupidStyles.lightTextStyle,
+                    style: CupidTextStyles.body1,
                   ),
                 );
               } else {
@@ -73,7 +73,7 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
                 child: Text(
                   'Some error occurred\nPlease try again!',
                   textAlign: TextAlign.center,
-                  style: CupidStyles.lightTextStyle,
+                  style: CupidTextStyles.body1,
                 ),
               );
             },

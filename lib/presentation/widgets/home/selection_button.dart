@@ -38,12 +38,12 @@ class SelectionButton extends StatelessWidget {
             child: Text(
               label,
               style: isSelected
-                  ? CupidStyles.normalTextStyle.copyWith(
+                  ? CupidTextStyles.label2.copyWith(
                       fontSize: 14,
                       color: CupidColors.offWhiteColor,
                       fontWeight: FontWeight.bold,
                     )
-                  : CupidStyles.normalTextStyle.copyWith(
+                  : CupidTextStyles.label2.copyWith(
                       fontSize: 14,
                       color: CupidColors.blackColor,
                       fontWeight: FontWeight.bold,

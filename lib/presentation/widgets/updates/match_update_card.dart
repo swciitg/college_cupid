@@ -55,7 +55,7 @@ class MatchUpdateCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'You have a match with ${update.matchedUser!.name}!',
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.title2.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,
               fontSize: 16,

@@ -32,12 +32,11 @@ class OverlayChip extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Text(
               label,
-              style: CupidStyles.normalTextStyle.setColor(Colors.white),
+              style: CupidTextStyles.label2.setColor(Colors.white),
             ),
           ),
         ),
       ),
     );
   }
-
 }

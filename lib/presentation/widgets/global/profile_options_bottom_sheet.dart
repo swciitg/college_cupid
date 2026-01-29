@@ -56,7 +56,7 @@ class ProfileOptionsBottomSheet extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Report and Block User',
-                      style: CupidStyles.normalTextStyle.copyWith(
+                      style: CupidTextStyles.title2.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),

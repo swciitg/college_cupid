@@ -24,11 +24,11 @@ class SexualOrientationScreen extends ConsumerWidget {
             children: [
               TextSpan(
                 text: 'Choose your \n',
-                style: CupidStyles.subHeadingTextStyle,
+                style: CupidTextStyles.title2,
               ),
               TextSpan(
                 text: 'Sexual orientation',
-                style: CupidStyles.headingStyle,
+                style: CupidTextStyles.brandTitle1,
               ),
             ],
           ),
@@ -36,7 +36,7 @@ class SexualOrientationScreen extends ConsumerWidget {
         const SizedBox(height: 8),
         const Text(
           'Your results will be based on your preference',
-          style: CupidStyles.normalTextStyle,
+          style: CupidTextStyles.body1,
         ),
         const SizedBox(height: 24),
         _buildchoiceChips(onboardingState.userProfile?.sexualOrientation?.type,
@@ -49,7 +49,7 @@ class SexualOrientationScreen extends ConsumerWidget {
           children: [
             const Text(
               'Display on profile',
-              style: CupidStyles.lightTextStyle,
+              style: CupidTextStyles.body1,
             ),
             Switch(
               inactiveTrackColor: WidgetStateColor.transparent,
@@ -79,7 +79,7 @@ class SexualOrientationScreen extends ConsumerWidget {
         return ChoiceChip(
           label: Text(
             tag.displayString,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.label2.copyWith(
               color: selectedChoice == tag
                   ? Colors.white
                   : CupidColors.textColorBlack,

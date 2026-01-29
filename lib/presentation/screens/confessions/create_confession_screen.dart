@@ -55,17 +55,17 @@ class _CreateConfessionScreenState
                   children: [
                     const Text(
                       'Write your confession',
-                      style: CupidStyles.headingStyle,
+                      style: CupidTextStyles.brandTitle1,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Share your thoughts anonymously with the IITG community.',
-                      style: CupidStyles.lightTextStyle.copyWith(fontSize: 14),
+                      style: CupidTextStyles.body1.copyWith(fontSize: 14),
                     ),
                     const SizedBox(height: 30),
                     Text(
                       'Type of confession',
-                      style: CupidStyles.normalTextStyle
+                      style: CupidTextStyles.title2
                           .copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
@@ -116,13 +116,12 @@ class _CreateConfessionScreenState
                           textAlignVertical: TextAlignVertical.top,
                           decoration: InputDecoration(
                             hintText: 'Write your confession here....',
-                            hintStyle: CupidStyles.subHeadingTextStyle.copyWith(
+                            hintStyle: CupidTextStyles.title1.copyWith(
                                 color: CupidColors.greyColor
                                     .withValues(alpha: 0.5)),
                             border: InputBorder.none,
                           ),
-                          style: CupidStyles.subHeadingTextStyle
-                              .copyWith(fontSize: 24),
+                          style: CupidTextStyles.title1.copyWith(fontSize: 24),
                         ),
                       ),
                     ),
@@ -166,7 +165,7 @@ class _CreateConfessionScreenState
                         }
                       },
                       backgroundColor: CupidColors.cupidPurple,
-                      style: CupidStyles.normalTextStyle.copyWith(
+                      style: CupidTextStyles.title2.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -208,7 +207,7 @@ class _CategoryChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: CupidStyles.normalTextStyle.copyWith(
+          style: CupidTextStyles.label2.copyWith(
             color: isSelected
                 ? CupidColors.cupidPurple
                 : CupidColors.blackColor, // Indigo from SS

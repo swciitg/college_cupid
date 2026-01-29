@@ -38,7 +38,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Text('Your Matches', style: CupidStyles.headingStyle),
+          const Text('Your Matches', style: CupidTextStyles.brandTitle1),
           if (showTimer)
             Expanded(
               child: FutureBuilder(
@@ -55,7 +55,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                       child: Text(
                         'Please try again later!',
                         textAlign: TextAlign.center,
-                        style: CupidStyles.lightTextStyle,
+                        style: CupidTextStyles.body1,
                       ),
                     );
                   }
@@ -77,16 +77,14 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                           const CountdownTimer(),
                           Text(
                             "Admirer Count: ${snapshot.data ?? 0}",
-                            style: CupidStyles.normalTextStyle.copyWith(
-                              fontSize: 28,
-                            ),
+                            style: CupidTextStyles.brandTitle1,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             getAdmirerCountMessage(snapshot.data ?? 0),
                             // getAdmirerCountMessage(0),
-                            style: CupidStyles.normalTextStyle.copyWith(
+                            style: CupidTextStyles.title2.copyWith(
                               fontSize: 18,
                             ),
                             textAlign: TextAlign.center,
@@ -113,7 +111,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                       child: Text(
                         'Please try again later!',
                         textAlign: TextAlign.center,
-                        style: CupidStyles.lightTextStyle,
+                        style: CupidTextStyles.body1,
                       ),
                     );
                   } else if (!snapshot.hasData) {
@@ -121,7 +119,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                       child: Text(
                         'No Matches as of now\nGood Luck!!!',
                         textAlign: TextAlign.center,
-                        style: CupidStyles.lightTextStyle,
+                        style: CupidTextStyles.body1,
                       ),
                     );
                   } else {
@@ -130,7 +128,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
                         child: Text(
                           'No Matches as of now\nGood Luck!!!',
                           textAlign: TextAlign.center,
-                          style: CupidStyles.lightTextStyle,
+                          style: CupidTextStyles.body1,
                         ),
                       );
                     }

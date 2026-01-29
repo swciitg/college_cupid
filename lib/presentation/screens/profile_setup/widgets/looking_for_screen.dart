@@ -39,11 +39,11 @@ class LookingForScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Looking for", style: CupidStyles.headingStyle),
+        const Text("Looking for", style: CupidTextStyles.brandTitle1),
         const SizedBox(height: 5),
         const Text(
           "The profiles showed to you will be based on this",
-          style: CupidStyles.normalTextStyle,
+          style: CupidTextStyles.body1,
         ),
         const SizedBox(height: 16),
         _buildchoiceChips(onboardingState.userProfile?.relationshipGoal?.goal,
@@ -56,7 +56,7 @@ class LookingForScreen extends ConsumerWidget {
           children: [
             const Text(
               "Display on profile",
-              style: CupidStyles.lightTextStyle,
+              style: CupidTextStyles.body1,
             ),
             const SizedBox(width: 8),
             Switch(
@@ -87,7 +87,7 @@ class LookingForScreen extends ConsumerWidget {
         return ChoiceChip(
           label: Text(
             tag.displayString,
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.label2.copyWith(
               color: selectedChoice == tag
                   ? Colors.white
                   : CupidColors.textColorBlack,

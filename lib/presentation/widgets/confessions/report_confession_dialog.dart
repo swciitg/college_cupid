@@ -21,18 +21,18 @@ class ReportConfessionDialog extends StatelessWidget {
         children: [
           Text(
             'Report Confession',
-            style: CupidStyles.headingStyle.copyWith(fontSize: 20),
+            style: CupidTextStyles.brandTitle2.copyWith(fontSize: 20),
           ),
           const SizedBox(height: 8),
           Text(
             'Why are you reporting this confession?',
-            style: CupidStyles.lightTextStyle,
+            style: CupidTextStyles.body1,
           ),
           const SizedBox(height: 20),
           ...ConfessionReportCategory.values.map((category) => ListTile(
                 title: Text(
                   category.displayName,
-                  style: CupidStyles.normalTextStyle,
+                  style: CupidTextStyles.body1,
                 ),
                 onTap: () {
                   onReport(category);

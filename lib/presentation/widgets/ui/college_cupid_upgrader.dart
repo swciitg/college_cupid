@@ -21,12 +21,12 @@ class CollegeCupidUpgrader extends StatelessWidget {
       data: Theme.of(context).copyWith(
         dialogTheme: const DialogThemeData(
           backgroundColor: CupidColors.backgroundColor,
-          titleTextStyle: CupidStyles.pageHeadingStyle,
-          contentTextStyle: CupidStyles.normalTextStyle,
+          titleTextStyle: CupidTextStyles.brandTitle1,
+          contentTextStyle: CupidTextStyles.body1,
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
-            textStyle: WidgetStateProperty.all(CupidStyles.textButtonStyle),
+            textStyle: WidgetStateProperty.all(CupidTextStyles.title1),
           ),
         ),
       ),
