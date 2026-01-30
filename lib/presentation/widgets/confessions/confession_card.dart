@@ -90,9 +90,8 @@ class ConfessionCard extends StatelessWidget {
           Text(
             confession.text,
             style: CupidTextStyles.title1.copyWith(
-              fontSize: 16,
+              fontSize: 14,
               height: 1.5,
-              color: CupidColors.blackColor,
             ),
           ),
           const SizedBox(height: 16),

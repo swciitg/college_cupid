@@ -51,7 +51,7 @@ class ConfessionReplyCard extends StatelessWidget {
         Expanded(
           child: Text(
             update.headerText, // "Replied to your confession"
-            style: CupidTextStyles.label3.copyWith(
+            style: CupidTextStyles.body1.copyWith(
                 color: CupidColors.cupidPurple,
                 fontWeight: FontWeight.w600,
                 fontSize: 12),

@@ -144,7 +144,6 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
         ),
         const SizedBox(height: 12),
         ...List.generate(3, (index) {
-
           return Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
             child: Column(
@@ -154,7 +153,7 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     quizQuestions[randomQuestions[index]].question,
-                    style: CupidStyles.subHeadingTextStyle.copyWith(
+                    style: CupidTextStyles.label2.copyWith(
                         color: CupidColors.grey700,
                         fontWeight: FontWeight.w600,
                         fontSize: 13),
@@ -169,7 +168,7 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
                       _audioPaths[index] = path;
                     });
                     _updateController(onboardingController);
-                    log(  "Recording completed for question $index: $path");
+                    log("Recording completed for question $index: $path");
                   },
                   onDelete: () {
                     setState(() {
@@ -177,8 +176,8 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
                     });
                     _updateController(onboardingController);
                     log("Recording deleted for question $index");
-                  }, 
-                  onChanged: (String answer) {  
+                  },
+                  onChanged: (String answer) {
                     _updateController(onboardingController);
                     log("Answer updated for question $index: $answer");
                   },
