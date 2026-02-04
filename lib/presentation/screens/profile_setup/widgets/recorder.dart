@@ -19,7 +19,8 @@ class AudioRecorder extends StatefulWidget {
     required this.onRecordingComplete,
     required this.onDelete,
     this.existingFilePath,
-    required this.textController, required this.onChanged,
+    required this.textController,
+    required this.onChanged,
   });
 
   @override
@@ -31,7 +32,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool _isPlaying = false;
-  bool _isRecording = false; 
+  bool _isRecording = false;
   String? _recordedFilePath;
 
   @override
@@ -60,19 +61,19 @@ class _AudioRecorderState extends State<AudioRecorder> {
     final hasRecording =
         _recordedFilePath != null && _recordedFilePath!.isNotEmpty;
 
-      return AnimatedContainer(
+    return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       width: double.infinity,
-      height: _isRecording || hasRecording ? 60 : 100, 
+      height: _isRecording || hasRecording ? 60 : 100,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (_isRecording || hasRecording) 
-              ? CupidColors.brandPurple600 
-              : Colors.transparent // Hide border when showing TextField
-        ),
+            color: (_isRecording || hasRecording)
+                ? CupidColors.brandPurple600
+                : Colors.transparent // Hide border when showing TextField
+            ),
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
@@ -80,6 +81,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
       ),
     );
   }
+
   Widget _buildCurrentState(bool hasRecording) {
     if (hasRecording) {
       return _buildPlayerView();
@@ -100,7 +102,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
           hintText: "Write your answer here...",
           controller: widget.textController,
           maxLines: 3,
-          textStyle: CupidStyles.subHeadingTextStyle.copyWith(
+          textStyle: CupidTextStyles.label2.copyWith(
             color: CupidColors.grey700,
             fontWeight: FontWeight.w600,
             fontSize: 13,
@@ -179,7 +181,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
           Expanded(
             child: Text(
               _recordedFilePath!.split('/').last,
-              style: CupidStyles.normalTextStyle.copyWith(
+              style: CupidTextStyles.body1.copyWith(
                 color: CupidColors.grey600,
                 fontSize: 14,
               ),
@@ -202,7 +204,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
     try {
       // Clear any previous text/focus if needed
       FocusManager.instance.primaryFocus?.unfocus();
-      
+
       setState(() {
         _isRecording = true;
       });
@@ -217,7 +219,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   Future<void> _stopRecording() async {
     try {
-      await _waveController.stopRecording(); 
+      await _waveController.stopRecording();
       // Note: onRecordingStopped callback will handle the state update
     } catch (e) {
       debugPrint("Error stopping recorder: $e");
@@ -227,8 +229,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Future<void> _onRecordingStopped() async {
     final file = _waveController.file;
     if (file == null) {
-        setState(() => _isRecording = false);
-        return;
+      setState(() => _isRecording = false);
+      return;
     }
 
     setState(() {
@@ -264,9 +266,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 }
 
-
 Widget voiceButton() {
-
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: ShapeDecoration(
@@ -307,4 +307,3 @@ Widget voiceButton() {
     ),
   );
 }
-

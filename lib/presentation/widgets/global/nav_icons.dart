@@ -38,13 +38,13 @@ List<NavigationDestination> navIcons = [
     ),
     label: 'Events',
   ),
-  const NavigationDestination(
-    icon: Icon(
-      FluentIcons.people_48_regular,
-      size: 30,
-    ),
-    label: 'Your Matches',
-  ),
+  // const NavigationDestination(
+  //   icon: Icon(
+  //     FluentIcons.people_48_regular,
+  //     size: 30,
+  //   ),
+  //   label: 'Your Matches',
+  // ),
   const NavigationDestination(
     icon: Icon(
       FluentIcons.person_48_regular,
@@ -59,7 +59,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.search_48_filled,
       size: 30,
-      color: CupidColors.cupidBlue,
+      color: CupidColors.cupidPurple,
     ),
     label: 'Select Crushes',
   ),
@@ -67,7 +67,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.heart_48_filled,
       size: 30,
-      color: CupidColors.cupidGreen,
+      color: CupidColors.cupidPurple,
     ),
     label: 'Your Crushes',
   ),
@@ -75,7 +75,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.chat_24_filled,
       size: 30,
-      color: Color(0xFF8B5CF6), // Purple
+      color: CupidColors.cupidPurple, // Purple
     ),
     label: 'Confessions',
   ),
@@ -91,7 +91,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.calendar_star_24_filled,
       size: 30,
-      color: Color(0xFF8B5CF6),
+      color: CupidColors.cupidPurple,
     ),
     label: 'Events',
   ),
@@ -99,7 +99,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.people_48_filled,
       size: 30,
-      color: CupidColors.cupidPeach,
+      color: CupidColors.cupidPurple,
     ),
     label: 'Your Matches',
   ),
@@ -107,7 +107,7 @@ List<NavigationDestination> filledNavIcons = [
     icon: Icon(
       FluentIcons.person_48_filled,
       size: 30,
-      color: CupidColors.cupidYellow,
+      color: CupidColors.cupidPurple,
     ),
     label: 'Profile',
   ),

@@ -51,7 +51,7 @@ class VoiceNoteReplyCard extends StatelessWidget {
         Expanded(
           child: Text(
             update.headerText, // "Replied to your voice note"
-            style: CupidStyles.normalTextStyle.copyWith(
+            style: CupidTextStyles.body1.copyWith(
                 color: CupidColors.cupidPurple,
                 fontWeight: FontWeight.w600,
                 fontSize: 12),
@@ -59,7 +59,7 @@ class VoiceNoteReplyCard extends StatelessWidget {
         ),
         Text(
           DateFormat('d MMM, yyyy').format(update.timestamp),
-          style: CupidStyles.lightTextStyle.copyWith(fontSize: 10),
+          style: CupidTextStyles.body1.copyWith(fontSize: 10),
         ),
       ],
     );

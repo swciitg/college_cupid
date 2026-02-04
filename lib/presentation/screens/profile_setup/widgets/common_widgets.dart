@@ -28,7 +28,8 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.maxLength,
     this.onChanged,
-    this.enabled = true, this.textStyle,
+    this.enabled = true,
+    this.textStyle,
   });
 
   @override
@@ -37,10 +38,7 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label.isNotEmpty) ...[
-          Text(
-            label,
-            style: CupidTextStyles.label1
-          ),
+          Text(label, style: CupidTextStyles.label1),
           const SizedBox(height: 8),
         ],
         Container(
@@ -56,12 +54,14 @@ class CustomTextField extends StatelessWidget {
             maxLines: maxLines,
             maxLength: maxLength,
             onChanged: onChanged,
-            style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
+            style: textStyle ??
+                CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: CupidTextStyles.label2,
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               suffixIcon: suffixIcon,
             ),
           ),
@@ -84,7 +84,9 @@ class SelectionChip extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
-    this.icon, this.textStyle, this.selectedTextStyle,
+    this.icon,
+    this.textStyle,
+    this.selectedTextStyle,
   });
 
   @override
@@ -94,7 +96,9 @@ class SelectionChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6F61FF).withValues(alpha: 0.22) : Colors.grey[200],
+          color: isSelected
+              ? const Color(0xFF6F61FF).withValues(alpha: 0.22)
+              : Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
           //border: isSelected ? Border.all(color: const Color(0xFF6C5DD3), width: 1.5) : null,
         ),
@@ -111,10 +115,13 @@ class SelectionChip extends StatelessWidget {
             ],
             Text(
               label,
-              style: (isSelected ? selectedTextStyle : textStyle) ?? CupidTextStyles.label2.copyWith(
-                color: isSelected ? const Color(0xFF6C5DD3) : Colors.black87,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: (isSelected ? selectedTextStyle : textStyle) ??
+                  CupidTextStyles.label2.copyWith(
+                    color:
+                        isSelected ? const Color(0xFF6C5DD3) : Colors.black87,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
             ),
           ],
         ),
@@ -157,7 +164,7 @@ class BottomNavButtons extends StatelessWidget {
                 ),
                 child: Text(
                   'Go Back',
-                  style: CupidStyles.normalTextStyle.copyWith(
+                  style: CupidTextStyles.body1.copyWith(
                     color: Colors.black87,
                     fontWeight: FontWeight.bold,
                   ),
@@ -176,20 +183,22 @@ class BottomNavButtons extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
+                disabledBackgroundColor:
+                    const Color(0xFF6C5DD3).withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     nextLabel,
-                    style: CupidStyles.normalTextStyle.copyWith(
+                    style: CupidTextStyles.body1.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                  const Icon(Icons.arrow_forward,
+                      color: Colors.white, size: 18),
                 ],
               ),
             ),
@@ -219,7 +228,9 @@ class ProfileProgressBar extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 2),
             height: 4,
             decoration: BoxDecoration(
-              color: index <= currentStep ? const Color(0xFF6F61FF) : Colors.grey[300],
+              color: index <= currentStep
+                  ? const Color(0xFF6F61FF)
+                  : Colors.grey[300],
               borderRadius: BorderRadius.circular(2),
             ),
           ),

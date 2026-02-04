@@ -49,20 +49,23 @@ class ConfessionCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: CupidColors.cupidBlue
-                      .withOpacity(0.2), // Reuse existing color
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  confession.typeOfConfession.displayName,
-                  style: CupidTextStyles.label3.copyWith(
-                    color: CupidColors.cupidBlue, // Reuse existing color
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+              Flexible(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: CupidColors.cupidBlue
+                        .withOpacity(0.2), // Reuse existing color
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    confession.typeOfConfession.displayName,
+                    style: CupidTextStyles.label3.copyWith(
+                      color: CupidColors.cupidBlue, // Reuse existing color
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
@@ -90,9 +93,8 @@ class ConfessionCard extends StatelessWidget {
           Text(
             confession.text,
             style: CupidTextStyles.title1.copyWith(
-              fontSize: 16,
+              fontSize: 14,
               height: 1.5,
-              color: CupidColors.blackColor,
             ),
           ),
           const SizedBox(height: 16),

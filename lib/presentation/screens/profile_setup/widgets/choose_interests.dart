@@ -1,5 +1,5 @@
 import 'package:college_cupid/presentation/widgets/profile/interests/display_interests.dart';
-import 'package:college_cupid/shared/styles.dart';
+
 import 'package:flutter/material.dart';
 import 'heart_state.dart';
 

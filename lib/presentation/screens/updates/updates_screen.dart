@@ -50,7 +50,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Text(
                 'Updates',
                 style: CupidTextStyles.brandTitle1,

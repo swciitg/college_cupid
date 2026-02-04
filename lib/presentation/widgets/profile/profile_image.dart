@@ -1,6 +1,7 @@
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -55,13 +56,19 @@ class ProfileImage extends StatelessWidget {
                 );
               },
               errorWidget: (context, url, error) {
-                if (blurHash == null) return const CustomLoader();
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: SizedBox(
-                    width: width,
-                    height: height ?? width * 4 / 3,
-                    child: BlurhashFfi(hash: blurHash!),
+                return Container(
+                  width: width,
+                  height: height ?? width * 4 / 3,
+                  decoration: BoxDecoration(
+                    color: CupidColors.greyColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.person,
+                      color: CupidColors.greyColor,
+                      size: 30,
+                    ),
                   ),
                 );
               },
