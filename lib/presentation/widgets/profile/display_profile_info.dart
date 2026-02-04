@@ -173,10 +173,10 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Text(
-                    //   //ques.answer,
-                    //   //style: CupidStyles.normalTextStyle.setFontSize(16),
-                    // ),
+                    Text(
+                      ques.answer,
+                      style: CupidStyles.normalTextStyle.setFontSize(16),
+                    ),
                     const SizedBox(height: 8),
                     if (!widget.isMine)
                       Row(

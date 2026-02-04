@@ -25,6 +25,8 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
   
   // Controller for Name (from LoginStore)
   late TextEditingController _nameController;
+  late TextEditingController _phnNumberController;
+  late TextEditingController _instaController;
   Zodiac? selectedZodiac;
 
   @override
@@ -34,6 +36,8 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
     _ageController = TextEditingController();
     _zodiacController = TextEditingController();
     _hometownController = TextEditingController();
+    _phnNumberController = TextEditingController();
+    _instaController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final onboardingController = ref.read(onboardingControllerProvider.notifier);
@@ -53,6 +57,8 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
     _ageController.dispose();
     _zodiacController.dispose();
     _hometownController.dispose();
+    _phnNumberController.dispose();
+    _instaController.dispose();
     super.dispose();
   }
 
@@ -83,6 +89,28 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           keyboardType: TextInputType.number,
           onChanged:(age){
             onboardingController.updateAge(age);
+          }
+        ),
+        const SizedBox(height: 16),
+
+        CustomTextField(
+          label: "Phone Number",
+          hintText: "998877XXXX",
+          controller: _phnNumberController,
+          keyboardType: TextInputType.phone,
+          maxLength: 10,
+          onChanged:(phnNumber){
+            onboardingController.updatePhnNumber(phnNumber);
+          }
+        ),
+        const SizedBox(height: 16),
+
+        CustomTextField(
+          label: "Insta Username",
+          hintText: "instagram_handle",
+          controller: _instaController,
+          onChanged:(insta){
+            onboardingController.updateInsta(insta);
           }
         ),
         const SizedBox(height: 16),
@@ -156,8 +184,6 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             );
           }).toList(),
         ),
-        // Note: The design asked for "Bachelors, Masters, PhD". 
-        // We are showing actual programs to maintain data integrity with the backend.
         
         const SizedBox(height: 20),
       ],

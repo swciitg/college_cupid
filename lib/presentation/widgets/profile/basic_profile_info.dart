@@ -13,6 +13,7 @@ import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/functions/snackbar.dart';
+import 'package:go_router/go_router.dart';
 
 class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
@@ -65,9 +66,7 @@ class BasicProfileInfo extends ConsumerWidget {
                         if (isMine)
                           GestureDetector(
                             onTap: () {
-                              // context.pushNamed(AppRoutes.editProfile.name);
-                              //TODO: Change to edit profile route when ready
-                              goRouter.goNamed(AppRoutes.profileSetup.name);
+                              context.goNamed(AppRoutes.editProfile.name);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(

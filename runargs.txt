@@ -1,1 +1,0 @@
-flutter run -d UWJJKR9DSWTSKBSG --dart-define SECURITY_KEY="Cupid-Dev" --dart-define API_URL="http://192.168.0.156:5000/api/v2" --dart-define BASE_URL="https://swc.iitg.ac.in/test/collegeCupid" -v

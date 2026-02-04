@@ -1,7 +1,8 @@
 class Endpoints {
-  static const baseUrl = String.fromEnvironment('BASE_URL');
-  static const apiUrl = String.fromEnvironment('API_URL');
-  static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
+  static const baseUrl ="https://swc.iitg.ac.in/test/collegeCupid";// String.fromEnvironment('BASE_URL');
+  static const apiUrl = "https://swc.iitg.ac.in/test/collegeCupid/api/v2";// String.fromEnvironment('API_URL');
+  static const apiSecurityKey = "Cupid-Dev";// String.fromEnvironment('SECURITY_KEY');
+  static const wsUrl = "wss://swc.iitg.ac.in/test/collegeCupid";// String.fromEnvironment('WS_URL');
 
   static const microsoftAuth = '/auth/microsoft';
 
@@ -53,6 +54,13 @@ class Endpoints {
   static getHeader() {
     return {
       'Content-Type': 'application/json',
+      'security-key': Endpoints.apiSecurityKey
+    };
+  }
+
+  static getMultipartHeader() {
+    return {
+      'Content-Type': 'multipart/form-data',
       'security-key': Endpoints.apiSecurityKey
     };
   }

@@ -12,17 +12,21 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final bool? enabled;
   final TextStyle? textStyle;
+  final int? maxLength;
   final Function(String)? onChanged;
 
   const CustomTextField({
+    
     super.key,
     required this.label,
     this.hintText,
+    
     this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.suffixIcon,
     this.maxLines = 1,
+    this.maxLength,
     this.onChanged,
     this.enabled = true, this.textStyle,
   });
@@ -50,6 +54,7 @@ class CustomTextField extends StatelessWidget {
             keyboardType: keyboardType,
             obscureText: obscureText,
             maxLines: maxLines,
+            maxLength: maxLength,
             onChanged: onChanged,
             style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: InputDecoration(
