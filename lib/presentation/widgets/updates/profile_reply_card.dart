@@ -70,7 +70,7 @@ class ProfileReplyCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Placeholder grey box (as per user image)
-        Container(
+        SizedBox(
           width: 80,
           height: 100,
           child: ClipRRect(

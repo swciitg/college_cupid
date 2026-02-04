@@ -92,7 +92,7 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                         totalSteps: steps.length,
                       ),
                     ),
-                    SizedBox(height: 45),
+                    const SizedBox(height: 45),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.fromLTRB(

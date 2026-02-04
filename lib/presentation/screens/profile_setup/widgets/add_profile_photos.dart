@@ -38,17 +38,17 @@ class AddPhotos extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey[300]!),
             ),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   "Add Photo Slot",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Icon(Icons.add_circle, color: Colors.black87, size: 20),
               ],
             ),
@@ -63,7 +63,7 @@ class AddPhotos extends ConsumerWidget {
   Widget _buildPhotoSlot(BuildContext context, WidgetRef ref, int index, File? image) {
     // Aspect ratio 1:1 or 4:5? Design looks like square or slightly tall.
     // Using simple container with height.
-    final height = 350.0; 
+    const height = 350.0; 
 
     return GestureDetector(
       onTap: () {
@@ -102,9 +102,9 @@ class AddPhotos extends ConsumerWidget {
                            )
                          ]
                        ),
-                       child: Row(
+                       child: const Row(
                          mainAxisSize: MainAxisSize.min,
-                         children: const [
+                         children: [
                            Text("Add Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                            SizedBox(width: 4),
                            Icon(Icons.add_circle, size: 16),
@@ -133,9 +133,9 @@ class AddPhotos extends ConsumerWidget {
                            )
                          ]
                        ),
-                       child: Row(
+                       child: const Row(
                          mainAxisSize: MainAxisSize.min,
-                         children: const [
+                         children: [
                            Text("Replace Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                            SizedBox(width: 4),
                            Icon(Icons.refresh, size: 16),

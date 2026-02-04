@@ -24,7 +24,7 @@ class ReportConfessionDialog extends StatelessWidget {
             style: CupidTextStyles.brandTitle2.copyWith(fontSize: 20),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Why are you reporting this confession?',
             style: CupidTextStyles.body1,
           ),

@@ -28,13 +28,13 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Your Crushes', style: CupidTextStyles.brandTitle1),
-              const SizedBox(height: 8),
+              Text('Your Crushes', style: CupidTextStyles.brandTitle1),
+              SizedBox(height: 8),
               Text(
                 'You can select a maximum of 7 crushes at a time.',
                 style: CupidTextStyles.body1,

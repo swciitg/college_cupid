@@ -66,7 +66,7 @@ class LookingForScreen extends ConsumerWidget {
                 onboardingController.updateLookingForDisplay(value);
               },
               inactiveTrackColor: WidgetStateColor.transparent,
-              activeColor: CupidColors.secondaryColor,
+              activeThumbColor: CupidColors.secondaryColor,
               inactiveThumbColor:
                   CupidColors.secondaryColor.withValues(alpha: 0.4),
               activeTrackColor:

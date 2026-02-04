@@ -74,7 +74,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         elevation: 0,
         centerTitle: false,
         automaticallyImplyLeading: false,
-        title: Padding(
+        title: const Padding(
           padding: EdgeInsets.only(left: 8.0),
           child: Text(
             'Confessions',

@@ -60,7 +60,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         final pageViewController = ref.read(pageViewProvider.notifier);
         ref.read(pageViewProvider.notifier).setCurrentPage(value);
         if (ref.read(pageViewProvider.notifier).isLastPage &&
-            filterState.name.isNotEmpty) return;
+            filterState.name.isNotEmpty) {
+          return;
+        }
         if (pageViewState.homeTabProfileList.length - value <= 4) {
           final filter = {
             'gender': filterState.interestedInGender.databaseString,

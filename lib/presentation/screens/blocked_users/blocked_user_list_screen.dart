@@ -78,7 +78,7 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
 
   AppBar _appBar() {
     return AppBar(
-      systemOverlayStyle: SystemUiOverlayStyle(
+      systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,

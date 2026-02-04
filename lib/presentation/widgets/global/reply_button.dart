@@ -26,7 +26,7 @@ class ReplyButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
@@ -37,7 +37,7 @@ class ReplyButton extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Icon(
               FluentIcons.send_24_regular,
               color: Colors.black,
