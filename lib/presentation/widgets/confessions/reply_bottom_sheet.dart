@@ -65,7 +65,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                   child: Text(
                     'The confession holder will be able to view your profile',
                     style: CupidTextStyles.label3.copyWith(
-                      color: CupidColors.brandPurple600,
+                      color: CupidColors.primary,
                       fontSize: 12,
                     ),
                   ),

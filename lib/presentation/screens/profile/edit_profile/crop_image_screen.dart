@@ -134,6 +134,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
 
   Future<void> _finished() async {
     if (loading) return;
+    
     if (mounted) {
       setState(() {
         loading = true;

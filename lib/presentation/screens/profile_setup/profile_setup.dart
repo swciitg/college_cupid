@@ -26,14 +26,15 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     const AddPhotos(),
   ];
   final List<String> stepTitles = [
-    'Basic Details',
+    'Your Basic Details',
     'Dating Preferences',
     'More about you',
+    
     'Interests',
     'Your Photos',
   ];
   final List<String> stepSubtitles = [
-    'Your Basic Details',
+    '',
     '',
     'Answer 3 questions',
     '',

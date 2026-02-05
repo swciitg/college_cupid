@@ -71,7 +71,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
             color: (_isRecording || hasRecording)
-                ? CupidColors.brandPurple600
+                ? CupidColors.primary
                 : Colors.transparent // Hide border when showing TextField
             ),
       ),
@@ -167,7 +167,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
-                color: CupidColors.brandPurple600,
+                color: CupidColors.primary,
                 shape: BoxShape.circle,
               ),
               child: Icon(

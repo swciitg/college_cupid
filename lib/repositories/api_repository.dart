@@ -13,6 +13,12 @@ class ApiRepository {
       receiveTimeout: const Duration(seconds: 15),
       headers: Endpoints.getHeader()));
 
+  final _dio2 = Dio(BaseOptions(
+      baseUrl: Endpoints.apiUrl,
+      connectTimeout: const Duration(seconds: 35),
+      receiveTimeout: const Duration(seconds: 15),
+      headers: Endpoints.getMultipartHeader()));
+
   final _authFreeDio = Dio(BaseOptions(
       baseUrl: Endpoints.apiUrl,
       connectTimeout: const Duration(seconds: 35),
@@ -20,6 +26,8 @@ class ApiRepository {
       headers: Endpoints.getHeader()));
 
   Dio get dio => _dio;
+
+  Dio get dio2 => _dio2;
 
   @protected
   Dio get authFreeDio => _authFreeDio;

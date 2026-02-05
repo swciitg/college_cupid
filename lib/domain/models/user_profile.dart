@@ -22,6 +22,8 @@ class UserProfile {
   PersonalityType? personalityType;
   bool deactivated;
   List<QuizQuestion> surpriseQuiz;
+  String phnNumber;
+  String insta;
   // int whatsappNumber;
   // String instaUserName;
 
@@ -48,6 +50,8 @@ class UserProfile {
     this.personalityType,
     this.deactivated = false,
     this.surpriseQuiz = const [],
+    this.phnNumber ="",
+    this.insta = '',
     // this.whatsappNumber = 0,
     // this.instaUserName = '',
   });
@@ -109,8 +113,8 @@ class UserProfile {
         .toList();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
     data['personalityType'] = personalityType?.name;
-    data['whatsappNumber'] = '12345679'; //whatsappNumber;
-    data['insta'] = 'ganesh_sinnur'; //instaUserName;
+    data['whatsappNumber'] = phnNumber; //whatsappNumber;
+    data['insta'] = insta; //instaUserName;
 
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
@@ -118,6 +122,7 @@ class UserProfile {
   }
 
   UserProfile copyWith({
+    String? phnNumber,
     String? name,
     String? profilePicUrl,
     Gender? gender,
@@ -126,6 +131,8 @@ class UserProfile {
     int? yearOfJoin,
     Program? program,
     String? publicKey,
+    String? insta,
+
     List<String>? interests,
     SexualOrientationModel? sexualOrientation,
     RelationshipGoal? relationshipGoal,
@@ -154,6 +161,8 @@ class UserProfile {
       hometown: hometown ?? this.hometown,
       age: age ?? this.age, 
       zodiac: zodiac ?? this.zodiac,
+      phnNumber: phnNumber ?? this.phnNumber,
+      insta: insta ?? this.insta,
     );
   }
 

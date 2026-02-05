@@ -90,6 +90,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       case OnboardingStep.basicDetails:
         if (state.userProfile?.gender == null 
               || state.userProfile?.program == null 
+              || state.userProfile?.insta.isEmpty == true
+              || state.userProfile?.phnNumber.isEmpty == true
               // || state.userProfile?.yearOfJoin == null
             ) {
           showSnackBar("Please fill in all fields");
@@ -190,6 +192,17 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   void updateProgram(Program program) {
     state = state.copyWith(
       userProfile: state.userProfile?.copyWith(program: program),
+    );
+  }
+  void updatePhnNumber(String phnNumber) {
+    state = state.copyWith(
+      userProfile: state.userProfile?.copyWith(phnNumber: phnNumber),
+    );
+  }
+
+  void updateInsta(String insta){
+    state = state.copyWith(
+      userProfile: state.userProfile?.copyWith(insta: insta),
     );
   }
 
@@ -320,6 +333,9 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
+
+      //upload voice
+      // await userProfileRepo.postAudioNotes(state.userProfile!);
 
       log("BEFORE DH KEY UPLOAD - Key: ${state.dhPrivateKey}", name: "OnboardingController");
       await OneDriveRepository.uploadDHPrivateKey(state.dhPrivateKey!);

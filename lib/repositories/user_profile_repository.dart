@@ -67,6 +67,57 @@ class UserProfileRepository extends ApiRepository {
       rethrow;
     }
   }
+  
+
+Future<void> postAudioNotes(UserProfile userProfile) async {
+  log("Started uploading audio notes",
+      name: "postAudio");
+
+  for (var question in userProfile.surpriseQuiz) {
+    if (question.audioPath == null) {
+      log("Skipped question (no audio): ${question.question}",
+          name: "postAudio");
+      continue;
+    }
+
+    log("Uploading audio for question: ${question.question}",
+        name: "postAudio");
+
+    final file = await MultipartFile.fromFile(
+      question.audioPath!,
+      filename: question.audioPath!.split('/').last,
+      contentType: MediaType('audio', 'mpeg'),
+    );
+
+    final formData = FormData.fromMap({
+      "question": question.question,
+      "file": file,
+    });
+
+    try {
+      final response = await dio2.post(
+        Endpoints.postAudioNotes,
+        data: formData,
+      );
+
+      log(
+        "Upload success | Status: ${response.statusCode} | Response: ${response.data}",
+        name: "postAudio",
+      );
+    } on DioException catch (e) {
+      log(
+        "Upload failed | ${e.message} | ${e.response?.data}",
+        name: "postAudio",
+        level: 1000, // error
+      );
+    }
+  }
+
+  log("Finished uploading audio notes",
+      name: "postAudio");
+}
+
+
 
   Future<void> updateUserProfile(UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
