@@ -11,22 +11,10 @@ class CommonWidgets {
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: ShapeDecoration(
-          color: CupidColors.surfacePrimaryMedEm,
+          color: CupidColors.primary,
           shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                  width: 1,
-                  color:Color(0xFF5B51D1),// Colors.black /* Outline-primary_button_top */,
-              ),
               borderRadius: BorderRadius.circular(14),
           ),
-          shadows: const [
-              BoxShadow(
-                  color: Color(0x07000000),
-                  blurRadius: 1,
-                  offset: Offset(0, 1),
-                  spreadRadius: -0.50,
-              )
-          ],
       ),
       child: Center(
         child: Text(

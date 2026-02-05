@@ -31,12 +31,41 @@ class CupidColors {
   static const cupidPeach = Color(0xFFFBA8AA);
   static const cupidPurple = Color(0xFF6F61FF);
 
+  // static const primary = Color(0xFFEB425E);
+  // static const whitePrimary = Color(0xFFFFFFFF);
+
   //2026
+  static const Color primary = Color(0xFFEB425E);
   static const Color surfacePrimaryMedEm = Color(0xFF6F61FF);
-  static const Color brandPurple600 = Color(0xFF5548D8);
   static const Color grey700 = Color(0xFF5B616D);
   static const Color grey600 = Color(0xFF8C929C);
   static const Color grey950 = Color(0xFF0A0C11);
+
+  static const Color primaryLight = Color(0xFFFDEDEF);
+  static const Color primaryDark = Color(0xFFD11F3D);
+  
+  static const Color greyPrimary = Color(0xFF1F1F1F);
+  static const Color greySecondary = Color(0xFF595959);
+  static const Color greyTertiary = Color(0xFF868686);
+  static const Color greyElement = Color(0xFFD9D9D9);
+  
+  static const Color whitePrimary = Color(0xFFFFFFFF);
+  static const Color whiteSecondary = Color(0xFFFCD1D8);
+  
+  static const Color blue = Color(0xFFDFF3FF);
+  static const Color green = Color(0xFF409B3F);
+  static const Color red = Color(0xFFED4030);
+
+  static const Color surfaceSpecialSecondaryAlphaBase = Color(0xFFF2F2F4);
+
+  static const Color borderPrimary = Color(0xFFD6445C);
+  static const Color borderSecondary = Color(0xFFE3E3E4);
+  
+
+  // static const Color surfacePrimaryMedEm = Color(0xFF6F61FF);
+  // static const Color grey700 = Color(0xFF5B616D);
+  // static const Color grey600 = Color(0xFF8C929C);
+  // static const Color grey950 = Color(0xFF0A0C11);
   
 
 }

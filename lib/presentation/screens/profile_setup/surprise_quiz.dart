@@ -66,9 +66,6 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
     var rand = math.Random().nextInt(quizQuestions.length);
     int attempts = 0;
 
-    // Ensure unique questions compared to OTHER slots
-    // We shouldn't care if it clashes with the *old* value at this index,
-    // but we must check against the *other* indices.
     bool appearsElsewhere(int r) {
       for (int i = 0; i < randomQuestions.length; i++) {
         if (i == index) continue; // Skip self
@@ -84,7 +81,6 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
 
     setState(() {
       randomQuestions[index] = rand;
-      // Reset answers for this question index when swapped
       textEditingControllers[index].clear();
       _audioPaths[index] = null;
     });
@@ -122,19 +118,19 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFFEBE9FF), // Light purple background
+            color: CupidColors.primaryLight, // Light purple background
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
               const Icon(Icons.info_outline,
-                  color: Color(0xFF6C5DD3), size: 20),
+                  color: CupidColors.primaryDark, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   "Recording at least 1 voice note increases your chances of matchmaking.",
                   style: CupidTextStyles.normalTextStyle.copyWith(
-                      color: CupidColors.brandPurple600,
+                      color: CupidColors.primaryDark,
                       fontSize: 12,
                       fontWeight: FontWeight.w500),
                 ),
@@ -142,22 +138,19 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
         ...List.generate(3, (index) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
+            padding: const EdgeInsets.only(bottom: 12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    quizQuestions[randomQuestions[index]].question,
-                    style: CupidTextStyles.label2.copyWith(
-                        color: CupidColors.grey700,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13),
-                  ),
+                Text(
+                  quizQuestions[randomQuestions[index]].question,
+                  style: CupidTextStyles.label2.copyWith(
+                      color: CupidColors.grey700,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 4),
                 AudioRecorder(
@@ -186,7 +179,7 @@ class _MoreAboutYouState extends ConsumerState<MoreAboutYou> {
             ),
           );
         }),
-        const SizedBox(height: 20),
+        // const SizedBox(height: 20),
       ],
     );
   }

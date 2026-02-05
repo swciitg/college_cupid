@@ -31,7 +31,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle title2 = TextStyle(
-    color: const Color(0xFF0A0C11) /* Color-Gray-950 */,
+    color: const Color(0xFF0A0C11),
     fontSize: 20,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
@@ -40,7 +40,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle label1 = TextStyle(
-    color: Color(0xFF8C929C) /* Text-low_em */,
+    color:CupidColors.whitePrimary,
     fontSize: 15,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
@@ -48,12 +48,13 @@ class CupidTextStyles {
   );
 
   static const TextStyle label2 = TextStyle(
-    color: const Color(0xFF5B616D) /* Text-med_em */,
+    color: const Color(0xFF5B616D) ,
     fontSize: 13,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
     height: 1.54,
   );
+  
 
   static const TextStyle label3 = TextStyle(
     color: const Color(0xFF5B616D) /* Text-med_em */,

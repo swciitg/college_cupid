@@ -168,9 +168,9 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
         ),
         const SizedBox(height: 16),
 
-        const Text(
+         Text(
           "Degree",
-          style: CupidTextStyles.label1
+          style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary),
         ),
         const SizedBox(height: 8),
          Wrap(
