@@ -2,6 +2,7 @@
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/common_widgets.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -163,6 +164,7 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           onChanged: (city){
             onboardingController.updateHometown(city);
           },
+          
         ),
         const SizedBox(height: 16),
 

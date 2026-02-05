@@ -112,12 +112,14 @@ class UserProfile {
         .map((e) => e.toJson())
         .toList();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
+    
     data['personalityType'] = personalityType?.name;
     data['whatsappNumber'] = phnNumber; //whatsappNumber;
     data['insta'] = insta; //instaUserName;
-
+    data['personalityType'] = PersonalityType.random().toString();
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
+    
     return data;
   }
 

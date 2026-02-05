@@ -333,6 +333,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
+      
 
       //upload voice
       // await userProfileRepo.postAudioNotes(state.userProfile!);

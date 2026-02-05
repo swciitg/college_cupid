@@ -1,3 +1,5 @@
+import 'dart:math';
+
 enum Program {
   none("Select", null, null, null),
   bTech("B.Tech", "BTECH", 0, 4),
@@ -167,5 +169,12 @@ enum PersonalityType {
 
   static PersonalityType fromString(String value) {
     return PersonalityType.values.firstWhere((e) => e.name == value);
+  }
+
+  static PersonalityType random() {
+    final random = Random();
+    return PersonalityType.values[
+      random.nextInt(PersonalityType.values.length)
+    ];
   }
 }
