@@ -28,7 +28,7 @@ enum AppRoutes {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 final goRouter = GoRouter(
-  initialLocation: '/${AppRoutes.home.name}', //just for working as of now
+  initialLocation: '/',
   debugLogDiagnostics: true,
   navigatorKey: navigatorKey,
   routes: [

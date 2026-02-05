@@ -6,17 +6,7 @@ final userProvider = StateNotifierProvider<UserController, UserProviderState>(
     (ref) => UserController());
 
 class UserController extends StateNotifier<UserProviderState> {
-  UserController() : super(UserProviderState(
-    //adding a mock user as of now
-      myProfile: UserProfile(
-        id: "dev_id_123",
-        name: "Hydrogen Dev",
-        email: "dev@iitg.ac.in",
-        // Add any other required fields for your UserProfile model here
-        //profilePic: "https://via.placeholder.com/150",
-        interests: ["Coding", "Flutter"],
-      )
-  ));
+  UserController() : super(UserProviderState());
 
   void setPassword(String value) {
     state = state.copyWith(password: value);
