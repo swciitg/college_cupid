@@ -69,151 +69,169 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
 
     return Scaffold(
       backgroundColor: CupidColors.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: CupidColors.backgroundColor,
-        elevation: 0,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text(
-            'Confessions',
-            style: CupidTextStyles.brandTitle1,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: SizedBox(
-            height: 50,
-            child: CupidTabBar(
-              controller: _tabController,
-              tabs: _tabs.map((e) => e.displayName).toList(),
-              onTap: (index) {
-                ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
-              },
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Text(
+                'Confessions',
+                style: CupidTextStyles.brandTitle1,
+              ),
             ),
-          ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 50,
+              child: CupidTabBar(
+                controller: _tabController,
+                tabs: _tabs.map((e) => e.displayName).toList(),
+                onTap: (index) {
+                  ref
+                      .read(confessionsProvider.notifier)
+                      .setFilter(_tabs[index]);
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: state.isLoading &&
+                      (state.confessions == null || state.confessions!.isEmpty)
+                  ? const Center(child: CustomLoader())
+                  : state.confessions == null || state.confessions!.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No confessions found!',
+                            style: CupidTextStyles.brandTitle2,
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            await ref
+                                .read(confessionsProvider.notifier)
+                                .refresh();
+                          },
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: (ScrollNotification scrollInfo) {
+                              if (!state.isLoading &&
+                                  scrollInfo.metrics.pixels >=
+                                      scrollInfo.metrics.maxScrollExtent -
+                                          200) {
+                                ref
+                                    .read(confessionsProvider.notifier)
+                                    .loadMore();
+                              }
+                              return false;
+                            },
+                            child: ListView.builder(
+                              key: PageStorageKey(state.selectedFilter.name),
+                              padding: const EdgeInsets.only(bottom: 100),
+                              itemCount: state.confessions!.length +
+                                  1, // +1 for loader
+                              itemBuilder: (context, index) {
+                                if (index == state.confessions!.length) {
+                                  return state.isLoading
+                                      ? const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
+                                }
+                                final confession = state.confessions![index];
+                                final myReaction = confession.reactions
+                                    .firstWhere((r) {
+                                  return r.user == LoginStore.userId;
+                                },
+                                        orElse: () => Reaction(
+                                            reaction: '', user: '')).reaction;
+                                final isMine = state.selectedFilter ==
+                                        ConfessionsFilter.byYou ||
+                                    state.myConfessionIds
+                                        .contains(confession.id);
+                                debugPrint('DEBUG UI: isMine: $isMine');
+                                return ConfessionCard(
+                                  confession: confession,
+                                  myReaction:
+                                      myReaction.isNotEmpty ? myReaction : null,
+                                  isMine: isMine,
+                                  onDelete: () async {
+                                    final success = await ref
+                                        .read(confessionsProvider.notifier)
+                                        .deleteConfession(confession.id);
+                                    if (success && context.mounted) {
+                                      showSnackBar(
+                                          'Confession Deleted Successfully');
+                                    }
+                                  },
+                                  onReport: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) =>
+                                          ReportConfessionDialog(
+                                        onReport: (category) {
+                                          ref
+                                              .read(
+                                                  confessionsProvider.notifier)
+                                              .reportConfession(
+                                                  confession.id, category);
+                                          showSnackBar(
+                                              'Confession Reported Successfully');
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  onReact: (reaction) {
+                                    final myReaction = confession.reactions
+                                        .firstWhere(
+                                          (r) => r.user == LoginStore.userId,
+                                          orElse: () =>
+                                              Reaction(reaction: '', user: ''),
+                                        )
+                                        .reaction;
+
+                                    if (myReaction == reaction) {
+                                      ref
+                                          .read(confessionsProvider.notifier)
+                                          .removeReaction(confession.id);
+                                    } else {
+                                      ref
+                                          .read(confessionsProvider.notifier)
+                                          .reactToConfession(
+                                              confession.id, reaction);
+                                    }
+                                  },
+                                  onReply: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) => ReplyBottomSheet(
+                                        confessionId: confession.id,
+                                        title: 'Reply to Confession',
+                                        onSend: (message) {
+                                          ref
+                                              .read(
+                                                  confessionsProvider.notifier)
+                                              .replyToConfession(
+                                                  confession.id, message);
+                                          showSnackBar(
+                                              'Reply Sent Successfully');
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+            ),
+          ],
         ),
       ),
-      body: state.isLoading &&
-              (state.confessions == null || state.confessions!.isEmpty)
-          ? const Center(child: CustomLoader())
-          : state.confessions == null || state.confessions!.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No confessions found!',
-                    style: CupidTextStyles.brandTitle2,
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    await ref.read(confessionsProvider.notifier).refresh();
-                  },
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if (!state.isLoading &&
-                          scrollInfo.metrics.pixels >=
-                              scrollInfo.metrics.maxScrollExtent - 200) {
-                        ref.read(confessionsProvider.notifier).loadMore();
-                      }
-                      return false;
-                    },
-                    child: ListView.builder(
-                      key: PageStorageKey(state.selectedFilter.name),
-                      padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: state.confessions!.length + 1, // +1 for loader
-                      itemBuilder: (context, index) {
-                        if (index == state.confessions!.length) {
-                          return state.isLoading
-                              ? const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : const SizedBox.shrink();
-                        }
-                        final confession = state.confessions![index];
-                        final myReaction = confession.reactions.firstWhere((r) {
-                          return r.user == LoginStore.userId;
-                        },
-                            orElse: () =>
-                                Reaction(reaction: '', user: '')).reaction;
-                        final isMine =
-                            state.selectedFilter == ConfessionsFilter.byYou ||
-                                state.myConfessionIds.contains(confession.id);
-                        debugPrint('DEBUG UI: isMine: $isMine');
-
-                        return ConfessionCard(
-                          confession: confession,
-                          myReaction: myReaction.isNotEmpty ? myReaction : null,
-                          isMine: isMine,
-                          onDelete: () async {
-                            final success = await ref
-                                .read(confessionsProvider.notifier)
-                                .deleteConfession(confession.id);
-                            if (success && context.mounted) {
-                              showSnackBar('Confession Deleted Successfully');
-                            }
-                          },
-                          onReport: () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => ReportConfessionDialog(
-                                onReport: (category) {
-                                  ref
-                                      .read(confessionsProvider.notifier)
-                                      .reportConfession(
-                                          confession.id, category);
-                                  showSnackBar(
-                                      'Confession Reported Successfully');
-                                },
-                              ),
-                            );
-                          },
-                          onReact: (reaction) {
-                            final myReaction = confession.reactions
-                                .firstWhere(
-                                  (r) => r.user == LoginStore.userId,
-                                  orElse: () =>
-                                      Reaction(reaction: '', user: ''),
-                                )
-                                .reaction;
-
-                            if (myReaction == reaction) {
-                              ref
-                                  .read(confessionsProvider.notifier)
-                                  .removeReaction(confession.id);
-                            } else {
-                              ref
-                                  .read(confessionsProvider.notifier)
-                                  .reactToConfession(confession.id, reaction);
-                            }
-                          },
-                          onReply: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => ReplyBottomSheet(
-                                confessionId: confession.id,
-                                title: 'Reply to Confession',
-                                onSend: (message) {
-                                  ref
-                                      .read(confessionsProvider.notifier)
-                                      .replyToConfession(
-                                          confession.id, message);
-                                  showSnackBar('Reply Sent Successfully');
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
       floatingActionButton: GestureDetector(
         onTap: () {
           context.pushNamed(AppRoutes.createConfession.name);

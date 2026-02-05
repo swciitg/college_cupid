@@ -55,7 +55,7 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
     final crushesRepo = ref.read(crushesRepoProvider);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
