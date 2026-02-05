@@ -57,7 +57,7 @@ class CupidTextStyles {
   
 
   static const TextStyle label3 = TextStyle(
-    color: const Color(0xFF5B616D) /* Text-med_em */,
+    color: Color(0xFF5B616D) /* Text-med_em */,
     fontSize: 12,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
@@ -65,7 +65,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle body1 = TextStyle(
-    color: const Color(0xFF5B616D) /* Text-med_em */,
+    color: Color(0xFF5B616D) /* Text-med_em */,
     fontSize: 13,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w400,
@@ -73,7 +73,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle body2 = TextStyle(
-    color: const Color(0xFF5B616D) /* Text-med_em */,
+    color: Color(0xFF5B616D) /* Text-med_em */,
     fontSize: 12,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w400,

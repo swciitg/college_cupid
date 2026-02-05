@@ -29,7 +29,7 @@ class _YourCrushesTabState extends ConsumerState<YourCrushesTab> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

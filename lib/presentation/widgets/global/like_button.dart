@@ -49,7 +49,7 @@ class _LikeButtonState extends State<LikeButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Like',
               style: TextStyle(
                 color: Colors.black,

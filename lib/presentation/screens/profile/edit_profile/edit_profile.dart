@@ -443,7 +443,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         ),
                         Switch(
                           inactiveTrackColor: WidgetStateColor.transparent,
-                          activeColor: CupidColors.secondaryColor,
+                          activeThumbColor: CupidColors.secondaryColor,
                           inactiveThumbColor:
                               CupidColors.secondaryColor.withValues(alpha: 0.4),
                           activeTrackColor:
@@ -504,7 +504,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             });
                           },
                           inactiveTrackColor: WidgetStateColor.transparent,
-                          activeColor: CupidColors.secondaryColor,
+                          activeThumbColor: CupidColors.secondaryColor,
                           inactiveThumbColor:
                               CupidColors.secondaryColor.withValues(alpha: 0.4),
                           activeTrackColor:

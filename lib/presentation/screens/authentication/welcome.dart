@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

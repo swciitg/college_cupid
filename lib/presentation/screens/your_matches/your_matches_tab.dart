@@ -1,4 +1,5 @@
 import 'package:college_cupid/functions/helpers.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/mbti_test_screen.dart';
 import 'package:college_cupid/presentation/widgets/your_matches/countdown_timer.dart';
 import 'package:college_cupid/presentation/widgets/your_matches/match_info.dart';
 import 'package:college_cupid/presentation/widgets/your_matches/prominent_countdown.dart';
@@ -27,6 +28,27 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
     super.initState();
   }
 
+  void _showMBTITest(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) => const PopScope(
+        canPop: false,
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          child: Padding(
+            padding: EdgeInsets.only(top: kToolbarHeight),
+            child: MbtiTestScreen(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final matchesRepo = ref.read(matchesRepoProvider);
@@ -39,6 +61,31 @@ class _YourMatchesState extends ConsumerState<YourMatches> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text('Your Matches', style: CupidTextStyles.brandTitle1),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Take an MBTI Test',
+                          style: CupidTextStyles.subHeadingTextStyle),
+                      Text('Get a Match to your personality',
+                          style: CupidTextStyles.body2),
+                    ],
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        _showMBTITest(context);
+                      },
+                      child: const Text("Take now"))
+                ],
+              ),
+            ),
+          ),
           if (showTimer)
             Expanded(
               child: FutureBuilder(
