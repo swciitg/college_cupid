@@ -116,7 +116,7 @@ class UserProfile {
     data['personalityType'] = personalityType?.name;
     data['whatsappNumber'] = phnNumber; //whatsappNumber;
     data['insta'] = insta; //instaUserName;
-    data['personalityType'] = PersonalityType.random().toString();
+    data['personalityType'] = PersonalityType.random().name;
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
     

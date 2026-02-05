@@ -7,6 +7,7 @@ import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ class _HomeState extends ConsumerState<Home> {
         ref.read(pageViewProvider.notifier).getInitialProfiles();
         return;
       }
-
     });
   }
 
@@ -90,11 +90,21 @@ class _HomeState extends ConsumerState<Home> {
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
                   bottomNavigationBar: NavigationBarTheme(
+                    
                     data: NavigationBarThemeData(
                       backgroundColor: Colors.transparent,
                       indicatorColor: Colors.transparent,
-                      labelBehavior:
-                          NavigationDestinationLabelBehavior.alwaysHide,
+                      labelTextStyle:
+                          WidgetStateProperty.resolveWith<TextStyle>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          // A → selected
+                          return CupidTextStyles.label3.copyWith(
+                              color: CupidColors.primaryDark, fontSize: 11);
+                        }
+                        // B → unselected
+                        return CupidTextStyles.label3.copyWith(
+                            color: CupidColors.keyboardTextLowEm, fontSize: 11);
+                      }),
                       height: 60,
                       elevation: 0,
                       shadowColor: Colors.black,
@@ -108,24 +118,49 @@ class _HomeState extends ConsumerState<Home> {
                         }
                       }),
                     ),
-                    child: NavigationBar(
-                      backgroundColor: CupidColors.backgroundColor,
-                      selectedIndex: _selectedIndex,
-                      onDestinationSelected: (i) => setState(() {
-                        if ((i - _selectedIndex).abs() != 1) {
-                          _pageController.jumpToPage(i);
-                        } else {
-                          _pageController.animateToPage(i,
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeIn);
-                        }
-                        _selectedIndex = i;
-                      }),
-                      destinations: List.generate(navIcons.length, (index) {
-                        return _selectedIndex == index
-                            ? filledNavIcons[index]
-                            : navIcons[index];
-                      }),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0,right: 10,top: 10),
+                      child: NavigationBar(
+                        backgroundColor: CupidColors.backgroundColor,
+                        selectedIndex: _selectedIndex,
+                        onDestinationSelected: (i) => setState(() {
+                          if ((i - _selectedIndex).abs() != 1) {
+                            _pageController.jumpToPage(i);
+                          } else {
+                            _pageController.animateToPage(i,
+                                duration: const Duration(milliseconds: 150),
+                                curve: Curves.easeIn);
+                          }
+                          _selectedIndex = i;
+                        }),
+                        destinations: List.generate(navItems.length, (index) {
+                          final item = navItems[index];
+                          return Container(
+                            padding: EdgeInsets.zero,
+                            decoration: _selectedIndex == index
+                                ? ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 12,
+                                        spreadRadius: 0,
+                                        offset: Offset(0, 6), 
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                            child: buildNavItem(
+                              icon: item.icon,
+                              label: item.label,
+                              isSelected: _selectedIndex == index,
+                            ),
+                          );
+                        }),
+                      ),
                     ),
                   ),
                   body: SafeArea(
@@ -139,7 +174,7 @@ class _HomeState extends ConsumerState<Home> {
                         },
                         children: [
                           const HomeTab(),
-                          const YourCrushesTab(),
+                          // const YourCrushesTab(),
                           const ConfessionsScreen(),
                           const UpdatesScreen(),
                           const EventsScreen(),
