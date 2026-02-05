@@ -34,7 +34,7 @@ class _HomeState extends ConsumerState<Home> {
         ref.read(pageViewProvider.notifier).getInitialProfiles();
         return;
       }
-      // _showMBTITest(context);
+
     });
   }
 
@@ -43,27 +43,6 @@ class _HomeState extends ConsumerState<Home> {
     _pageController.dispose();
     super.dispose();
   }
-
-  // void _showMBTITest(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.transparent,
-  //     elevation: 0,
-  //     isScrollControlled: true,
-  //     isDismissible: false,
-  //     enableDrag: false,
-  //     builder: (context) => const PopScope(
-  //       canPop: false,
-  //       child: ClipRRect(
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //         child: Padding(
-  //           padding: EdgeInsets.only(top: kToolbarHeight),
-  //           child: MbtiTestScreen(),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
