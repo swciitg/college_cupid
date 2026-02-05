@@ -85,6 +85,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   custom_lint: ^0.6.2
   riverpod_lint: ^2.3.9
+  flutter_native_splash: ^2.4.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
