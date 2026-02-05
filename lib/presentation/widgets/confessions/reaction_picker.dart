@@ -40,8 +40,7 @@ class ReactionPicker extends StatelessWidget {
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color:
-                      isSelected ? CupidColors.cupidPurple.withOpacity(0.7) : Colors.transparent,
+                  color: isSelected ? CupidColors.primary.withOpacity(0.7) : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

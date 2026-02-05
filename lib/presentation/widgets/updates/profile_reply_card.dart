@@ -45,16 +45,13 @@ class ProfileReplyCard extends StatelessWidget {
   Widget _buildHeader() {
     return Row(
       children: [
-        const Icon(FluentIcons.arrow_reply_24_regular,
-            size: 16, color: CupidColors.cupidPurple),
+        const Icon(FluentIcons.arrow_reply_24_regular, size: 16, color: CupidColors.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             update.headerText, // "Replied to your profile"
-            style: CupidTextStyles.label3.copyWith(
-                color: CupidColors.cupidPurple,
-                fontWeight: FontWeight.w600,
-                fontSize: 12),
+            style: CupidTextStyles.label3
+                .copyWith(color: CupidColors.primary, fontWeight: FontWeight.w600, fontSize: 12),
           ),
         ),
         Text(

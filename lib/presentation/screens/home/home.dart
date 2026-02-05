@@ -1,7 +1,6 @@
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/confessions/confessions_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
-import 'package:college_cupid/presentation/screens/your_crushes/your_crushes_tab.dart';
 import 'package:college_cupid/presentation/screens/updates/updates_screen.dart';
 import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
@@ -90,20 +89,18 @@ class _HomeState extends ConsumerState<Home> {
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
                   bottomNavigationBar: NavigationBarTheme(
-                    
                     data: NavigationBarThemeData(
                       backgroundColor: Colors.transparent,
                       indicatorColor: Colors.transparent,
-                      labelTextStyle:
-                          WidgetStateProperty.resolveWith<TextStyle>((states) {
+                      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
                         if (states.contains(WidgetState.selected)) {
                           // A → selected
-                          return CupidTextStyles.label3.copyWith(
-                              color: CupidColors.primaryDark, fontSize: 11);
+                          return CupidTextStyles.label3
+                              .copyWith(color: CupidColors.primaryDark, fontSize: 11);
                         }
                         // B → unselected
-                        return CupidTextStyles.label3.copyWith(
-                            color: CupidColors.keyboardTextLowEm, fontSize: 11);
+                        return CupidTextStyles.label3
+                            .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 11);
                       }),
                       height: 60,
                       elevation: 0,
@@ -111,15 +108,14 @@ class _HomeState extends ConsumerState<Home> {
                       surfaceTintColor: CupidColors.navBarBackgroundColor,
                       iconTheme: WidgetStateProperty.resolveWith((states) {
                         if (states.contains(WidgetState.selected)) {
-                          return const IconThemeData(
-                              color: CupidColors.secondaryColor);
+                          return const IconThemeData(color: CupidColors.secondaryColor);
                         } else {
                           return const IconThemeData(color: Colors.grey);
                         }
                       }),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0,right: 10,top: 10),
+                      padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
                       child: NavigationBar(
                         backgroundColor: CupidColors.backgroundColor,
                         selectedIndex: _selectedIndex,
@@ -128,15 +124,26 @@ class _HomeState extends ConsumerState<Home> {
                             _pageController.jumpToPage(i);
                           } else {
                             _pageController.animateToPage(i,
-                                duration: const Duration(milliseconds: 150),
-                                curve: Curves.easeIn);
+                                duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
                           }
                           _selectedIndex = i;
+                        }),
+                        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            // A → selected
+                            return CupidTextStyles.label3
+                                .copyWith(color: CupidColors.primaryDark, fontSize: 10);
+                          }
+                          // B → unselected
+                          return CupidTextStyles.label3
+                              .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 10);
                         }),
                         destinations: List.generate(navItems.length, (index) {
                           final item = navItems[index];
                           return Container(
                             padding: EdgeInsets.zero,
+                            margin:
+                                EdgeInsets.symmetric(horizontal: _selectedIndex == index ? 4 : 0),
                             decoration: _selectedIndex == index
                                 ? ShapeDecoration(
                                     color: Colors.white,
@@ -148,7 +155,7 @@ class _HomeState extends ConsumerState<Home> {
                                         color: Colors.black26,
                                         blurRadius: 12,
                                         spreadRadius: 0,
-                                        offset: Offset(0, 6), 
+                                        offset: Offset(0, 6),
                                       ),
                                     ],
                                   )

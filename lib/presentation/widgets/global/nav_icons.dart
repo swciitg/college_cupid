@@ -3,7 +3,6 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:college_cupid/shared/colors.dart';
 
@@ -15,14 +14,12 @@ NavigationDestination buildNavItem({
   return NavigationDestination(
     icon: Icon(
       icon,
-      size:25,
+      size: 25,
       color: isSelected ? CupidColors.primaryDark : null,
     ),
     label: label,
-
   );
 }
-
 
 // Widget buildIcons({
 

@@ -34,10 +34,9 @@ class CupidTabBar extends StatelessWidget {
             final isSelected = controller.index == tabs.indexOf(title);
             return Tab(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? CupidColors.cupidPurple : Colors.white,
+                  color: isSelected ? CupidColors.primary : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
@@ -49,8 +48,7 @@ class CupidTabBar extends StatelessWidget {
                   title,
                   style: CupidTextStyles.label2.copyWith(
                     color: isSelected ? Colors.white : Colors.black,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
