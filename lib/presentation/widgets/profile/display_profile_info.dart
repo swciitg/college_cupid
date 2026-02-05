@@ -57,17 +57,14 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 ),
                 if (widget.userProfile.surpriseQuiz.isNotEmpty)
                   _surpriseQues(widget.userProfile.surpriseQuiz.first, 0),
-                if (widget.userProfile.surpriseQuiz.isEmpty)
-                  const SizedBox(height: 16),
+                if (widget.userProfile.surpriseQuiz.isEmpty) const SizedBox(height: 16),
                 _image(null, width, 1),
                 const SizedBox(height: 8),
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
-                if (widget.userProfile.surpriseQuiz.length < 2)
-                  const SizedBox(height: 16),
+                if (widget.userProfile.surpriseQuiz.length < 2) const SizedBox(height: 16),
                 if (widget.userProfile.surpriseQuiz.length >= 2)
                   _surpriseQues(widget.userProfile.surpriseQuiz[1], 1),
-                if (widget.userProfile.images.length > 2)
-                  _image(null, width, 2),
+                if (widget.userProfile.images.length > 2) _image(null, width, 2),
                 if (widget.userProfile.surpriseQuiz.length >= 3)
                   _surpriseQues(widget.userProfile.surpriseQuiz[2], 2),
                 const SizedBox(height: 24),
@@ -87,8 +84,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(FluentIcons.diamond_24_filled,
-                                      color: Colors.black),
+                                  const Icon(FluentIcons.diamond_24_filled, color: Colors.black),
                                   const SizedBox(width: 8),
                                   Text(
                                     "Pass",
@@ -116,8 +112,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(FluentIcons.heart_24_filled,
-                                    color: Colors.black),
+                                const Icon(FluentIcons.heart_24_filled, color: Colors.black),
                                 const SizedBox(width: 8),
                                 Text(
                                   "Smash",
@@ -192,10 +187,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               builder: (context) => ReplyBottomSheet(
                                 title: 'Reply to Answer',
                                 onSend: (message) async {
-                                  final success = await ref
-                                      .read(updatesRepoProvider)
-                                      .replyToUser(widget.userProfile.email,
-                                          message, "QUESTIONS", index);
+                                  final success = await ref.read(updatesRepoProvider).replyToUser(
+                                      widget.userProfile.email, message, "QUESTIONS", index);
                                   if (success) {
                                     showSnackBar("Reply sent successfully!");
                                   } else {
@@ -235,9 +228,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 });
               },
               icon: Icon(
-                _expanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
+                _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
               ),
             )
           ],
@@ -246,8 +237,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           spacing: 8,
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: List.generate(
-              _expanded ? widget.userProfile.interests.length : 4, (index) {
+          children: List.generate(_expanded ? widget.userProfile.interests.length : 4, (index) {
             final extra = widget.userProfile.interests.length - 3;
             if (!_expanded && index == 3) {
               return GestureDetector(
@@ -270,23 +260,17 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   }
 
   DecoratedBox _interestChip(String label, int index) {
-    final colors = {
-      0: CupidColors.cupidPeach.withValues(alpha: 0.4),
-      1: CupidColors.cupidBlue.withValues(alpha: 0.4),
-      2: CupidColors.cupidYellow.withValues(alpha: 0.4),
-    };
-    final color = _expanded ? null : colors[index];
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        border: color == null ? Border.all(color: Colors.black54) : null,
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+        padding: const EdgeInsets.all(12),
         child: Text(
           label,
-          style: CupidTextStyles.label2,
+          style: CupidTextStyles.label2
+              .copyWith(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -319,15 +303,12 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                     builder: (context) => ReplyBottomSheet(
                       title: 'Reply to Profile',
                       onSend: (message) async {
-                        print(
-                            "DEBUG UI: Reply button pressed for IMAGES index $index");
-                        print(
-                            "DEBUG UI: Sending to ${widget.userProfile.email}");
+                        print("DEBUG UI: Reply button pressed for IMAGES index $index");
+                        print("DEBUG UI: Sending to ${widget.userProfile.email}");
                         try {
                           final success = await ref
                               .read(updatesRepoProvider)
-                              .replyToUser(widget.userProfile.email, message,
-                                  "IMAGES", index);
+                              .replyToUser(widget.userProfile.email, message, "IMAGES", index);
                           print("DEBUG UI: Result success=$success");
                           if (success) {
                             showSnackBar("Reply sent successfully!");

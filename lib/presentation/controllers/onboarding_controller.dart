@@ -336,7 +336,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       
 
       //upload voice
-      // await userProfileRepo.postAudioNotes(state.userProfile!);
+      await userProfileRepo.postAudioNotes(state.userProfile!);
 
       log("BEFORE DH KEY UPLOAD - Key: ${state.dhPrivateKey}", name: "OnboardingController");
       await OneDriveRepository.uploadDHPrivateKey(state.dhPrivateKey!);

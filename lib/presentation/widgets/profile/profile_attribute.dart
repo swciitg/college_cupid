@@ -17,12 +17,12 @@ class ProfileAttribute extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 20, color: CupidColors.cupidPurple),
+        Icon(icon, size: 20, color: CupidColors.primary),
         const SizedBox(width: 4),
         Text(
           text,
           style: CupidTextStyles.label2.copyWith(
-            color: CupidColors.cupidPurple,
+            color: CupidColors.primary,
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),

@@ -1,6 +1,7 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_match_score.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -36,8 +37,7 @@ class BasicProfileInfo extends ConsumerWidget {
     Program program = userProfile.program!;
 
     final showRelationshipGoal = userProfile.relationshipGoal?.display == true;
-    final showSexualOrientation =
-        userProfile.sexualOrientation?.display == true;
+    final showSexualOrientation = userProfile.sexualOrientation?.display == true;
     return SizedBox(
       height: maxHeight,
       width: width,
@@ -59,7 +59,7 @@ class BasicProfileInfo extends ConsumerWidget {
                           child: Text(
                             userProfile.name,
                             overflow: TextOverflow.ellipsis,
-                            style: CupidTextStyles.title2.bold,
+                            style: CupidTextStyles.brandTitle1,
                           ),
                         ),
                         const SizedBox(width: 28),
@@ -69,8 +69,7 @@ class BasicProfileInfo extends ConsumerWidget {
                               context.goNamed(AppRoutes.editProfile.name);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey.shade300),
                                 borderRadius: BorderRadius.circular(20),
@@ -86,8 +85,7 @@ class BasicProfileInfo extends ConsumerWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Icon(FluentIcons.edit_16_regular,
-                                      size: 14),
+                                  const Icon(FluentIcons.edit_16_regular, size: 14),
                                 ],
                               ),
                             ),
@@ -101,7 +99,10 @@ class BasicProfileInfo extends ConsumerWidget {
                       Text(
                         userProfile.gender!.displayString,
                         style: CupidTextStyles.label2.copyWith(
-                            fontSize: 13, fontWeight: FontWeight.bold),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: CupidColors.primary,
+                        ),
                       ),
                     const SizedBox(height: 8),
                     SingleChildScrollView(
@@ -112,25 +113,20 @@ class BasicProfileInfo extends ConsumerWidget {
                               userProfile.sexualOrientation != null) ...[
                             ProfileAttribute(
                               icon: FluentIcons.person_24_regular,
-                              text: userProfile
-                                      .sexualOrientation?.type.displayString ??
-                                  '',
+                              text: userProfile.sexualOrientation?.type.displayString ?? '',
                             ),
                             const SizedBox(width: 12),
                           ],
                           ProfileAttribute(
                             icon: FluentIcons.hat_graduation_24_regular,
-                            text:
-                                '${program.displayString} ${userProfile.yearOfJoin}',
+                            text: '${program.displayString} ${userProfile.yearOfJoin}',
                           ),
                           if ((showRelationshipGoal || isMine) &&
                               userProfile.relationshipGoal != null) ...[
                             const SizedBox(width: 12),
                             ProfileAttribute(
                               icon: FluentIcons.handshake_24_regular,
-                              text: userProfile
-                                      .relationshipGoal?.goal.displayString ??
-                                  '',
+                              text: userProfile.relationshipGoal?.goal.displayString ?? '',
                             ),
                           ],
                         ],
@@ -171,8 +167,7 @@ class BasicProfileInfo extends ConsumerWidget {
                               onSend: (message) async {
                                 final success = await ref
                                     .read(updatesRepoProvider)
-                                    .replyToUser(userProfile.email, message,
-                                        "IMAGES", 0);
+                                    .replyToUser(userProfile.email, message, "IMAGES", 0);
                                 if (success) {
                                   showSnackBar("Reply sent successfully!");
                                 } else {
@@ -198,8 +193,8 @@ class BasicProfileInfo extends ConsumerWidget {
     if (matchScore == null) {
       return const SizedBox();
     }
-    final myPreferredGender = currentUser.sexualOrientation!.type
-        .preferredGender(currentUser.gender!);
+    final myPreferredGender =
+        currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
     final otherGender = userProfile.gender!;
     if (myPreferredGender != null && myPreferredGender != otherGender) {
       return const SizedBox();

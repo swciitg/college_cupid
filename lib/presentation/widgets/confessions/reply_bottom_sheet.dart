@@ -31,15 +31,16 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.all(20),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: 20,
         right: 20,
         top: 20,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -53,17 +54,16 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3E8FF), // Light purple from SS
+              color: CupidColors.primaryLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(FluentIcons.info_24_regular,
-                    color: Color(0xFF9747FF)),
+                const Icon(FluentIcons.info_24_regular, color: CupidColors.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'The confession holder will be able to view your profile',
+                    'Replies aren\'t anonymous. The original poster will see your profile.',
                     style: CupidTextStyles.label3.copyWith(
                       color: CupidColors.primary,
                       fontSize: 12,
@@ -103,8 +103,8 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                   ),
                   child: Text(
                     'Cancel',
-                    style: CupidTextStyles.label2.copyWith(
-                        fontWeight: FontWeight.bold, color: Colors.black),
+                    style: CupidTextStyles.label2
+                        .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                 ),
               ),
@@ -117,7 +117,7 @@ class _ReplyBottomSheetState extends State<ReplyBottomSheet> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: CupidColors.cupidPurple, // Purple from SS
+                    backgroundColor: CupidColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
