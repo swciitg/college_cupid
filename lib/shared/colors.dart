@@ -9,8 +9,7 @@ class CupidColors {
   static const secondaryColor = Color(0xFF88AEDA);
   static const blackColor = Color.fromRGBO(0, 0, 0, 1);
   static const offWhiteColor = Color.fromRGBO(243, 243, 243, 1);
-  static const selectedInterestTileBorderColor =
-      Color.fromRGBO(150, 100, 100, 1);
+  static const selectedInterestTileBorderColor = Color.fromRGBO(150, 100, 100, 1);
   static const selectedInterestTileColor = Color.fromRGBO(245, 220, 220, 1);
 
   // static const pinkColor = Color.fromRGBO(241, 95, 138, 1);
@@ -29,7 +28,6 @@ class CupidColors {
   static const cupidYellow = Color(0x99EAE27A);
   static const cupidGreen = Color(0xFF7AEAA9);
   static const cupidPeach = Color(0xFFFBA8AA);
-  static const cupidPurple = Color(0xFF6F61FF);
 
   // static const primary = Color(0xFFEB425E);
   // static const whitePrimary = Color(0xFFFFFFFF);
@@ -43,15 +41,15 @@ class CupidColors {
 
   static const Color primaryLight = Color(0xFFFDEDEF);
   static const Color primaryDark = Color(0xFFD11F3D);
-  
+
   static const Color greyPrimary = Color(0xFF1F1F1F);
   static const Color greySecondary = Color(0xFF595959);
   static const Color greyTertiary = Color(0xFF868686);
   static const Color greyElement = Color(0xFFD9D9D9);
-  
+
   static const Color whitePrimary = Color(0xFFFFFFFF);
   static const Color whiteSecondary = Color(0xFFFCD1D8);
-  
+
   static const Color blue = Color(0xFFDFF3FF);
   static const Color green = Color(0xFF409B3F);
   static const Color red = Color(0xFFED4030);
@@ -65,14 +63,4 @@ class CupidColors {
   static const Color surfaceS2 = Color.fromRGBO(242, 242, 244, 1);
   static const Color surfaceS0 = Color.fromRGBO(255, 255, 255, 1);
   
-  // rgba(226, 226, 226, 1)
-  // rgbargba(255, 255, 255, 1)
-  
-
-  // static const Color surfacePrimaryMedEm = Color(0xFF6F61FF);
-  // static const Color grey700 = Color(0xFF5B616D);
-  // static const Color grey600 = Color(0xFF8C929C);
-  // static const Color grey950 = Color(0xFF0A0C11);
-  
-
 }

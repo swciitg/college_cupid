@@ -1,208 +1,3 @@
-// import 'package:college_cupid/domain/models/confession.dart';
-// import 'package:college_cupid/functions/snackbar.dart';
-// import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
-// import 'package:college_cupid/shared/colors.dart';
-// import 'package:college_cupid/shared/styles.dart';
-// import 'package:college_cupid/stores/confessions_controller.dart';
-// import 'package:college_cupid/stores/login_store.dart';
-// import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:go_router/go_router.dart';
-
-// class CreateConfessionScreen extends ConsumerStatefulWidget {
-//   const CreateConfessionScreen({super.key});
-
-//   @override
-//   ConsumerState<CreateConfessionScreen> createState() =>
-//       _CreateConfessionScreenState();
-// }
-
-// class _CreateConfessionScreenState
-//     extends ConsumerState<CreateConfessionScreen> {
-//   final TextEditingController _confessionController = TextEditingController();
-//   ConfessionCategory _selectedCategory = ConfessionCategory.SPOTTED_IN_CAMPUS;
-//   bool _isLoading = false;
-
-//   @override
-//   void dispose() {
-//     _confessionController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         leading: Center(
-//           child: GestureDetector(
-//             onTap: () => context.pop(),
-//             child: Container(
-//               height: 32,
-//               width: 32,
-//               decoration: ShapeDecoration(
-//                 color: Colors.white,
-//                 shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10)),
-//                 shadows: const [
-//                   BoxShadow(
-//                     color: Colors.black12,
-//                     blurRadius: 8,
-//                     offset: Offset(0, 4),
-//                   ),
-//                 ],
-//               ),
-//               child:
-//                   const Icon(Icons.arrow_back, size: 16, color: Colors.black),
-//             ),
-//           ),
-//         ),
-//       ),
-//       body: SafeArea(
-//         child: CustomScrollView(
-//           physics: const ClampingScrollPhysics(),
-//           slivers: [
-//             SliverPadding(
-//               padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 0),
-//               sliver: SliverToBoxAdapter(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     const Text(
-//                       'Write your confession',
-//                       style: CupidTextStyles.brandTitle1,
-//                     ),
-//                     const SizedBox(height: 8),
-//                     Text(
-//                       'Share your thoughts anonymously with the IITG community.',
-//                       style: CupidTextStyles.body1.copyWith(fontSize: 14),
-//                     ),
-//                     const SizedBox(height: 30),
-//                     Text(
-//                       'Type of confession',
-//                       style: CupidTextStyles.title2
-//                           .copyWith(fontWeight: FontWeight.bold),
-//                     ),
-//                     const SizedBox(height: 12),
-//                     Row(
-//                       children: [
-//                         _CategoryChip(
-//                           label: 'Spotted in Campus',
-//                           isSelected: _selectedCategory ==
-//                               ConfessionCategory.SPOTTED_IN_CAMPUS,
-//                           onTap: () {
-//                             setState(() {
-//                               _selectedCategory =
-//                                   ConfessionCategory.SPOTTED_IN_CAMPUS;
-//                             });
-//                           },
-//                         ),
-//                         const SizedBox(width: 12),
-//                         _CategoryChip(
-//                           label: 'Gossip',
-//                           isSelected:
-//                               _selectedCategory == ConfessionCategory.GOSSIP,
-//                           onTap: () {
-//                             setState(() {
-//                               _selectedCategory = ConfessionCategory.GOSSIP;
-//                             });
-//                           },
-//                         ),
-//                       ],
-//                     ),
-//                     const SizedBox(height: 20),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             SliverFillRemaining(
-//               hasScrollBody: false,
-//               child: Padding(
-//                 padding: const EdgeInsets.fromLTRB(20.0, 24.0, 20.0, 20.0),
-//                 child: Column(
-//                   children: [
-//                     Expanded(
-//                       child: Container(
-//                         constraints: const BoxConstraints(minHeight: 150),
-//                         child: TextField(
-//                           controller: _confessionController,
-//                           maxLines: null,
-//                           expands: true,
-//                           textAlignVertical: TextAlignVertical.top,
-//                           decoration: InputDecoration(
-//                             hintText: 'Write your confession here....',
-//                             hintStyle: CupidTextStyles.title1.copyWith(
-//                                 color: CupidColors.greyColor
-//                                     .withValues(alpha: 0.5)),
-//                             border: InputBorder.none,
-//                           ),
-//                           style: CupidTextStyles.title1.copyWith(fontSize: 24),
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 20),
-//                     CupidButton(
-//                       text: _isLoading ? 'Posting...' : 'Post ->',
-//                       onTap: () async {
-//                         debugPrint('DEBUG: Tapped Post');
-//                         debugPrint('DEBUG: Email: ${LoginStore.email}');
-
-//                         if (_isLoading) return;
-//                         if (_confessionController.text.trim().isEmpty) return;
-
-//                         setState(() {
-//                           _isLoading = true;
-//                         });
-
-//                         final success = await ref
-//                             .read(confessionsProvider.notifier)
-//                             .postConfession(
-//                               _confessionController.text,
-//                               _selectedCategory,
-//                             );
-
-//                         debugPrint('DEBUG: Success: $success');
-//                         if (!success) {
-//                           debugPrint(
-//                               'DEBUG: Error: ${ref.read(confessionsProvider).errorMessage}');
-//                         }
-
-//                         if (success && mounted) {
-//                           showSnackBar('Confession Uploaded Successfully!');
-//                           context.pop();
-//                         } else if (mounted) {
-//                           setState(() {
-//                             _isLoading = false;
-//                           });
-//                           final error =
-//                               ref.read(confessionsProvider).errorMessage;
-//                           showSnackBar(error ?? 'Failed to post confession');
-//                         }
-//                       },
-//                       backgroundColor: CupidColors.cupidPurple,
-//                       style: CupidTextStyles.title2.copyWith(
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                         fontSize: 16,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
 import 'package:college_cupid/domain/models/confession.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
@@ -219,8 +14,7 @@ class CreateConfessionScreen extends ConsumerStatefulWidget {
   const CreateConfessionScreen({super.key});
 
   @override
-  ConsumerState<CreateConfessionScreen> createState() =>
-      _CreateConfessionScreenState();
+  ConsumerState<CreateConfessionScreen> createState() => _CreateConfessionScreenState();
 }
 
 class _CreateConfessionScreenState extends ConsumerState<CreateConfessionScreen> {
@@ -317,7 +111,6 @@ class _CreateConfessionScreenState extends ConsumerState<CreateConfessionScreen>
               ),
             ),
             
-            // --- Expanded TextField Area ---
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 20),
@@ -359,8 +152,7 @@ class _CreateConfessionScreenState extends ConsumerState<CreateConfessionScreen>
       ),
     );
   }
-
-  // Refactored post logic for cleaner build method
+  
   Future<void> _handlePost() async {
     if (_isLoading || _confessionController.text.trim().isEmpty) return;
 

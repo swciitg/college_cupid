@@ -38,9 +38,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-        ref
-            .read(confessionsProvider.notifier)
-            .setFilter(_tabs[_tabController.index]);
+        ref.read(confessionsProvider.notifier).setFilter(_tabs[_tabController.index]);
       }
     });
   }
@@ -54,13 +52,11 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(confessionsProvider);
-    debugPrint(
-        'DEBUG UI: Build. Filter: ${state.selectedFilter}, Loading: ${state.isLoading}');
+    debugPrint('DEBUG UI: Build. Filter: ${state.selectedFilter}, Loading: ${state.isLoading}');
     debugPrint('DEBUG UI: Confessions count: ${state.confessions?.length}');
 
     ref.listen<ConfessionsState>(confessionsProvider, (previous, next) {
-      if (next.errorMessage != null &&
-          next.errorMessage != previous?.errorMessage) {
+      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next.errorMessage!)),
         );
@@ -93,9 +89,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                 controller: _tabController,
                 tabs: _tabs.map((e) => e.displayName).toList(),
                 onTap: (index) {
-                  ref
-                      .read(confessionsProvider.notifier)
-                      .setFilter(_tabs[index]);
+                  ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
                 },
               ),
             ),
@@ -104,8 +98,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
               ),
             ),
             Expanded(
-              child: state.isLoading &&
-                      (state.confessions == null || state.confessions!.isEmpty)
+              child: state.isLoading && (state.confessions == null || state.confessions!.isEmpty)
                   ? const Center(child: CustomLoader())
                   : state.confessions == null || state.confessions!.isEmpty
                       ? const Center(
@@ -116,27 +109,21 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                         )
                       : RefreshIndicator(
                           onRefresh: () async {
-                            await ref
-                                .read(confessionsProvider.notifier)
-                                .refresh();
+                            await ref.read(confessionsProvider.notifier).refresh();
                           },
                           child: NotificationListener<ScrollNotification>(
                             onNotification: (ScrollNotification scrollInfo) {
                               if (!state.isLoading &&
                                   scrollInfo.metrics.pixels >=
-                                      scrollInfo.metrics.maxScrollExtent -
-                                          200) {
-                                ref
-                                    .read(confessionsProvider.notifier)
-                                    .loadMore();
+                                      scrollInfo.metrics.maxScrollExtent - 200) {
+                                ref.read(confessionsProvider.notifier).loadMore();
                               }
                               return false;
                             },
                             child: ListView.builder(
                               key: PageStorageKey(state.selectedFilter.name),
                               padding: const EdgeInsets.only(bottom: 100),
-                              itemCount: state.confessions!.length +
-                                  1, // +1 for loader
+                              itemCount: state.confessions!.length + 1, // +1 for loader
                               itemBuilder: (context, index) {
                                 if (index == state.confessions!.length) {
                                   return state.isLoading
@@ -149,45 +136,34 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                       : const SizedBox.shrink();
                                 }
                                 final confession = state.confessions![index];
-                                final myReaction = confession.reactions
-                                    .firstWhere((r) {
+                                final myReaction = confession.reactions.firstWhere((r) {
                                   return r.user == LoginStore.userId;
-                                },
-                                        orElse: () => Reaction(
-                                            reaction: '', user: '')).reaction;
-                                final isMine = state.selectedFilter ==
-                                        ConfessionsFilter.byYou ||
-                                    state.myConfessionIds
-                                        .contains(confession.id);
+                                }, orElse: () => Reaction(reaction: '', user: '')).reaction;
+                                final isMine = state.selectedFilter == ConfessionsFilter.byYou ||
+                                    state.myConfessionIds.contains(confession.id);
                                 debugPrint('DEBUG UI: isMine: $isMine');
                                 return ConfessionCard(
                                   confession: confession,
-                                  myReaction:
-                                      myReaction.isNotEmpty ? myReaction : null,
+                                  myReaction: myReaction.isNotEmpty ? myReaction : null,
                                   isMine: isMine,
                                   onDelete: () async {
                                     final success = await ref
                                         .read(confessionsProvider.notifier)
                                         .deleteConfession(confession.id);
                                     if (success && context.mounted) {
-                                      showSnackBar(
-                                          'Confession Deleted Successfully');
+                                      showSnackBar('Confession Deleted Successfully');
                                     }
                                   },
                                   onReport: () {
                                     showModalBottomSheet(
                                       context: context,
                                       backgroundColor: Colors.transparent,
-                                      builder: (context) =>
-                                          ReportConfessionDialog(
+                                      builder: (context) => ReportConfessionDialog(
                                         onReport: (category) {
                                           ref
-                                              .read(
-                                                  confessionsProvider.notifier)
-                                              .reportConfession(
-                                                  confession.id, category);
-                                          showSnackBar(
-                                              'Confession Reported Successfully');
+                                              .read(confessionsProvider.notifier)
+                                              .reportConfession(confession.id, category);
+                                          showSnackBar('Confession Reported Successfully');
                                         },
                                       ),
                                     );
@@ -196,8 +172,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                     final myReaction = confession.reactions
                                         .firstWhere(
                                           (r) => r.user == LoginStore.userId,
-                                          orElse: () =>
-                                              Reaction(reaction: '', user: ''),
+                                          orElse: () => Reaction(reaction: '', user: ''),
                                         )
                                         .reaction;
 
@@ -208,8 +183,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                     } else {
                                       ref
                                           .read(confessionsProvider.notifier)
-                                          .reactToConfession(
-                                              confession.id, reaction);
+                                          .reactToConfession(confession.id, reaction);
                                     }
                                   },
                                   onReply: () {
@@ -222,12 +196,9 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                                         title: 'Reply to Confession',
                                         onSend: (message) {
                                           ref
-                                              .read(
-                                                  confessionsProvider.notifier)
-                                              .replyToConfession(
-                                                  confession.id, message);
-                                          showSnackBar(
-                                              'Reply Sent Successfully');
+                                              .read(confessionsProvider.notifier)
+                                              .replyToConfession(confession.id, message);
+                                          showSnackBar('Reply Sent Successfully');
                                         },
                                       ),
                                     );

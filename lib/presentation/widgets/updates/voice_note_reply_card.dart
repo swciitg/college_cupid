@@ -45,16 +45,13 @@ class VoiceNoteReplyCard extends StatelessWidget {
   Widget _buildHeader() {
     return Row(
       children: [
-        const Icon(FluentIcons.arrow_reply_24_regular,
-            size: 16, color: CupidColors.cupidPurple),
+        const Icon(FluentIcons.arrow_reply_24_regular, size: 16, color: CupidColors.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             update.headerText, // "Replied to your voice note"
-            style: CupidTextStyles.body1.copyWith(
-                color: CupidColors.cupidPurple,
-                fontWeight: FontWeight.w600,
-                fontSize: 12),
+            style: CupidTextStyles.body1
+                .copyWith(color: CupidColors.primary, fontWeight: FontWeight.w600, fontSize: 12),
           ),
         ),
         Text(
@@ -76,11 +73,11 @@ class VoiceNoteReplyCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-                color: CupidColors.backgroundColor, shape: BoxShape.circle),
+            decoration:
+                const BoxDecoration(color: CupidColors.backgroundColor, shape: BoxShape.circle),
             child: const Icon(
               Icons.play_arrow_rounded,
-              color: CupidColors.cupidPurple,
+              color: CupidColors.primary,
             ),
           ),
           const SizedBox(width: 8),
@@ -95,7 +92,7 @@ class VoiceNoteReplyCard extends StatelessWidget {
                     width: 3,
                     height: 10 + (index % 5) * 6.0,
                     decoration: BoxDecoration(
-                      color: CupidColors.cupidPurple.withValues(alpha: 0.6),
+                      color: CupidColors.primary.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   );

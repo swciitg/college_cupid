@@ -15,6 +15,7 @@ import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_shee
 import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BasicProfileInfo extends ConsumerWidget {
   final double maxHeight;
@@ -53,13 +54,27 @@ class BasicProfileInfo extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Text(
-                            userProfile.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: CupidTextStyles.brandTitle1,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  '${userProfile.name}, ${userProfile.age}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: CupidTextStyles.brandTitle1,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              SvgPicture.asset(
+                                'assets/icons/verified.svg',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(width: 28),
