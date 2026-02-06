@@ -1,4 +1,4 @@
-// UserProfile import removed
+// ignore_for_file: constant_identifier_names
 
 enum ConfessionCategory { SPOTTED_IN_CAMPUS, GOSSIP }
 

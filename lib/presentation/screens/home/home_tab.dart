@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -78,7 +80,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           }
         } catch (e) {
           // Handle error
-          print("Error adding crush: $e");
+          log("Error adding crush: $e");
         }
       },
     );

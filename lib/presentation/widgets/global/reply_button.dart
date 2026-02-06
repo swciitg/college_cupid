@@ -1,5 +1,4 @@
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
@@ -19,14 +18,10 @@ class ReplyButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: Border.all(
+            color: CupidColors.greyColor.withValues(alpha: 0.2),
+          ),
         ),
         child:  Row(
           mainAxisSize: MainAxisSize.min,

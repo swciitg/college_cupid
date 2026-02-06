@@ -70,30 +70,26 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: double.infinity,
-              color: Colors.white,
+              decoration: const BoxDecoration(color: CupidColors.whitePrimary),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Text(
-                'Confessions',
-                style: CupidTextStyles.brandTitle1,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 50,
-              child: CupidTabBar(
-                controller: _tabController,
-                tabs: _tabs.map((e) => e.displayName).toList(),
-                onTap: (index) {
-                  ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: Text(
+                      'Confessions',
+                      style: CupidTextStyles.brandTitle1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  CupidTabBar(
+                    controller: _tabController,
+                    tabs: _tabs.map((e) => e.displayName).toList(),
+                    onTap: (index) {
+                      ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
+                    },
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -108,6 +104,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                           ),
                         )
                       : RefreshIndicator(
+                          color: CupidColors.primary,
                           onRefresh: () async {
                             await ref.read(confessionsProvider.notifier).refresh();
                           },
@@ -220,10 +217,10 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
             color: CupidColors.primary,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: CupidColors.primaryLight,
+                color: CupidColors.primary.withValues(alpha: 0.4),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

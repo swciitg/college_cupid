@@ -16,11 +16,9 @@ class CustomTextField extends StatelessWidget {
   final Function(String)? onChanged;
 
   const CustomTextField({
-    
     super.key,
     required this.label,
     this.hintText,
-    
     this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
@@ -47,7 +45,6 @@ class CustomTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: TextField(
-            
             enabled: enabled,
             controller: controller,
             keyboardType: keyboardType,
@@ -55,21 +52,18 @@ class CustomTextField extends StatelessWidget {
             maxLines: maxLines,
             maxLength: maxLength,
             onChanged: onChanged,
-            style: textStyle ??
-                CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
+            style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: InputDecoration(
               // label: ,
-              counter:maxLength!=null? const Text(""):null,//Text("data"),
+              counter: maxLength != null ? const Text("") : null, //Text("data"),
               hintText: hintText,
               hintStyle: CupidTextStyles.label2.copyWith(color: CupidColors.grey600),
               border: InputBorder.none,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               suffixIcon: suffixIcon,
             ),
           ),
         ),
-        
       ],
     );
   }
@@ -100,9 +94,8 @@ class SelectionChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? CupidColors.primaryLight
-              : CupidColors.surfaceSpecialSecondaryAlphaBase.withOpacity(.88),
+          color:
+              isSelected ? CupidColors.primaryLight : CupidColors.surfaceS2.withValues(alpha: .88),
           borderRadius: BorderRadius.circular(12),
           //border: isSelected ? Border.all(color: const Color(0xFF6C5DD3), width: 1.5) : null,
         ),
@@ -113,7 +106,7 @@ class SelectionChip extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? CupidColors.primaryDark :CupidColors.greySecondary,
+                color: isSelected ? CupidColors.primaryDark : CupidColors.greySecondary,
               ),
               const SizedBox(width: 8),
             ],
@@ -121,10 +114,8 @@ class SelectionChip extends StatelessWidget {
               label,
               style: (isSelected ? selectedTextStyle : textStyle) ??
                   CupidTextStyles.label2.copyWith(
-                    color:
-                        isSelected ? CupidColors.primaryDark : CupidColors.greySecondary,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? CupidColors.primaryDark : CupidColors.greySecondary,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
             ),
           ],
@@ -160,21 +151,19 @@ class BottomNavButtons extends StatelessWidget {
               flex: 1,
               child: TextButton(
                 onPressed: onBack,
-               style: ElevatedButton.styleFrom(
-                backgroundColor: CupidColors.surfaceSpecialSecondaryAlphaBase,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: const BorderSide(
-                    color:  CupidColors.borderSecondary,
-                    width: 1,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CupidColors.surfaceS2,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(
+                      color: CupidColors.borderSecondary,
+                      width: 1,
+                    ),
                   ),
+                  disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
                 ),
-                disabledBackgroundColor:
-                    const Color(0xFF6C5DD3).withValues(alpha: 0.5),
-              ),
-                
                 child: Text(
                   'Go Back',
                   style: CupidTextStyles.body1.copyWith(
@@ -202,8 +191,7 @@ class BottomNavButtons extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                disabledBackgroundColor:
-                    const Color(0xFF6C5DD3).withValues(alpha: 0.5),
+                disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -216,8 +204,7 @@ class BottomNavButtons extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward,
-                      color: Colors.white, size: 18),
+                  const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
                 ],
               ),
             ),
@@ -247,9 +234,7 @@ class ProfileProgressBar extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 2),
             height: 4,
             decoration: BoxDecoration(
-              color: index <= currentStep
-                  ? CupidColors.primary
-                  : CupidColors.greyElement,
+              color: index <= currentStep ? CupidColors.primary : CupidColors.greyElement,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

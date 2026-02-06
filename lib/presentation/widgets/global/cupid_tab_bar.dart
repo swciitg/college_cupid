@@ -17,71 +17,62 @@ class CupidTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      height: 32,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Colors.grey.shade300, // Light border like the image
-        ),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) {
-          return Row(
-            mainAxisSize: MainAxisSize.min,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
             children: List.generate(tabs.length, (index) {
-              final isSelected = controller.index == index;
-              
-              return GestureDetector(
-                onTap: () {
-                  controller.animateTo(index);
-                  if (onTap != null) onTap!(index);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFE94057) : Colors.transparent,
-                    borderRadius: _getBorderRadius(index),
-                    border: Border(
-                      right: (index != tabs.length - 1 && !isSelected && controller.index != index + 1)
-                          ? BorderSide(color: Colors.grey.shade300, width: 1)
-                          : BorderSide.none,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0,horizontal: 10),
-                    child: Text(
-                      tabs[index],
-                      textAlign: TextAlign.center,
-                      style: CupidTextStyles.label2.copyWith(
-                        color: isSelected ? Colors.white : Colors.grey.shade700,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              final title = tabs[index];
+              final isFirst = index == 0;
+              final isLast = index == tabs.length - 1;
+              return AnimatedBuilder(
+                animation: controller,
+                builder: (context, child) {
+                  final isSelected = controller.index == index;
+                  return GestureDetector(
+                    onTap: () {
+                      controller.animateTo(index);
+                      onTap?.call(index);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: isFirst ? 16 : 0, right: isLast ? 16 : 0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? CupidColors.primary : Colors.transparent,
+                        borderRadius: BorderRadius.only(
+                          topLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+                          bottomLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+                          topRight: isLast ? const Radius.circular(11) : Radius.zero,
+                          bottomRight: isLast ? const Radius.circular(11) : Radius.zero,
+                        ),
+                        border: Border.all(
+                          color: CupidColors.greyColor.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          title,
+                          style: CupidTextStyles.label2.copyWith(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
             }),
-          );
-        },
+          ),
+        ),
       ),
     );
-  }
-
-  BorderRadius _getBorderRadius(int index) {
-    if (index == 0) {
-      return const BorderRadius.only(
-        topLeft: Radius.circular(9),
-        bottomLeft: Radius.circular(9),
-      );
-    } else if (index == tabs.length - 1) {
-      return const BorderRadius.only(
-        topRight: Radius.circular(9),
-        bottomRight: Radius.circular(9),
-      );
-    }
-    return BorderRadius.zero;
   }
 }

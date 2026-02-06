@@ -239,79 +239,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    TextField(
-                      controller: TextEditingController(text: LoginStore.displayName),
-                      decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            width: 1.2,
-                            color: CupidColors.blackColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(color: CupidColors.blackColor),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.2),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.5),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                      ).copyWith(
-                        labelText: "Name",
-                        floatingLabelAlignment: FloatingLabelAlignment.start,
-                        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-                        enabled: false,
-                        fillColor: Colors.transparent,
-                      ),
-                    ),
+                    _nameField(),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: TextEditingController(text: LoginStore.email),
-                      decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            width: 1.2,
-                            color: CupidColors.blackColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(color: CupidColors.blackColor),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.2),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.5),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                      ).copyWith(
-                        labelText: "Email",
-                        floatingLabelAlignment: FloatingLabelAlignment.start,
-                        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-                        enabled: false,
-                        fillColor: Colors.transparent,
-                      ),
-                    ),
+                    _emailField(),
                     const SizedBox(height: 16),
                     const Text(
                       "Profile Pictures",
@@ -428,9 +358,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         ),
                         Switch(
                           inactiveTrackColor: WidgetStateColor.transparent,
-                          activeThumbColor: CupidColors.secondaryColor,
-                          inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                          activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                          activeThumbColor: CupidColors.primary,
+                          inactiveThumbColor: CupidColors.primary.withValues(alpha: 0.4),
+                          activeTrackColor: CupidColors.primary.withValues(alpha: 0.4),
                           value: _displaySexualOrientation,
                           onChanged: (value) {
                             setState(() {
@@ -486,9 +416,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             });
                           },
                           inactiveTrackColor: WidgetStateColor.transparent,
-                          activeThumbColor: CupidColors.secondaryColor,
-                          inactiveThumbColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
-                          activeTrackColor: CupidColors.secondaryColor.withValues(alpha: 0.4),
+                          activeThumbColor: CupidColors.primary,
+                          inactiveThumbColor: CupidColors.primary.withValues(alpha: 0.4),
+                          activeTrackColor: CupidColors.primary.withValues(alpha: 0.4),
                         ),
                       ],
                     ),
@@ -520,6 +450,84 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  TextField _emailField() {
+    return TextField(
+      controller: TextEditingController(text: LoginStore.email),
+      decoration: const InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(
+            width: 1.2,
+            color: CupidColors.blackColor,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: CupidColors.blackColor),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1.2),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ).copyWith(
+        labelText: "Email",
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+        enabled: false,
+        fillColor: Colors.transparent,
+      ),
+    );
+  }
+
+  TextField _nameField() {
+    return TextField(
+      controller: TextEditingController(text: LoginStore.displayName),
+      decoration: const InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(
+            width: 1.2,
+            color: CupidColors.blackColor,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide(color: CupidColors.blackColor),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1.2),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ).copyWith(
+        labelText: "Name",
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
+        enabled: false,
+        fillColor: Colors.transparent,
       ),
     );
   }
@@ -588,7 +596,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 .any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
-                            print(quizQuestions[rand].question);
                             surprizeQuiz[index] = quizQuestions[rand];
                             // textEditingControllers[index].clear();
                             setState(() {});
@@ -645,7 +652,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       label: Text(
         option,
         style: CupidTextStyles.label2.setColor(
-          isSelected ? Colors.white : CupidColors.textColorBlack,
+          isSelected ? CupidColors.primary : CupidColors.blackColor,
         ),
       ),
       selected: isSelected,
@@ -654,13 +661,13 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       color: WidgetStateColor.resolveWith(
         (states) {
           if (states.contains(WidgetState.selected)) {
-            return CupidColors.primary;
+            return CupidColors.primary.withValues(alpha: 0.1);
           }
-          return Colors.white;
+          return CupidColors.offWhiteColor;
         },
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      checkmarkColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      checkmarkColor: CupidColors.primary,
       onSelected: (bool selected) {
         onSelected();
       },
@@ -676,19 +683,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidTextStyles.label2.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? CupidColors.primary : CupidColors.blackColor,
             ),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           color: WidgetStateColor.resolveWith(
             (states) {
               if (states.contains(WidgetState.selected)) {
-                return CupidColors.primary;
+                return CupidColors.primary.withValues(alpha: 0.1);
               }
-              return Colors.white;
+              return CupidColors.offWhiteColor;
             },
           ),
-          checkmarkColor: Colors.white,
+          checkmarkColor: CupidColors.primary,
           selected: selectedChoice == tag,
           onSelected: (_) {
             onSelected(tag);
@@ -707,21 +714,21 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           label: Text(
             tag.displayString,
             style: CupidTextStyles.label2.copyWith(
-              color: selectedChoice == tag ? Colors.white : CupidColors.textColorBlack,
+              color: selectedChoice == tag ? CupidColors.primary : CupidColors.blackColor,
             ),
           ),
           color: WidgetStateColor.resolveWith(
             (states) {
               if (states.contains(WidgetState.selected)) {
-                return CupidColors.primary;
+                return CupidColors.primary.withValues(alpha: 0.1);
               }
-              return Colors.white;
+              return CupidColors.offWhiteColor;
             },
           ),
+          checkmarkColor: CupidColors.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
           ),
-          checkmarkColor: Colors.white,
           selected: selectedChoice == tag,
           onSelected: (val) {
             onSelected(tag);

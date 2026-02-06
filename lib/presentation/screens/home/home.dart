@@ -45,7 +45,6 @@ class _HomeState extends ConsumerState<Home> {
   @override
   Widget build(BuildContext context) {
     final userController = ref.watch(userProvider);
-    final size = MediaQuery.sizeOf(context);
     return CollegeCupidUpgrader(
       child: GestureDetector(
         onTap: () {
@@ -55,221 +54,123 @@ class _HomeState extends ConsumerState<Home> {
           decoration: const BoxDecoration(
             color: CupidColors.backgroundColor,
           ),
-          child: Stack(
-            children: [
-              // ..._heartShapes(
-              //   HeartState(
-              //     size: 200,
-              //     left: -50,
-              //     bottom: size.height * 0.25,
-              //     rotation: Random().nextDouble() * pi / 4,
-              //   ),
-              //   HeartState(
-              //     size: 200,
-              //     right: 50,
-              //     bottom: size.height * 0.09,
-              //     rotation: Random().nextDouble() * pi / 4,
-              //   ),
-              //   HeartState(
-              //     size: 180,
-              //     right: -50,
-              //     top: size.height * 0.25,
-              //     rotation: Random().nextDouble() * pi / 4,
-              //   ),
-              //   HeartState(
-              //     size: 180,
-              //     left: 50,
-              //     top: size.height * 0.15,
-              //     rotation: Random().nextDouble() * pi / 4,
-              //   ),
-              // ),
-              SizedBox(
-                height: size.height,
-                width: size.width,
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  bottomNavigationBar: NavigationBarTheme(
-                    data: NavigationBarThemeData(
-                      backgroundColor: Colors.transparent,
-                      indicatorColor: Colors.transparent,
-                      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          // A → selected
-                          return CupidTextStyles.label3
-                              .copyWith(color: CupidColors.primaryDark, fontSize: 11);
-                        }
-                        // B → unselected
-                        return CupidTextStyles.label3
-                            .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 11);
-                      }),
-                      height: 60,
-                      elevation: 0,
-                      shadowColor: Colors.black,
-                      surfaceTintColor: CupidColors.navBarBackgroundColor,
-                      iconTheme: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return const IconThemeData(color: CupidColors.secondaryColor);
-                        } else {
-                          return const IconThemeData(color: Colors.grey);
-                        }
-                      }),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            bottomNavigationBar: _navBar(),
+            body: SafeArea(
+              child: SizedBox.expand(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  children: [
+                    const HomeTab(),
+                    // const YourCrushesTab(),
+                    const ConfessionsScreen(),
+                    const UpdatesScreen(),
+                    const EventsScreen(),
+                    //const YourMatches(),
+                    UserProfileScreen(
+                      isMine: true,
+                      userProfile: userController.myProfile!,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
-                      child: NavigationBar(
-                        backgroundColor: CupidColors.backgroundColor,
-                        selectedIndex: _selectedIndex,
-                        onDestinationSelected: (i) => setState(() {
-                          if ((i - _selectedIndex).abs() != 1) {
-                            _pageController.jumpToPage(i);
-                          } else {
-                            _pageController.animateToPage(i,
-                                duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
-                          }
-                          _selectedIndex = i;
-                        }),
-                        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            // A → selected
-                            return CupidTextStyles.label3
-                                .copyWith(color: CupidColors.primaryDark, fontSize: 10);
-                          }
-                          // B → unselected
-                          return CupidTextStyles.label3
-                              .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 10);
-                        }),
-                        destinations: List.generate(navItems.length, (index) {
-                          final item = navItems[index];
-                          return Container(
-                            padding: EdgeInsets.zero,
-                            margin:
-                                EdgeInsets.symmetric(horizontal: _selectedIndex == index ? 4 : 0),
-                            decoration: _selectedIndex == index
-                                ? ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    shadows: const [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        blurRadius: 12,
-                                        spreadRadius: 0,
-                                        offset: Offset(0, 6),
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                            child: buildNavItem(
-                              icon: item.icon,
-                              label: item.label,
-                              isSelected: _selectedIndex == index,
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ),
-                  body: SafeArea(
-                    child: SizedBox.expand(
-                      child: PageView(
-                        controller: _pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _selectedIndex = index;
-                          });
-                        },
-                        children: [
-                          const HomeTab(),
-                          // const YourCrushesTab(),
-                          const ConfessionsScreen(),
-                          const UpdatesScreen(),
-                          const EventsScreen(),
-                          //const YourMatches(),
-                          UserProfileScreen(
-                            isMine: true,
-                            userProfile: userController.myProfile!,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
-            ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  NavigationBarTheme _navBar() {
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        indicatorColor: Colors.transparent,
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+          if (states.contains(WidgetState.selected)) {
+            // A → selected
+            return CupidTextStyles.label3.copyWith(color: CupidColors.primaryDark, fontSize: 11);
+          }
+          // B → unselected
+          return CupidTextStyles.label3
+              .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 11);
+        }),
+        height: 60,
+        elevation: 0,
+        shadowColor: Colors.black,
+        backgroundColor: CupidColors.navBarBackgroundColor,
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: CupidColors.secondaryColor);
+          } else {
+            return const IconThemeData(color: Colors.grey);
+          }
+        }),
+      ),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: CupidColors.offWhiteColor, width: 2)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
+          child: NavigationBar(
+            backgroundColor: CupidColors.navBarBackgroundColor,
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (i) => setState(() {
+              if ((i - _selectedIndex).abs() != 1) {
+                _pageController.jumpToPage(i);
+              } else {
+                _pageController.animateToPage(i,
+                    duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+              }
+              _selectedIndex = i;
+            }),
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+              if (states.contains(WidgetState.selected)) {
+                // A → selected
+                return CupidTextStyles.label3
+                    .copyWith(color: CupidColors.primaryDark, fontSize: 10);
+              }
+              // B → unselected
+              return CupidTextStyles.label3
+                  .copyWith(color: CupidColors.keyboardTextLowEm, fontSize: 10);
+            }),
+            destinations: List.generate(navItems.length, (index) {
+              final item = navItems[index];
+              return Container(
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.symmetric(horizontal: _selectedIndex == index ? 4 : 0),
+                decoration: _selectedIndex == index
+                    ? ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shadows: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 12,
+                            spreadRadius: 0,
+                            offset: Offset(0, 6),
+                          ),
+                        ],
+                      )
+                    : null,
+                child: buildNavItem(
+                  icon: item.icon,
+                  label: item.label,
+                  isSelected: _selectedIndex == index,
+                ),
+              );
+            }),
           ),
         ),
       ),
     );
   }
 }
-//   List<Widget> _heartShapes(
-//       HeartState yellow, HeartState blue, HeartState pink, HeartState green) {
-//     return [
-//       AnimatedPositioned(
-//         duration: const Duration(milliseconds: 2000),
-//         curve: Curves.easeInOut,
-//         top: yellow.top,
-//         right: yellow.right,
-//         bottom: yellow.bottom,
-//         left: yellow.left,
-//         child: Transform.rotate(
-//           angle: yellow.rotation!,
-//           child: HeartShape(
-//             size: yellow.size,
-//             asset: CupidIcons.heartOutline,
-//             color: const Color(0x99EAE27A),
-//           ),
-//         ),
-//       ),
-//       AnimatedPositioned(
-//         duration: const Duration(milliseconds: 2000),
-//         curve: Curves.easeInOut,
-//         top: blue.top,
-//         right: blue.right,
-//         bottom: blue.bottom,
-//         left: blue.left,
-//         child: Transform.rotate(
-//           angle: blue.rotation!,
-//           child: HeartShape(
-//             size: blue.size,
-//             asset: CupidIcons.heartOutline,
-//             color: const Color(0x99A8CEFA),
-//           ),
-//         ),
-//       ),
-//       AnimatedPositioned(
-//         duration: const Duration(milliseconds: 2000),
-//         curve: Curves.easeInOut,
-//         top: pink.top,
-//         right: pink.right,
-//         bottom: pink.bottom,
-//         left: pink.left,
-//         child: Transform.rotate(
-//           angle: pink.rotation!,
-//           child: HeartShape(
-//             size: pink.size,
-//             asset: CupidIcons.heartOutline,
-//             color: const Color(0x99F9A8D4),
-//           ),
-//         ),
-//       ),
-//       AnimatedPositioned(
-//         duration: const Duration(milliseconds: 2000),
-//         curve: Curves.easeInOut,
-//         top: green.top,
-//         right: green.right,
-//         bottom: green.bottom,
-//         left: green.left,
-//         child: Transform.rotate(
-//           angle: green.rotation!,
-//           child: HeartShape(
-//             size: green.size,
-//             asset: CupidIcons.heartOutline,
-//             color: CupidColors.cupidGreen,
-//           ),
-//         ),
-//       ),
-//     ];
-//   }
-// }

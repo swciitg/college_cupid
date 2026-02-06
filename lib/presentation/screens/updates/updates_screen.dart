@@ -13,8 +13,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with SingleTickerProviderStateMixin {
+class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _tabs = ['All', 'Profile', 'Confession', 'Match'];
 
@@ -44,39 +43,48 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     final updatesState = ref.watch(updatesControllerProvider);
 
     return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
+      backgroundColor: CupidColors.surfaceS2,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Text(
-                'Updates',
-                style: CupidTextStyles.brandTitle1,
+            Container(
+              decoration: const BoxDecoration(color: CupidColors.whitePrimary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Updates',
+                          style: CupidTextStyles.brandTitle1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  CupidTabBar(
+                    controller: _tabController,
+                    tabs: _tabs,
+                    onTap: (index) {
+                      ref
+                          .read(updatesControllerProvider.notifier)
+                          .fetchUpdates(filter: _tabs[index]);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
-            SizedBox(height: 20,),
-            SizedBox(
-              height: 50,
-              child: CupidTabBar(
-                controller: _tabController,
-                tabs: _tabs,
-                onTap: (index) {
-                  ref
-                      .read(updatesControllerProvider.notifier)
-                      .fetchUpdates(filter: _tabs[index]);
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
+                color: CupidColors.primary,
                 onRefresh: () async {
                   await ref
                       .read(updatesControllerProvider.notifier)
-                      .fetchUpdates(
-                          filter: _tabs[_tabController.index], isRefresh: true);
+                      .fetchUpdates(filter: _tabs[_tabController.index], isRefresh: true);
                 },
                 child: updatesState.when(
                   data: (updates) {
@@ -101,15 +109,17 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                       );
                     }
                     return ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       itemCount: updates.length,
                       itemBuilder: (context, index) {
-                        return UpdateItemBuilder(update: updates[index]);
+                        return Padding(
+                          padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
+                          child: UpdateItemBuilder(update: updates[index]),
+                        );
                       },
                     );
                   },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(child: CircularProgressIndicator()),
                   error: (e, s) => Center(child: Text('Error: $e')),
                 ),
               ),

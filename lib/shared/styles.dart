@@ -31,7 +31,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle title2 = TextStyle(
-    color: const Color(0xFF0A0C11),
+    color: Color(0xFF0A0C11),
     fontSize: 20,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
@@ -48,7 +48,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle label2 = TextStyle(
-    color: const Color(0xFF5B616D) ,
+    color:Color(0xFF5B616D) ,
     fontSize: 13,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,

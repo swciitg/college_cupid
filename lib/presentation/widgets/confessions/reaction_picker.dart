@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:flutter_chat_reactions/src/widgets/rections_row.dart';
 
 class ReactionPicker extends StatelessWidget {

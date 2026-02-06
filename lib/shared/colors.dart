@@ -24,7 +24,7 @@ class CupidColors {
   static const glassWhite = Color(0xFFFDFDFF);
   static const semiGlassWhite = Color(0x4F000203);
   static const textColorBlack = Color(0xFF11142A);
-  static const cupidBlue = Color(0xFFA8CEFA);
+  static const cupidBlue = Color(0xFFDFF3FF);
   static const cupidYellow = Color(0x99EAE27A);
   static const cupidGreen = Color(0xFF7AEAA9);
   static const cupidPeach = Color(0xFFFBA8AA);
@@ -54,7 +54,7 @@ class CupidColors {
   static const Color green = Color(0xFF409B3F);
   static const Color red = Color(0xFFED4030);
 
-  static const Color surfaceSpecialSecondaryAlphaBase = Color(0xFFF2F2F4);
+  static const Color surfaceS2 = Color(0xFFF2F2F4);
 
   static const Color borderPrimary = Color(0xFFD6445C);
   static const Color borderSecondary = Color(0xFFE3E3E4);

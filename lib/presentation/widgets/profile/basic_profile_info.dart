@@ -84,25 +84,12 @@ class BasicProfileInfo extends ConsumerWidget {
                               context.goNamed(AppRoutes.editProfile.name);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Edit Profile',
-                                    style: CupidTextStyles.label2.copyWith(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Icon(FluentIcons.edit_16_regular, size: 14),
-                                ],
-                              ),
+                              child: const Icon(FluentIcons.edit_16_regular, size: 14),
                             ),
                           )
                         else if (!isMine)
