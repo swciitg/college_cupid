@@ -173,8 +173,7 @@ class ConfessionCard extends StatelessWidget {
                     if (onDelete != null) onDelete!();
                   },
                   shapeDecoration: BoxDecoration(
-                      border: Border.all(
-                          color: CupidColors.borderSecondary, width: 1),
+                      border: Border.all(color: CupidColors.borderSecondary, width: 1),
                       borderRadius: BorderRadius.circular(10)),
                 ),
                 const SizedBox(width: 12),
@@ -198,7 +197,11 @@ class _ActionButton extends StatelessWidget {
   final double borderRadius;
 
   const _ActionButton(
-      {required this.icon, required this.onTap, this.color, this.borderRadius = 10});
+      {required this.icon,
+      required this.onTap,
+      this.color,
+      this.borderRadius = 10,
+      this.shapeDecoration});
 
   @override
   Widget build(BuildContext context) {
@@ -230,9 +233,7 @@ Widget chip(String label) {
       ),
     ),
     child: Center(
-      child: Text(label,
-          style: CupidTextStyles.label3
-              .copyWith(color: CupidColors.greySecondary)),
+      child: Text(label, style: CupidTextStyles.label3.copyWith(color: CupidColors.greySecondary)),
     ),
   );
 }

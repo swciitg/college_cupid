@@ -10,7 +10,6 @@ import 'package:college_cupid/stores/confessions_controller.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/domain/models/confession.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

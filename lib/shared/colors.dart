@@ -53,9 +53,6 @@ class CupidColors {
   static const Color blue = Color(0xFFDFF3FF);
   static const Color green = Color(0xFF409B3F);
   static const Color red = Color(0xFFED4030);
-
-  static const Color surfaceS2 = Color(0xFFF2F2F4);
-
   static const Color borderPrimary = Color(0xFFD6445C);
   static const Color borderSecondary = Color(0xFFE3E3E4);
 
@@ -63,5 +60,4 @@ class CupidColors {
   static const Color surfaceS2 = Color.fromRGBO(242, 242, 244, 1);
   static const Color surfaceS1 = Color.fromRGBO(254, 254, 254, 1);
   static const Color surfaceS0 = Color.fromRGBO(255, 255, 255, 1);
-  
 }
