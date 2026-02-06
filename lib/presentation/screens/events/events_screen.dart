@@ -19,7 +19,7 @@ class EventsScreen extends ConsumerWidget {
     final eventsState = ref.watch(eventsProvider);
 
     return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
+      backgroundColor: CupidColors.surfaceS1,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),

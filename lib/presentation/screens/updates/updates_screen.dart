@@ -56,6 +56,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                 style: CupidTextStyles.brandTitle1,
               ),
             ),
+            SizedBox(height: 20,),
             SizedBox(
               height: 50,
               child: CupidTabBar(

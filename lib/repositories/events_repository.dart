@@ -13,10 +13,10 @@ class MockEventsRepository implements EventsRepository {
     return [
       EventModel(
         id: '1',
-        title: 'Speed dating is now Live',
+        title: 'Speed dating coming soon',
         description:
             'Join the queue to get matched anonymously with other students!',
-        actionText: 'Start Anonymous Chat',
+        actionText: 'Coming Soon',
         isLive: true,
       ),
     ];

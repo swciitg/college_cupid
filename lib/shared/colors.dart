@@ -61,6 +61,7 @@ class CupidColors {
 
   static const Color keyboardTextLowEm = Color.fromRGBO(140, 146, 156, 1);
   static const Color surfaceS2 = Color.fromRGBO(242, 242, 244, 1);
+  static const Color surfaceS1 = Color.fromRGBO(254, 254, 254, 1);
   static const Color surfaceS0 = Color.fromRGBO(255, 255, 255, 1);
   
 }
