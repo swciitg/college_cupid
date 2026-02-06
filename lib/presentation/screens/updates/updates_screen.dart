@@ -13,8 +13,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with SingleTickerProviderStateMixin {
+class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _tabs = ['All', 'Profile', 'Confession', 'Match'];
 
@@ -62,20 +61,18 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                 controller: _tabController,
                 tabs: _tabs,
                 onTap: (index) {
-                  ref
-                      .read(updatesControllerProvider.notifier)
-                      .fetchUpdates(filter: _tabs[index]);
+                  ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: _tabs[index]);
                 },
               ),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
+                color: CupidColors.primary,
                 onRefresh: () async {
                   await ref
                       .read(updatesControllerProvider.notifier)
-                      .fetchUpdates(
-                          filter: _tabs[_tabController.index], isRefresh: true);
+                      .fetchUpdates(filter: _tabs[_tabController.index], isRefresh: true);
                 },
                 child: updatesState.when(
                   data: (updates) {
@@ -107,8 +104,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                       },
                     );
                   },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(child: CircularProgressIndicator()),
                   error: (e, s) => Center(child: Text('Error: $e')),
                 ),
               ),

@@ -588,7 +588,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 .any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
-                            print(quizQuestions[rand].question);
                             surprizeQuiz[index] = quizQuestions[rand];
                             // textEditingControllers[index].clear();
                             setState(() {});

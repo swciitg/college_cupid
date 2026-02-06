@@ -12,15 +12,13 @@ class DatingPreferenceScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Sexual Orientation",
-            style: CupidTextStyles.label1
-                .copyWith(color: CupidColors.greySecondary)),
+            style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary)),
         const SizedBox(height: 12),
         Wrap(
           spacing: 10,
@@ -28,13 +26,9 @@ class DatingPreferenceScreen extends ConsumerWidget {
           children: SexualOrientation.values.map((orientation) {
             return SelectionChip(
               label: orientation.displayString,
-              isSelected:
-                  onboardingState.userProfile?.sexualOrientation?.type ==
-                      orientation,
-              onTap: () =>
-                  onboardingController.updateSexualOrientation(orientation),
-              textStyle: CupidTextStyles.normalTextStyle
-                  .copyWith(color: CupidColors.grey950),
+              isSelected: onboardingState.userProfile?.sexualOrientation?.type == orientation,
+              onTap: () => onboardingController.updateSexualOrientation(orientation),
+              textStyle: CupidTextStyles.normalTextStyle.copyWith(color: CupidColors.grey950),
               selectedTextStyle: CupidTextStyles.normalTextStyle.copyWith(
                 color: CupidColors.primary,
                 fontWeight: FontWeight.bold,
@@ -44,8 +38,7 @@ class DatingPreferenceScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 32),
         Text("Type of Relationship",
-            style: CupidTextStyles.label1
-                .copyWith(color: CupidColors.greySecondary)),
+            style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary)),
         const SizedBox(height: 12),
         Wrap(
           spacing: 10,
@@ -53,11 +46,9 @@ class DatingPreferenceScreen extends ConsumerWidget {
           children: LookingFor.values.map((goal) {
             return SelectionChip(
               label: goal.displayString,
-              isSelected:
-                  onboardingState.userProfile?.relationshipGoal?.goal == goal,
+              isSelected: onboardingState.userProfile?.relationshipGoal?.goal == goal,
               onTap: () => onboardingController.updateLookingForType(goal),
-              textStyle: CupidTextStyles.normalTextStyle
-                  .copyWith(color: CupidColors.grey950),
+              textStyle: CupidTextStyles.normalTextStyle.copyWith(color: CupidColors.grey950),
               selectedTextStyle: CupidTextStyles.normalTextStyle.copyWith(
                 color: CupidColors.primary,
                 fontWeight: FontWeight.bold,
@@ -78,14 +69,13 @@ class DatingPreferenceScreen extends ConsumerWidget {
                   width: 180,
                   height: 150,
                   decoration: BoxDecoration(
-                    shape:
-                        BoxShape.circle,
+                    shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: CupidColors.primary.withOpacity(0.3),
+                        color: CupidColors.primary.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
-                        offset: const Offset( 0, 10), 
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),

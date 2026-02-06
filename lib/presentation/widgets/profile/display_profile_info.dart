@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/basic_profile_info.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
@@ -303,20 +305,20 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                     builder: (context) => ReplyBottomSheet(
                       title: 'Reply to Profile',
                       onSend: (message) async {
-                        print("DEBUG UI: Reply button pressed for IMAGES index $index");
-                        print("DEBUG UI: Sending to ${widget.userProfile.email}");
+                        log("DEBUG UI: Reply button pressed for IMAGES index $index");
+                        log("DEBUG UI: Sending to ${widget.userProfile.email}");
                         try {
                           final success = await ref
                               .read(updatesRepoProvider)
                               .replyToUser(widget.userProfile.email, message, "IMAGES", index);
-                          print("DEBUG UI: Result success=$success");
+                          log("DEBUG UI: Result success=$success");
                           if (success) {
                             showSnackBar("Reply sent successfully!");
                           } else {
                             showSnackBar("Failed to send reply");
                           }
                         } catch (e) {
-                          print("DEBUG UI: Error calling repo: $e");
+                          log("DEBUG UI: Error calling repo: $e");
                         }
                       },
                     ),

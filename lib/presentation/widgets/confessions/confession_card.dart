@@ -37,7 +37,7 @@ class ConfessionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -51,11 +51,9 @@ class ConfessionCard extends StatelessWidget {
             children: [
               Flexible(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: CupidColors.cupidBlue
-                        .withOpacity(0.2), // Reuse existing color
+                    color: CupidColors.cupidBlue.withValues(alpha: 0.2), // Reuse existing color
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -78,8 +76,8 @@ class ConfessionCard extends StatelessWidget {
                   if (!isMine) ...[
                     const SizedBox(width: 4),
                     IconButton(
-                      icon: const Icon(Icons.report_problem,
-                          size: 20, color: CupidColors.cupidPeach),
+                      icon:
+                          const Icon(Icons.report_problem, size: 20, color: CupidColors.cupidPeach),
                       onPressed: () {
                         onReport!();
                       },
@@ -125,10 +123,7 @@ class ConfessionCard extends StatelessWidget {
                   if (confession.reactions.isNotEmpty) ...[
                     SizedBox(
                       height: 24,
-                      width: 30 +
-                          (confession.reactions.length > 1
-                              ? 10.0
-                              : 0.0), // Dynamic width
+                      width: 30 + (confession.reactions.length > 1 ? 10.0 : 0.0), // Dynamic width
                       child: Stack(
                         children: [
                           if (confession.reactions.length > 1)
@@ -158,7 +153,7 @@ class ConfessionCard extends StatelessWidget {
               if (isMine) ...[
                 _ActionButton(
                   icon: FluentIcons.delete_24_regular,
-                  color: Colors.red.withOpacity(0.7),
+                  color: Colors.red.withValues(alpha: 0.7),
                   onTap: () {
                     if (onDelete != null) onDelete!();
                   },
@@ -192,7 +187,7 @@ class _ActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: CupidColors.greyColor.withOpacity(0.2),
+            color: CupidColors.greyColor.withValues(alpha: 0.2),
           ),
         ),
         child: Icon(icon, size: 14, color: color ?? CupidColors.greyColor),

@@ -99,6 +99,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                           ),
                         )
                       : RefreshIndicator(
+                          color: CupidColors.primary,
                           onRefresh: () async {
                             await ref.read(confessionsProvider.notifier).refresh();
                           },
@@ -214,7 +215,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: CupidColors.primary.withOpacity(0.4),
+                color: CupidColors.primary.withValues(alpha: 0.4),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

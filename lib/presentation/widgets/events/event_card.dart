@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/domain/models/event_model.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -56,7 +58,7 @@ class EventCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 // TODO: Implement action
-                print("Action: ${event.actionText}");
+                log("Action: ${event.actionText}");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
