@@ -13,15 +13,14 @@ class AddPhotos extends ConsumerWidget {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final images = onboardingState.images ?? [];
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         ...List.generate(images.length, (index) {
           return Padding(
-             padding: const EdgeInsets.only(bottom: 16),
-             child: _buildPhotoSlot(context, ref, index, images[index]),
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildPhotoSlot(context, ref, index, images[index]),
           );
         }),
 
@@ -54,7 +53,7 @@ class AddPhotos extends ConsumerWidget {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 100), // Bottom padding for nav buttons
       ],
     );
@@ -63,11 +62,11 @@ class AddPhotos extends ConsumerWidget {
   Widget _buildPhotoSlot(BuildContext context, WidgetRef ref, int index, File? image) {
     // Aspect ratio 1:1 or 4:5? Design looks like square or slightly tall.
     // Using simple container with height.
-    const height = 350.0; 
+    const height = 350.0;
 
     return GestureDetector(
       onTap: () {
-         _pickImage(context, ref, index);
+        _pickImage(context, ref, index);
       },
       child: Container(
         height: height,
@@ -85,65 +84,65 @@ class AddPhotos extends ConsumerWidget {
               if (image != null)
                 Image.file(image, fit: BoxFit.cover)
               else
-                 Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     const Text("Image Preview", style: TextStyle(color: Colors.grey)),
-                     const Spacer(),
-                     Container(
-                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                       decoration: BoxDecoration(
-                         color: Colors.white,
-                         borderRadius: BorderRadius.circular(20),
-                         boxShadow: [
-                           BoxShadow(
-                             color: Colors.black.withValues(alpha: 0.05),
-                             blurRadius: 4,
-                           )
-                         ]
-                       ),
-                       child: const Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           Text("Add Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                           SizedBox(width: 4),
-                           Icon(Icons.add_circle, size: 16),
-                         ],
-                       ),
-                     ),
-                     const SizedBox(height: 20),
+                    const Spacer(),
+                    const Text("Image Preview", style: TextStyle(color: Colors.grey)),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                            )
+                          ]),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Add Image",
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                          SizedBox(width: 4),
+                          Icon(Icons.add_circle, size: 16),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
-                 ),
-              
+                ),
               if (image != null)
-                 Positioned(
-                   bottom: 16,
-                   left: 0, 
-                   right: 0,
-                   child: Center(
-                     child: Container(
-                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                       decoration: BoxDecoration(
-                         color: Colors.white,
-                         borderRadius: BorderRadius.circular(20),
-                         boxShadow: [
-                           BoxShadow(
-                             color: Colors.black.withValues(alpha: 0.1),
-                             blurRadius: 4,
-                           )
-                         ]
-                       ),
-                       child: const Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           Text("Replace Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                           SizedBox(width: 4),
-                           Icon(Icons.refresh, size: 16),
-                         ],
-                       ),
-                     ),
-                   ),
-                 ),
+                Positioned(
+                  bottom: 16,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 4,
+                            )
+                          ]),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Replace Image",
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                          SizedBox(width: 4),
+                          Icon(Icons.refresh, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

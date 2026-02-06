@@ -9,14 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
-final userProfileRepoProvider =
-    Provider<UserProfileRepository>((ref) => UserProfileRepository());
+final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserProfileRepository());
 
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
 
-  Future<String> postUserProfileImage(File? image,
-      {Function(double)? onSendProgress}) async {
+  Future<String> postUserProfileImage(File? image, {Function(double)? onSendProgress}) async {
     try {
       final formData = FormData.fromMap({
         'dp': await MultipartFile.fromFile(
@@ -67,57 +65,50 @@ class UserProfileRepository extends ApiRepository {
       rethrow;
     }
   }
-  
 
-Future<void> postAudioNotes(UserProfile userProfile) async {
-  log("Started uploading audio notes",
-      name: "postAudio");
+  Future<void> postAudioNotes(UserProfile userProfile) async {
+    log("Started uploading audio notes", name: "postAudio");
 
-  for (var question in userProfile.surpriseQuiz) {
-    if (question.audioPath == null) {
-      log("Skipped question (no audio): ${question.question}",
-          name: "postAudio");
-      continue;
+    for (var question in userProfile.surpriseQuiz) {
+      if (question.audioPath == null) {
+        log("Skipped question (no audio): ${question.question}", name: "postAudio");
+        continue;
+      }
+
+      log("Uploading audio for question: ${question.question}", name: "postAudio");
+
+      final file = await MultipartFile.fromFile(
+        question.audioPath!,
+        filename: question.audioPath!.split('/').last,
+        contentType: MediaType('audio', 'mpeg'),
+      );
+
+      final formData = FormData.fromMap({
+        "question": question.question,
+        "voice": file,
+      });
+
+      try {
+        final response = await dio2.post(
+          Endpoints.postAudioNotes,
+          data: formData,
+        );
+
+        log(
+          "Upload success | Status: ${response.statusCode} | Response: ${response.data}",
+          name: "postAudio",
+        );
+      } on DioException catch (e) {
+        log(
+          "Upload failed | ${e.message} | ${e.response?.data}",
+          name: "postAudio",
+          level: 1000, // error
+        );
+      }
     }
 
-    log("Uploading audio for question: ${question.question}",
-        name: "postAudio");
-
-    final file = await MultipartFile.fromFile(
-      question.audioPath!,
-      filename: question.audioPath!.split('/').last,
-      contentType: MediaType('audio', 'mpeg'),
-    );
-
-    final formData = FormData.fromMap({
-      "question": question.question,
-      "file": file,
-    });
-
-    try {
-      final response = await dio2.post(
-        Endpoints.postAudioNotes,
-        data: formData,
-      );
-
-      log(
-        "Upload success | Status: ${response.statusCode} | Response: ${response.data}",
-        name: "postAudio",
-      );
-    } on DioException catch (e) {
-      log(
-        "Upload failed | ${e.message} | ${e.response?.data}",
-        name: "postAudio",
-        level: 1000, // error
-      );
-    }
+    log("Finished uploading audio notes", name: "postAudio");
   }
-
-  log("Finished uploading audio notes",
-      name: "postAudio");
-}
-
-
 
   Future<void> updateUserProfile(UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
@@ -131,6 +122,8 @@ Future<void> postAudioNotes(UserProfile userProfile) async {
   Future<Map<String, dynamic>?> getUserProfile(String email) async {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');
+      final profile = res.data['userProfile'];
+      log("Fetched User Profile: $profile");
       return res.data['userProfile'];
     } catch (error) {
       debugPrint("Error getting User Profile: $error");
@@ -144,8 +137,7 @@ Future<void> postAudioNotes(UserProfile userProfile) async {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }
     try {
-      Response res = await dio.get(
-          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+      Response res = await dio.get('${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];

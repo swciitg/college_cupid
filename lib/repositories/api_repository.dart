@@ -33,21 +33,18 @@ class ApiRepository {
   Dio get authFreeDio => _authFreeDio;
 
   ApiRepository() {
-    _authFreeDio.interceptors
-        .add(InterceptorsWrapper(onError: (error, handler) async {
+    _authFreeDio.interceptors.add(InterceptorsWrapper(onError: (error, handler) async {
       var response = error.response;
 
       if (response != null) {
-        debugPrint(
-            'AuthFree API Error: ${response.statusCode} - ${response.statusMessage}');
+        debugPrint('AuthFree API Error: ${response.statusCode} - ${response.statusMessage}');
         debugPrint('URL: ${response.requestOptions.uri}');
         debugPrint('Data: ${response.data}');
         showSnackBar("Some error occurred, please try again later!");
       }
       return handler.next(error);
     }));
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
+    _dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
       options.headers["Authorization"] = "Bearer ${LoginStore.accessToken}";
       debugPrint("Header: ${options.headers}");
       handler.next(options);
@@ -60,16 +57,41 @@ class ApiRepository {
           bool couldRegenerate = await BackendHelper().regenerateAccessToken();
           if (couldRegenerate) {
             debugPrint('RETRYING REQUEST');
-            return handler
-                .resolve(await BackendHelper().retryRequest(response));
+            return handler.resolve(await BackendHelper().retryRequest(response));
           } else {
             await LoginStore.logout();
             showSnackBar("Your session has expired!! Login again.");
           }
         }
       } else if (response != null) {
-        debugPrint(
-            'API Error: ${response.statusCode} - ${response.statusMessage}');
+        debugPrint('API Error: ${response.statusCode} - ${response.statusMessage}');
+        debugPrint('URL: ${response.requestOptions.uri}');
+        debugPrint('Data: ${response.data}');
+        showSnackBar("Some error occurred, please try again later!");
+      }
+      return handler.next(error);
+    }));
+    _dio2.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
+      options.headers["Authorization"] = "Bearer ${LoginStore.accessToken}";
+      debugPrint("Header: ${options.headers}");
+      handler.next(options);
+    }, onError: (error, handler) async {
+      var response = error.response;
+      if (response != null && response.statusCode == 401) {
+        if (LoginStore.accessToken!.isEmpty) {
+          showSnackBar("Login to continue!!");
+        } else {
+          bool couldRegenerate = await BackendHelper().regenerateAccessToken();
+          if (couldRegenerate) {
+            debugPrint('RETRYING REQUEST');
+            return handler.resolve(await BackendHelper().retryRequest(response));
+          } else {
+            await LoginStore.logout();
+            showSnackBar("Your session has expired!! Login again.");
+          }
+        }
+      } else if (response != null) {
+        debugPrint('API Error: ${response.statusCode} - ${response.statusMessage}');
         debugPrint('URL: ${response.requestOptions.uri}');
         debugPrint('Data: ${response.data}');
         showSnackBar("Some error occurred, please try again later!");

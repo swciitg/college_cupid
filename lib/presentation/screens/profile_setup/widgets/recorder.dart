@@ -33,6 +33,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   bool _isPlaying = false;
   bool _isRecording = false;
+  bool _recordingStarted = false;
   String? _recordedFilePath;
 
   @override
@@ -58,14 +59,13 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    final hasRecording =
-        _recordedFilePath != null && _recordedFilePath!.isNotEmpty;
+    final hasRecording = _recordedFilePath != null && _recordedFilePath!.isNotEmpty;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       width: double.infinity,
-      height: _isRecording || hasRecording ? 60 : 100,
+      height: _isRecording || hasRecording ? 60 : 110,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -85,8 +85,14 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Widget _buildCurrentState(bool hasRecording) {
     if (hasRecording) {
       return _buildPlayerView();
-    } else if (_isRecording) {
+    } else if (_isRecording && _recordingStarted) {
       return _buildWaveformView();
+    } else if (_isRecording) {
+      // Show loading indicator while waiting for recording to start
+      return const Center(
+        key: ValueKey('starting'),
+        child: CircularProgressIndicator(color: CupidColors.primary),
+      );
     } else {
       return _buildIdleView();
     }
@@ -211,9 +217,15 @@ class _AudioRecorderState extends State<AudioRecorder> {
       // Small delay to allow UI to build WaveformRecorder before starting
       await Future.delayed(const Duration(milliseconds: 100));
       await _waveController.startRecording();
+      setState(() {
+        _recordingStarted = true;
+      });
     } catch (e) {
       debugPrint("Error starting recorder: $e");
-      setState(() => _isRecording = false);
+      setState(() {
+        _isRecording = false;
+        _recordingStarted = false;
+      });
     }
   }
 
@@ -229,12 +241,16 @@ class _AudioRecorderState extends State<AudioRecorder> {
   Future<void> _onRecordingStopped() async {
     final file = _waveController.file;
     if (file == null) {
-      setState(() => _isRecording = false);
+      setState(() {
+        _isRecording = false;
+        _recordingStarted = false;
+      });
       return;
     }
 
     setState(() {
       _isRecording = false;
+      _recordingStarted = false;
       _recordedFilePath = file.path;
     });
 
