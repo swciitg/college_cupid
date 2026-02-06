@@ -18,62 +18,64 @@ class DrawerWidget extends ConsumerWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final user = ref.read(userProvider).myProfile!;
     return Container(
-      width: screenWidth * 0.55,
+      width: screenWidth * 0.75,
       decoration: const BoxDecoration(color: Colors.white),
       child: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // TODO: App Logo
-                  // const Divider(),
-                  CupidTextButton(
-                    text: 'Blocked Users',
-                    onPressed: () {
-                      context.pop();
-                      context.pushNamed(AppRoutes.blockedUserListScreen.name);
-                    },
-                  ),
-                  CupidTextButton(
-                    text: 'Terms of use',
-                    onPressed: () async {
-                      try {
-                        await launchURL(
-                          host: 'swc.iitg.ac.in',
-                          path: '/collegeCupid/terms',
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    // TODO: App Logo
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    CupidTextButton(
+                      text: 'Blocked Users',
+                      onPressed: () {
+                        context.pop();
+                        context.pushNamed(AppRoutes.blockedUserListScreen.name);
+                      },
+                    ),
+                    CupidTextButton(
+                      text: 'Terms of use',
+                      onPressed: () async {
+                        try {
+                          await launchURL(
+                            host: 'swc.iitg.ac.in',
+                            path: '/collegeCupid/terms',
+                          );
+                        } catch (e) {
+                          showSnackBar(e.toString());
+                        }
+                      },
+                    ),
+                    CupidTextButton(
+                      text: 'About us',
+                      onPressed: () async {
+                        try {
+                          await launchURL(host: 'swc.iitg.ac.in');
+                        } catch (e) {
+                          showSnackBar(e.toString());
+                        }
+                      },
+                    ),
+                    CupidTextButton(
+                      text: '${user.deactivated ? "Activate" : "Deactivate"} account',
+                      onPressed: () async {
+                        context.pop();
+                        await showDialog(
+                          context: context,
+                          builder: (context) => DeactivateAccountAlert(
+                            activateBack: user.deactivated,
+                          ),
                         );
-                      } catch (e) {
-                        showSnackBar(e.toString());
-                      }
-                    },
-                  ),
-                  CupidTextButton(
-                    text: 'About us',
-                    onPressed: () async {
-                      try {
-                        await launchURL(host: 'swc.iitg.ac.in');
-                      } catch (e) {
-                        showSnackBar(e.toString());
-                      }
-                    },
-                  ),
-                  // TODO: Deactivate account
-                  CupidTextButton(
-                    text:
-                        '${user.deactivated ? "Activate" : "Deactivate"} account',
-                    onPressed: () async {
-                      context.pop();
-                      await showDialog(
-                        context: context,
-                        builder: (context) => DeactivateAccountAlert(
-                          activateBack: user.deactivated,
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(

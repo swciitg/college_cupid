@@ -28,7 +28,8 @@
 		<true/>
 		<key>NSCameraUsageDescription</key>
 		<string>This app requires Camera access for profile images</string>	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires Microphone access for voice recordings</string>		<key>NSPhotoLibraryUsageDescription</key>
+		<string>This app requires Microphone access for voice recordings</string>		
+		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app requires Photo Library access for profile images</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
@@ -51,5 +52,19 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>GIDClientID</key>
+		<string>634767510071-n40h9itd9ciijpr71ukbakqlaet0q1l4.apps.googleusercontent.com</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<!-- Reversed client ID from GoogleService-Info.plist -->
+					<string>com.googleusercontent.apps.634767510071-n40h9itd9ciijpr71ukbakqlaet0q1l4</string>
+				</array>
+			</dict>
+		</array>
 	</dict>
 </plist>

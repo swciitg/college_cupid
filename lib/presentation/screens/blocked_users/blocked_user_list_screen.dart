@@ -86,7 +86,6 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
       backgroundColor: Colors.white,
       elevation: 0,
       scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false,
       centerTitle: false,
       title: const Text(
         'Blocked Users',

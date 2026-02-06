@@ -12,4 +12,6 @@ class DatabaseStrings {
   static const rollNumber = 'rollNumber';
   static const outlookAccessToken = "outlookAccessToken";
   static const outlookRefreshToken = "outlookRefreshToken";
+  static const googleAccessToken = "googleAccessToken";
+  static const googleRefreshToken = "googleRefreshToken";
 }

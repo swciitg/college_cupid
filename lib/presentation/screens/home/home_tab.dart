@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/stores/login_store.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -35,8 +35,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
     // Safety check for index out of bounds
     if (pageViewState.homeTabProfileList.isEmpty ||
-        pageViewNotifier.currentPage >=
-            pageViewState.homeTabProfileList.length) {
+        pageViewNotifier.currentPage >= pageViewState.homeTabProfileList.length) {
       if (pageViewState.loading) {
         return const Center(child: CustomLoader());
       }
@@ -48,8 +47,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       );
     }
 
-    final currentUser =
-        pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
+    final currentUser = pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
 
     return DisplayProfileInfo(
       userProfile: currentUser,
@@ -75,7 +73,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         try {
           bool success = await crushesRepo.addCrush(sharedSecret);
           if (success) {
-            await OneDriveRepository.addCrush(profile.email);
+            final storageRepo = ref.read(storageRepositoryProvider);
+            await storageRepo.addCrush(profile.email);
             await crushesRepo.increaseCrushesCount(profile.email);
           }
         } catch (e) {

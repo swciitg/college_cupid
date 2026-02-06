@@ -1,9 +1,11 @@
 import 'dart:developer';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/basic_profile_info.dart';
+import 'package:college_cupid/presentation/widgets/profile/logout_button.dart';
+import 'package:college_cupid/presentation/widgets/profile/storage_status_card.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
+import 'package:college_cupid/presentation/widgets/profile/voice_player.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -13,7 +15,6 @@ import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/shared/endpoints.dart';
 
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
@@ -39,9 +40,42 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
 class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   var _expanded = false;
 
+  // Merge surpriseQuiz and voiceRecordings to get all answered questions
+  List<QuizQuestion> _getAllQuestions() {
+    final Map<String, QuizQuestion> questionsMap = {};
+
+    // Add all text quiz answers
+    for (var quiz in widget.userProfile.surpriseQuiz) {
+      questionsMap[quiz.question] = quiz;
+    }
+
+    // Add voice recordings - either merge with existing or add new
+    for (var voice in widget.userProfile.voiceRecordings) {
+      if (voice.question.isNotEmpty && voice.answer.isNotEmpty) {
+        if (questionsMap.containsKey(voice.question)) {
+          // Merge: add audioPath to existing question
+          questionsMap[voice.question] = questionsMap[voice.question]!.copyWith(
+            audioPath: voice.answer,
+          );
+        } else {
+          // Add new question with only audio answer
+          questionsMap[voice.question] = QuizQuestion(
+            question: voice.question,
+            answer: '',
+            audioPath: voice.answer,
+          );
+        }
+      }
+    }
+
+    return questionsMap.values.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width - 32;
+    final allQuestions = _getAllQuestions();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: LayoutBuilder(builder: (context, constraints) {
@@ -59,18 +93,15 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   backButton: widget.backButton,
                   isMine: widget.isMine,
                 ),
-                if (widget.userProfile.surpriseQuiz.isNotEmpty)
-                  _surpriseQues(widget.userProfile.surpriseQuiz.first, 0),
-                if (widget.userProfile.surpriseQuiz.isEmpty) const SizedBox(height: 16),
+                if (allQuestions.isNotEmpty) _surpriseQues(allQuestions[0], 0),
+                if (allQuestions.isEmpty) const SizedBox(height: 16),
                 _image(null, width, 1),
                 const SizedBox(height: 8),
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
-                if (widget.userProfile.surpriseQuiz.length < 2) const SizedBox(height: 16),
-                if (widget.userProfile.surpriseQuiz.length >= 2)
-                  _surpriseQues(widget.userProfile.surpriseQuiz[1], 1),
+                if (allQuestions.length < 2) const SizedBox(height: 16),
+                if (allQuestions.length >= 2) _surpriseQues(allQuestions[1], 1),
                 if (widget.userProfile.images.length > 2) _image(null, width, 2),
-                if (widget.userProfile.surpriseQuiz.length >= 3)
-                  _surpriseQues(widget.userProfile.surpriseQuiz[2], 2),
+                if (allQuestions.length >= 3) _surpriseQues(allQuestions[2], 2),
                 const SizedBox(height: 24),
                 if (!widget.isMine) // Only show if not my profile
                   Row(
@@ -130,6 +161,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       ),
                     ],
                   ),
+                if (widget.isMine) const StorageStatusCard(),
+                if (widget.isMine) const LogoutButton(),
                 const SizedBox(height: 100),
               ],
             ),
@@ -216,7 +249,12 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   }
 
   Widget _buildAnswer(QuizQuestion ques) {
-    // Check if there's a voice recording for this question
+    // Check if there's audio in the question itself (merged data)
+    if (ques.audioPath != null && ques.audioPath!.isNotEmpty) {
+      return VoicePlayer(audioUrl: ques.audioPath!);
+    }
+
+    // Check if there's a voice recording for this question (fallback)
     final voiceRecording = widget.userProfile.voiceRecordings.firstWhere(
       (recording) => recording.question == ques.question,
       orElse: () => VoiceRecording(question: '', answer: ''),
@@ -224,7 +262,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
 
     // If there's a voice recording, show audio player
     if (voiceRecording.answer.isNotEmpty) {
-      return _VoicePlayer(audioUrl: voiceRecording.answer);
+      return VoicePlayer(audioUrl: voiceRecording.answer);
     }
 
     // Otherwise show text answer
@@ -353,180 +391,5 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           ),
       ],
     );
-  }
-}
-
-class _VoicePlayer extends StatefulWidget {
-  final String audioUrl;
-
-  const _VoicePlayer({required this.audioUrl});
-
-  @override
-  State<_VoicePlayer> createState() => _VoicePlayerState();
-}
-
-class _VoicePlayerState extends State<_VoicePlayer> {
-  late final AudioPlayer _audioPlayer;
-  bool _isPlaying = false;
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
-
-  @override
-  void initState() {
-    super.initState();
-    _audioPlayer = AudioPlayer();
-
-    // Configure audio player for better iOS compatibility
-    _audioPlayer.setReleaseMode(ReleaseMode.stop);
-
-    _audioPlayer.onPlayerComplete.listen((_) {
-      if (mounted) {
-        setState(() {
-          _isPlaying = false;
-          _position = Duration.zero;
-        });
-      }
-    });
-
-    _audioPlayer.onDurationChanged.listen((duration) {
-      if (mounted) {
-        setState(() => _duration = duration);
-      }
-    });
-
-    _audioPlayer.onPositionChanged.listen((position) {
-      if (mounted) {
-        setState(() => _position = position);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  Future<void> _togglePlay() async {
-    if (_isPlaying) {
-      await _audioPlayer.pause();
-      setState(() => _isPlaying = false);
-    } else {
-      try {
-        // Construct the full URL - remove leading slash if present to avoid double slashes
-        final audioPath =
-            widget.audioUrl.startsWith('/') ? widget.audioUrl.substring(1) : widget.audioUrl;
-        final fullUrl = '${Endpoints.baseUrl}/$audioPath';
-        log('Playing audio from: $fullUrl');
-
-        // Set audio context for iOS before playing
-        await _audioPlayer.setAudioContext(AudioContext(
-          iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playback,
-            options: const {AVAudioSessionOptions.mixWithOthers},
-          ),
-          android: const AudioContextAndroid(
-            isSpeakerphoneOn: false,
-            audioFocus: AndroidAudioFocus.gain,
-          ),
-        ));
-
-        // Set the source first
-        await _audioPlayer.setSourceUrl(fullUrl);
-        // Then play
-        await _audioPlayer.resume();
-        setState(() => _isPlaying = true);
-      } catch (e) {
-        log('Error playing audio: $e');
-        if (mounted) {
-          setState(() => _isPlaying = false);
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: _togglePlay,
-          child: Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: CupidColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              _isPlaying ? Icons.pause : Icons.play_arrow,
-              color: CupidColors.primary,
-              size: 32,
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: SizedBox(
-            height: 60,
-            child: CustomPaint(
-              painter: _WaveformPainter(
-                progress: _duration.inSeconds > 0 ? _position.inSeconds / _duration.inSeconds : 0.0,
-                isPlaying: _isPlaying,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _WaveformPainter extends CustomPainter {
-  final double progress;
-  final bool isPlaying;
-
-  _WaveformPainter({required this.progress, required this.isPlaying});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.round;
-
-    const barCount = 60;
-    final barWidth = 3.0;
-    final spacing = (size.width - (barCount * barWidth)) / (barCount - 1);
-    final progressPosition = progress * size.width;
-
-    for (int i = 0; i < barCount; i++) {
-      final x = i * (barWidth + spacing);
-
-      // Create more realistic varied heights using multiple sine waves
-      final normalizedPosition = i / barCount;
-      final wave1 = 0.4 + 0.3 * (1 - (normalizedPosition - 0.5).abs() * 2);
-      final wave2 = 0.15 * (1 + (i % 5) / 5.0);
-      final wave3 = 0.1 * (1 - (i % 7) / 7.0);
-      final wave4 = 0.05 * (1 + (i % 3) / 3.0);
-
-      final heightFactor = (wave1 + wave2 + wave3 + wave4).clamp(0.2, 1.0);
-      final barHeight = size.height * heightFactor;
-      final y = (size.height - barHeight) / 2;
-
-      // Color based on progress
-      paint.color =
-          x <= progressPosition ? CupidColors.primary : CupidColors.primary.withValues(alpha: 0.3);
-
-      final rect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(x, y, barWidth, barHeight),
-        const Radius.circular(2),
-      );
-      canvas.drawRRect(rect, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_WaveformPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.isPlaying != isPlaying;
   }
 }

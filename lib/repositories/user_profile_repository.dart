@@ -70,8 +70,14 @@ class UserProfileRepository extends ApiRepository {
     log("Started uploading audio notes", name: "postAudio");
 
     for (var question in userProfile.surpriseQuiz) {
-      if (question.audioPath == null) {
+      if (question.audioPath == null || question.audioPath!.isEmpty) {
         log("Skipped question (no audio): ${question.question}", name: "postAudio");
+        continue;
+      }
+
+      // Skip server paths - only upload local file paths
+      if (question.audioPath!.startsWith('/uploads/') || question.audioPath!.startsWith('http')) {
+        log("Skipped question (already on server): ${question.question}", name: "postAudio");
         continue;
       }
 
