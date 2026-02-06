@@ -54,7 +54,7 @@ class CupidColors {
   static const Color green = Color(0xFF409B3F);
   static const Color red = Color(0xFFED4030);
 
-  static const Color surfaceSpecialSecondaryAlphaBase = Color(0xFFF2F2F4);
+  static const Color surfaceS2 = Color(0xFFF2F2F4);
 
   static const Color borderPrimary = Color(0xFFD6445C);
   static const Color borderSecondary = Color(0xFFE3E3E4);

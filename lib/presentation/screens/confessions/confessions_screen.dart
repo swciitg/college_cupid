@@ -64,27 +64,35 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
     });
 
     return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
+      backgroundColor: CupidColors.surfaceS2,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Text(
-                'Confessions',
-                style: CupidTextStyles.brandTitle1,
+            Container(
+              decoration: const BoxDecoration(color: CupidColors.whitePrimary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: Text(
+                      'Confessions',
+                      style: CupidTextStyles.brandTitle1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  CupidTabBar(
+                    controller: _tabController,
+                    tabs: _tabs.map((e) => e.displayName).toList(),
+                    onTap: (index) {
+                      ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            CupidTabBar(
-              controller: _tabController,
-              tabs: _tabs.map((e) => e.displayName).toList(),
-              onTap: (index) {
-                ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
-              },
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: state.isLoading && (state.confessions == null || state.confessions!.isEmpty)
                   ? const Center(child: CustomLoader())

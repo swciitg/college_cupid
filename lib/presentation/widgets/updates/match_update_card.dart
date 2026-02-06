@@ -16,8 +16,8 @@ class MatchUpdateCard extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
@@ -27,7 +27,7 @@ class MatchUpdateCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFFF3366).withValues(alpha: 0.3),
@@ -41,15 +41,14 @@ class MatchUpdateCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(update.senderUser.images.first.url,
-                  update.senderUser.images.first.blurHash),
+              _buildAvatar(
+                  update.senderUser.images.first.url, update.senderUser.images.first.blurHash),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(FluentIcons.heart_24_filled,
-                    color: Colors.white, size: 28),
+                child: Icon(FluentIcons.heart_24_filled, color: Colors.white, size: 28),
               ),
-              _buildAvatar(update.matchedUser!.images.first.url,
-                  update.matchedUser!.images.first.blurHash),
+              _buildAvatar(
+                  update.matchedUser!.images.first.url, update.matchedUser!.images.first.blurHash),
             ],
           ),
           const SizedBox(height: 16),
@@ -64,13 +63,9 @@ class MatchUpdateCard extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                  child: _buildSocialButton(
-                      'Whatsapp', FluentIcons.chat_24_regular)),
+              Expanded(child: _buildSocialButton('Whatsapp', FluentIcons.chat_24_regular)),
               const SizedBox(width: 12),
-              Expanded(
-                  child: _buildSocialButton(
-                      'Instagram', FluentIcons.camera_24_regular)),
+              Expanded(child: _buildSocialButton('Instagram', FluentIcons.camera_24_regular)),
             ],
           )
         ],
@@ -115,8 +110,7 @@ class MatchUpdateCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
           ),
           const SizedBox(width: 6),
           Icon(icon, color: Colors.white, size: 16),

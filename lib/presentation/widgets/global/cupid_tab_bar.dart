@@ -19,7 +19,6 @@ class CupidTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -43,6 +42,7 @@ class CupidTabBar extends StatelessWidget {
                       onTap?.call(index);
                     },
                     child: Container(
+                      margin: EdgeInsets.only(left: isFirst ? 16 : 0, right: isLast ? 16 : 0),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected ? CupidColors.primary : Colors.transparent,

@@ -94,9 +94,8 @@ class SelectionChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? CupidColors.primaryLight
-              : CupidColors.surfaceSpecialSecondaryAlphaBase.withValues(alpha: .88),
+          color:
+              isSelected ? CupidColors.primaryLight : CupidColors.surfaceS2.withValues(alpha: .88),
           borderRadius: BorderRadius.circular(12),
           //border: isSelected ? Border.all(color: const Color(0xFF6C5DD3), width: 1.5) : null,
         ),
@@ -153,7 +152,7 @@ class BottomNavButtons extends StatelessWidget {
               child: TextButton(
                 onPressed: onBack,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: CupidColors.surfaceSpecialSecondaryAlphaBase,
+                  backgroundColor: CupidColors.surfaceS2,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   elevation: 0,
                   shape: RoundedRectangleBorder(

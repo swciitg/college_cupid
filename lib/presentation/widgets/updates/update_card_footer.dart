@@ -24,9 +24,7 @@ class UpdateCardFooter extends ConsumerWidget {
           width: 32,
           height: 32,
           child: ProfileImage(
-            url: update.senderUser.images.isNotEmpty
-                ? update.senderUser.images.first.url
-                : '',
+            url: update.senderUser.images.isNotEmpty ? update.senderUser.images.first.url : '',
             blurHash: update.senderUser.images.isNotEmpty
                 ? update.senderUser.images.first.blurHash
                 : null,
@@ -50,8 +48,7 @@ class UpdateCardFooter extends ConsumerWidget {
             },
             child: Text(
               update.senderUser.name,
-              style:
-                  CupidTextStyles.label2.copyWith(fontWeight: FontWeight.w600),
+              style: CupidTextStyles.label2.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -83,14 +80,13 @@ class UpdateCardFooter extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               children: [
                 Text(
-                  'Smash',
-                  style: CupidTextStyles.label3
-                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                  'Like Profile',
+                  style: CupidTextStyles.label3.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(width: 4),
                 const Icon(
