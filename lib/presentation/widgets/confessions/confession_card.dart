@@ -47,19 +47,22 @@ class ConfessionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: CupidColors.cupidBlue.withValues(alpha: 0.2), // Reuse existing color
-                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: CupidColors.greyColor.withValues(alpha: 0.2),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     confession.typeOfConfession.displayName,
                     style: CupidTextStyles.label3.copyWith(
-                      color: CupidColors.cupidBlue, // Reuse existing color
+                      color: CupidColors.greySecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -67,17 +70,27 @@ class ConfessionCard extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8,
                 children: [
-                  Text(
-                    DateFormat('d MMM, yyyy').format(confession.createdAt),
-                    style: CupidTextStyles.label3.copyWith(fontSize: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: CupidColors.greyColor.withValues(alpha: 0.2),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      DateFormat('d MMM, yyyy').format(confession.createdAt),
+                      style: CupidTextStyles.label3.copyWith(fontSize: 12),
+                    ),
                   ),
                   if (!isMine) ...[
-                    const SizedBox(width: 4),
                     IconButton(
-                      icon:
-                          const Icon(Icons.report_problem, size: 20, color: CupidColors.cupidPeach),
+                      icon: const Icon(Icons.report_problem, size: 20, color: CupidColors.red),
                       onPressed: () {
                         onReport!();
                       },
@@ -99,6 +112,7 @@ class ConfessionCard extends StatelessWidget {
           Row(
             children: [
               _ActionButton(
+                borderRadius: 20,
                 icon: FluentIcons.add_12_regular,
                 onTap: () {
                   showDialog(
@@ -117,7 +131,7 @@ class ConfessionCard extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 8),
               Row(
                 children: [
                   if (confession.reactions.isNotEmpty) ...[
@@ -153,7 +167,7 @@ class ConfessionCard extends StatelessWidget {
               if (isMine) ...[
                 _ActionButton(
                   icon: FluentIcons.delete_24_regular,
-                  color: Colors.red.withValues(alpha: 0.7),
+                  color: Colors.red,
                   onTap: () {
                     if (onDelete != null) onDelete!();
                   },
@@ -175,8 +189,10 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final Color? color;
+  final double borderRadius;
 
-  const _ActionButton({required this.icon, required this.onTap, this.color});
+  const _ActionButton(
+      {required this.icon, required this.onTap, this.color, this.borderRadius = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +201,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
           border: Border.all(
             color: CupidColors.greyColor.withValues(alpha: 0.2),
           ),

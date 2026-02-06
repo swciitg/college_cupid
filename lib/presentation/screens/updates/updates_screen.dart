@@ -55,17 +55,15 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                 style: CupidTextStyles.brandTitle1,
               ),
             ),
-            SizedBox(
-              height: 50,
-              child: CupidTabBar(
-                controller: _tabController,
-                tabs: _tabs,
-                onTap: (index) {
-                  ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: _tabs[index]);
-                },
-              ),
+            const SizedBox(height: 12),
+            CupidTabBar(
+              controller: _tabController,
+              tabs: _tabs,
+              onTap: (index) {
+                ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: _tabs[index]);
+              },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Expanded(
               child: RefreshIndicator(
                 color: CupidColors.primary,

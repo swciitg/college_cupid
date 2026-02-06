@@ -6,9 +6,8 @@ import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 
-final confessionsProvider =
-    StateNotifierProvider<ConfessionsController, ConfessionsState>(
-        (ref) => ConfessionsController(ref.read(confessionsRepoProvider)));
+final confessionsProvider = StateNotifierProvider<ConfessionsController, ConfessionsState>(
+    (ref) => ConfessionsController(ref.read(confessionsRepoProvider)));
 
 enum ConfessionsFilter { all, spottedInCampus, gossip, byYou }
 
@@ -22,7 +21,7 @@ extension ConfessionsFilterExtension on ConfessionsFilter {
       case ConfessionsFilter.gossip:
         return 'Gossip';
       case ConfessionsFilter.byYou:
-        return 'My Confessions';
+        return 'By You';
     }
   }
 }
@@ -81,20 +80,17 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
     try {
       if (LoginStore.email == null) return;
 
-      final encryptedEmail =
-          Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
+      final encryptedEmail = Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
 
       final myConfessions = await _repository.getMyConfessions(encryptedEmail);
       final myIds = myConfessions.map((c) => c.id).toSet();
 
       // Optimize: Populate the 'byYou' list since we have the data
       // This avoids a second fetch when user clicks the tab
-      final updatedMap =
-          Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
+      final updatedMap = Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
       updatedMap[ConfessionsFilter.byYou] = myConfessions;
 
-      state =
-          state.copyWith(myConfessionIds: myIds, confessionsMap: updatedMap);
+      state = state.copyWith(myConfessionIds: myIds, confessionsMap: updatedMap);
     } catch (e) {
       debugPrint('Error fetching my confession IDs: $e');
     }
@@ -116,22 +112,18 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
 
     final currentPage = isRefresh ? 0 : (state.pages[targetFilter] ?? 0);
 
-    state = state.copyWith(
-        isLoading: true, errorMessage: null, selectedFilter: targetFilter);
+    state = state.copyWith(isLoading: true, errorMessage: null, selectedFilter: targetFilter);
 
     try {
       List<Confession> newConfessions;
       if (targetFilter == ConfessionsFilter.byYou) {
         if (LoginStore.email == null) {
-          state = state.copyWith(
-              isLoading: false, errorMessage: "User email not found");
+          state = state.copyWith(isLoading: false, errorMessage: "User email not found");
           return;
         }
 
-        debugPrint(
-            'DEBUG: Fetching "By You" confessions for email: ${LoginStore.email}');
-        final encryptedEmail = Encryption.encryptEmail(
-            LoginStore.email!, Endpoints.apiSecurityKey);
+        debugPrint('DEBUG: Fetching "By You" confessions for email: ${LoginStore.email}');
+        final encryptedEmail = Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
         debugPrint('DEBUG: Encrypted Email: $encryptedEmail');
 
         newConfessions = await _repository.getMyConfessions(encryptedEmail);
@@ -143,23 +135,17 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
         } else if (targetFilter == ConfessionsFilter.gossip) {
           category = ConfessionCategory.GOSSIP;
         }
-        newConfessions = await _repository.getConfessions(
-            category: category, page: currentPage);
+        newConfessions = await _repository.getConfessions(category: category, page: currentPage);
       }
 
-      final Map<ConfessionsFilter, List<Confession>> updatedMap =
-          Map.from(state.confessionsMap);
+      final Map<ConfessionsFilter, List<Confession>> updatedMap = Map.from(state.confessionsMap);
       final Map<ConfessionsFilter, int> updatedPages = Map.from(state.pages);
-      final Map<ConfessionsFilter, bool> updatedHasMore =
-          Map.from(state.hasMore);
+      final Map<ConfessionsFilter, bool> updatedHasMore = Map.from(state.hasMore);
 
       if (isRefresh || currentPage == 0) {
         updatedMap[targetFilter] = newConfessions;
       } else {
-        updatedMap[targetFilter] = [
-          ...?updatedMap[targetFilter],
-          ...newConfessions
-        ];
+        updatedMap[targetFilter] = [...?updatedMap[targetFilter], ...newConfessions];
       }
 
       updatedPages[targetFilter] = currentPage;
@@ -203,20 +189,15 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
         } else if (currentFilter == ConfessionsFilter.gossip) {
           category = ConfessionCategory.GOSSIP;
         }
-        newConfessions = await _repository.getConfessions(
-            category: category, page: nextPage);
+        newConfessions = await _repository.getConfessions(category: category, page: nextPage);
       }
 
-      final updatedMap =
-          Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
+      final updatedMap = Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
       final updatedPages = Map<ConfessionsFilter, int>.from(state.pages);
       final updatedHasMore = Map<ConfessionsFilter, bool>.from(state.hasMore);
 
       if (newConfessions.isNotEmpty) {
-        updatedMap[currentFilter] = [
-          ...?updatedMap[currentFilter],
-          ...newConfessions
-        ];
+        updatedMap[currentFilter] = [...?updatedMap[currentFilter], ...newConfessions];
         updatedPages[currentFilter] = nextPage;
       } else {
         updatedHasMore[currentFilter] = false;
@@ -247,11 +228,9 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
         state = state.copyWith(errorMessage: 'User email not found');
         return false;
       }
-      final encryptedEmail =
-          Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
+      final encryptedEmail = Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
 
-      final success =
-          await _repository.postConfession(text, category.name, encryptedEmail);
+      final success = await _repository.postConfession(text, category.name, encryptedEmail);
       if (success) {
         _fetchMyConfessionIds();
         await refresh();
@@ -266,8 +245,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
   }
 
   void _updateConfessionInList(Confession updatedConfession) {
-    final updatedMap =
-        Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
+    final updatedMap = Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
 
     updatedMap.forEach((filter, list) {
       final index = list.indexWhere((c) => c.id == updatedConfession.id);
@@ -282,8 +260,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
   }
 
   void _removeConfessionFromList(String id) {
-    final updatedMap =
-        Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
+    final updatedMap = Map<ConfessionsFilter, List<Confession>>.from(state.confessionsMap);
 
     updatedMap.forEach((filter, list) {
       updatedMap[filter] = list.where((c) => c.id != id).toList();
@@ -312,8 +289,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
         }
 
         if (target != null) {
-          final hasReacted =
-              target.reactions.any((r) => r.user == LoginStore.userId);
+          final hasReacted = target.reactions.any((r) => r.user == LoginStore.userId);
           List<Reaction> updatedReactions;
           if (hasReacted) {
             updatedReactions = target.reactions.map((r) {
@@ -328,8 +304,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
               Reaction(reaction: reaction, user: LoginStore.userId!)
             ];
           }
-          final updatedConfession =
-              target.copyWith(reactions: updatedReactions);
+          final updatedConfession = target.copyWith(reactions: updatedReactions);
           _updateConfessionInList(updatedConfession);
         }
       } else {
@@ -343,8 +318,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
   Future<bool> deleteConfession(String id) async {
     try {
       debugPrint('DEBUG CONTROLLER: Deleting confession $id');
-      final encryptedEmail =
-          Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
+      final encryptedEmail = Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
       final success = await _repository.deleteConfession(id, encryptedEmail);
       debugPrint('DEBUG CONTROLLER: Delete result: $success');
       if (success) {
@@ -362,8 +336,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
     }
   }
 
-  Future<void> reportConfession(
-      String id, ConfessionReportCategory category) async {
+  Future<void> reportConfession(String id, ConfessionReportCategory category) async {
     try {
       final success = await _repository.reportConfession(id, category);
       if (!success) {
@@ -395,9 +368,7 @@ class ConfessionsController extends StateNotifier<ConfessionsState> {
 
         if (target != null) {
           final updatedConfession = target.copyWith(
-            reactions: target.reactions
-                .where((r) => r.user != LoginStore.userId)
-                .toList(),
+            reactions: target.reactions.where((r) => r.user != LoginStore.userId).toList(),
           );
           _updateConfessionInList(updatedConfession);
         }

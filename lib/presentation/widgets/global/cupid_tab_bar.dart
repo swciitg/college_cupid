@@ -18,44 +18,63 @@ class CupidTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TabBar(
-      controller: controller,
-      isScrollable: isScrollable,
-      indicatorColor: Colors.transparent,
-      dividerColor: Colors.transparent,
-      labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      tabAlignment: TabAlignment.start,
-      onTap: onTap,
-      tabs: tabs.map((title) {
-        return AnimatedBuilder(
-          animation: controller,
-          builder: (context, child) {
-            final isSelected = controller.index == tabs.indexOf(title);
-            return Tab(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? CupidColors.primary : Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected
-                        ? Colors.transparent
-                        : CupidColors.greyColor.withValues(alpha: 0.2),
-                  ),
-                ),
-                child: Text(
-                  title,
-                  style: CupidTextStyles.label2.copyWith(
-                    color: isSelected ? Colors.white : Colors.black,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      }).toList(),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(tabs.length, (index) {
+              final title = tabs[index];
+              final isFirst = index == 0;
+              final isLast = index == tabs.length - 1;
+              return AnimatedBuilder(
+                animation: controller,
+                builder: (context, child) {
+                  final isSelected = controller.index == index;
+                  return GestureDetector(
+                    onTap: () {
+                      controller.animateTo(index);
+                      onTap?.call(index);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? CupidColors.primary : Colors.transparent,
+                        borderRadius: BorderRadius.only(
+                          topLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+                          bottomLeft: isFirst ? const Radius.circular(11) : Radius.zero,
+                          topRight: isLast ? const Radius.circular(11) : Radius.zero,
+                          bottomRight: isLast ? const Radius.circular(11) : Radius.zero,
+                        ),
+                        border: Border.all(
+                          color: CupidColors.greyColor.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          title,
+                          style: CupidTextStyles.label2.copyWith(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -77,15 +77,12 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 50,
-              child: CupidTabBar(
-                controller: _tabController,
-                tabs: _tabs.map((e) => e.displayName).toList(),
-                onTap: (index) {
-                  ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
-                },
-              ),
+            CupidTabBar(
+              controller: _tabController,
+              tabs: _tabs.map((e) => e.displayName).toList(),
+              onTap: (index) {
+                ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);
+              },
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -212,7 +209,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
             color: CupidColors.primary,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: CupidColors.primary.withValues(alpha: 0.4),
