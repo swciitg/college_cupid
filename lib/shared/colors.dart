@@ -62,7 +62,11 @@ class CupidColors {
   static const Color borderSecondary = Color(0xFFE3E3E4);
 
   static const Color keyboardTextLowEm = Color.fromRGBO(140, 146, 156, 1);
-  // rgba
+  static const Color surfaceS2 = Color.fromRGBO(242, 242, 244, 1);
+  static const Color surfaceS0 = Color.fromRGBO(255, 255, 255, 1);
+  
+  // rgba(226, 226, 226, 1)
+  // rgbargba(255, 255, 255, 1)
   
 
   // static const Color surfacePrimaryMedEm = Color(0xFF6F61FF);

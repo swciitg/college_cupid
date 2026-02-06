@@ -68,12 +68,18 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
     });
 
     return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
+      backgroundColor: CupidColors.surfaceS2,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
               padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Text(
                 'Confessions',
@@ -94,6 +100,9 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
               ),
             ),
             const SizedBox(height: 16),
+                ],
+              ),
+            ),
             Expanded(
               child: state.isLoading &&
                       (state.confessions == null || state.confessions!.isEmpty)
@@ -239,11 +248,11 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            color: CupidColors.cupidPurple,
-            borderRadius: BorderRadius.circular(30),
+            color: CupidColors.primary,
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: CupidColors.cupidPurple.withOpacity(0.4),
+                color: CupidColors.primaryLight,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -261,8 +270,8 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(FluentIcons.edit_24_filled,
-                  color: Colors.white, size: 20),
+              const Icon(Icons.edit,
+                  color: CupidColors.whitePrimary, size: 20),
             ],
           ),
         ),

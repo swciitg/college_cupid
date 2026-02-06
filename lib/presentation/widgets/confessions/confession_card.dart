@@ -30,96 +30,95 @@ class ConfessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: CupidColors.surfaceS0,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: 8,
             children: [
-              Flexible(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: CupidColors.cupidBlue
-                        .withOpacity(0.2), // Reuse existing color
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    confession.typeOfConfession.displayName,
-                    style: CupidTextStyles.label3.copyWith(
-                      color: CupidColors.cupidBlue, // Reuse existing color
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  Text(
-                    DateFormat('d MMM, yyyy').format(confession.createdAt),
-                    style: CupidTextStyles.label3.copyWith(fontSize: 12),
-                  ),
-                  if (!isMine) ...[
-                    const SizedBox(width: 4),
-                    IconButton(
-                      icon: const Icon(Icons.report_problem,
-                          size: 20, color: CupidColors.cupidPeach),
-                      onPressed: () {
-                        onReport!();
-                      },
-                    ),
-                  ],
-                ],
-              ),
+              chip(confession.typeOfConfession.displayName),
+              chip(DateFormat('d MMM, yyyy').format(confession.createdAt))
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             confession.text,
             style: CupidTextStyles.title1.copyWith(
-              fontSize: 14,
+              color: CupidColors.greySecondary,
+              fontSize: 25,
               height: 1.5,
             ),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              _ActionButton(
-                icon: FluentIcons.add_12_regular,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => Dialog(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      child: ReactionPicker(
-                        selectedReaction: myReaction,
-                        onReactionSelected: (reaction) {
-                          if (onReact != null) onReact!(reaction);
-                          Navigator.pop(context);
+              Builder(
+                builder: (context) {
+                  final GlobalKey buttonKey = GlobalKey();
+
+                  return _ActionButton(
+                    key: buttonKey,
+                    icon: Icons.add,
+                    onTap: () {
+                      final RenderBox renderBox = buttonKey.currentContext!
+                          .findRenderObject() as RenderBox;
+                      final buttonPosition =
+                          renderBox.localToGlobal(Offset.zero);
+                      final buttonSize = renderBox.size;
+
+                      showGeneralDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        barrierLabel: 'Dismiss',
+                        barrierColor: Colors.black45,
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return Stack(
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () => Navigator.pop(context),
+                                child: const SizedBox.expand(),
+                              ),
+                              Positioned(
+                                top: buttonPosition.dy -
+                                    60, // Adjust offset as needed
+                                left: buttonPosition.dx,
+                                child: ScaleTransition(
+                                  scale: CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutBack,
+                                  ),
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: ReactionPicker(
+                                        selectedReaction: myReaction,
+                                        onReactionSelected: (reaction) {
+                                          if (onReact != null)
+                                            onReact!(reaction);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 16),
               Row(
                 children: [
                   if (confession.reactions.isNotEmpty) ...[
@@ -157,11 +156,15 @@ class ConfessionCard extends StatelessWidget {
               const Spacer(),
               if (isMine) ...[
                 _ActionButton(
-                  icon: FluentIcons.delete_24_regular,
-                  color: Colors.red.withOpacity(0.7),
+                  icon: Icons.delete_outline,
+                  color: CupidColors.red,
                   onTap: () {
                     if (onDelete != null) onDelete!();
                   },
+                  shapeDecoration: BoxDecoration(
+                      border: Border.all(
+                          color: CupidColors.borderSecondary, width: 1),
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 const SizedBox(width: 12),
               ],
@@ -179,24 +182,51 @@ class ConfessionCard extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final BoxDecoration? shapeDecoration;
   final Color? color;
 
-  const _ActionButton({required this.icon, required this.onTap, this.color});
+  const _ActionButton(
+      {super.key,
+      required this.icon,
+      required this.onTap,
+      this.color,
+      this.shapeDecoration});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: CupidColors.greyColor.withOpacity(0.2),
-          ),
-        ),
-        child: Icon(icon, size: 14, color: color ?? CupidColors.greyColor),
+        padding: const EdgeInsets.all(10),
+        decoration: shapeDecoration ??
+            BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: CupidColors.borderSecondary,
+              ),
+            ),
+        child: Center(
+            child: Icon(icon, size: 18, color: color ?? CupidColors.grey700)),
       ),
     );
   }
+}
+
+Widget chip(String label) {
+  return Container(
+    height: 24,
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+    decoration: ShapeDecoration(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(width: 1, color: CupidColors.borderSecondary),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    child: Center(
+      child: Text(label,
+          style: CupidTextStyles.label3
+              .copyWith(color: CupidColors.greySecondary)),
+    ),
+  );
 }

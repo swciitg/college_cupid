@@ -26,7 +26,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.swciitg.college_cupid"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "25.2.9519653"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

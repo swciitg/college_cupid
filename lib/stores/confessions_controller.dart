@@ -22,7 +22,7 @@ extension ConfessionsFilterExtension on ConfessionsFilter {
       case ConfessionsFilter.gossip:
         return 'Gossip';
       case ConfessionsFilter.byYou:
-        return 'My Confessions';
+        return 'By You';
     }
   }
 }
