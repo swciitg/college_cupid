@@ -81,7 +81,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               height: 60,
                               decoration: BoxDecoration(
                                 color: CupidColors.offWhiteColor,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -90,8 +90,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                   const SizedBox(width: 8),
                                   Text(
                                     "Pass",
-                                    style: CupidTextStyles.brandTitle2.copyWith(
-                                      fontSize: 18,
+                                    style: CupidTextStyles.label1.copyWith(
                                       color: Colors.black,
                                     ),
                                   ),
@@ -109,7 +108,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                             height: 60,
                             decoration: BoxDecoration(
                               color: CupidColors.offWhiteColor,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -117,9 +116,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                 const Icon(FluentIcons.heart_24_filled, color: Colors.black),
                                 const SizedBox(width: 8),
                                 Text(
-                                  "Smash",
-                                  style: CupidTextStyles.brandTitle1.copyWith(
-                                    fontSize: 18,
+                                  "Like",
+                                  style: CupidTextStyles.label1.copyWith(
                                     color: Colors.black,
                                   ),
                                 ),

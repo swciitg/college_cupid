@@ -67,7 +67,7 @@ class ConfessionReplyCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: CupidColors.primary.withValues(alpha: 0.4),
+        color: CupidColors.cupidBlue,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
