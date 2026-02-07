@@ -203,9 +203,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       ),
                       child: Text(
                         ques.question,
-                        style: CupidTextStyles.body1.copyWith(
+                        style: CupidTextStyles.label3.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
                           color: CupidColors.greySecondary,
                         ),
                       ),
@@ -268,8 +267,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     // Otherwise show text answer
     return Text(
       ques.answer,
-      style: CupidTextStyles.body1.copyWith(
-        fontSize: 15,
+      style: CupidTextStyles.label1.copyWith(
+        color: CupidColors.greySecondary,
       ),
     );
   }

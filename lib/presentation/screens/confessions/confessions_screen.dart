@@ -69,6 +69,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              width: double.infinity,
               decoration: const BoxDecoration(color: CupidColors.whitePrimary),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,8 +238,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.edit,
-                  color: CupidColors.whitePrimary, size: 20),
+              const Icon(Icons.edit, color: CupidColors.whitePrimary, size: 20),
             ],
           ),
         ),
