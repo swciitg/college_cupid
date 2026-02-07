@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class RestoreDriveScreen extends ConsumerStatefulWidget {
-  const RestoreDriveScreen({super.key});
+  final String? googleAccountEmail;
+
+  const RestoreDriveScreen({this.googleAccountEmail, super.key});
 
   @override
   ConsumerState<RestoreDriveScreen> createState() => _RestoreDriveScreenState();
@@ -135,7 +137,8 @@ class _RestoreDriveScreenState extends ConsumerState<RestoreDriveScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+        body: SafeArea(
+      child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -159,50 +162,96 @@ class _RestoreDriveScreenState extends ConsumerState<RestoreDriveScreen> {
               ),
               const SizedBox(height: 48),
 
-              // Google Account Warning
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.orange.withValues(alpha: 0.3),
-                    width: 1,
+              // Google Account Display
+              if (widget.googleAccountEmail != null && widget.googleAccountEmail!.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: CupidColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: CupidColors.primary.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.account_circle,
+                        color: CupidColors.primary,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Connect with this account:',
+                              style: CupidTextStyles.label2.copyWith(
+                                fontSize: 13,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              widget.googleAccountEmail!,
+                              style: CupidTextStyles.label1.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: CupidColors.primary,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.orange,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Important: Use the Correct Google Account',
+                              style: CupidTextStyles.label1.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange.shade900,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'You must connect with the same Google account you used before. Using a different account will result in generating new keys, and you won\'t be able to recover your previous data.',
+                              style: CupidTextStyles.body2.copyWith(
+                                fontSize: 12,
+                                color: Colors.orange.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.orange,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Important: Use the Correct Google Account',
-                            style: CupidTextStyles.label1.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange.shade900,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'You must connect with the same Google account you used before. Using a different account will result in generating new keys, and you won\'t be able to recover your previous data.',
-                            style: CupidTextStyles.body2.copyWith(
-                              fontSize: 12,
-                              color: Colors.orange.shade800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 24),
 
               // Info card
@@ -280,7 +329,7 @@ class _RestoreDriveScreenState extends ConsumerState<RestoreDriveScreen> {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: 80),
 
               // Restore button
               ElevatedButton(
@@ -352,7 +401,7 @@ class _RestoreDriveScreenState extends ConsumerState<RestoreDriveScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildBulletPoint(String text) {

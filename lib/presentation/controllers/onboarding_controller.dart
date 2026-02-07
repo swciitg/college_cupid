@@ -388,13 +388,13 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   }
 
   // Google Drive connection methods
-  Future<void> connectGoogleDrive() async {
+  Future<void> connectGoogleDrive({String? loginHint}) async {
     try {
       state = state.copyWith(loading: true, loadingMessage: "Connecting to Google Drive...");
 
-      // Get stored Google account email if exists
+      // Get stored Google account email if exists (unless loginHint is provided)
       final userProfile = _ref.read(userProvider).myProfile;
-      final storedEmail = userProfile?.googleAccountEmail;
+      final storedEmail = loginHint ?? userProfile?.googleAccountEmail;
 
       // Sign in with Google and initialize Drive API
       // Pass stored email as hint to force using the same account
@@ -427,6 +427,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("Error connecting to Google Drive: $e");
       showSnackBar("Failed to connect to Google Drive. Please try again.");
       state = state.copyWith(loading: false, loadingMessage: null);
+      rethrow; // Allow caller to handle the error
     }
   }
 

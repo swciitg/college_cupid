@@ -120,7 +120,12 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               // Only show restore page if user was using Google Drive
               if (storageType == StorageType.googleDrive) {
                 debugPrint('NAVIGATING TO RESTORE PAGE');
-                goRouter.goNamed(AppRoutes.restoreDrive.name);
+                goRouter.goNamed(
+                  AppRoutes.restoreDrive.name,
+                  queryParameters: {
+                    'googleEmail': userProfileData.googleAccountEmail ?? '',
+                  },
+                );
               } else {
                 debugPrint('LOCAL STORAGE USER - LOADING DATA AND SKIPPING RESTORE PAGE');
 

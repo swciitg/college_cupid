@@ -57,7 +57,10 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/${AppRoutes.restoreDrive.name}',
       name: AppRoutes.restoreDrive.name,
-      builder: (context, state) => const RestoreDriveScreen(),
+      builder: (context, state) {
+        final googleEmail = state.uri.queryParameters['googleEmail'];
+        return RestoreDriveScreen(googleAccountEmail: googleEmail);
+      },
     ),
     GoRoute(
       path: '/${AppRoutes.home.name}',
