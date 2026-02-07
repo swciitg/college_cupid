@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:college_cupid/domain/models/storage_type.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ class UserProfile {
   List<VoiceRecording> voiceRecordings;
   String phnNumber;
   String insta;
+  StorageType storageType;
+  String? googleAccountEmail;
   // int whatsappNumber;
   // String instaUserName;
 
@@ -54,6 +57,8 @@ class UserProfile {
     this.voiceRecordings = const [],
     this.phnNumber = "",
     this.insta = '',
+    this.storageType = StorageType.localStorage,
+    this.googleAccountEmail,
     // this.whatsappNumber = 0,
     // this.instaUserName = '',
   });
@@ -89,6 +94,13 @@ class UserProfile {
           (json['surpriseQuiz'] as List? ?? []).map((e) => QuizQuestion.fromJson(e)).toList(),
       voiceRecordings:
           (json['voiceRecordings'] as List? ?? []).map((e) => VoiceRecording.fromJson(e)).toList(),
+      phnNumber: json['whatsappNumber'] ?? '',
+      insta: json['insta'] ?? '',
+      hometown: json['hometown'] ?? '',
+      age: json['age'] ?? 20,
+      zodiac: json['zodiac'] != null ? Zodiac.fromDatabaseString(json['zodiac']) : Zodiac.aries,
+      storageType: StorageTypeExtension.fromString(json['storageType'] ?? 'LOCAL_STORAGE'),
+      googleAccountEmail: json['googleAccountEmail'],
     );
   }
 
@@ -119,6 +131,10 @@ class UserProfile {
     data['personalityType'] = PersonalityType.random().name;
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
+    data['storageType'] = storageType.value;
+    if (googleAccountEmail != null) {
+      data['googleAccountEmail'] = googleAccountEmail;
+    }
 
     return data;
   }
@@ -144,6 +160,8 @@ class UserProfile {
     String? hometown,
     int? age,
     Zodiac? zodiac,
+    StorageType? storageType,
+    String? googleAccountEmail,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -164,6 +182,8 @@ class UserProfile {
       zodiac: zodiac ?? this.zodiac,
       phnNumber: phnNumber ?? this.phnNumber,
       insta: insta ?? this.insta,
+      storageType: storageType ?? this.storageType,
+      googleAccountEmail: googleAccountEmail ?? this.googleAccountEmail,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
+import 'package:college_cupid/services/firebase_drive_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,6 +56,13 @@ class LoginStore {
     dhPrivateKey = null;
     dhPublicKey = null;
     rollNumber = null;
+
+    // Sign out from Google and Firebase
+    try {
+      await FirebaseDriveService.signOut();
+    } catch (e) {
+      debugPrint('Error signing out from Firebase/Google: $e');
+    }
 
     await SecureStorageService.clear();
     return prefs.clear();

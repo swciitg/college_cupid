@@ -19,6 +19,14 @@ class MockEventsRepository implements EventsRepository {
         actionText: 'Coming Soon',
         isLive: true,
       ),
+      EventModel(
+        id: '2',
+        title: 'Secret Match Coming Soon',
+        description:
+            'Take a Personality test and get matched with someone who shares your interests!',
+        actionText: 'Coming Soon',
+        isLive: true,
+      ),
     ];
   }
 }

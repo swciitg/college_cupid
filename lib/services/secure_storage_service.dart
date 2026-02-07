@@ -22,6 +22,27 @@ class SecureStorageService {
     return storage.read(key: DatabaseStrings.outlookRefreshToken);
   }
 
+  // Google Drive token methods
+  static Future<void> setGoogleAccessToken(String value) async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: DatabaseStrings.googleAccessToken, value: value);
+  }
+
+  static Future<String?> getGoogleAccessToken() async {
+    const storage = FlutterSecureStorage();
+    return storage.read(key: DatabaseStrings.googleAccessToken);
+  }
+
+  static Future<void> setGoogleRefreshToken(String value) async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: DatabaseStrings.googleRefreshToken, value: value);
+  }
+
+  static Future<String?> getGoogleRefreshToken() async {
+    const storage = FlutterSecureStorage();
+    return storage.read(key: DatabaseStrings.googleRefreshToken);
+  }
+
   static Future<void> clear() async {
     const storage = FlutterSecureStorage();
     return storage.deleteAll();

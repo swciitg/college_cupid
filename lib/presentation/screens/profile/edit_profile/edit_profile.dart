@@ -8,6 +8,7 @@ import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/widgets/recorder.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
@@ -19,7 +20,6 @@ import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -49,17 +49,58 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   late UserProfile profileSave;
   List<QuizQuestion> surprizeQuiz = [];
   List<TextEditingController> textEditingControllers = [];
-  final questionScrollController = ScrollController();
-  var _currentQuestion = 0;
-  double? screenWidth;
+  final Map<int, String?> _audioPaths = {}; // Track audio paths for each question
+  late TextEditingController _instaController;
+  late TextEditingController _phoneController;
+  late TextEditingController _hometownController;
+  late TextEditingController _ageController;
 
   @override
   void initState() {
     final userState = ref.read(userProvider);
     profileSave = userState.myProfile!;
-    surprizeQuiz.addAll(profileSave.surpriseQuiz);
-    textEditingControllers.addAll(
-        profileSave.surpriseQuiz.map((e) => TextEditingController(text: e.answer)).toList());
+
+    // Merge surpriseQuiz and voiceRecordings like in display_profile_info.dart
+    final Map<String, QuizQuestion> questionsMap = {};
+
+    // Add all text quiz answers
+    for (var quiz in profileSave.surpriseQuiz) {
+      questionsMap[quiz.question] = quiz;
+    }
+
+    // Add voice recordings - either merge with existing or add new
+    for (var voice in profileSave.voiceRecordings) {
+      if (voice.question.isNotEmpty && voice.answer.isNotEmpty) {
+        if (questionsMap.containsKey(voice.question)) {
+          // Merge: add audioPath to existing question
+          questionsMap[voice.question] = questionsMap[voice.question]!.copyWith(
+            audioPath: voice.answer,
+          );
+        } else {
+          // Add new question with only audio answer
+          questionsMap[voice.question] = QuizQuestion(
+            question: voice.question,
+            answer: '',
+            audioPath: voice.answer,
+          );
+        }
+      }
+    }
+
+    surprizeQuiz.addAll(questionsMap.values);
+    debugPrint('Total questions after merge: ${surprizeQuiz.length}');
+    for (var q in surprizeQuiz) {
+      debugPrint('Question: ${q.question}, hasText: ${q.answer.isNotEmpty}, hasAudio: ${q.audioPath != null}');
+    }
+    
+    textEditingControllers
+        .addAll(surprizeQuiz.map((e) => TextEditingController(text: e.answer)).toList());
+
+    // Initialize audio paths from existing data
+    for (int i = 0; i < surprizeQuiz.length; i++) {
+      _audioPaths[i] = surprizeQuiz[i].audioPath;
+    }
+
     _selectedProgram = userState.myProfile!.program!;
     _selectedGender = userState.myProfile!.gender!;
     _selectedSexualOrientation = userState.myProfile!.sexualOrientation?.type;
@@ -67,22 +108,26 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     _yearOfJoin = DateTime.now().year % 100 - userState.myProfile!.yearOfJoin!;
     _relationshipGoal = userState.myProfile!.relationshipGoal?.goal ?? LookingFor.longTermPartner;
     _displayRelationshipGoal = userState.myProfile!.relationshipGoal?.display ?? true;
+
+    _instaController = TextEditingController(text: userState.myProfile!.insta);
+    _phoneController = TextEditingController(text: userState.myProfile!.phnNumber);
+    _hometownController = TextEditingController(text: userState.myProfile!.hometown);
+    _ageController = TextEditingController(text: userState.myProfile!.age.toString());
+
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(onboardingControllerProvider.notifier).setInterests(
             userState.myProfile!.interests,
           );
     });
-    questionScrollController.addListener(() {
-      if (screenWidth == null) return;
-      _currentQuestion = (questionScrollController.offset / (screenWidth! - 60)).toInt();
-      setState(() {});
-    });
   }
 
   @override
   void dispose() {
-    questionScrollController.dispose();
+    _instaController.dispose();
+    _phoneController.dispose();
+    _hometownController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -117,11 +162,40 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       showSnackBar("Please select at least 5 interests");
       return;
     }
-    final answers = textEditingControllers.map((e) => e.text.trim()).toList();
-    if (answers.any((e) => e.isEmpty)) {
-      showSnackBar("Please all the quiz questions!");
+
+    // Validate phone number
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isNotEmpty) {
+      if (phoneNumber.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(phoneNumber)) {
+        showSnackBar("Phone number must be exactly 10 digits");
+        return;
+      }
+    }
+
+    // Validate age
+    final ageText = _ageController.text.trim();
+    int? age;
+    if (ageText.isNotEmpty) {
+      age = int.tryParse(ageText);
+      if (age == null || age < 18 || age > 100) {
+        showSnackBar("Please enter a valid age between 18 and 100");
+        return;
+      }
+    } else {
+      showSnackBar("Age is required");
       return;
     }
+
+    // Check if all questions have either text or audio answers
+    for (int i = 0; i < surprizeQuiz.length; i++) {
+      final hasText = textEditingControllers[i].text.trim().isNotEmpty;
+      final hasAudio = _audioPaths[i] != null && _audioPaths[i]!.isNotEmpty;
+      if (!hasText && !hasAudio) {
+        showSnackBar("Please answer all quiz questions with text or audio!");
+        return;
+      }
+    }
+
     setState(() {
       _loading = true;
     });
@@ -165,6 +239,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       final userProfile = profile.copyWith(
         gender: _selectedGender,
         program: _selectedProgram,
+        age: age,
+        insta: _instaController.text.trim(),
+        phnNumber: _phoneController.text.trim(),
+        hometown: _hometownController.text.trim(),
         sexualOrientation: _selectedSexualOrientation != null
             ? SexualOrientationModel(
                 type: _selectedSexualOrientation!,
@@ -177,10 +255,27 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         ),
         images: updatedImages,
         surpriseQuiz: List.generate(
-          3,
-          (index) => surprizeQuiz[index].copyWith(answer: answers[index]),
+          surprizeQuiz.length,
+          (index) {
+            final audioPath = _audioPaths[index];
+            // Only include local file paths for upload, not server paths
+            final isLocalFile = audioPath != null &&
+                !audioPath.startsWith('/uploads/') &&
+                !audioPath.startsWith('http');
+
+            return surprizeQuiz[index].copyWith(
+              answer: textEditingControllers[index].text.trim(),
+              audioPath: isLocalFile ? audioPath : null,
+            );
+          },
         ),
       );
+
+      // Upload audio files if new recordings exist
+      _loadingMessage = "Uploading audio notes";
+      setState(() {});
+      await ref.read(userProfileRepoProvider).postAudioNotes(userProfile);
+
       await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
       ref.read(userProvider.notifier).updateMyProfile(userProfile);
       await SharedPrefService.saveMyProfile(userProfile.toJson());
@@ -212,8 +307,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    screenWidth = size.width;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -239,9 +332,29 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    _nameField(),
+                    _buildNameEmailHeader(),
+                    const SizedBox(height: 24),
+                    _buildCustomTextField(
+                      label: "Age",
+                      controller: _ageController,
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 16),
-                    _emailField(),
+                    _buildCustomTextField(
+                      label: "Instagram Username",
+                      controller: _instaController,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCustomTextField(
+                      label: "WhatsApp Number",
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCustomTextField(
+                      label: "Hometown",
+                      controller: _hometownController,
+                    ),
                     const SizedBox(height: 16),
                     const Text(
                       "Profile Pictures",
@@ -373,20 +486,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     const SizedBox(height: 8),
                     const Text("Surprise quiz", style: CupidTextStyles.title2),
                     const SizedBox(height: 8),
-                    _buildQuestions(size.width - 40),
+                    _buildQuestions(),
                     const SizedBox(height: 16),
-                    Center(
-                      child: DotsIndicator(
-                        dotsCount: 3,
-                        position: _currentQuestion,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        decorator: const DotsDecorator(
-                          color: Colors.black38,
-                          activeColor: Colors.black,
-                          size: Size(4, 4),
-                        ),
-                      ),
-                    ),
                     const Text("Looking for", style: CupidTextStyles.title2),
                     const SizedBox(height: 4),
                     const Text(
@@ -454,163 +555,158 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     );
   }
 
-  TextField _emailField() {
-    return TextField(
-      controller: TextEditingController(text: LoginStore.email),
-      decoration: const InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          borderSide: BorderSide(
-            width: 1.2,
-            color: CupidColors.blackColor,
+  Widget _buildNameEmailHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          LoginStore.displayName ?? 'User',
+          style: CupidTextStyles.brandTitle1.copyWith(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          borderSide: BorderSide(color: CupidColors.blackColor),
+        const SizedBox(height: 4),
+        Text(
+          LoginStore.email ?? '',
+          style: CupidTextStyles.body1.copyWith(
+            color: CupidColors.greySecondary,
+            fontSize: 14,
+          ),
         ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1.2),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1.5),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-      ).copyWith(
-        labelText: "Email",
-        floatingLabelAlignment: FloatingLabelAlignment.start,
-        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-        enabled: false,
-        fillColor: Colors.transparent,
-      ),
+      ],
     );
   }
 
-  TextField _nameField() {
-    return TextField(
-      controller: TextEditingController(text: LoginStore.displayName),
-      decoration: const InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          borderSide: BorderSide(
-            width: 1.2,
-            color: CupidColors.blackColor,
+  Widget _buildQuestions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: CupidColors.primaryLight,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline, color: CupidColors.primaryDark, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "Recording at least 1 voice note increases your chances of matchmaking.",
+                  style: CupidTextStyles.normalTextStyle.copyWith(
+                    color: CupidColors.primaryDark,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          borderSide: BorderSide(color: CupidColors.blackColor),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1.2),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1.5),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: CupidColors.greyColor, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-      ).copyWith(
-        labelText: "Name",
-        floatingLabelAlignment: FloatingLabelAlignment.start,
-        labelStyle: const TextStyle(color: CupidColors.secondaryColor),
-        enabled: false,
-        fillColor: Colors.transparent,
-      ),
-    );
-  }
-
-  Widget _buildQuestions(double width) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const PageScrollPhysics(),
-      controller: questionScrollController,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          3,
+        const SizedBox(height: 16),
+        ...List.generate(
+          surprizeQuiz.length,
           (index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.grey[200]!,
+                  width: 1,
+                ),
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SizedBox(
-                          width: width,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  surprizeQuiz[index].question,
-                                  style: CupidTextStyles.body1,
-                                ),
-                                const SizedBox(height: 8),
-                                TextField(
-                                  controller: textEditingControllers[index],
-                                  maxLength: 120,
-                                  maxLines: 4,
-                                  style: CupidTextStyles.body1.copyWith(
-                                    color: CupidColors.lightTextColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Question ${index + 1}',
+                              style: CupidTextStyles.body2.copyWith(
+                                color: CupidColors.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 4),
+                            Text(
+                              surprizeQuiz[index].question,
+                              style: CupidTextStyles.label1.copyWith(
+                                color: CupidColors.grey950,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        top: 8,
-                        right: 4,
+                      const SizedBox(width: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
                         child: IconButton(
                           onPressed: () {
                             var rand = math.Random().nextInt(quizQuestions.length);
-                            while (surprizeQuiz
-                                .any((e) => e.question == quizQuestions[rand].question)) {
+                            while (
+                                surprizeQuiz.any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
                             surprizeQuiz[index] = quizQuestions[rand];
-                            // textEditingControllers[index].clear();
+                            textEditingControllers[index].clear();
+                            _audioPaths[index] = null;
                             setState(() {});
                           },
-                          icon: const Icon(Icons.refresh_rounded, color: Colors.black),
+                          icon: const Icon(Icons.refresh_rounded, color: CupidColors.primary, size: 20),
+                          padding: const EdgeInsets.all(8),
+                          constraints: const BoxConstraints(),
+                          tooltip: 'Change question',
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  AudioRecorder(
+                    existingFilePath: _audioPaths[index],
+                    textController: textEditingControllers[index],
+                    onRecordingComplete: (path) {
+                      setState(() {
+                        _audioPaths[index] = path;
+                      });
+                      log("Recording completed for question $index: $path");
+                    },
+                    onDelete: () {
+                      setState(() {
+                        _audioPaths[index] = null;
+                      });
+                      log("Recording deleted for question $index");
+                    },
+                    onChanged: (text) {
+                      // Text changed callback
+                    },
                   ),
                 ],
               ),
             );
           },
         ),
-      ),
+      ],
     );
   }
 
@@ -875,6 +971,38 @@ class _EditProfileState extends ConsumerState<EditProfile> {
               size: 30,
               color: Colors.white,
             ),
+    );
+  }
+
+  Widget _buildCustomTextField({
+    required String label,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            style: CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

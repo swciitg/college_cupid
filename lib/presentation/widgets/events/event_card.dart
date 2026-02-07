@@ -15,24 +15,20 @@ class EventCard extends StatelessWidget {
     return Container(
       // // margin: const EdgeInsets.only(bottom: 20),
       // padding: const EdgeInsets.all(16),
-      
-      // decoration: BoxDecoration(
-      //   color: Colors.white,
-      //   borderRadius: BorderRadius.circular(20),
-      //   boxShadow: [
-      //     BoxShadow(
-      //       color: Colors.black.withValues(alpha: 0.05),
-      //       blurRadius: 10,
-      //       offset: const Offset(0, 4),
-      //     ),
-      //   ],
-      // ),
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: CupidColors.surfaceS0,
-        borderRadius: BorderRadius.circular(10),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,7 +64,8 @@ class EventCard extends StatelessWidget {
                 log("Action: ${event.actionText}");
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:CupidColors.primary.withAlpha(150), // Purple from screenshot
+                backgroundColor: CupidColors.primary
+                    .withAlpha(150), // Purple from screenshot
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

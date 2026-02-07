@@ -20,10 +20,7 @@ class BlockedUserInfoTile extends ConsumerWidget {
   final BlockedUsersStore blockedUsersStore;
 
   const BlockedUserInfoTile(
-      {required this.email,
-      required this.blockedUsersStore,
-      required this.index,
-      super.key});
+      {required this.email, required this.blockedUsersStore, required this.index, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,12 +30,12 @@ class BlockedUserInfoTile extends ConsumerWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CustomLoader();
-        } else if (snapshot.hasError) {
-          return Center(child: Text(snapshot.error.toString()));
+        } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+          return Center(
+              child: Text(snapshot.hasError ? snapshot.error.toString() : 'User not found'));
         } else {
           final profile = UserProfile.fromJson(snapshot.data!);
-          final program =
-              Program.values.firstWhere((p) => p == profile.program);
+          final program = Program.values.firstWhere((p) => p == profile.program);
 
           return Padding(
             padding: const EdgeInsets.only(top: 8),

@@ -13,7 +13,8 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
+class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _tabs = ['All', 'Profile', 'Confession', 'Match'];
 
@@ -43,13 +44,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
     final updatesState = ref.watch(updatesControllerProvider);
 
     return Scaffold(
-      backgroundColor: CupidColors.surfaceS2,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              decoration: const BoxDecoration(color: CupidColors.whitePrimary),
+              decoration: const BoxDecoration(color: Colors.transparent),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,7 +85,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                 onRefresh: () async {
                   await ref
                       .read(updatesControllerProvider.notifier)
-                      .fetchUpdates(filter: _tabs[_tabController.index], isRefresh: true);
+                      .fetchUpdates(
+                          filter: _tabs[_tabController.index], isRefresh: true);
                 },
                 child: updatesState.when(
                   data: (updates) {
@@ -119,7 +121,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (e, s) => Center(child: Text('Error: $e')),
                 ),
               ),

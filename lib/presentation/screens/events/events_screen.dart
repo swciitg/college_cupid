@@ -1,7 +1,7 @@
 import 'package:college_cupid/domain/models/event_model.dart';
 import 'package:college_cupid/presentation/widgets/events/event_card.dart';
 import 'package:college_cupid/repositories/events_repository.dart';
-import 'package:college_cupid/shared/colors.dart';
+
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +19,7 @@ class EventsScreen extends ConsumerWidget {
     final eventsState = ref.watch(eventsProvider);
 
     return Scaffold(
-      backgroundColor: CupidColors.surfaceS1,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),

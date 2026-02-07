@@ -40,7 +40,7 @@ class CupidTextStyles {
   );
 
   static const TextStyle label1 = TextStyle(
-    color:CupidColors.whitePrimary,
+    color: CupidColors.whitePrimary,
     fontSize: 15,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
@@ -48,13 +48,12 @@ class CupidTextStyles {
   );
 
   static const TextStyle label2 = TextStyle(
-    color:Color(0xFF5B616D) ,
+    color: Color(0xFF5B616D),
     fontSize: 13,
     fontFamily: 'OpenSauceTwo',
     fontWeight: FontWeight.w600,
     height: 1.54,
   );
-  
 
   static const TextStyle label3 = TextStyle(
     color: Color(0xFF5B616D) /* Text-med_em */,
@@ -133,8 +132,8 @@ class CupidStyles {
     ),
   );
 
-  static const textButtonStyle = TextStyle(
-      fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
+  static const textButtonStyle =
+      TextStyle(fontFamily: 'Neue Montreal', fontSize: 24, color: CupidColors.blackColor);
 
   static TextStyle countdownStyle(double size) {
     return TextStyle(
@@ -145,13 +144,23 @@ class CupidStyles {
   }
 
   static const statusBarStyle = SystemUiOverlayStyle(
-    statusBarColor: Colors.white,
+    statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.dark,
   );
 
-  static const countdownLabelStyle =
-      TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
+  // Edge-to-edge system UI style for consistent transparent bars
+  static const edgeToEdgeSystemUI = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  );
+
+  static const countdownLabelStyle = TextStyle(fontSize: 14, color: CupidColors.backgroundColor);
 
   static const headingStyle = TextStyle(
     fontFamily: 'Neue Montreal',
@@ -200,6 +209,5 @@ extension CupidTextStylesExtension on TextStyle {
   TextStyle setFontSize(double size) => copyWith(fontSize: size);
   TextStyle setFontFamily(String family) => copyWith(fontFamily: family);
   TextStyle setLineHeight(double height) => copyWith(height: height);
-  TextStyle setFontWeight(FontWeight fontWeight) =>
-      copyWith(fontWeight: fontWeight);
+  TextStyle setFontWeight(FontWeight fontWeight) => copyWith(fontWeight: fontWeight);
 }
