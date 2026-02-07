@@ -38,10 +38,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final myProfile = ref.watch(userProvider).myProfile;
-    final profileToShow = widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
+    final profileToShow =
+        widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       drawer: widget.isMine ? const DrawerWidget() : null,
       body: SafeArea(
         child: Stack(
@@ -66,9 +67,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       try {
                         bool success = await crushesRepo.addCrush(sharedSecret);
                         if (success) {
-                          final storageRepo = ref.read(storageRepositoryProvider);
+                          final storageRepo =
+                              ref.read(storageRepositoryProvider);
                           await storageRepo.addCrush(profileToShow.email);
-                          await crushesRepo.increaseCrushesCount(profileToShow.email);
+                          await crushesRepo
+                              .increaseCrushesCount(profileToShow.email);
                           if (mounted) {
                             showSnackBar('Added to crushes!');
                           }

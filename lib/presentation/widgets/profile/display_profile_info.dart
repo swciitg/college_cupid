@@ -8,14 +8,15 @@ import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/voice_player.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reply_bottom_sheet.dart';
 import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:college_cupid/shared/assets.dart';
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool backButton;
@@ -100,7 +101,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
                 if (allQuestions.length < 2) const SizedBox(height: 16),
                 if (allQuestions.length >= 2) _surpriseQues(allQuestions[1], 1),
-                if (widget.userProfile.images.length > 2) _image(null, width, 2),
+                if (widget.userProfile.images.length > 2)
+                  _image(null, width, 2),
                 if (allQuestions.length >= 3) _surpriseQues(allQuestions[2], 2),
                 const SizedBox(height: 24),
                 if (!widget.isMine) // Only show if not my profile
@@ -111,20 +113,26 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                           child: GestureDetector(
                             onTap: widget.onPass,
                             child: Container(
-                              height: 60,
+                              height: 80,
                               decoration: BoxDecoration(
-                                color: CupidColors.offWhiteColor,
-                                borderRadius: BorderRadius.circular(10),
+                                color: CupidColors.primaryLight,
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Row(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(FluentIcons.diamond_24_filled, color: Colors.black),
-                                  const SizedBox(width: 8),
+                                  SvgPicture.asset(
+                                    CupidIcons.passButtonIcon,
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                  const SizedBox(height: 4),
                                   Text(
                                     "Pass",
                                     style: CupidTextStyles.label1.copyWith(
-                                      color: Colors.black,
+                                      color: CupidColors.primaryDark,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ],
@@ -138,20 +146,26 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                         child: GestureDetector(
                           onTap: widget.onSmash,
                           child: Container(
-                            height: 60,
+                            height: 80,
                             decoration: BoxDecoration(
-                              color: CupidColors.offWhiteColor,
-                              borderRadius: BorderRadius.circular(10),
+                              color: CupidColors.cupidGreen.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(FluentIcons.heart_24_filled, color: Colors.black),
-                                const SizedBox(width: 8),
+                                SvgPicture.asset(
+                                  CupidIcons.smashButtonIcon,
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                const SizedBox(height: 4),
                                 Text(
                                   "Like",
                                   style: CupidTextStyles.label1.copyWith(
-                                    color: Colors.black,
+                                    color: CupidColors.green,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
@@ -196,7 +210,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 4),
                       decoration: BoxDecoration(
                         border: Border.all(color: CupidColors.greyElement),
                         borderRadius: BorderRadius.circular(8),
@@ -225,8 +240,10 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               builder: (context) => ReplyBottomSheet(
                                 title: 'Reply to Answer',
                                 onSend: (message) async {
-                                  final success = await ref.read(updatesRepoProvider).replyToUser(
-                                      widget.userProfile.email, message, "QUESTIONS", index);
+                                  final success = await ref
+                                      .read(updatesRepoProvider)
+                                      .replyToUser(widget.userProfile.email,
+                                          message, "QUESTIONS", index);
                                   if (success) {
                                     showSnackBar("Reply sent successfully!");
                                   } else {
@@ -292,7 +309,9 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 });
               },
               icon: Icon(
-                _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                _expanded
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
               ),
             )
           ],
@@ -301,7 +320,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           spacing: 8,
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: List.generate(_expanded ? widget.userProfile.interests.length : 4, (index) {
+          children: List.generate(
+              _expanded ? widget.userProfile.interests.length : 4, (index) {
             final extra = widget.userProfile.interests.length - 3;
             if (!_expanded && index == 3) {
               return GestureDetector(
@@ -333,8 +353,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
         padding: const EdgeInsets.all(12),
         child: Text(
           label,
-          style: CupidTextStyles.label2
-              .copyWith(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500),
+          style: CupidTextStyles.label2.copyWith(
+              color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -372,7 +392,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                         try {
                           final success = await ref
                               .read(updatesRepoProvider)
-                              .replyToUser(widget.userProfile.email, message, "IMAGES", index);
+                              .replyToUser(widget.userProfile.email, message,
+                                  "IMAGES", index);
                           log("DEBUG UI: Result success=$success");
                           if (success) {
                             showSnackBar("Reply sent successfully!");

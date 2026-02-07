@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
+import 'package:college_cupid/presentation/widgets/events/event_update_message_card.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
@@ -35,7 +36,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
     // Safety check for index out of bounds
     if (pageViewState.homeTabProfileList.isEmpty ||
-        pageViewNotifier.currentPage >= pageViewState.homeTabProfileList.length) {
+        pageViewNotifier.currentPage >=
+            pageViewState.homeTabProfileList.length) {
       if (pageViewState.loading) {
         return const Center(child: CustomLoader());
       }
@@ -47,41 +49,49 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       );
     }
 
-    final currentUser = pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
+    final currentUser =
+        pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
 
-    return DisplayProfileInfo(
-      userProfile: currentUser,
-      onPass: () {
-        pageViewNotifier.nextProfile();
-      },
-      onSmash: () async {
-        final crushesRepo = ref.read(crushesRepoProvider);
-        final profile = currentUser;
+    return Column(
+      children: [
+        const EventUpdateMessageCard(isLive: true), 
+        Expanded(
+          child: DisplayProfileInfo(
+            userProfile: currentUser,
+            onPass: () {
+              pageViewNotifier.nextProfile();
+            },
+            onSmash: () async {
+              final crushesRepo = ref.read(crushesRepoProvider);
+              final profile = currentUser;
 
-        if (LoginStore.dhPrivateKey == null) {
-          return;
-        }
+              if (LoginStore.dhPrivateKey == null) {
+                return;
+              }
 
-        final sharedSecret = DiffieHellman.generateSharedSecret(
-          otherPublicKey: BigInt.parse(profile.publicKey),
-          myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
-        ).toString();
+              final sharedSecret = DiffieHellman.generateSharedSecret(
+                otherPublicKey: BigInt.parse(profile.publicKey),
+                myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
+              ).toString();
 
-        // Optimistically move to next profile
-        pageViewNotifier.nextProfile();
+              // Optimistically move to next profile
+              pageViewNotifier.nextProfile();
 
-        try {
-          bool success = await crushesRepo.addCrush(sharedSecret);
-          if (success) {
-            final storageRepo = ref.read(storageRepositoryProvider);
-            await storageRepo.addCrush(profile.email);
-            await crushesRepo.increaseCrushesCount(profile.email);
-          }
-        } catch (e) {
-          // Handle error
-          log("Error adding crush: $e");
-        }
-      },
+              try {
+                bool success = await crushesRepo.addCrush(sharedSecret);
+                if (success) {
+                  final storageRepo = ref.read(storageRepositoryProvider);
+                  await storageRepo.addCrush(profile.email);
+                  await crushesRepo.increaseCrushesCount(profile.email);
+                }
+              } catch (e) {
+                // Handle error
+                log("Error adding crush: $e");
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }
