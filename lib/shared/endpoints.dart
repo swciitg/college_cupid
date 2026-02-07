@@ -3,7 +3,6 @@ class Endpoints {
   static const apiUrl = String.fromEnvironment('API_URL');
   static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
   static const wsUrl = String.fromEnvironment('WS_URL');
-  
 
   static const microsoftAuth = '/auth/microsoft';
 
@@ -15,14 +14,14 @@ class Endpoints {
   static const deleteProfileImage = '/deleteImage';
   static const postUserProfile = '/user/profile';
   static const getUserProfile = '/user/profile/email'; // + '/${email}'
-  static const getPaginatedUserProfiles =
-      '/user/profile/page'; // + '/${pageNumber}'
+  static const getPaginatedUserProfiles = '/user/profile/page'; // + '/${pageNumber}'
   static const updateUserProfile = '/user/profile';
   static const deactivateAccount = '/user/profile/deactivate';
   static const activateAccount = '/user/profile/reactivate';
 
   static const postAudioNotes = '/user/voice/upload';
-  
+  static const searchProfiles = '/user/search';
+
   static const addCrush = '/crush/add';
   static const getCrush = '/crush';
   static const removeCrush = '/crush/remove';
@@ -53,16 +52,10 @@ class Endpoints {
   static const regenerateToken = '/auth/refreshToken';
 
   static getHeader() {
-    return {
-      'Content-Type': 'application/json',
-      'security-key': Endpoints.apiSecurityKey
-    };
+    return {'Content-Type': 'application/json', 'security-key': Endpoints.apiSecurityKey};
   }
 
   static getMultipartHeader() {
-    return {
-      'Content-Type': 'multipart/form-data',
-      'security-key': Endpoints.apiSecurityKey
-    };
+    return {'Content-Type': 'multipart/form-data', 'security-key': Endpoints.apiSecurityKey};
   }
 }

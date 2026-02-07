@@ -56,9 +56,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
 
     ref.listen<ConfessionsState>(confessionsProvider, (previous, next) {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage!)),
-        );
+        showSnackBar(next.errorMessage!);
       }
     });
 

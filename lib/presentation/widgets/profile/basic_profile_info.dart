@@ -110,8 +110,23 @@ class BasicProfileInfo extends ConsumerWidget {
                               child: const Icon(FluentIcons.edit_16_regular, size: 14),
                             ),
                           )
-                        else if (!isMine)
-                          _buildMatchScore(currentUser)
+                        else if (!isMine) ...[
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed(AppRoutes.searchProfiles.name);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(FluentIcons.search_24_regular, size: 14),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildMatchScore(currentUser),
+                        ]
                       ],
                     ),
                     //Show Gender

@@ -8,6 +8,7 @@ import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_pro
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/presentation/screens/restore/restore_drive_screen.dart';
+import 'package:college_cupid/presentation/screens/search/search_profiles_screen.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/presentation/screens/confessions/create_confession_screen.dart';
@@ -25,6 +26,7 @@ enum AppRoutes {
   editProfile,
   editInterests,
   createConfession,
+  searchProfiles,
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -95,6 +97,11 @@ final goRouter = GoRouter(
           path: AppRoutes.blockedUserListScreen.name,
           name: AppRoutes.blockedUserListScreen.name,
           builder: (context, state) => const BlockedUserListScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.searchProfiles.name,
+          name: AppRoutes.searchProfiles.name,
+          builder: (context, state) => const SearchProfilesScreen(),
         ),
       ],
     ),

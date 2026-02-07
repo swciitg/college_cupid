@@ -190,4 +190,44 @@ class UserProfileRepository extends ApiRepository {
       return false;
     }
   }
+
+  Future<List<Map<String, dynamic>>> searchProfilesRaw(String searchQuery) async {
+    try {
+      Response res = await dio.get(
+        Endpoints.searchProfiles,
+        queryParameters: {'searchQuery': searchQuery},
+      );
+      if (res.statusCode == 200) {
+        final users = res.data['users'] as List;
+        return users.cast<Map<String, dynamic>>();
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      log("Error searching profiles: $err");
+      return Future.error(err.toString());
+    }
+  }
+
+  Future<List<UserProfile>> searchProfiles(String searchQuery) async {
+    try {
+      Response res = await dio.get(
+        Endpoints.searchProfiles,
+        queryParameters: {'searchQuery': searchQuery},
+      );
+      if (res.statusCode == 200) {
+        final users = res.data['users'];
+        List<UserProfile> userProfiles = [];
+        for (var user in users) {
+          userProfiles.add(UserProfile.fromJson(user));
+        }
+        return userProfiles;
+      } else {
+        return Future.error(res.statusMessage.toString());
+      }
+    } catch (err) {
+      log("Error searching profiles: $err");
+      return Future.error(err.toString());
+    }
+  }
 }

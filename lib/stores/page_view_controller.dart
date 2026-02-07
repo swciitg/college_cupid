@@ -8,8 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:get_storage/get_storage.dart';
 
-final pageViewProvider =
-    StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
+final pageViewProvider = StateNotifierProvider<PageViewNotifier, PageViewState>((ref) {
   return PageViewNotifier(ref: ref);
 });
 
@@ -47,18 +46,28 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
       final data = {
         'pageNumber': pageNumber,
       };
-      log("pageNumber (write): ${data['pageNumber']}",
-          name: 'PageViewNotifier');
+      log("pageNumber (write): ${data['pageNumber']}", name: 'PageViewNotifier');
       ls.write('pageViewState', data);
     }
   }
 
   void removeHomeTabProfile(String email) {
     state = state.copyWith(
-      homeTabProfileList: state.homeTabProfileList
-          .where((element) => element.email != email)
-          .toList(),
+      homeTabProfileList:
+          state.homeTabProfileList.where((element) => element.email != email).toList(),
     );
+  }
+
+  void insertProfileAtStart(UserProfile profile) {
+    // Remove if already exists to avoid duplicates
+    final updatedList =
+        state.homeTabProfileList.where((element) => element.email != profile.email).toList();
+    // Insert at the beginning
+    state = state.copyWith(
+      homeTabProfileList: [profile, ...updatedList],
+    );
+    // Reset to first profile
+    setCurrentPage(0);
   }
 
   void setHomeTabProfiles(List<UserProfile> value) {
@@ -137,8 +146,7 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
         'name': filterStore.name
       };
       try {
-        final List<UserProfile> users =
-            await userProfileRepo.getPaginatedUsers(pageNumber, filter);
+        final List<UserProfile> users = await userProfileRepo.getPaginatedUsers(pageNumber, filter);
         addHomeTabProfiles(users);
       } catch (e) {
         log("Error fetching more profiles: $e");
