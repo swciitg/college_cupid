@@ -17,6 +17,7 @@ import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:college_cupid/shared/assets.dart';
+
 class DisplayProfileInfo extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool backButton;
@@ -24,12 +25,14 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
   final VoidCallback? onSmash;
   final bool isMine;
   final bool showPass;
+  final Widget? customHeader;
 
   const DisplayProfileInfo(
       {required this.userProfile,
       this.backButton = false,
       this.isMine = false,
       this.showPass = true,
+      this.customHeader,
       this.onPass,
       this.onSmash,
       super.key});
@@ -87,6 +90,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (widget.customHeader != null) widget.customHeader!,
                 BasicProfileInfo(
                   maxHeight: maxHeight,
                   width: width,
