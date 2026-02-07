@@ -48,8 +48,7 @@ class EventsScreen extends ConsumerWidget {
                             Text(
                               "No events right now,\ntune in later",
                               textAlign: TextAlign.center,
-                              style:
-                                  CupidTextStyles.body1.copyWith(fontSize: 18),
+                              style: CupidTextStyles.body1.copyWith(fontSize: 18),
                             ),
                           ],
                         ),
@@ -62,8 +61,10 @@ class EventsScreen extends ConsumerWidget {
                       },
                     );
                   },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(
+                      child: CircularProgressIndicator(
+                    color: CupidColors.primary,
+                  )),
                   error: (e, s) => Center(child: Text('Error: $e')),
                 ),
               ),

@@ -64,7 +64,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       ).toString();
 
                       try {
-                        bool success = await crushesRepo.addCrush(sharedSecret);
+                        bool success =
+                            await crushesRepo.addCrush(sharedSecret, profileToShow.email);
                         if (success) {
                           final storageRepo = ref.read(storageRepositoryProvider);
                           await storageRepo.addCrush(profileToShow.email);

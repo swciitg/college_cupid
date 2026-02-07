@@ -71,7 +71,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         pageViewNotifier.nextProfile();
 
         try {
-          bool success = await crushesRepo.addCrush(sharedSecret);
+          bool success = await crushesRepo.addCrush(sharedSecret, profile.email);
           if (success) {
             final storageRepo = ref.read(storageRepositoryProvider);
             await storageRepo.addCrush(profile.email);

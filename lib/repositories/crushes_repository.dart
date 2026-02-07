@@ -6,16 +6,15 @@ import 'package:college_cupid/shared/endpoints.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final crushesRepoProvider =
-    Provider<CrushesRepository>((ref) => CrushesRepository());
+final crushesRepoProvider = Provider<CrushesRepository>((ref) => CrushesRepository());
 
 class CrushesRepository extends ApiRepository {
   CrushesRepository() : super();
 
   Future<void> increaseCrushesCount(String email) async {
     try {
-      Response res = await authFreeDio.put(Endpoints.increaseCrushesCount,
-          queryParameters: {'crushEmail': email});
+      Response res = await authFreeDio
+          .put(Endpoints.increaseCrushesCount, queryParameters: {'crushEmail': email});
       if (res.statusCode == 200) {
         return;
       } else {
@@ -28,8 +27,8 @@ class CrushesRepository extends ApiRepository {
 
   Future<void> decreaseCrushesCount(String email) async {
     try {
-      Response res = await authFreeDio.put(Endpoints.decreaseCrushesCount,
-          queryParameters: {'crushEmail': email});
+      Response res = await authFreeDio
+          .put(Endpoints.decreaseCrushesCount, queryParameters: {'crushEmail': email});
       if (res.statusCode == 200) {
         return;
       } else {
@@ -40,10 +39,13 @@ class CrushesRepository extends ApiRepository {
     }
   }
 
-  Future<bool> addCrush(String sharedSecret) async {
+  Future<bool> addCrush(String sharedSecret, String crushEmail) async {
     try {
       Response res = await dio.put(Endpoints.addCrush,
-          data: jsonEncode({'sharedSecret': sharedSecret}));
+          data: jsonEncode({
+            'sharedSecret': sharedSecret,
+            'crushEmail': crushEmail,
+          }));
 
       if (res.statusCode == 200) {
         showSnackBar(res.data['message']);
