@@ -1,14 +1,16 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
+import 'package:college_cupid/functions/snackbar.dart';
+import 'package:college_cupid/presentation/widgets/global/reauth_dialog.dart';
 import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
+import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
+import 'package:college_cupid/repositories/google_drive_repository.dart';
 import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:college_cupid/functions/snackbar.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
@@ -72,6 +74,31 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                           await crushesRepo.increaseCrushesCount(profileToShow.email);
                           if (mounted) {
                             showSnackBar('Added to crushes!');
+                          }
+                        }
+                      } on AuthenticationExpiredException catch (e) {
+                        debugPrint("Drive authentication expired: $e");
+                        if (context.mounted) {
+                          final userProfile = ref.read(userProvider).myProfile;
+                          final shouldReAuth = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => ReAuthDialog(
+                              googleAccountEmail: userProfile?.googleAccountEmail,
+                            ),
+                          );
+                          if (shouldReAuth == true) {
+                            // Retry after successful re-auth
+                            try {
+                              final storageRepo = ref.read(storageRepositoryProvider);
+                              await storageRepo.addCrush(profileToShow.email);
+                              await crushesRepo.increaseCrushesCount(profileToShow.email);
+                              if (mounted) {
+                                showSnackBar('Added to crushes!');
+                              }
+                            } catch (retryError) {
+                              debugPrint("Error retrying crush add: $retryError");
+                            }
                           }
                         }
                       } catch (e) {

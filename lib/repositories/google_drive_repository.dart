@@ -19,7 +19,8 @@ class GoogleDriveRepository implements StorageRepository {
         errorString.contains('authentication') ||
         errorString.contains('token') ||
         errorString.contains('invalid_grant') ||
-        errorString.contains('credentials');
+        errorString.contains('credentials') ||
+        errorString.contains('not initialized');
   }
 
   @override

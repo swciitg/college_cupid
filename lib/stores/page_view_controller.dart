@@ -90,6 +90,8 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
 
   void setCurrentPage(int value) {
     currentPage = value;
+    // Trigger state rebuild by creating a new state object
+    state = state.copyWith();
   }
 
   Future<void> getInitialProfiles() async {

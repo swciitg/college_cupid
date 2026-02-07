@@ -1,3 +1,4 @@
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -20,9 +21,27 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     LoginStore.isAuthenticated().then((value) async {
       if (value == true && LoginStore.isProfileCompleted) {
         debugPrint('USER IS AUTHENTICATED');
+
+        // Initialize user profile first to get storage type
+        if (!mounted) return;
+        await ref.read(userProvider.notifier).initializeProfile();
+
+        // Now try to restore Google Drive session if user was using it
+        try {
+          final storageRepo = ref.read(storageRepositoryProvider);
+          final initialized = await storageRepo.initializeWithStoredTokens();
+          if (initialized) {
+            debugPrint('Google Drive session restored successfully');
+          } else {
+            debugPrint('Google Drive initialization returned false (may be using local storage)');
+          }
+        } catch (e) {
+          debugPrint('Failed to restore Google Drive session: $e');
+          // Continue anyway - user can reconnect later if needed
+        }
+
         if (!mounted) return;
         final goRouter = GoRouter.of(context);
-        await ref.read(userProvider.notifier).initializeProfile();
         goRouter.goNamed(AppRoutes.home.name);
       } else {
         debugPrint('USER IS NOT AUTHENTICATED');

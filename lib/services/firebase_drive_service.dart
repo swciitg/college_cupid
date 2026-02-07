@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:college_cupid/domain/models/drive_data.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
@@ -6,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 
 /// Service for managing user data in Google Drive using Firebase Auth
 /// Firebase is used only for authentication, data is stored in Google Drive
@@ -20,7 +20,6 @@ class FirebaseDriveService {
       drive.DriveApi.driveAppdataScope,
     ],
   );
-  static final Logger _logger = Logger();
 
   static drive.DriveApi? _driveApi;
   static String? _appFolderId;
@@ -109,7 +108,7 @@ class FirebaseDriveService {
       // Try to find existing user_keys.json file
       await _findUserDataFile();
 
-      _logger.i('Successfully signed in. User ID: $userId, Folder ID: $_appFolderId');
+      log('Successfully signed in. User ID: $userId, Folder ID: $_appFolderId');
 
       return {
         'userId': userId,
@@ -118,7 +117,7 @@ class FirebaseDriveService {
         'token': _accessToken!,
       };
     } catch (e) {
-      _logger.e('Error signing in: $e');
+      log('Error signing in: $e');
       rethrow;
     }
   }
@@ -141,7 +140,7 @@ class FirebaseDriveService {
     );
 
     if (fileList.files != null && fileList.files!.isNotEmpty) {
-      _logger.i('Found existing folder: ${fileList.files!.first.id}');
+      log('Found existing folder: ${fileList.files!.first.id}');
       return fileList.files!.first.id!;
     }
 
@@ -151,7 +150,7 @@ class FirebaseDriveService {
     folder.mimeType = 'application/vnd.google-apps.folder';
 
     final createdFolder = await _driveApi!.files.create(folder);
-    _logger.i('Created new folder: ${createdFolder.id}');
+    log('Created new folder: ${createdFolder.id}');
     return createdFolder.id!;
   }
 
@@ -172,10 +171,10 @@ class FirebaseDriveService {
 
       if (fileList.files != null && fileList.files!.isNotEmpty) {
         _userDataFileId = fileList.files!.first.id;
-        _logger.i('Found existing user_keys.json: $_userDataFileId');
+        log('Found existing user_keys.json: $_userDataFileId');
       }
     } catch (e) {
-      _logger.w('Could not find user_keys.json: $e');
+      log('Could not find user_keys.json: $e');
     }
   }
 
@@ -198,7 +197,7 @@ class FirebaseDriveService {
           _userDataFileId!,
           uploadMedia: media,
         );
-        _logger.i('Updated user_keys.json');
+        log('Updated user_keys.json');
       } else {
         // Create new file
         final driveFile = drive.File();
@@ -211,10 +210,10 @@ class FirebaseDriveService {
         );
 
         _userDataFileId = response.id;
-        _logger.i('Created user_keys.json: $_userDataFileId');
+        log('Created user_keys.json: $_userDataFileId');
       }
     } catch (e) {
-      _logger.e('Error uploading private data: $e');
+      log('Error uploading private data: $e');
       rethrow;
     }
   }
@@ -232,7 +231,7 @@ class FirebaseDriveService {
       }
 
       if (_userDataFileId == null) {
-        _logger.w('user_keys.json not found');
+        log('user_keys.json not found');
         return null;
       }
 
@@ -255,7 +254,7 @@ class FirebaseDriveService {
 
       return DriveData.fromJSON(jsonData);
     } catch (e) {
-      _logger.e('Error reading private data: $e');
+      log('Error reading private data: $e');
       rethrow;
     }
   }
@@ -327,10 +326,10 @@ class FirebaseDriveService {
         uploadMedia: media,
       );
 
-      _logger.i('Text data uploaded: ${response.id}');
+      log('Text data uploaded: ${response.id}');
       return response.id!;
     } catch (e) {
-      _logger.e('Error uploading text data: $e');
+      log('Error uploading text data: $e');
       rethrow;
     }
   }
@@ -353,10 +352,10 @@ class FirebaseDriveService {
         uploadMedia: media,
       );
 
-      _logger.i('File uploaded: ${response.id}');
+      log('File uploaded: ${response.id}');
       return response.id!;
     } catch (e) {
-      _logger.e('Error uploading file: $e');
+      log('Error uploading file: $e');
       rethrow;
     }
   }
@@ -384,7 +383,7 @@ class FirebaseDriveService {
 
       return utf8.decode(dataStore);
     } catch (e) {
-      _logger.e('Error downloading text data: $e');
+      log('Error downloading text data: $e');
       rethrow;
     }
   }
@@ -405,9 +404,9 @@ class FirebaseDriveService {
         uploadMedia: media,
       );
 
-      _logger.i('File updated: $fileId');
+      log('File updated: $fileId');
     } catch (e) {
-      _logger.e('Error updating file: $e');
+      log('Error updating file: $e');
       rethrow;
     }
   }
@@ -420,9 +419,9 @@ class FirebaseDriveService {
 
     try {
       await _driveApi!.files.delete(fileId);
-      _logger.i('File deleted: $fileId');
+      log('File deleted: $fileId');
     } catch (e) {
-      _logger.e('Error deleting file: $e');
+      log('Error deleting file: $e');
       rethrow;
     }
   }
@@ -443,7 +442,7 @@ class FirebaseDriveService {
 
       return fileList.files ?? [];
     } catch (e) {
-      _logger.e('Error listing files: $e');
+      log('Error listing files: $e');
       rethrow;
     }
   }
@@ -463,9 +462,9 @@ class FirebaseDriveService {
       _userDataFileId = null;
       _accessToken = null;
       _refreshToken = null;
-      _logger.i('Signed out successfully');
+      log('Signed out successfully');
     } catch (e) {
-      _logger.e('Error signing out: $e');
+      log('Error signing out: $e');
       rethrow;
     }
   }
@@ -477,7 +476,7 @@ class FirebaseDriveService {
       final GoogleSignInAccount? account = await _googleSignIn.signInSilently();
 
       if (account == null) {
-        _logger.w('Silent sign-in failed, requires user interaction');
+        log('Silent sign-in failed, requires user interaction');
         return false;
       }
 
@@ -497,62 +496,86 @@ class FirebaseDriveService {
       });
       _driveApi = drive.DriveApi(authClient);
 
-      _logger.i('Access token refreshed successfully');
+      log('Access token refreshed successfully');
       return true;
     } catch (e) {
-      _logger.e('Error refreshing access token: $e');
+      log('Error refreshing access token: $e');
       return false;
     }
   }
 
-  /// Initialize with stored tokens (for app restart)
+  /// Initialize Drive API using existing Firebase Auth session
+  /// Firebase Auth persists across app restarts, so we leverage that
   static Future<bool> initializeWithStoredTokens() async {
     try {
-      final storedAccessToken = await SecureStorageService.getGoogleAccessToken();
-
-      if (storedAccessToken == null || storedAccessToken.isEmpty) {
+      // Firebase user persists - if they're signed in, we have access
+      final firebaseUser = _auth.currentUser;
+      if (firebaseUser == null) {
+        log('No Firebase user - user not signed in');
         return false;
       }
 
-      _accessToken = storedAccessToken;
+      log('Firebase user found: ${firebaseUser.email}');
 
-      // Try to sign in silently
+      // Try silent sign-in first - this gets fresh tokens if Google session is active
       final GoogleSignInAccount? account = await _googleSignIn.signInSilently();
 
       if (account != null) {
+        log('Silent sign-in successful');
         final auth = await account.authentication;
-        _accessToken = auth.accessToken;
 
-        if (_accessToken != null) {
+        if (auth.accessToken != null) {
+          _accessToken = auth.accessToken;
           await SecureStorageService.setGoogleAccessToken(_accessToken!);
 
-          // Create authenticated client
+          // Initialize Drive API
           final authClient = GoogleAuthClient({
             'Authorization': 'Bearer $_accessToken',
           });
           _driveApi = drive.DriveApi(authClient);
-
-          // Get app folder
           _appFolderId = await _getOrCreateAppFolder();
           await _findUserDataFile();
 
-          // Sign in to Firebase if needed
-          if (_auth.currentUser == null) {
-            final credential = GoogleAuthProvider.credential(
-              accessToken: auth.accessToken,
-              idToken: auth.idToken,
-            );
-            await _auth.signInWithCredential(credential);
-          }
-
-          _logger.i('Initialized with stored tokens successfully');
+          log('✓ Drive session restored successfully');
           return true;
         }
       }
 
+      // Fallback: Try using stored token
+      log('Silent sign-in unavailable, trying stored token');
+      final storedAccessToken = await SecureStorageService.getGoogleAccessToken();
+
+      if (storedAccessToken != null && storedAccessToken.isNotEmpty) {
+        _accessToken = storedAccessToken;
+
+        final authClient = GoogleAuthClient({
+          'Authorization': 'Bearer $_accessToken',
+        });
+        _driveApi = drive.DriveApi(authClient);
+
+        try {
+          // Validate token by testing Drive access
+          _appFolderId = await _getOrCreateAppFolder();
+          await _findUserDataFile();
+
+          log('✓ Drive restored with stored token');
+          return true;
+        } catch (e) {
+          log('Stored token expired: $e');
+          // Clear invalid credentials
+          _driveApi = null;
+          _accessToken = null;
+          await SecureStorageService.clearGoogleTokens();
+          return false;
+        }
+      }
+
+      log('No valid tokens available - re-authentication required');
       return false;
     } catch (e) {
-      _logger.e('Error initializing with stored tokens: $e');
+      log('Drive initialization error: $e');
+      _driveApi = null;
+      _accessToken = null;
       return false;
     }
   }

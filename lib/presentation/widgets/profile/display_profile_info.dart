@@ -39,6 +39,22 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
 
 class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   var _expanded = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(DisplayProfileInfo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reset scroll position when profile changes
+    if (oldWidget.userProfile.email != widget.userProfile.email) {
+      _scrollController.jumpTo(0);
+    }
+  }
 
   // Merge surpriseQuiz and voiceRecordings to get all answered questions
   List<QuizQuestion> _getAllQuestions() {
@@ -83,6 +99,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
         return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

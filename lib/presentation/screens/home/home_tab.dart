@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
+import 'package:college_cupid/presentation/widgets/global/reauth_dialog.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
+import 'package:college_cupid/repositories/google_drive_repository.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
@@ -76,6 +79,28 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             final storageRepo = ref.read(storageRepositoryProvider);
             await storageRepo.addCrush(profile.email);
             await crushesRepo.increaseCrushesCount(profile.email);
+          }
+        } on AuthenticationExpiredException catch (e) {
+          log("Drive authentication expired: $e");
+          if (context.mounted) {
+            final userProfile = ref.read(userProvider).myProfile;
+            final shouldReAuth = await showDialog<bool>(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => ReAuthDialog(
+                googleAccountEmail: userProfile?.googleAccountEmail,
+              ),
+            );
+            if (shouldReAuth == true) {
+              // Retry after successful re-auth
+              try {
+                final storageRepo = ref.read(storageRepositoryProvider);
+                await storageRepo.addCrush(profile.email);
+                await crushesRepo.increaseCrushesCount(profile.email);
+              } catch (retryError) {
+                log("Error retrying crush add: $retryError");
+              }
+            }
           }
         } catch (e) {
           // Handle error

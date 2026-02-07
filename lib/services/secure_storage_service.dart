@@ -43,6 +43,12 @@ class SecureStorageService {
     return storage.read(key: DatabaseStrings.googleRefreshToken);
   }
 
+  static Future<void> clearGoogleTokens() async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: DatabaseStrings.googleAccessToken);
+    await storage.delete(key: DatabaseStrings.googleRefreshToken);
+  }
+
   static Future<void> clear() async {
     const storage = FlutterSecureStorage();
     return storage.deleteAll();
