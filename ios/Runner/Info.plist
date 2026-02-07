@@ -53,7 +53,7 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>GIDClientID</key>
-		<string>634767510071-n40h9itd9ciijpr71ukbakqlaet0q1l4.apps.googleusercontent.com</string>
+		<string>771812337595-j3dv3mao5u57norfgrafkklkk1ogoemk.apps.googleusercontent.com</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
@@ -62,7 +62,7 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<!-- Reversed client ID from GoogleService-Info.plist -->
-					<string>com.googleusercontent.apps.634767510071-n40h9itd9ciijpr71ukbakqlaet0q1l4</string>
+					<string>com.googleusercontent.apps.771812337595-j3dv3mao5u57norfgrafkklkk1ogoemk</string>
 				</array>
 			</dict>
 		</array>
