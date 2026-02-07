@@ -4,6 +4,7 @@ import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/presentation/widgets/global/reauth_dialog.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/repositories/google_drive_repository.dart';
+import 'package:college_cupid/presentation/widgets/events/event_update_message_card.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
@@ -38,7 +39,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
     // Safety check for index out of bounds
     if (pageViewState.homeTabProfileList.isEmpty ||
-        pageViewNotifier.currentPage >= pageViewState.homeTabProfileList.length) {
+        pageViewNotifier.currentPage >=
+            pageViewState.homeTabProfileList.length) {
       if (pageViewState.loading) {
         return const Center(child: CustomLoader());
       }
@@ -50,9 +52,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       );
     }
 
-    final currentUser = pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
+    final currentUser =
+        pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
 
     return DisplayProfileInfo(
+      customHeader: const EventUpdateMessageCard(isLive: true),
       userProfile: currentUser,
       onPass: () {
         pageViewNotifier.nextProfile();

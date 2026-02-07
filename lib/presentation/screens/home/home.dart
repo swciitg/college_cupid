@@ -54,32 +54,53 @@ class _HomeState extends ConsumerState<Home> {
             FocusScope.of(context).unfocus();
           },
           child: Scaffold(
+            extendBodyBehindAppBar: true,
             backgroundColor: CupidColors.backgroundColor,
             bottomNavigationBar: _navBar(),
-            body: SafeArea(
-              bottom: false,
-              child: SizedBox.expand(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                  children: [
-                    const HomeTab(),
-                    // const YourCrushesTab(),
-                    const ConfessionsScreen(),
-                    const UpdatesScreen(),
-                    const EventsScreen(),
-                    //const YourMatches(),
-                    UserProfileScreen(
-                      isMine: true,
-                      userProfile: userController.myProfile!,
+            body: Stack(
+              children: [
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.4, 1.0],
+                      colors: [
+                        CupidColors.navBarIconColor.withValues(alpha: 0.3),
+                        CupidColors.navBarIconColor.withValues(alpha: 0.05),
+                        Colors.transparent,
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                SafeArea(
+                  top: true,
+                  bottom: false,
+                  child: SizedBox.expand(
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                      children: [
+                        const HomeTab(),
+                        // const YourCrushesTab(),
+                        const ConfessionsScreen(),
+                        const UpdatesScreen(),
+                        const EventsScreen(),
+                        //const YourMatches(),
+                        UserProfileScreen(
+                          isMine: true,
+                          userProfile: userController.myProfile!,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -94,7 +115,8 @@ class _HomeState extends ConsumerState<Home> {
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
           if (states.contains(WidgetState.selected)) {
             // A → selected
-            return CupidTextStyles.label3.copyWith(color: CupidColors.primaryDark, fontSize: 11);
+            return CupidTextStyles.label3
+                .copyWith(color: CupidColors.primaryDark, fontSize: 11);
           }
           // B → unselected
           return CupidTextStyles.label3
@@ -114,7 +136,8 @@ class _HomeState extends ConsumerState<Home> {
       ),
       child: DecoratedBox(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: CupidColors.offWhiteColor, width: 2)),
+          border: Border(
+              top: BorderSide(color: CupidColors.offWhiteColor, width: 2)),
         ),
         child: Padding(
           padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
@@ -126,11 +149,13 @@ class _HomeState extends ConsumerState<Home> {
                 _pageController.jumpToPage(i);
               } else {
                 _pageController.animateToPage(i,
-                    duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeIn);
               }
               _selectedIndex = i;
             }),
-            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+            labelTextStyle:
+                WidgetStateProperty.resolveWith<TextStyle>((states) {
               if (states.contains(WidgetState.selected)) {
                 // A → selected
                 return CupidTextStyles.label3
@@ -144,7 +169,8 @@ class _HomeState extends ConsumerState<Home> {
               final item = navItems[index];
               return Container(
                 padding: EdgeInsets.zero,
-                margin: EdgeInsets.symmetric(horizontal: _selectedIndex == index ? 4 : 0),
+                margin: EdgeInsets.symmetric(
+                    horizontal: _selectedIndex == index ? 4 : 0),
                 decoration: _selectedIndex == index
                     ? ShapeDecoration(
                         color: Colors.white,

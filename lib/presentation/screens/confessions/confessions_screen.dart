@@ -61,14 +61,13 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
     });
 
     return Scaffold(
-      backgroundColor: CupidColors.surfaceS2,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
-              decoration: const BoxDecoration(color: CupidColors.whitePrimary),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
