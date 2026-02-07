@@ -225,7 +225,12 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                 title: 'Reply to Answer',
                                 onSend: (message) async {
                                   final success = await ref.read(updatesRepoProvider).replyToUser(
-                                      widget.userProfile.email, message, "QUESTIONS", index);
+                                        widget.userProfile.email,
+                                        message,
+                                        "QUESTIONS",
+                                        index,
+                                        receiverPublicKey: widget.userProfile.publicKey,
+                                      );
                                   if (success) {
                                     showSnackBar("Reply sent successfully!");
                                   } else {
@@ -369,9 +374,13 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                         log("DEBUG UI: Reply button pressed for IMAGES index $index");
                         log("DEBUG UI: Sending to ${widget.userProfile.email}");
                         try {
-                          final success = await ref
-                              .read(updatesRepoProvider)
-                              .replyToUser(widget.userProfile.email, message, "IMAGES", index);
+                          final success = await ref.read(updatesRepoProvider).replyToUser(
+                                widget.userProfile.email,
+                                message,
+                                "IMAGES",
+                                index,
+                                receiverPublicKey: widget.userProfile.publicKey,
+                              );
                           log("DEBUG UI: Result success=$success");
                           if (success) {
                             showSnackBar("Reply sent successfully!");

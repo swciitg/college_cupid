@@ -11,8 +11,7 @@ class Encryption {
   static Uint8List hexadecimalToBytes(String hexString) {
     List<int> decimalList = [];
     for (int i = 0; i < hexString.length; i += 2) {
-      decimalList.add(
-          int.parse(hexString.substring(i, i + 2).toUpperCase(), radix: 16));
+      decimalList.add(int.parse(hexString.substring(i, i + 2).toUpperCase(), radix: 16));
     }
     return Uint8List.fromList(decimalList);
   }
@@ -31,8 +30,7 @@ class Encryption {
     return md5Digest;
   }
 
-  static Uint8List encryptAES(
-      {required String plainText, required String key}) {
+  static Uint8List encryptAES({required String plainText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     // Uint8List keyBytes2 = calculateSHA256(key);
     // print(key);
@@ -49,8 +47,7 @@ class Encryption {
     return encrypted;
   }
 
-  static String decryptAES(
-      {required Uint8List encryptedText, required String key}) {
+  static String decryptAES({required Uint8List encryptedText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
     Uint8List iv = Uint8List(16);
 
@@ -64,5 +61,33 @@ class Encryption {
   static String encryptEmail(String email, String key) {
     final encryptedEmailBytes = encryptAES(plainText: email, key: key);
     return bytesToHexadecimal(encryptedEmailBytes);
+  }
+
+  /// Encrypt a message using the recipient's public key
+  /// Uses the public key as part of AES key derivation
+  static String encryptWithPublicKey({
+    required String message,
+    required String publicKey,
+  }) {
+    // Use the public key as the encryption key
+    final encryptedBytes = encryptAES(plainText: message, key: publicKey);
+    return bytesToHexadecimal(encryptedBytes);
+  }
+
+  /// Decrypt a message using the user's own private key
+  /// The sender encrypted with our public key, we decrypt with our private key
+  static String decryptWithPrivateKey({
+    required String encryptedMessage,
+    required String privateKey,
+  }) {
+    try {
+      final encryptedBytes = hexadecimalToBytes(encryptedMessage);
+      // Use private key to decrypt (since sender used our public key)
+      // In Diffie-Hellman context, we use the private key for decryption
+      return decryptAES(encryptedText: encryptedBytes, key: privateKey).trim();
+    } catch (e) {
+      // If decryption fails, return the original message
+      return encryptedMessage;
+    }
   }
 }

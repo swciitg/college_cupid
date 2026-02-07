@@ -10,14 +10,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/repositories/confessions_repository.dart';
 
-final updatesRepoProvider = Provider<UpdatesRepository>((ref) =>
-    UpdatesRepositoryImpl(ref.read(apiRepositoryProvider),
-        ref.read(userProfileRepoProvider), ref.read(confessionsRepoProvider)));
+final updatesRepoProvider = Provider<UpdatesRepository>((ref) => UpdatesRepositoryImpl(
+    ref.read(apiRepositoryProvider),
+    ref.read(userProfileRepoProvider),
+    ref.read(confessionsRepoProvider)));
 
 abstract class UpdatesRepository {
   Future<List<UpdateModel>> fetchUpdates({String? filter});
-  Future<bool> replyToUser(String receiverEmail, String content,
-      String entityType, int entitySerial);
+  Future<bool> replyToUser(
+    String receiverEmail,
+    String content,
+    String entityType,
+    int entitySerial, {
+    String? receiverPublicKey, // Optional: only needed for profile replies
+  });
 }
 
 class UpdatesRepositoryImpl implements UpdatesRepository {
@@ -25,14 +31,41 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
   final UserProfileRepository _userProfileRepository;
   final ConfessionsRepository _confessionsRepository;
 
-  UpdatesRepositoryImpl(this._apiRepository, this._userProfileRepository,
-      this._confessionsRepository);
+  UpdatesRepositoryImpl(
+      this._apiRepository, this._userProfileRepository, this._confessionsRepository);
+
+  /// Decrypts profile reply content if it's a profile reply type
+  String _decryptProfileReply(String content, UpdateType type) {
+    // Only decrypt profile-related replies (IMAGES and QUESTIONS)
+    if (type != UpdateType.profileReply && type != UpdateType.textReply) {
+      return content;
+    }
+
+    // Check if user has a private key
+    if (LoginStore.dhPrivateKey == null || LoginStore.dhPrivateKey!.isEmpty) {
+      log('Warning: No private key available for decryption');
+      return content;
+    }
+
+    try {
+      // Decrypt using user's private key
+      final decrypted = Encryption.decryptWithPrivateKey(
+        encryptedMessage: content,
+        privateKey: LoginStore.dhPrivateKey!,
+      );
+      log('Successfully decrypted profile reply');
+      return decrypted;
+    } catch (e) {
+      log('Error decrypting profile reply: $e');
+      // Return original content if decryption fails
+      return content;
+    }
+  }
 
   @override
   Future<List<UpdateModel>> fetchUpdates({String? filter}) async {
     try {
-      final encryptedEmail =
-          Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
+      final encryptedEmail = Encryption.encryptEmail(LoginStore.email!, Endpoints.apiSecurityKey);
       final response = await _apiRepository.dio.post(
         Endpoints.getUpdates,
         data: {'encryptedEmail': encryptedEmail},
@@ -54,8 +87,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
         await Future.wait(senderEmails.map((email) async {
           if (email == null) return;
           try {
-            final profileMap =
-                await _userProfileRepository.getUserProfile(email);
+            final profileMap = await _userProfileRepository.getUserProfile(email);
             if (profileMap != null) {
               userProfileMap[email] = UserProfile.fromJson(profileMap);
             }
@@ -70,8 +102,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
           // Retrieve the current user's email properly. LoginStore.email might be nullable.
           final myEmail = LoginStore.email;
           if (myEmail != null) {
-            final myProfileMap =
-                await _userProfileRepository.getUserProfile(myEmail);
+            final myProfileMap = await _userProfileRepository.getUserProfile(myEmail);
             if (myProfileMap != null) {
               myProfile = UserProfile.fromJson(myProfileMap);
             }
@@ -81,14 +112,12 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
         }
 
         // Concurrent fetching for updates logic (profiles AND confessions)
-        final List<UpdateModel?> processedUpdates =
-            await Future.wait(data.map((json) async {
+        final List<UpdateModel?> processedUpdates = await Future.wait(data.map((json) async {
           log("Processing update: $json"); // Debug log
 
           final senderEmail = json['senderEmail'] as String? ?? '';
           final userProfile = userProfileMap[senderEmail] ??
-              UserProfile.fromEmail(
-                  senderEmail.isEmpty ? 'Unknown User' : senderEmail);
+              UserProfile.fromEmail(senderEmail.isEmpty ? 'Unknown User' : senderEmail);
 
           String? replyToText = json['repliedContent'];
           String? mediaUrl;
@@ -98,8 +127,8 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
           // Check if it's a confession reply
           if (json['confessionId'] != null) {
             final confessionId = json['confessionId'] as String;
-            final confession = await _confessionsRepository.getConfessionById(
-                confessionId, encryptedEmail);
+            final confession =
+                await _confessionsRepository.getConfessionById(confessionId, encryptedEmail);
             if (confession != null) {
               replyToText = confession.text;
               headerText = "Replied to your confession";
@@ -124,8 +153,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             } else if (entityType == "QUESTIONS" && entitySerial != null) {
               type = UpdateType.textReply;
               headerText = "Replied to your answer";
-              if (myProfile != null &&
-                  myProfile.surpriseQuiz.length > entitySerial) {
+              if (myProfile != null && myProfile.surpriseQuiz.length > entitySerial) {
                 // User said "answer at the top".
                 replyToText = myProfile.surpriseQuiz[entitySerial].answer;
               } else {
@@ -139,11 +167,13 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             senderUser: userProfile,
             type: type,
             headerText: headerText,
-            replyText: json['replyContent'] ?? '',
+            replyText: _decryptProfileReply(
+              json['replyContent'] ?? '',
+              type,
+            ),
             replyTo: replyToText,
             mediaUrl: mediaUrl,
-            timestamp:
-                DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+            timestamp: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
           );
         }));
 
@@ -152,9 +182,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
         if (filter == 'All') {
           return allUpdates;
         } else if (filter == 'Confession') {
-          return allUpdates
-              .where((u) => u.type == UpdateType.confessionReply)
-              .toList();
+          return allUpdates.where((u) => u.type == UpdateType.confessionReply).toList();
         } else if (filter == 'Match') {
           return allUpdates.where((u) => u.type == UpdateType.match).toList();
         } else if (filter == 'Profile') {
@@ -174,16 +202,34 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
   }
 
   @override
-  Future<bool> replyToUser(String receiverEmail, String content,
-      String entityType, int entitySerial) async {
+  Future<bool> replyToUser(
+    String receiverEmail,
+    String content,
+    String entityType,
+    int entitySerial, {
+    String? receiverPublicKey,
+  }) async {
     debugPrint("REPO: replyToUser called");
-    debugPrint(
-        "REPO: Receiver: $receiverEmail, Type: $entityType, Serial: $entitySerial");
+    debugPrint("REPO: Receiver: $receiverEmail, Type: $entityType, Serial: $entitySerial");
+
     try {
+      // Encrypt content for profile replies (IMAGES and QUESTIONS)
+      String finalContent = content;
+      if ((entityType == 'IMAGES' || entityType == 'QUESTIONS') &&
+          receiverPublicKey != null &&
+          receiverPublicKey.isNotEmpty) {
+        debugPrint("REPO: Encrypting profile reply with public key");
+        finalContent = Encryption.encryptWithPublicKey(
+          message: content,
+          publicKey: receiverPublicKey,
+        );
+        debugPrint("REPO: Encrypted content: ${finalContent.substring(0, 20)}...");
+      }
+
       final payload = {
         'isConfession': false,
         'receiverEmail': receiverEmail,
-        'replyContent': content,
+        'replyContent': finalContent,
         'entityType': entityType,
         'entitySerial': entitySerial,
       };

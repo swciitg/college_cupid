@@ -89,14 +89,10 @@ class MockUpdatesRepository implements UpdatesRepository {
     if (filter != null && filter != 'All') {
       if (filter == 'Profile') {
         return allUpdates
-            .where((u) =>
-                u.type == UpdateType.voiceReply ||
-                u.type == UpdateType.textReply)
+            .where((u) => u.type == UpdateType.voiceReply || u.type == UpdateType.textReply)
             .toList();
       } else if (filter == 'Confession') {
-        return allUpdates
-            .where((u) => u.type == UpdateType.confessionReply)
-            .toList();
+        return allUpdates.where((u) => u.type == UpdateType.confessionReply).toList();
       } else if (filter == 'Match') {
         return allUpdates.where((u) => u.type == UpdateType.match).toList();
       }
@@ -106,8 +102,13 @@ class MockUpdatesRepository implements UpdatesRepository {
   }
 
   @override
-  Future<bool> replyToUser(String receiverEmail, String content,
-      String entityType, int entitySerial) async {
+  Future<bool> replyToUser(
+    String receiverEmail,
+    String content,
+    String entityType,
+    int entitySerial, {
+    String? receiverPublicKey,
+  }) async {
     await Future.delayed(const Duration(seconds: 1));
     return true;
   }

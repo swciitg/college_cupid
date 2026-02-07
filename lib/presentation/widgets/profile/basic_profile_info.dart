@@ -185,9 +185,13 @@ class BasicProfileInfo extends ConsumerWidget {
                             builder: (context) => ReplyBottomSheet(
                               title: 'Reply to Profile',
                               onSend: (message) async {
-                                final success = await ref
-                                    .read(updatesRepoProvider)
-                                    .replyToUser(userProfile.email, message, "IMAGES", 0);
+                                final success = await ref.read(updatesRepoProvider).replyToUser(
+                                      userProfile.email,
+                                      message,
+                                      "IMAGES",
+                                      0,
+                                      receiverPublicKey: userProfile.publicKey,
+                                    );
                                 if (success) {
                                   showSnackBar("Reply sent successfully!");
                                 } else {
