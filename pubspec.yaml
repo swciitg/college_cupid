@@ -70,6 +70,9 @@ dependencies:
   record: ^6.1.2
   audioplayers: ^6.5.1
   flutter_chat_reactions: ^0.2.7
+  socket_io_client: ^3.1.4
+
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
   flutter_test:
