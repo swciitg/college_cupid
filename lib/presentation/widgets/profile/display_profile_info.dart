@@ -73,15 +73,15 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width - 32;
+    final width = MediaQuery.sizeOf(context).width - 16;
     final allQuestions = _getAllQuestions();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       child: LayoutBuilder(builder: (context, constraints) {
         final maxHeight = constraints.maxHeight;
         return ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

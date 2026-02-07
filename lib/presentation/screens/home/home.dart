@@ -10,6 +10,7 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Home extends ConsumerStatefulWidget {
@@ -45,19 +46,18 @@ class _HomeState extends ConsumerState<Home> {
   @override
   Widget build(BuildContext context) {
     final userController = ref.watch(userProvider);
-    return CollegeCupidUpgrader(
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: CupidColors.backgroundColor,
-          ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: CupidStyles.edgeToEdgeSystemUI,
+      child: CollegeCupidUpgrader(
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
           child: Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: CupidColors.backgroundColor,
             bottomNavigationBar: _navBar(),
             body: SafeArea(
+              bottom: false,
               child: SizedBox.expand(
                 child: PageView(
                   controller: _pageController,

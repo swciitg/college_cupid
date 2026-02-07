@@ -1,5 +1,6 @@
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -17,11 +18,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    statusBarBrightness: Brightness.light, // For iOS
-  ));
+  SystemChrome.setSystemUIOverlayStyle(CupidStyles.edgeToEdgeSystemUI);
+
+  // Enable edge-to-edge mode
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await GetStorage.init();
   runApp(
     const riverpod.ProviderScope(child: CollegeCupidApp()),
@@ -46,6 +46,9 @@ class CollegeCupidApp extends StatelessWidget {
         scaffoldMessengerKey: rootScaffoldMessengerKey,
         theme: ThemeData(
           scaffoldBackgroundColor: CupidColors.backgroundColor,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: CupidStyles.edgeToEdgeSystemUI,
+          ),
           textSelectionTheme: TextSelectionThemeData(
             selectionHandleColor: CupidColors.secondaryColor,
             cursorColor: CupidColors.secondaryColor,
