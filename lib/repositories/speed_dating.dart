@@ -5,11 +5,7 @@ import 'package:college_cupid/services/websocket_service.dart';
 class SpeedDatingRepository {
   final WebSocketService _webSocketService = WebSocketService();
 
-  // Singleton pattern
-  static final SpeedDatingRepository _instance =
-      SpeedDatingRepository._internal();
-  factory SpeedDatingRepository() => _instance;
-  SpeedDatingRepository._internal();
+  SpeedDatingRepository();
 
   Stream<Map<String, dynamic>> get chatMessageStream =>
       _webSocketService.chatMessageStream;

@@ -31,11 +31,12 @@ class CommonWidgets {
     );
   }
 
-  static Widget backButton({required BuildContext context}) {
+  static Widget backButton(
+      {required BuildContext context, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: GestureDetector(
-        onTap: () => context.pop(),
+        onTap: onTap ?? () => context.pop(),
         child: Container(
           height: 36,
           width: 36,

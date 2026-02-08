@@ -90,7 +90,8 @@ class _WaitingPageState extends State<WaitingPage> {
     // If we are the one waiting (didn't get questions), we wait for the first message to enter chat
     _chatMessageSubscription = _repository.chatMessageStream.listen((data) {
       if (mounted && _isMatched && _roomId != null) {
-        _navigateToChat(_roomId!, initialMessage: "Partner: ${data['message']}");
+        _navigateToChat(_roomId!,
+            initialMessage: "Partner: ${data['message']}");
       }
     });
 
@@ -114,7 +115,8 @@ class _WaitingPageState extends State<WaitingPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Pick a conversation starter", style: CupidTextStyles.brandTitle2),
+                const Text("Pick a conversation starter",
+                    style: CupidTextStyles.brandTitle2),
                 const SizedBox(height: 16),
                 if (_questions != null)
                   ..._questions!.map((q) => ListTile(
@@ -153,6 +155,7 @@ class _WaitingPageState extends State<WaitingPage> {
               Navigator.pop(context);
             }
           },
+          repository: _repository,
         ),
       ),
     );
@@ -217,11 +220,13 @@ class _WaitingPageState extends State<WaitingPage> {
                           ),
                         ],
                       ),
-                      child: const Icon(Icons.arrow_back, size: 18, color: Colors.black),
+                      child: const Icon(Icons.arrow_back,
+                          size: 18, color: Colors.black),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text("Speed Dating", style: CupidTextStyles.brandTitle1),
+                  const Text("Speed Dating",
+                      style: CupidTextStyles.brandTitle1),
                   const SizedBox(
                     height: 8,
                   ),
@@ -229,7 +234,9 @@ class _WaitingPageState extends State<WaitingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _isMatched ? "Matched! Waiting for partner..." : "Finding you a partner...",
+                        _isMatched
+                            ? "Matched! Waiting for partner..."
+                            : "Finding you a partner...",
                         style: CupidTextStyles.body1,
                       ),
                       const Center(
@@ -259,7 +266,8 @@ class _WaitingPageState extends State<WaitingPage> {
                     color: Color(0xFFFFE6E6),
                     shape: OvalBorder(),
                   ),
-                  child: Center(child: Image.asset("assets/images/female_doll.png")),
+                  child: Center(
+                      child: Image.asset("assets/images/female_doll.png")),
                 ),
               ),
             ),

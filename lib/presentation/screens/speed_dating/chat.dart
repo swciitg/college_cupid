@@ -9,12 +9,14 @@ class ChatScreen extends StatefulWidget {
   final String roomId;
   final VoidCallback onLeave;
   final String? initialMessage;
+  final SpeedDatingRepository repository;
 
   const ChatScreen({
     super.key,
     required this.roomId,
     required this.onLeave,
     this.initialMessage,
+    required this.repository,
   });
 
   @override
@@ -24,7 +26,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final List<String> _messages = [];
-  final SpeedDatingRepository _repository = SpeedDatingRepository();
+  // final SpeedDatingRepository _repository = SpeedDatingRepository();
 
   Timer? _timer;
   double _progress = 0.0;
@@ -49,6 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _timer?.cancel();
     _messageController.dispose();
+    widget.repository.disconnect();
     super.dispose();
   }
 
@@ -75,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _setupListeners() {
-    _repository.chatMessageStream.listen((data) {
+    widget.repository.chatMessageStream.listen((data) {
       if (mounted) {
         setState(() {
           _messages.add("Partner: ${data['message']}");
@@ -83,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    _repository.partnerLeftStream.listen((_) {
+    widget.repository.partnerLeftStream.listen((_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Partner left the chat.')),
@@ -92,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    _repository.partnerDisconnectedStream.listen((_) {
+    widget.repository.partnerDisconnectedStream.listen((_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Partner disconnected. Redirecting...')),
@@ -110,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    _repository.disconnectedStream.listen((_) {
+    widget.repository.disconnectedStream.listen((_) {
       if (mounted) {
         showDialog(
           context: context,
@@ -135,13 +138,13 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    _repository.continuePromptStream.listen((_) {
+    widget.repository.continuePromptStream.listen((_) {
       if (mounted) {
         _showRevealSheet();
       }
     });
 
-    _repository.partnerResponseStream.listen((data) {
+    widget.repository.partnerResponseStream.listen((data) {
       if (mounted) {
         // If data is null, no reveal.
         if (data == null) {
@@ -195,7 +198,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     if (_messageController.text.trim().isEmpty) return;
     final msg = _messageController.text.trim();
-    _repository.sendMessage(widget.roomId, msg);
+    widget.repository.sendMessage(widget.roomId, msg);
     setState(() {
       _messages.add("Me: $msg");
       _messageController.clear();
@@ -252,7 +255,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMyResponse(bool accepted) {
-    _repository.sendMyResponse(widget.roomId, accepted ? "yes" : "no");
+    widget.repository.sendMyResponse(widget.roomId, accepted ? "yes" : "no");
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Response sent. Waiting for partner...')),
     );
@@ -271,7 +274,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  _repository.leave();
+                  widget.repository.leave();
                   widget.onLeave();
                   Navigator.of(context).pop(true);
                 },
@@ -293,7 +296,15 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20),
-                CommonWidgets.backButton(context: context),
+                CommonWidgets.backButton(
+                  context: context,
+                  onTap: () async {
+                    final shouldPop = await _onWillPop();
+                    if (shouldPop) {
+                      if (mounted) Navigator.of(context).pop();
+                    }
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
