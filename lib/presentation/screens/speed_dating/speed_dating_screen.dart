@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
-import 'package:college_cupid/repositories/speed_dating.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/colors.dart';
-import 'package:college_cupid/shared/enums.dart';
+
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:college_cupid/presentation/screens/speed_dating/animated_heart.dart';
-import 'chat.dart';
-import 'waiting.dart';
+// import 'waiting.dart';
+
+import 'waiting_page.dart';
 
 class SpeedDatingScreen extends StatefulWidget {
   const SpeedDatingScreen({super.key});
@@ -20,10 +20,10 @@ class SpeedDatingScreen extends StatefulWidget {
 }
 
 class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
-  final SpeedDatingRepository _repository = SpeedDatingRepository();
-  bool _isWaiting = false;
-  StreamSubscription<void>? _disconnectedSubscription;
-  String? _currentRoomId;
+  // We remove repository listening from here because WaitingPage and ChatScreen handle it.
+  // Actually, chat screen might pop back here?
+  // User profile loading is still needed.
+
   bool _isLoading = true;
   UserProfile? _userProfile;
 
@@ -31,7 +31,6 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
   void initState() {
     super.initState();
     _loadUserProfile();
-    _setupListeners();
   }
 
   Future<void> _loadUserProfile() async {
@@ -44,7 +43,6 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
         });
       } else {
         setState(() => _isLoading = false);
-        // Handle case where profile is not loaded
       }
     } catch (e) {
       debugPrint("Error loading profile: $e");
@@ -52,79 +50,16 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
     }
   }
 
-  void _setupListeners() {
-    _repository.roomCreatedStream.listen((data) {
-      if (data.containsKey('roomId')) {
-        setState(() {
-          _currentRoomId = data['roomId'];
-          _isWaiting = false;
-        });
-      }
-    });
-
-    _disconnectedSubscription = _repository.disconnectedStream.listen((_) {
-      if (mounted && (_isWaiting || _currentRoomId != null)) {
-        setState(() {
-          _isWaiting = false;
-          _currentRoomId = null;
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Connection lost/failed. Please try again later.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
-  }
-
   void _joinPool() {
     if (_userProfile == null) return;
 
-    // Connects only when the user clicks the button
-    _repository.connect();
-
-    // Map Gender
-    int genderInt = 0;
-    if (_userProfile!.gender == Gender.female) {
-      genderInt = 1;
-    }
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Joining Speed Dating Pool...')));
-
-    _repository.joinPool(
-      email: _userProfile!.email,
-      gender: genderInt,
-      interests: _userProfile!.interests,
+    // Navigate to WaitingPage
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaitingPage(userProfile: _userProfile!),
+      ),
     );
-
-    setState(() {
-      _isWaiting = true;
-    });
-  }
-
-  void _cancelWaiting() {
-    _repository.leave();
-    setState(() {
-      _isWaiting = false;
-    });
-  }
-
-  void _handleChatLeave() {
-    // repository.leave() is called in ChatScreen exit
-    setState(() {
-      _currentRoomId = null;
-      _isWaiting = false;
-    });
-  }
-
-  @override
-  void dispose() {
-    _disconnectedSubscription?.cancel();
-    _repository.disconnect();
-    super.dispose();
   }
 
   @override
@@ -133,17 +68,6 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
-    }
-
-    if (_currentRoomId != null) {
-      return ChatScreen(
-        roomId: _currentRoomId!,
-        onLeave: _handleChatLeave,
-      );
-    }
-
-    if (_isWaiting) {
-      return WaitingScreen(onCancel: _cancelWaiting);
     }
 
     return Scaffold(
@@ -242,9 +166,9 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: CupidButton(
-                text: _isLoading ? 'Cancel' : 'Start Chatting',
+                text: 'Start Chatting',
                 trailingIcon: Icon(
-                  _isLoading ? Icons.cancel : Icons.arrow_forward,
+                  Icons.arrow_forward,
                   color: CupidColors.whitePrimary,
                   size: 20,
                 ),

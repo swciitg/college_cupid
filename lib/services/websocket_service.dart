@@ -32,12 +32,13 @@ class WebSocketService {
 
   void initConnection() {
     _socket = io.io(
-        'https://swc.iitg.ac.in',
-        io.OptionBuilder()
-            .setTransports(['websocket'])
-            .setPath('/test/collegeCupid')
-            .enableAutoConnect()
-            .build());
+      'https://swc.iitg.ac.in',
+      io.OptionBuilder()
+          .setPath('/test/collegeCupid')
+          .setTransports(['polling', 'websocket'])
+          .enableAutoConnect()
+          .build(),
+    );
 
     _socket.connect();
 
