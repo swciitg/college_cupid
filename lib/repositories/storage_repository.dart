@@ -32,4 +32,10 @@ abstract class StorageRepository {
 
   /// Initialize with stored credentials (if applicable)
   Future<bool> initializeWithStoredTokens();
+
+  /// Get list of viewed event IDs
+  Future<List<String>> getViewedEventIds();
+
+  /// Mark an event as viewed
+  Future<void> markEventAsViewed(String eventId);
 }

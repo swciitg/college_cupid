@@ -40,7 +40,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to sync to Google Drive (data safe in local): $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
       // Don't rethrow - data is safe locally
     }
@@ -58,7 +59,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to read from Google Drive, trying local backup: $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
       // Fall back to local storage
       return await _localBackup.readPrivateData();
@@ -81,7 +83,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to get crushes from Google Drive, using local: $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
       return await _localBackup.getMyCrushes();
     }
@@ -98,7 +101,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to add crush to Google Drive (saved locally): $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
     }
   }
@@ -112,9 +116,11 @@ class GoogleDriveRepository implements StorageRepository {
     try {
       await FirebaseDriveService.removeCrush(index);
     } catch (e) {
-      _logger.w('Failed to remove crush from Google Drive (removed locally): $e');
+      _logger
+          .w('Failed to remove crush from Google Drive (removed locally): $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
     }
   }
@@ -130,7 +136,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to upload key to Google Drive (saved locally): $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
     }
   }
@@ -147,7 +154,8 @@ class GoogleDriveRepository implements StorageRepository {
     } catch (e) {
       _logger.w('Failed to get key from Google Drive, using local: $e');
       if (_isAuthError(e)) {
-        throw AuthenticationExpiredException('Google Drive authentication expired: $e');
+        throw AuthenticationExpiredException(
+            'Google Drive authentication expired: $e');
       }
       return await _localBackup.getDHPrivateKey();
     }
@@ -167,6 +175,16 @@ class GoogleDriveRepository implements StorageRepository {
   @override
   Future<bool> initializeWithStoredTokens() async {
     return FirebaseDriveService.initializeWithStoredTokens();
+  }
+
+  @override
+  Future<List<String>> getViewedEventIds() async {
+    return await _localBackup.getViewedEventIds();
+  }
+
+  @override
+  Future<void> markEventAsViewed(String eventId) async {
+    await _localBackup.markEventAsViewed(eventId);
   }
 }
 

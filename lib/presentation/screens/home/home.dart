@@ -8,6 +8,7 @@ import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dar
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
+import 'package:college_cupid/stores/home_tab_provider.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +47,15 @@ class _HomeState extends ConsumerState<Home> {
   @override
   Widget build(BuildContext context) {
     final userController = ref.watch(userProvider);
+    ref.listen<int>(homeTabIndexProvider, (previous, next) {
+      if (next != _selectedIndex) {
+        _pageController.jumpToPage(next);
+        setState(() {
+          _selectedIndex = next;
+        });
+      }
+    });
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: CupidStyles.edgeToEdgeSystemUI,
       child: CollegeCupidUpgrader(
