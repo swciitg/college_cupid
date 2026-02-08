@@ -36,7 +36,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
       this._apiRepository, this._userProfileRepository, this._confessionsRepository);
 
   /// Decrypts profile reply content if it's a profile reply type
-  String _decryptProfileReply(String content, UpdateType type) {
+  String _decryptProfileReply(String content, UpdateType type, String? senderPublicKey) {
     // Only decrypt profile-related replies (IMAGES and QUESTIONS)
     if (type != UpdateType.profileReply && type != UpdateType.textReply) {
       return content;
@@ -48,13 +48,20 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
       return content;
     }
 
+    // Check if sender's public key is available
+    if (senderPublicKey == null || senderPublicKey.isEmpty) {
+      log('Warning: Sender public key not available for decryption');
+      return content;
+    }
+
     try {
-      // Decrypt using user's private key
-      final decrypted = Encryption.decryptWithPrivateKey(
+      // Decrypt using shared secret (my private key + their public key)
+      final decrypted = Encryption.decryptWithSharedSecret(
         encryptedMessage: content,
-        privateKey: LoginStore.dhPrivateKey!,
+        myPrivateKey: LoginStore.dhPrivateKey!,
+        theirPublicKey: senderPublicKey,
       );
-      log('Successfully decrypted profile reply');
+      log('Successfully decrypted profile reply using shared secret');
       return decrypted;
     } catch (e) {
       log('Error decrypting profile reply: $e');
@@ -171,6 +178,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             replyText: _decryptProfileReply(
               json['replyContent'] ?? '',
               type,
+              userProfile.publicKey,
             ),
             replyTo: replyToText,
             mediaUrl: mediaUrl,
@@ -218,13 +226,14 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
       String finalContent = content;
       if ((entityType == 'IMAGES' || entityType == 'QUESTIONS') &&
           receiverPublicKey != null &&
-          receiverPublicKey.isNotEmpty) {
-        debugPrint("REPO: Encrypting profile reply with public key");
-        finalContent = Encryption.encryptWithPublicKey(
+          receiverPublicKey.isNotEmpty &&
+          LoginStore.dhPrivateKey != null &&
+          LoginStore.dhPrivateKey!.isNotEmpty) {
+        finalContent = Encryption.encryptWithSharedSecret(
           message: content,
-          publicKey: receiverPublicKey,
+          myPrivateKey: LoginStore.dhPrivateKey!,
+          theirPublicKey: receiverPublicKey,
         );
-        debugPrint("REPO: Encrypted content: ${finalContent.substring(0, 20)}...");
       }
 
       final payload = {
