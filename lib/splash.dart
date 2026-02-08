@@ -28,12 +28,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
         // Now try to restore Google Drive session if user was using it
         try {
-          final storageRepo = ref.read(storageRepositoryProvider);
-          final initialized = await storageRepo.initializeWithStoredTokens();
-          if (initialized) {
-            debugPrint('Google Drive session restored successfully');
+          final userProfile = ref.read(userProvider).myProfile;
+          final storageType = userProfile?.storageType;
+
+          if (storageType?.name == 'googleDrive') {
+            debugPrint('User storage type: Google Drive - Attempting to restore session...');
+            final storageRepo = ref.read(storageRepositoryProvider);
+            final initialized = await storageRepo.initializeWithStoredTokens();
+            if (initialized) {
+              debugPrint('Google Drive session restored successfully');
+            } else {
+              debugPrint('Failed to restore Google Drive session - user may need to reconnect');
+            }
+          } else if (storageType?.name == 'localStorage') {
+            debugPrint('User storage type: Local Storage - Skipping Google Drive initialization');
           } else {
-            debugPrint('Google Drive initialization returned false (may be using local storage)');
+            debugPrint('User storage type: Unknown or not set (${storageType?.name})');
           }
         } catch (e) {
           debugPrint('Failed to restore Google Drive session: $e');

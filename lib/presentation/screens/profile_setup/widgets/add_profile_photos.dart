@@ -11,7 +11,6 @@ class AddPhotos extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final images = onboardingState.images ?? [];
 
     return Column(
@@ -23,36 +22,6 @@ class AddPhotos extends ConsumerWidget {
             child: _buildPhotoSlot(context, ref, index, images[index]),
           );
         }),
-
-        // Add Photo Slot Button
-        GestureDetector(
-          onTap: () {
-            onboardingController.addPhotoSlot();
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Add Photo Slot",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Icon(Icons.add_circle, color: Colors.black87, size: 20),
-              ],
-            ),
-          ),
-        ),
 
         const SizedBox(height: 100), // Bottom padding for nav buttons
       ],

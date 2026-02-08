@@ -12,6 +12,7 @@ class DriveConnect extends ConsumerWidget {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final isConnected = onboardingState.isDriveConnected ?? false;
+    final isAdmin = onboardingState.isAdminUser ?? false;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,6 +215,56 @@ class DriveConnect extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16)
+        ],
+
+        // Admin-only option to continue with local storage
+        if (isAdmin && !isConnected) ...[
+          const Divider(height: 32),
+          Text(
+            'Admin Option',
+            style: CupidTextStyles.title2.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.orange[800],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'As an admin, you can choose to continue with local storage instead of Google Drive. Note: Your data will only be stored on this device.',
+            style: CupidTextStyles.body2.copyWith(
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () {
+              // Continue with local storage for admins
+              onboardingController.continueWithLocalStorage();
+            },
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: Colors.orange.withValues(alpha: 0.5)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.phone_android_outlined,
+                  color: Colors.orange,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Continue with Local Storage',
+                  style: CupidTextStyles.label1.copyWith(
+                    color: Colors.orange[800],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ],
     );

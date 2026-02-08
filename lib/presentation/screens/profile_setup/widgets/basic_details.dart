@@ -1,4 +1,3 @@
-
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/common_widgets.dart';
@@ -7,6 +6,7 @@ import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BasicDetails extends ConsumerStatefulWidget {
@@ -21,7 +21,7 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
   late TextEditingController _ageController;
   late TextEditingController _zodiacController;
   late TextEditingController _hometownController;
-  
+
   // Controller for Name (from LoginStore)
   late TextEditingController _nameController;
   late TextEditingController _phnNumberController;
@@ -31,19 +31,23 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
   @override
   void initState() {
     super.initState();
+    final onboardingState = ref.read(onboardingControllerProvider);
+    final userProfile = onboardingState.userProfile;
+
     _nameController = TextEditingController(text: LoginStore.displayName);
-    _ageController = TextEditingController();
+    _ageController = TextEditingController(text: userProfile?.age.toString() ?? '');
     _zodiacController = TextEditingController();
-    _hometownController = TextEditingController();
-    _phnNumberController = TextEditingController();
-    _instaController = TextEditingController();
+    _hometownController = TextEditingController(text: userProfile?.hometown ?? '');
+    _phnNumberController = TextEditingController(text: userProfile?.phnNumber ?? '');
+    _instaController = TextEditingController(text: userProfile?.insta ?? '');
+    selectedZodiac = userProfile?.zodiac;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final onboardingController = ref.read(onboardingControllerProvider.notifier);
       // Auto-calculate year of join if possible, or keep existing logic
       if (LoginStore.rollNumber != null) {
-        final yearOfJoin = DateTime.now().year % 100 -
-            getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
+        final yearOfJoin =
+            DateTime.now().year % 100 - getYearOfJoinFromRollNumber(LoginStore.rollNumber!);
         // log("Year of join : $yearOfJoin");
         onboardingController.updateYearOfJoin(yearOfJoin);
       }
@@ -61,59 +65,50 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
     super.dispose();
   }
 
-  List<Program> programs =
-      Program.values.where((e) => e != Program.none).toList();
+  List<Program> programs = Program.values.where((e) => e != Program.none).toList();
 
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
     final onboardingController = ref.read(onboardingControllerProvider.notifier);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
-
         CustomTextField(
           label: "Your Full Name",
           controller: _nameController,
           enabled: false,
         ),
         const SizedBox(height: 16),
-
         CustomTextField(
-          label: "Age",
-          hintText: "20", // Placeholder from design
-          controller: _ageController,
-          keyboardType: TextInputType.number,
-          onChanged:(age){
-            onboardingController.updateAge(age);
-          }
-        ),
+            label: "Age",
+            hintText: "20", // Placeholder from design
+            controller: _ageController,
+            keyboardType: TextInputType.number,
+            onChanged: (age) {
+              onboardingController.updateAge(age);
+            }),
         const SizedBox(height: 16),
-
         CustomTextField(
-          label: "Phone Number",
-          hintText: "998877XXXX",
-          controller: _phnNumberController,
-          keyboardType: TextInputType.phone,
-          maxLength: 10,
-          onChanged:(phnNumber){
-            onboardingController.updatePhnNumber(phnNumber);
-          }
-        ),
+            label: "Phone Number",
+            hintText: "998877XXXX",
+            controller: _phnNumberController,
+            keyboardType: TextInputType.phone,
+            maxLength: 10,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (phnNumber) {
+              onboardingController.updatePhnNumber(phnNumber);
+            }),
         const SizedBox(height: 16),
-
         CustomTextField(
-          label: "Insta Username",
-          hintText: "instagram_handle",
-          controller: _instaController,
-          onChanged:(insta){
-            onboardingController.updateInsta(insta);
-          }
-        ),
+            label: "Insta Username",
+            hintText: "instagram_handle",
+            controller: _instaController,
+            onChanged: (insta) {
+              onboardingController.updateInsta(insta);
+            }),
         const SizedBox(height: 16),
-
         const Text(
           "Zodiac",
           style: CupidTextStyles.label1,
@@ -133,16 +128,12 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             if (value != null) {
               selectedZodiac = value;
               onboardingController.updateZodiac(value);
-              setState((){});
+              setState(() {});
             }
           },
         ),
         const SizedBox(height: 16),
-        
-        const Text(
-          "Gender",
-          style: CupidTextStyles.label1
-        ),
+        const Text("Gender", style: CupidTextStyles.label1),
         const SizedBox(height: 8),
         Wrap(
           spacing: 10,
@@ -156,24 +147,21 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
           }).toList(),
         ),
         const SizedBox(height: 16),
-
         CustomTextField(
           label: "Hometown",
           hintText: "Banglore",
           controller: _hometownController,
-          onChanged: (city){
+          onChanged: (city) {
             onboardingController.updateHometown(city);
           },
-          
         ),
         const SizedBox(height: 16),
-
-         Text(
+        Text(
           "Degree",
           style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary),
         ),
         const SizedBox(height: 8),
-         Wrap(
+        Wrap(
           spacing: 10,
           runSpacing: 10,
           children: programs.map((program) {
@@ -184,7 +172,6 @@ class _BasicDetailsState extends ConsumerState<BasicDetails> {
             );
           }).toList(),
         ),
-        
         const SizedBox(height: 20),
       ],
     );

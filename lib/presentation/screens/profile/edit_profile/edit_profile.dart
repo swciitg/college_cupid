@@ -90,9 +90,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     surprizeQuiz.addAll(questionsMap.values);
     debugPrint('Total questions after merge: ${surprizeQuiz.length}');
     for (var q in surprizeQuiz) {
-      debugPrint('Question: ${q.question}, hasText: ${q.answer.isNotEmpty}, hasAudio: ${q.audioPath != null}');
+      debugPrint(
+          'Question: ${q.question}, hasText: ${q.answer.isNotEmpty}, hasAudio: ${q.audioPath != null}');
     }
-    
+
     textEditingControllers
         .addAll(surprizeQuiz.map((e) => TextEditingController(text: e.answer)).toList());
 
@@ -276,10 +277,14 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       setState(() {});
       await ref.read(userProfileRepoProvider).postAudioNotes(userProfile);
 
-      await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
-      ref.read(userProvider.notifier).updateMyProfile(userProfile);
-      await SharedPrefService.saveMyProfile(userProfile.toJson());
-      ref.read(userProvider.notifier).updateMyProfile(userProfile);
+      final updatedProfileMap =
+          await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
+      if (updatedProfileMap != null) {
+        final updatedProfile = UserProfile.fromJson(updatedProfileMap);
+        ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+        await SharedPrefService.saveMyProfile(updatedProfile.toJson());
+      }
+
       setState(() {
         _loading = false;
       });
@@ -664,8 +669,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         child: IconButton(
                           onPressed: () {
                             var rand = math.Random().nextInt(quizQuestions.length);
-                            while (
-                                surprizeQuiz.any((e) => e.question == quizQuestions[rand].question)) {
+                            while (surprizeQuiz
+                                .any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
                             surprizeQuiz[index] = quizQuestions[rand];
@@ -673,7 +678,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             _audioPaths[index] = null;
                             setState(() {});
                           },
-                          icon: const Icon(Icons.refresh_rounded, color: CupidColors.primary, size: 20),
+                          icon: const Icon(Icons.refresh_rounded,
+                              color: CupidColors.primary, size: 20),
                           padding: const EdgeInsets.all(8),
                           constraints: const BoxConstraints(),
                           tooltip: 'Change question',

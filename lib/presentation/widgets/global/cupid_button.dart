@@ -53,9 +53,7 @@ class CupidButton extends StatelessWidget {
                           ),
                     ),
                     if (trailingIcon != null) ...[
-                      SizedBox(
-                        width: 8,
-                      ),
+                      const SizedBox(width: 8),
                       trailingIcon!,
                     ]
                   ],

@@ -1,6 +1,7 @@
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final TextStyle? textStyle;
   final int? maxLength;
   final Function(String)? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -28,12 +30,14 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.textStyle,
+    this.inputFormatters,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (label.isNotEmpty) ...[
           Text(label, style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary)),
@@ -52,6 +56,7 @@ class CustomTextField extends StatelessWidget {
             maxLines: maxLines,
             maxLength: maxLength,
             onChanged: onChanged,
+            inputFormatters: inputFormatters,
             style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: InputDecoration(
               // label: ,
@@ -162,7 +167,7 @@ class BottomNavButtons extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
+                  disabledBackgroundColor: CupidColors.primary.withValues(alpha: 0.5),
                 ),
                 child: Text(
                   'Go Back',
@@ -191,7 +196,7 @@ class BottomNavButtons extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                disabledBackgroundColor: const Color(0xFF6C5DD3).withValues(alpha: 0.5),
+                disabledBackgroundColor: CupidColors.primary.withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

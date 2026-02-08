@@ -195,7 +195,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                       ),
                     ],
                   ),
-                if (widget.isMine) const StorageStatusCard(),
+                // Only show StorageStatusCard for admins
+                if (widget.isMine && widget.userProfile.isAdmin) const StorageStatusCard(),
                 if (widget.isMine) const LogoutButton(),
                 const SizedBox(height: 100),
               ],
