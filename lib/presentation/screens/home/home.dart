@@ -1,6 +1,7 @@
 import 'package:college_cupid/presentation/screens/home/home_tab.dart';
 import 'package:college_cupid/presentation/screens/confessions/confessions_screen.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
+import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
 import 'package:college_cupid/presentation/screens/updates/updates_screen.dart';
 import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
