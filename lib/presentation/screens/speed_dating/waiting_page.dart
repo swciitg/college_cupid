@@ -22,65 +22,77 @@ class WaitingPage extends StatefulWidget {
 
 class _WaitingPageState extends State<WaitingPage> {
   final SpeedDatingRepository _repository = SpeedDatingRepository();
-  StreamSubscription? _roomCreatedSubscription;
+
   StreamSubscription? _disconnectedSubscription;
 
   @override
   void initState() {
     super.initState();
-    // _setupListeners();
-    // _connectAndJoin();
-    connectSocket();
+    _setupListeners();
+    _connectAndJoin();
+    // connectSocket();
   }
 
-  void connectSocket() async {
-    final wsUrl = Uri.parse('wss://swc.iitg.ac.in/test/collegeCupid');
-    final channel = WebSocketChannel.connect(wsUrl);
+  // void connectSocket() async {
+  //   final wsUrl = Uri.parse('wss://swc.iitg.ac.in/test/collegeCupid');
+  //   final channel = WebSocketChannel.connect(wsUrl);
 
-    await channel.ready;
-    log("message");
+  //   await channel.ready;
+  //   log("message");
 
-    // channel.stream.listen((message) {
-    //   channel.sink.add('received!');
-    //   channel.sink.close(status.goingAway);
-    // });
-  }
+  //   // channel.stream.listen((message) {
+  //   //   channel.sink.add('received!');
+  //   //   channel.sink.close(status.goingAway);
+  //   // });
+  // }
 
-  void _connectAndJoin() {
+  Future<void> _connectAndJoin() async {
     // Ensure fresh connection - maybe disconnect old one safely?
     // Repository method connect() calls initConnection() which handles state.
-    _repository.connect();
+    await _repository.connect();
+    log("connected to socket");
 
     int genderInt = widget.userProfile.gender == Gender.female ? 1 : 0;
 
-    _repository.joinPool(
+    await _repository.joinPool(
       email: widget.userProfile.email,
       gender: genderInt,
       interests: widget.userProfile.interests,
     );
   }
 
+  bool _isMatched = false;
+  String? _roomId;
+  List<String>? _questions;
+  StreamSubscription? _matchedSubscription;
+  StreamSubscription? _questionsSubscription;
+  StreamSubscription? _chatMessageSubscription;
+
   void _setupListeners() {
-    _roomCreatedSubscription = _repository.roomCreatedStream.listen((data) {
-      if (data.containsKey('roomId') && mounted) {
-        // Navigate to ChatScreen
-        // Providing replacement so back button from chat doesn't go to waiting
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              roomId: data['roomId'],
-              onLeave: () {
-                // ChatScreen calls this when user clicks exit or partner leaves.
-                // Since we used pushReplacement, ChatScreen is on top of stack (SpeedDatingScreen is below).
-                // We should pop to go back to SpeedDatingScreen.
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ),
-        );
+    _matchedSubscription = _repository.matchedStream.listen((data) {
+      if (mounted) {
+        setState(() {
+          _isMatched = true;
+          _roomId = data['roomId'];
+        });
+      }
+    });
+
+    _questionsSubscription = _repository.questionsStream.listen((data) {
+      if (mounted && _roomId != null) {
+        // Show questions to pick
+        setState(() {
+          _questions = List<String>.from(data);
+        });
+        _showQuestionPicker();
+      }
+    });
+
+    // If we are the one waiting (didn't get questions), we wait for the first message to enter chat
+    _chatMessageSubscription = _repository.chatMessageStream.listen((data) {
+      if (mounted && _isMatched && _roomId != null) {
+        _navigateToChat(_roomId!,
+            initialMessage: "Partner: ${data['message']}");
       }
     });
 
@@ -89,6 +101,64 @@ class _WaitingPageState extends State<WaitingPage> {
         _showErrorAndPop('Connection lost/failed. Please try again later.');
       }
     });
+  }
+
+  void _showQuestionPicker() {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false, // Prevent closing without selection
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Pick a conversation starter",
+                    style: CupidTextStyles.brandTitle2),
+                const SizedBox(height: 16),
+                if (_questions != null)
+                  ..._questions!.map((q) => ListTile(
+                        title: Text(q),
+                        onTap: () {
+                          Navigator.pop(context); // Close sheet
+                          _sendStarterAndChat(q);
+                        },
+                      )),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _sendStarterAndChat(String question) {
+    if (_roomId != null) {
+      _repository.sendMessage(_roomId!, question);
+      _navigateToChat(_roomId!, initialMessage: "Me: $question");
+    }
+  }
+
+  void _navigateToChat(String roomId, {String? initialMessage}) {
+    // Avoid double navigation
+    // We can just pushReplacement
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(
+          roomId: roomId,
+          initialMessage: initialMessage,
+          onLeave: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+      ),
+    );
   }
 
   void _showErrorAndPop(String message) {
@@ -103,23 +173,16 @@ class _WaitingPageState extends State<WaitingPage> {
 
   void _cancelAndPop() {
     _repository.leave();
-    // Also disconnecting might be good practice if we want to stop listening completely?
-    // The requirement says "on pressing the cancel button or any error disconnect from websocket"
     _repository.disconnect();
-    if (mounted) context.pop();
+    context.pop();
   }
 
   @override
   void dispose() {
-    _roomCreatedSubscription?.cancel();
+    _matchedSubscription?.cancel();
+    _questionsSubscription?.cancel();
+    _chatMessageSubscription?.cancel();
     _disconnectedSubscription?.cancel();
-    // We do NOT disconnect here automatically because if we navigate to ChatScreen, we need the connection.
-    // If we pop this page (cancel), we call _cancelAndPop which disconnects.
-    // BUT if we navigate to ChatScreen, this widget is disposed (if replaced).
-    // Wait, if pushReplacement is used, this widget is disposed. We must NOT disconnect in dispose if successful.
-    // How to know if successful?
-    // Actually, ChatScreen uses the SAME repository instance (singleton).
-    // So if we just cancel subscriptions, the socket stays open.
     super.dispose();
   }
 
@@ -167,11 +230,13 @@ class _WaitingPageState extends State<WaitingPage> {
                   const SizedBox(
                     height: 8,
                   ),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Finding you a partner...",
+                        _isMatched
+                            ? "Matched! Waiting for partner..."
+                            : "Finding you a partner...",
                         style: CupidTextStyles.body1,
                       ),
                       Center(

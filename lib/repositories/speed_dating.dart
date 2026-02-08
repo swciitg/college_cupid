@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:college_cupid/services/websocket_service.dart';
 
 class SpeedDatingRepository {
@@ -11,26 +13,33 @@ class SpeedDatingRepository {
 
   Stream<Map<String, dynamic>> get chatMessageStream =>
       _webSocketService.chatMessageStream;
-  Stream<String> get continueResponseStream =>
-      _webSocketService.continueResponseStream;
+  Stream<void> get continuePromptStream =>
+      _webSocketService.continuePromptStream;
+  Stream<dynamic> get partnerResponseStream =>
+      _webSocketService.partnerResponseStream;
   Stream<void> get chatClosedStream => _webSocketService.chatClosedStream;
   Stream<void> get partnerLeftStream => _webSocketService.partnerLeftStream;
   Stream<void> get partnerDisconnectedStream =>
       _webSocketService.partnerDisconnectedStream;
   Stream<Map<String, dynamic>> get roomCreatedStream =>
       _webSocketService.roomCreatedStream;
+  Stream<Map<String, dynamic>> get matchedStream =>
+      _webSocketService.matchedStream;
+  Stream<List<dynamic>> get questionsStream =>
+      _webSocketService.questionsStream;
   Stream<void> get disconnectedStream => _webSocketService.disconnectedStream;
 
-  void connect() {
-    _webSocketService.initConnection();
+  Future<void> connect() async {
+    log('SpeedDatingRepository: Initiating WebSocket connection');
+    await _webSocketService.initConnection();
   }
 
-  void joinPool({
+  Future<void> joinPool({
     required String email,
     required int gender,
     required List<String> interests,
-  }) {
-    _webSocketService.joinPool(
+  }) async {
+    await _webSocketService.joinPool(
       email,
       gender,
       interests,
@@ -42,8 +51,8 @@ class SpeedDatingRepository {
     _webSocketService.sendChatMessage(roomId, message);
   }
 
-  void sendDecision(String roomId, String answer) {
-    _webSocketService.sendContinueResponse(roomId, answer);
+  void sendMyResponse(String roomId, String answer) {
+    _webSocketService.sendMyResponse(roomId, answer);
   }
 
   void leave() {

@@ -1,112 +1,184 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
-import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'dart:async';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
-  late io.Socket _socket;
+  WebSocketChannel? _channel;
 
   // Streams for various events
   final _chatMessageController =
       StreamController<Map<String, dynamic>>.broadcast();
-  final _continueResponseController = StreamController<String>.broadcast();
+  final _continuePromptController = StreamController<void>.broadcast();
+  final _partnerResponseController =
+      StreamController<dynamic>.broadcast(); // Can be map or null
   final _chatClosedController = StreamController<void>.broadcast();
   final _partnerLeftController = StreamController<void>.broadcast();
   final _partnerDisconnectedController = StreamController<void>.broadcast();
+  final _matchedController = StreamController<Map<String, dynamic>>.broadcast();
+  final _questionsController =
+      StreamController<List<dynamic>>.broadcast(); // List of strings
   final _roomCreatedController =
       StreamController<Map<String, dynamic>>.broadcast();
-
   final _disconnectedController = StreamController<void>.broadcast();
 
   Stream<Map<String, dynamic>> get chatMessageStream =>
       _chatMessageController.stream;
-  Stream<String> get continueResponseStream =>
-      _continueResponseController.stream;
+  Stream<void> get continuePromptStream => _continuePromptController.stream;
+  Stream<dynamic> get partnerResponseStream =>
+      _partnerResponseController.stream;
   Stream<void> get chatClosedStream => _chatClosedController.stream;
   Stream<void> get partnerLeftStream => _partnerLeftController.stream;
   Stream<void> get partnerDisconnectedStream =>
       _partnerDisconnectedController.stream;
+  Stream<Map<String, dynamic>> get matchedStream => _matchedController.stream;
+  Stream<List<dynamic>> get questionsStream => _questionsController.stream;
   Stream<Map<String, dynamic>> get roomCreatedStream =>
       _roomCreatedController.stream;
   Stream<void> get disconnectedStream => _disconnectedController.stream;
 
-  void initConnection() {
-    _socket = io.io(
-      'https://swc.iitg.ac.in',
-      io.OptionBuilder()
-          .setPath('/test/collegeCupid')
-          .setTransports(['polling', 'websocket'])
-          .enableAutoConnect()
-          .build(),
-    );
+  Completer<void>? _connectionCompleter;
 
-    _socket.connect();
+  Future<void> initConnection() async {
+    _connectionCompleter = Completer<void>();
 
-    _socket.onConnect((_) {
+    try {
+      log('Default WebSocketService: Connecting to wss://swc.iitg.ac.in/test/collegeCupid');
+      _channel = WebSocketChannel.connect(
+        Uri.parse('wss://swc.iitg.ac.in/test/collegeCupid'),
+      );
+
+      await _channel!.ready;
+
       log('Default WebSocketService: Connected to WebSocket Server');
-    });
+      log("connected to websocket"); // Requested log
+      _connectionCompleter!.complete();
 
-    _socket.onDisconnect((_) {
-      log('Default WebSocketService: Disconnected from WebSocket Server');
+      _setupListeners();
+    } catch (e) {
+      log('Default WebSocketService: Connection Error: $e');
+      if (_connectionCompleter != null && !_connectionCompleter!.isCompleted) {
+        _connectionCompleter!.completeError(e);
+      }
       _disconnectedController.add(null);
-    });
+    }
 
-    _socket.onConnectError((data) {
-      log('Default WebSocketService: Connect Error: $data');
-      _disconnectedController.add(null);
-    });
-
-    _socket.onError((data) {
-      log('Default WebSocketService: Error: $data');
-    });
-
-    _setupListeners();
+    return _connectionCompleter!.future;
   }
 
   void _setupListeners() {
-    _socket.on('room_created', (data) {
-      log('Default WebSocketService: Received [room_created]: $data');
-      if (data != null) {
-        _roomCreatedController.add(data as Map<String, dynamic>);
-      }
-    });
+    _channel!.stream.listen(
+      (message) {
+        log('Default WebSocketService: Received: $message');
+        try {
+          if (message is String) {
+            final decoded = jsonDecode(message);
+            if (decoded is Map<String, dynamic>) {
+              // Assuming protocol: {"event": "eventName"chat, "data": ...}
+              // or {"type": "eventName", "payload": ...}
+              // Adjusting based on common patterns.
+              // If the server sends just the event name as a key?
+              // Let's assume a 'type' or 'event' field exists.
 
-    _socket.on('chat_message', (data) {
-      log('Default WebSocketService: Received [chat_message]: $data');
-      if (data != null) {
-        // Expected payload is just the string message, but let's wrap it for consistency if needed
-        // The doc says payload is "string"
-        _chatMessageController.add({'message': data});
-      }
-    });
+              String? eventType = decoded['event'] ?? decoded['type'];
+              dynamic data = decoded['data'] ?? decoded['payload'] ?? decoded;
 
-    _socket.on('continue_response', (data) {
-      log('Default WebSocketService: Received [continue_response]: $data');
-      if (data != null) {
-        _continueResponseController.add(data as String);
-      }
-    });
-
-    _socket.on('chat_closed', (_) {
-      log('Default WebSocketService: Received [chat_closed]');
-      _chatClosedController.add(null);
-    });
-
-    _socket.on('partner_left', (_) {
-      log('Default WebSocketService: Received [partner_left]');
-      _partnerLeftController.add(null);
-    });
-
-    _socket.on('partner_disconnected', (_) {
-      log('Default WebSocketService: Received [partner_disconnected]');
-      _partnerDisconnectedController.add(null);
-    });
+              if (eventType != null) {
+                _handleEvent(eventType, data);
+              } else {
+                // If it's a map without an explicit event field,
+                // maybe check keys?
+                log('Default WebSocketService: Unknown message format (no event/type field)');
+              }
+            }
+          }
+        } catch (e) {
+          log('Default WebSocketService: Error parsing message: $e');
+        }
+      },
+      onDone: () {
+        log('Default WebSocketService: Connection Closed');
+        _disconnectedController.add(null);
+      },
+      onError: (error) {
+        log('Default WebSocketService: Stream Error: $error');
+        _disconnectedController.add(null);
+      },
+    );
   }
 
-  void joinPool(
-      String email, int gender, List<String> interests, String timeJoined) {
-    log('Default WebSocketService: Emitting [join_pool] - Email: $email, Gender: $gender');
-    _socket.emit('join_pool', {
+  void _handleEvent(String event, dynamic data) {
+    switch (event) {
+      case 'matched':
+        log('Default WebSocketService: Received [matched]: $data');
+        if (data != null) {
+          _matchedController.add(data as Map<String, dynamic>);
+        }
+        break;
+      case 'questions':
+        log('Default WebSocketService: Received [questions]: $data');
+        if (data != null && data is List) {
+          _questionsController.add(data);
+        }
+        break;
+      case 'room_created':
+        log('Default WebSocketService: Received [room_created]: $data');
+        if (data != null) {
+          _roomCreatedController.add(data as Map<String, dynamic>);
+        }
+        break;
+      case 'continue_prompt':
+        log('Default WebSocketService: Received [continue_prompt]');
+        _continuePromptController.add(null);
+        break;
+      case 'partner_response':
+        log('Default WebSocketService: Received [partner_response]: $data');
+        _partnerResponseController.add(data);
+        break;
+      case 'chat_message':
+        log('Default WebSocketService: Received [chat_message]: $data');
+        if (data != null) {
+          _chatMessageController.add({'message': data});
+        }
+        break;
+
+      case 'chat_closed':
+        log('Default WebSocketService: Received [chat_closed]');
+        _chatClosedController.add(null);
+        break;
+      case 'partner_left':
+        log('Default WebSocketService: Received [partner_left]');
+        _partnerLeftController.add(null);
+        break;
+      case 'partner_disconnected':
+        log('Default WebSocketService: Received [partner_disconnected]');
+        _partnerDisconnectedController.add(null);
+        break;
+      default:
+        log('Default WebSocketService: Unhandled event: $event');
+    }
+  }
+
+  void _send(String event, dynamic data) {
+    if (_channel != null) {
+      final message = jsonEncode({'event': event, 'data': data});
+      // log('Default WebSocketService: Sending: $message');
+      _channel!.sink.add(message);
+    } else {
+      log('Default WebSocketService: Cannot send, channel is null');
+    }
+  }
+
+  Future<void> joinPool(String email, int gender, List<String> interests,
+      String timeJoined) async {
+    if (_channel == null || _channel!.closeCode != null) {
+      // simplistic check, ready checks better
+      await initConnection();
+    }
+
+    log('Default WebSocketService: Emitting [join_pool] - Email: $email');
+    _send('join_pool', {
       'email': email,
       'gender': gender,
       'interests': interests,
@@ -118,15 +190,23 @@ class WebSocketService {
 
   void sendChatMessage(String roomId, String message) {
     log('Default WebSocketService: Emitting [chat_message] - Room: $roomId, Msg: $message');
-    _socket.emit('chat_message', {
+    _send('chat_message', {
       'roomId': roomId,
       'message': message,
     });
   }
 
   void sendContinueResponse(String roomId, String answer) {
-    log('Default WebSocketService: Emitting [continue_response] - Room: $roomId, Answer: $answer');
-    _socket.emit('continue_response', {
+    log('Default WebSocketService: Emitting [continue_response]');
+    _send('continue_response', {
+      'roomId': roomId,
+      'answer': answer,
+    });
+  }
+
+  void sendMyResponse(String roomId, String answer) {
+    log('Default WebSocketService: Emitting [my_response] - Room: $roomId, Answer: $answer');
+    _send('my_response', {
       'roomId': roomId,
       'answer': answer,
     });
@@ -134,16 +214,21 @@ class WebSocketService {
 
   void leave() {
     log('Default WebSocketService: Emitting [leave]');
-    _socket.emit('leave');
+    _send('leave', {});
   }
 
   void disconnect() {
-    _socket.disconnect();
+    if (_channel != null) {
+      _channel!.sink.close();
+    }
     _chatMessageController.close();
-    _continueResponseController.close();
+    _continuePromptController.close();
+    _partnerResponseController.close();
     _chatClosedController.close();
     _partnerLeftController.close();
     _partnerDisconnectedController.close();
+    _matchedController.close();
+    _questionsController.close();
     _roomCreatedController.close();
     _disconnectedController.close();
   }
