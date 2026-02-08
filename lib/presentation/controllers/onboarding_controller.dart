@@ -342,6 +342,25 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("IMAGES POSTED", name: "OnboardingController");
       state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
+
+      // Determine storage type based on Google Drive connection
+      final storageType =
+          state.isDriveConnected == true ? StorageType.googleDrive : StorageType.localStorage;
+
+      // Get Google account email if Drive is connected
+      final googleEmail =
+          state.isDriveConnected == true ? FirebaseAuth.instance.currentUser?.email : null;
+
+      // Update user profile with storage type and Google email before posting
+      state = state.copyWith(
+        userProfile: state.userProfile?.copyWith(
+          storageType: storageType,
+          googleAccountEmail: googleEmail,
+        ),
+      );
+
+      log("POSTING USER PROFILE with storageType: ${storageType.name}, googleEmail: $googleEmail",
+          name: "OnboardingController");
       log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
       await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");

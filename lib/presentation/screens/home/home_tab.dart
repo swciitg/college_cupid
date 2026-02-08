@@ -39,8 +39,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
     // Safety check for index out of bounds
     if (pageViewState.homeTabProfileList.isEmpty ||
-        pageViewNotifier.currentPage >=
-            pageViewState.homeTabProfileList.length) {
+        pageViewNotifier.currentPage >= pageViewState.homeTabProfileList.length) {
       if (pageViewState.loading) {
         return const Center(child: CustomLoader());
       }
@@ -52,11 +51,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       );
     }
 
-    final currentUser =
-        pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
+    final currentUser = pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
 
     return DisplayProfileInfo(
-      customHeader: const EventUpdateMessageCard(isLive: true),
+      customHeader: const EventUpdateMessageCard(),
       userProfile: currentUser,
       onPass: () {
         pageViewNotifier.nextProfile();

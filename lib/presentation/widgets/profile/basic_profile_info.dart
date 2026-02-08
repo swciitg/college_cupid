@@ -124,8 +124,8 @@ class BasicProfileInfo extends ConsumerWidget {
                               child: const Icon(FluentIcons.search_24_regular, size: 14),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          _buildMatchScore(currentUser),
+                          // const SizedBox(width: 8),
+                          // _buildMatchScore(currentUser),
                         ]
                       ],
                     ),
@@ -227,17 +227,17 @@ class BasicProfileInfo extends ConsumerWidget {
     );
   }
 
-  Widget _buildMatchScore(UserProfile currentUser) {
-    final matchScore = currentUser.getMatchScore(userProfile);
-    if (matchScore == null) {
-      return const SizedBox();
-    }
-    final myPreferredGender =
-        currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
-    final otherGender = userProfile.gender!;
-    if (myPreferredGender != null && myPreferredGender != otherGender) {
-      return const SizedBox();
-    }
-    return ProfileMatchScore(matchScore: matchScore);
-  }
+  // Widget _buildMatchScore(UserProfile currentUser) {
+  //   final matchScore = currentUser.getMatchScore(userProfile);
+  //   if (matchScore == null) {
+  //     return const SizedBox();
+  //   }
+  //   final myPreferredGender =
+  //       currentUser.sexualOrientation!.type.preferredGender(currentUser.gender!);
+  //   final otherGender = userProfile.gender!;
+  //   if (myPreferredGender != null && myPreferredGender != otherGender) {
+  //     return const SizedBox();
+  //   }
+  //   return ProfileMatchScore(matchScore: matchScore);
+  // }
 }

@@ -13,12 +13,10 @@ import 'package:go_router/go_router.dart';
 import 'package:college_cupid/routing/app_router.dart';
 
 class EventUpdateMessageCard extends ConsumerStatefulWidget {
-  final bool isLive;
-  const EventUpdateMessageCard({super.key, required this.isLive});
+  const EventUpdateMessageCard({super.key});
 
   @override
-  ConsumerState<EventUpdateMessageCard> createState() =>
-      _EventUpdateMessageCardState();
+  ConsumerState<EventUpdateMessageCard> createState() => _EventUpdateMessageCardState();
 }
 
 class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
@@ -27,17 +25,33 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
   int _currentPage = 0;
   Timer? _timer;
   late AnimationController _iconController;
-  late Animation<double> _iconAnimation;
+  late Animation<double> _floatAnimation;
+  late Animation<double> _tiltAnimation;
   bool _isReverse = false;
 
   @override
   void initState() {
     super.initState();
-    _iconController =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this)
-          ..repeat(reverse: true);
-    _iconAnimation = Tween<double>(begin: -0.05, end: 0.05).animate(
-        CurvedAnimation(parent: _iconController, curve: Curves.easeInOut));
+    _iconController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    // Floating animation (vertical movement)
+    _floatAnimation = Tween<double>(begin: -12.0, end: 6.0).animate(
+      CurvedAnimation(
+        parent: _iconController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    // Subtle tilt animation (rotation)
+    _tiltAnimation = Tween<double>(begin: -0.1, end: 0.1).animate(
+      CurvedAnimation(
+        parent: _iconController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -96,7 +110,7 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isLive || !_isVisible) {
+    if (!_isVisible) {
       return const SizedBox.shrink();
     }
 
@@ -114,12 +128,10 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
           onTap: () {
             final event = events[_currentPage];
             if (event.route != null) {
-              final routeName = event.route!.startsWith('/')
-                  ? event.route!.substring(1)
-                  : event.route!;
+              final routeName =
+                  event.route!.startsWith('/') ? event.route!.substring(1) : event.route!;
 
-              final isAppRoute =
-                  AppRoutes.values.any((e) => e.name == routeName);
+              final isAppRoute = AppRoutes.values.any((e) => e.name == routeName);
 
               if (isAppRoute) {
                 context.pushNamed(routeName);
@@ -133,8 +145,17 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                RotationTransition(
-                  turns: _iconAnimation,
+                AnimatedBuilder(
+                  animation: _iconController,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, _floatAnimation.value),
+                      child: Transform.rotate(
+                        angle: _tiltAnimation.value,
+                        child: child,
+                      ),
+                    );
+                  },
                   child: SvgPicture.asset(
                     CupidIcons.newEventUpdateIcon,
                     height: 70,
@@ -168,25 +189,18 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
                           },
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 150),
-                            transitionBuilder:
-                                (Widget child, Animation<double> animation) {
+                            transitionBuilder: (Widget child, Animation<double> animation) {
                               final inAnimation = Tween<Offset>(
-                                      begin:
-                                          Offset(_isReverse ? -1.0 : 1.0, 0.0),
-                                      end: Offset.zero)
+                                      begin: Offset(_isReverse ? -1.0 : 1.0, 0.0), end: Offset.zero)
                                   .animate(animation);
                               final outAnimation = Tween<Offset>(
-                                      begin:
-                                          Offset(_isReverse ? 1.0 : -1.0, 0.0),
-                                      end: Offset.zero)
+                                      begin: Offset(_isReverse ? 1.0 : -1.0, 0.0), end: Offset.zero)
                                   .animate(animation);
 
                               if (child.key == ValueKey<int>(_currentPage)) {
-                                return SlideTransition(
-                                    position: inAnimation, child: child);
+                                return SlideTransition(position: inAnimation, child: child);
                               } else {
-                                return SlideTransition(
-                                    position: outAnimation, child: child);
+                                return SlideTransition(position: outAnimation, child: child);
                               }
                             },
                             child: Container(
@@ -213,8 +227,7 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
                                   Text(
                                     events[_currentPage].description,
                                     style: CupidTextStyles.body2.copyWith(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                       fontSize: 11,
                                     ),
                                   ),
