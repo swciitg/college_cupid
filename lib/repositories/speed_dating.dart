@@ -19,6 +19,7 @@ class SpeedDatingRepository {
       _webSocketService.partnerDisconnectedStream;
   Stream<Map<String, dynamic>> get roomCreatedStream =>
       _webSocketService.roomCreatedStream;
+  Stream<void> get disconnectedStream => _webSocketService.disconnectedStream;
 
   void connect() {
     _webSocketService.initConnection();

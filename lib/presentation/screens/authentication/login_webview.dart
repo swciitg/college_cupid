@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:college_cupid/domain/models/drive_data.dart';
+import 'package:college_cupid/domain/models/storage_type.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/helpers.dart';
-import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
@@ -28,14 +30,12 @@ class LoginWebview extends ConsumerStatefulWidget {
 class _LoginWebviewState extends ConsumerState<LoginWebview> {
   late WebViewController controller;
 
-  Future<String> getElementById(
-      WebViewController controller, String elementId) async {
-    var element = await controller.runJavaScriptReturningResult(
-        "document.querySelector('#$elementId').innerText");
+  Future<String> getElementById(WebViewController controller, String elementId) async {
+    var element = await controller
+        .runJavaScriptReturningResult("document.querySelector('#$elementId').innerText");
     String newString = element.toString();
     if (element.toString().startsWith('"')) {
-      newString =
-          element.toString().substring(1, element.toString().length - 1);
+      newString = element.toString().substring(1, element.toString().length - 1);
     }
     return newString.replaceAll('\\', '');
   }
@@ -56,7 +56,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
     debugPrint('BASE URL: ${Endpoints.baseUrl}');
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
-    final userController = ref.read(userProvider.notifier);
+    // final userController = ref.read(userProvider.notifier);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -64,23 +64,20 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
           onPageFinished: (String url) async {
             final goRouter = GoRouter.of(context);
 
-            if (!url.startsWith(
-                '${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
+            if (!url.startsWith('${Endpoints.baseUrl}/auth/microsoft/redirect?code')) {
               return;
             }
 
             String authStatus = await getElementById(controller, 'status');
             if (authStatus != 'SUCCESS') return;
             if (!mounted) return;
-             String outlookInfoString =
-                (await getElementById(controller, 'outlookInfo'))
-                    .replaceAll("\\", '"');
-              // print(outlookInfoString);
+            String outlookInfoString =
+                (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
+            // print(outlookInfoString);
 
             Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
-            final displayName =
-                outlookInfo['displayName']!.toString().toTitleCase();
+            final displayName = outlookInfo['displayName']!.toString().toTitleCase();
             final rollNumber = outlookInfo['rollNumber']!;
             final accessToken = outlookInfo['accessToken']!;
             final refreshToken = outlookInfo['refreshToken']!;
@@ -88,10 +85,8 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
             final outlookAccessToken = outlookInfo['outlookAccessToken'];
             final outlookRefreshToken = outlookInfo['outlookRefreshToken'];
 
-            await SecureStorageService.setOutlookAccessToken(
-                outlookAccessToken);
-            await SecureStorageService.setOutlookRefreshToken(
-                outlookRefreshToken);
+            await SecureStorageService.setOutlookAccessToken(outlookAccessToken);
+            await SecureStorageService.setOutlookRefreshToken(outlookRefreshToken);
 
             await SharedPrefService.setOutlookInfo(
               accessToken: accessToken,
@@ -114,29 +109,69 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               log('NEW USER');
               goRouter.goNamed(AppRoutes.profileSetup.name);
             } else {
-              debugPrint('USER ALREADY EXISTS');
-              debugPrint('LOGGING IN');
+              debugPrint('USER ALREADY EXISTS - RETURNING USER');
 
-              try {
-                final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
-                debugPrint('DH PVT KEY FETCHED: $dhPvtKey');
-                if (dhPvtKey == null) {
-                  // SOMEONE CLEARED ONEDRIVE DATA
-                  // TODO: DO SOMETHING HERE
-                  LoginStore.logout();
-                  goRouter.goNamed(AppRoutes.splash.name);
-                } else {
-                  final userProfileMap =
-                      await userProfileRepo.getUserProfile(email);
-                  final userProfile = UserProfile.fromJson(userProfileMap!);
-                  await userController.updateMyProfile(userProfile);
-                  await SharedPrefService.setDHPublicKey(userProfile.publicKey);
-                  await SharedPrefService.setDHPrivateKey(dhPvtKey);
+              // Parse the user profile to check storage type
+              final userProfileData = UserProfile.fromJson(myProfile);
+              final storageType = userProfileData.storageType;
 
-                  goRouter.goNamed(AppRoutes.splash.name);
+              debugPrint('User storage type: ${storageType.name}');
+
+              // Only show restore page if user was using Google Drive
+              if (storageType == StorageType.googleDrive) {
+                debugPrint('NAVIGATING TO RESTORE PAGE');
+                goRouter.goNamed(
+                  AppRoutes.restoreDrive.name,
+                  queryParameters: {
+                    'googleEmail': userProfileData.googleAccountEmail ?? '',
+                  },
+                );
+              } else {
+                debugPrint('LOCAL STORAGE USER - LOADING DATA AND SKIPPING RESTORE PAGE');
+
+                // Set storage type in provider
+                ref.read(storageTypeProvider.notifier).state = storageType;
+
+                // Load user profile and personal info into providers
+                await ref.read(userProvider.notifier).updateMyProfile(userProfileData);
+                await SharedPrefService.setDHPublicKey(userProfileData.publicKey);
+
+                // Load DH private key from local storage
+                var dhPrivateKey = await SharedPrefService.getDHPrivateKey();
+
+                // If no private key exists, generate new keys and store them
+                if (dhPrivateKey == null || dhPrivateKey.isEmpty) {
+                  debugPrint('No keys found - generating new keys for local storage user');
+
+                  final keyPair = DiffieHellman.generateKeyPair();
+                  dhPrivateKey = keyPair.privateKey.toString();
+                  final publicKey = keyPair.publicKey.toString();
+
+                  // Store keys locally
+                  await SharedPrefService.setDHPrivateKey(dhPrivateKey);
+                  await SharedPrefService.setDHPublicKey(publicKey);
+
+                  // Update public key in user profile
+                  final updatedProfile = userProfileData.copyWith(publicKey: publicKey);
+                  await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+                  await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+
+                  // Save keys to local storage
+                  final storageRepo = ref.read(storageRepositoryProvider);
+                  final driveData = DriveData(
+                    diffieHellmanPrivateKey: dhPrivateKey,
+                    crushEmailList: [],
+                  );
+                  await storageRepo.uploadPrivateData(driveData);
+
+                  debugPrint('Keys generated and stored successfully');
                 }
-              } catch (e) {
-                // TODO: Handle onedrive data clear
+
+                LoginStore.dhPrivateKey = dhPrivateKey;
+
+                debugPrint('User data loaded - navigating to home');
+                // Local storage users can go directly to home
+                goRouter.goNamed(AppRoutes.home.name);
               }
             }
           },

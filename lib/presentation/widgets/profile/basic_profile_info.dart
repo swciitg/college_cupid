@@ -48,7 +48,6 @@ class BasicProfileInfo extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,6 +56,25 @@ class BasicProfileInfo extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        if (isMine)
+                          Builder(
+                            builder: (context) => Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Scaffold.of(context).openDrawer();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(FluentIcons.navigation_24_regular, size: 14),
+                                ),
+                              ),
+                            ),
+                          ),
                         Expanded(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,7 +115,7 @@ class BasicProfileInfo extends ConsumerWidget {
                       ],
                     ),
                     //Show Gender
-                    if (userProfile.gender != null)
+                    if (userProfile.gender != null && !isMine)
                       Text(
                         userProfile.gender!.displayString,
                         style: CupidTextStyles.label2.copyWith(

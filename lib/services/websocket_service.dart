@@ -1,11 +1,10 @@
-import 'package:college_cupid/shared/endpoints.dart';
-import 'package:flutter/foundation.dart';
-import 'package:socket_io_client/socket_io_client.dart' as socket_io;
+import 'dart:developer';
+
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'dart:async';
 
 class WebSocketService {
-  late socket_io.Socket _socket;
-  final String _url = "http://192.168.0.138:5000";//Endpoints.wsUrl;//'ws://localhost:3000'; // Default Development URL
+  late io.Socket _socket;
 
   // Streams for various events
   final _chatMessageController =
@@ -17,6 +16,8 @@ class WebSocketService {
   final _roomCreatedController =
       StreamController<Map<String, dynamic>>.broadcast();
 
+  final _disconnectedController = StreamController<void>.broadcast();
+
   Stream<Map<String, dynamic>> get chatMessageStream =>
       _chatMessageController.stream;
   Stream<String> get continueResponseStream =>
@@ -27,30 +28,35 @@ class WebSocketService {
       _partnerDisconnectedController.stream;
   Stream<Map<String, dynamic>> get roomCreatedStream =>
       _roomCreatedController.stream;
+  Stream<void> get disconnectedStream => _disconnectedController.stream;
 
   void initConnection() {
-    _socket = socket_io.io(_url, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
+    _socket = io.io(
+        'https://swc.iitg.ac.in',
+        io.OptionBuilder()
+            .setTransports(['websocket'])
+            .setPath('/test/collegeCupid')
+            .enableAutoConnect()
+            .build());
 
     _socket.connect();
 
     _socket.onConnect((_) {
-      debugPrint('Default WebSocketService: Connected to WebSocket Server');
+      log('Default WebSocketService: Connected to WebSocket Server');
     });
 
     _socket.onDisconnect((_) {
-      debugPrint(
-          'Default WebSocketService: Disconnected from WebSocket Server');
+      log('Default WebSocketService: Disconnected from WebSocket Server');
+      _disconnectedController.add(null);
     });
 
     _socket.onConnectError((data) {
-      debugPrint('Default WebSocketService: Connect Error: $data');
+      log('Default WebSocketService: Connect Error: $data');
+      _disconnectedController.add(null);
     });
 
     _socket.onError((data) {
-      debugPrint('Default WebSocketService: Error: $data');
+      log('Default WebSocketService: Error: $data');
     });
 
     _setupListeners();
@@ -58,14 +64,14 @@ class WebSocketService {
 
   void _setupListeners() {
     _socket.on('room_created', (data) {
-      debugPrint('Default WebSocketService: Received [room_created]: $data');
+      log('Default WebSocketService: Received [room_created]: $data');
       if (data != null) {
         _roomCreatedController.add(data as Map<String, dynamic>);
       }
     });
 
     _socket.on('chat_message', (data) {
-      debugPrint('Default WebSocketService: Received [chat_message]: $data');
+      log('Default WebSocketService: Received [chat_message]: $data');
       if (data != null) {
         // Expected payload is just the string message, but let's wrap it for consistency if needed
         // The doc says payload is "string"
@@ -74,33 +80,31 @@ class WebSocketService {
     });
 
     _socket.on('continue_response', (data) {
-      debugPrint(
-          'Default WebSocketService: Received [continue_response]: $data');
+      log('Default WebSocketService: Received [continue_response]: $data');
       if (data != null) {
         _continueResponseController.add(data as String);
       }
     });
 
     _socket.on('chat_closed', (_) {
-      debugPrint('Default WebSocketService: Received [chat_closed]');
+      log('Default WebSocketService: Received [chat_closed]');
       _chatClosedController.add(null);
     });
 
     _socket.on('partner_left', (_) {
-      debugPrint('Default WebSocketService: Received [partner_left]');
+      log('Default WebSocketService: Received [partner_left]');
       _partnerLeftController.add(null);
     });
 
     _socket.on('partner_disconnected', (_) {
-      debugPrint('Default WebSocketService: Received [partner_disconnected]');
+      log('Default WebSocketService: Received [partner_disconnected]');
       _partnerDisconnectedController.add(null);
     });
   }
 
   void joinPool(
       String email, int gender, List<String> interests, String timeJoined) {
-    debugPrint(
-        'Default WebSocketService: Emitting [join_pool] - Email: $email, Gender: $gender');
+    log('Default WebSocketService: Emitting [join_pool] - Email: $email, Gender: $gender');
     _socket.emit('join_pool', {
       'email': email,
       'gender': gender,
@@ -112,8 +116,7 @@ class WebSocketService {
   }
 
   void sendChatMessage(String roomId, String message) {
-    debugPrint(
-        'Default WebSocketService: Emitting [chat_message] - Room: $roomId, Msg: $message');
+    log('Default WebSocketService: Emitting [chat_message] - Room: $roomId, Msg: $message');
     _socket.emit('chat_message', {
       'roomId': roomId,
       'message': message,
@@ -121,8 +124,7 @@ class WebSocketService {
   }
 
   void sendContinueResponse(String roomId, String answer) {
-    debugPrint(
-        'Default WebSocketService: Emitting [continue_response] - Room: $roomId, Answer: $answer');
+    log('Default WebSocketService: Emitting [continue_response] - Room: $roomId, Answer: $answer');
     _socket.emit('continue_response', {
       'roomId': roomId,
       'answer': answer,
@@ -130,7 +132,7 @@ class WebSocketService {
   }
 
   void leave() {
-    debugPrint('Default WebSocketService: Emitting [leave]');
+    log('Default WebSocketService: Emitting [leave]');
     _socket.emit('leave');
   }
 
@@ -142,5 +144,6 @@ class WebSocketService {
     _partnerLeftController.close();
     _partnerDisconnectedController.close();
     _roomCreatedController.close();
+    _disconnectedController.close();
   }
 }

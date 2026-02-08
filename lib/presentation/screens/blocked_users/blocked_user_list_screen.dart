@@ -3,7 +3,6 @@ import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/blocked_users_store.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
@@ -78,15 +77,10 @@ class _BlockedUserListScreenState extends State<BlockedUserListScreen> {
 
   AppBar _appBar() {
     return AppBar(
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
+      systemOverlayStyle: CupidStyles.edgeToEdgeSystemUI,
       backgroundColor: Colors.white,
       elevation: 0,
       scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false,
       centerTitle: false,
       title: const Text(
         'Blocked Users',

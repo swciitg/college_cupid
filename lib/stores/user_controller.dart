@@ -1,12 +1,15 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final userProvider = StateNotifierProvider<UserController, UserProviderState>(
-    (ref) => UserController());
+final userProvider =
+    StateNotifierProvider<UserController, UserProviderState>((ref) => UserController(ref));
 
 class UserController extends StateNotifier<UserProviderState> {
-  UserController() : super(UserProviderState());
+  final Ref _ref;
+
+  UserController(this._ref) : super(UserProviderState());
 
   void setPassword(String value) {
     state = state.copyWith(password: value);
@@ -18,9 +21,11 @@ class UserController extends StateNotifier<UserProviderState> {
   }
 
   Future<void> initializeProfile() async {
-    final myProfile =
-        UserProfile.fromJson(await SharedPrefService.getMyProfile());
+    final myProfile = UserProfile.fromJson(await SharedPrefService.getMyProfile());
     state = state.copyWith(myProfile: myProfile);
+
+    // Set storage type from loaded profile
+    _ref.read(storageTypeProvider.notifier).state = myProfile.storageType;
   }
 }
 

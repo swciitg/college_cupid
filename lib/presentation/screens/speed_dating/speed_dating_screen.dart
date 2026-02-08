@@ -1,8 +1,14 @@
+import 'dart:async';
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/presentation/widgets/global/cupid_button.dart';
 import 'package:college_cupid/repositories/speed_dating.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
+import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:college_cupid/presentation/screens/speed_dating/animated_heart.dart';
 import 'chat.dart';
 import 'waiting.dart';
 
@@ -16,6 +22,7 @@ class SpeedDatingScreen extends StatefulWidget {
 class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
   final SpeedDatingRepository _repository = SpeedDatingRepository();
   bool _isWaiting = false;
+  StreamSubscription<void>? _disconnectedSubscription;
   String? _currentRoomId;
   bool _isLoading = true;
   UserProfile? _userProfile;
@@ -24,7 +31,6 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
   void initState() {
     super.initState();
     _loadUserProfile();
-    _repository.connect();
     _setupListeners();
   }
 
@@ -55,10 +61,29 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
         });
       }
     });
+
+    _disconnectedSubscription = _repository.disconnectedStream.listen((_) {
+      if (mounted && (_isWaiting || _currentRoomId != null)) {
+        setState(() {
+          _isWaiting = false;
+          _currentRoomId = null;
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Connection lost/failed. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
   }
 
   void _joinPool() {
     if (_userProfile == null) return;
+
+    // Connects only when the user clicks the button
+    _repository.connect();
 
     // Map Gender
     int genderInt = 0;
@@ -66,8 +91,8 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
       genderInt = 1;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Joining Speed Dating Pool...')));
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Joining Speed Dating Pool...')));
 
     _repository.joinPool(
       email: _userProfile!.email,
@@ -97,8 +122,7 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
 
   @override
   void dispose() {
-    // Only disconnect if we want to kill the socket on exit.
-    // Usually yes for this screen.
+    _disconnectedSubscription?.cancel();
     _repository.disconnect();
     super.dispose();
   }
@@ -123,32 +147,117 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Speed Dating"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      backgroundColor: CupidColors.surfaceS0,
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.timer, size: 100, color: Colors.pinkAccent),
-            const SizedBox(height: 20),
-            Text(
-              "Meet new people in 3 minutes!",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _joinPool,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.pink,
-                foregroundColor: Colors.white,
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      height: 36,
+                      width: 36,
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shadows: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.arrow_back,
+                          size: 18, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text("Speed Dating",
+                      style: CupidTextStyles.brandTitle1),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text(
+                    "No profiles or photos—just a 3-minute chat with another student. If both like the vibe, profiles unlock.",
+                    style: CupidTextStyles.body1,
+                  ),
+                ],
               ),
-              child: const Text("Start Speed Dating"),
             ),
+            const Divider(
+              color: CupidColors.borderSecondary,
+            ),
+            Expanded(
+              child: Stack(
+                children: [
+                  // Animated Hearts
+                  const AnimatedHeart(startDelay: Duration(milliseconds: 0)),
+                  const AnimatedHeart(startDelay: Duration(milliseconds: 1000)),
+                  const AnimatedHeart(startDelay: Duration(milliseconds: 2000)),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 180,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CupidColors.primary
+                                      .withValues(alpha: 0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Image.asset(
+                            'assets/images/dating_pref_doll.png',
+                            height: 180,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: CupidButton(
+                text: _isLoading ? 'Cancel' : 'Start Chatting',
+                trailingIcon: Icon(
+                  _isLoading ? Icons.cancel : Icons.arrow_forward,
+                  color: CupidColors.whitePrimary,
+                  size: 20,
+                ),
+                onTap: _joinPool,
+                backgroundColor: CupidColors.primary,
+                style: CupidTextStyles.label1.copyWith(
+                  color: CupidColors.whitePrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

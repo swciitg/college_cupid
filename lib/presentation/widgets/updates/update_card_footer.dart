@@ -2,7 +2,7 @@ import 'package:college_cupid/domain/models/update_model.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -75,7 +75,8 @@ class UpdateCardFooter extends ConsumerWidget {
                 try {
                   bool success = await crushesRepo.addCrush(sharedSecret);
                   if (success) {
-                    await OneDriveRepository.addCrush(profile.email);
+                    final storageRepo = ref.read(storageRepositoryProvider);
+                    await storageRepo.addCrush(profile.email);
                     await crushesRepo.increaseCrushesCount(profile.email);
                   }
                 } catch (e) {

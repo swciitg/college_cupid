@@ -1,8 +1,9 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
+import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +38,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final myProfile = ref.watch(userProvider).myProfile;
-    final profileToShow =
-        widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
+    final profileToShow = widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
 
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: widget.isMine ? const DrawerWidget() : null,
       body: SafeArea(
         child: Stack(
           children: [
@@ -65,10 +66,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       try {
                         bool success = await crushesRepo.addCrush(sharedSecret);
                         if (success) {
-                          await OneDriveRepository.addCrush(
-                              profileToShow.email);
-                          await crushesRepo
-                              .increaseCrushesCount(profileToShow.email);
+                          final storageRepo = ref.read(storageRepositoryProvider);
+                          await storageRepo.addCrush(profileToShow.email);
+                          await crushesRepo.increaseCrushesCount(profileToShow.email);
                           if (mounted) {
                             showSnackBar('Added to crushes!');
                           }
