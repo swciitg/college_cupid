@@ -9,6 +9,7 @@ import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:college_cupid/presentation/widgets/global/ripple_animation.dart';
 
 class WaitingPage extends StatefulWidget {
   final UserProfile userProfile;
@@ -29,25 +30,9 @@ class _WaitingPageState extends State<WaitingPage> {
     super.initState();
     _setupListeners();
     _connectAndJoin();
-    // connectSocket();
   }
 
-  // void connectSocket() async {
-  //   final wsUrl = Uri.parse('wss://swc.iitg.ac.in/test/collegeCupid');
-  //   final channel = WebSocketChannel.connect(wsUrl);
-
-  //   await channel.ready;
-  //   log("message");
-
-  //   // channel.stream.listen((message) {
-  //   //   channel.sink.add('received!');
-  //   //   channel.sink.close(status.goingAway);
-  //   // });
-  // }
-
   Future<void> _connectAndJoin() async {
-    // Ensure fresh connection - maybe disconnect old one safely?
-    // Repository method connect() calls initConnection() which handles state.
     await _repository.connect();
     log("connected to socket");
 
@@ -235,12 +220,16 @@ class _WaitingPageState extends State<WaitingPage> {
                     children: [
                       Text(
                         _isMatched
-                            ? "Matched! Waiting for partner..."
+                            ? "Found Someone"
                             : "Finding you a partner...",
-                        style: CupidTextStyles.body1,
+                        style: CupidTextStyles.body1.copyWith(
+                          color: _isMatched
+                              ? CupidColors.green
+                              : CupidColors.greySecondary,
+                        ),
                       ),
-                      const Center(
-                        child: SizedBox(
+                      if (!_isMatched)
+                        const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
@@ -248,7 +237,6 @@ class _WaitingPageState extends State<WaitingPage> {
                             strokeWidth: 2,
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -259,15 +247,27 @@ class _WaitingPageState extends State<WaitingPage> {
             ),
             Expanded(
               child: Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: const ShapeDecoration(
-                    color: Color(0xFFFFE6E6),
-                    shape: OvalBorder(),
+                child: RippleAnimation(
+                  color: widget.userProfile.gender != Gender.female
+                      ? const Color(0xFFFFE6E6)
+                      : const Color(0xFFFB3D63),
+                  child: Container(
+                    width: 250,
+                    height: 250,
+                    decoration: ShapeDecoration(
+                      color: Color(widget.userProfile.gender == Gender.female
+                          ? 0xFFFFE6E6
+                          : 0xFFFFE6E6),
+                      shape: const OvalBorder(),
+                    ),
+                    child: Center(
+                        child: Image.asset(
+                      widget.userProfile.gender == Gender.female
+                          ? "assets/images/female_doll.png"
+                          : "assets/images/male_doll.png",
+                      scale: .75,
+                    )),
                   ),
-                  child: Center(
-                      child: Image.asset("assets/images/female_doll.png")),
                 ),
               ),
             ),
