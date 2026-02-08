@@ -61,11 +61,10 @@ class EventCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 // TODO: Implement action
-                log("Action: ${event.actionText}");
+                
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: CupidColors.primary
-                    .withAlpha(150), // Purple from screenshot
+                backgroundColor: CupidColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

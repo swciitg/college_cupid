@@ -3,6 +3,7 @@ import 'package:college_cupid/domain/models/drive_data.dart';
 import 'package:college_cupid/repositories/storage_repository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local storage implementation using Secure Storage
 /// Data is stored encrypted on the device
@@ -131,6 +132,10 @@ class LocalStorageRepository implements StorageRepository {
   Future<void> signOut() async {
     try {
       await _secureStorage.delete(key: _privateDataKey);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('viewed_events');
+
       _logger.i('Local storage cleared');
     } catch (e) {
       _logger.e('Error clearing local storage: $e');
@@ -148,5 +153,31 @@ class LocalStorageRepository implements StorageRepository {
   Future<bool> initializeWithStoredTokens() async {
     // No-op for local storage, always return true
     return true;
+  }
+
+  @override
+  Future<List<String>> getViewedEventIds() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getStringList('viewed_events') ?? [];
+    } catch (e) {
+      _logger.e('Error getting viewed events from local storage: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<void> markEventAsViewed(String eventId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final viewedEvents = prefs.getStringList('viewed_events') ?? [];
+      if (!viewedEvents.contains(eventId)) {
+        viewedEvents.add(eventId);
+        await prefs.setStringList('viewed_events', viewedEvents);
+        _logger.i('Event marked as viewed: $eventId');
+      }
+    } catch (e) {
+      _logger.e('Error marking event as viewed: $e');
+    }
   }
 }
