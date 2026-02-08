@@ -122,8 +122,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 if (widget.userProfile.interests.isNotEmpty) _buildInterests(),
                 if (allQuestions.length < 2) const SizedBox(height: 16),
                 if (allQuestions.length >= 2) _surpriseQues(allQuestions[1], 1),
-                if (widget.userProfile.images.length > 2)
-                  _image(null, width, 2),
+                if (widget.userProfile.images.length > 2) _image(null, width, 2),
                 if (allQuestions.length >= 3) _surpriseQues(allQuestions[2], 2),
                 const SizedBox(height: 24),
                 if (!widget.isMine) // Only show if not my profile
@@ -169,7 +168,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                           child: Container(
                             height: 80,
                             decoration: BoxDecoration(
-                              color: CupidColors.cupidGreen.withOpacity(0.2),
+                              color: CupidColors.cupidGreen.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Column(
@@ -231,8 +230,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                       decoration: BoxDecoration(
                         border: Border.all(color: CupidColors.greyElement),
                         borderRadius: BorderRadius.circular(8),
@@ -332,9 +330,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 });
               },
               icon: Icon(
-                _expanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
+                _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
               ),
             )
           ],
@@ -343,8 +339,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
           spacing: 8,
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
-          children: List.generate(
-              _expanded ? widget.userProfile.interests.length : 4, (index) {
+          children: List.generate(_expanded ? widget.userProfile.interests.length : 4, (index) {
             final extra = widget.userProfile.interests.length - 3;
             if (!_expanded && index == 3) {
               return GestureDetector(
@@ -376,8 +371,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
         padding: const EdgeInsets.all(12),
         child: Text(
           label,
-          style: CupidTextStyles.label2.copyWith(
-              color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500),
+          style: CupidTextStyles.label2
+              .copyWith(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ),
     );

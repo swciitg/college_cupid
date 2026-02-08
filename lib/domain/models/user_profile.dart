@@ -28,6 +28,7 @@ class UserProfile {
   String insta;
   StorageType storageType;
   String? googleAccountEmail;
+  bool isAdmin;
   // int whatsappNumber;
   // String instaUserName;
 
@@ -61,6 +62,7 @@ class UserProfile {
     this.googleAccountEmail,
     // this.whatsappNumber = 0,
     // this.instaUserName = '',
+    this.isAdmin = false,
   });
 
   factory UserProfile.fromEmail(String email) {
@@ -101,6 +103,7 @@ class UserProfile {
       zodiac: json['zodiac'] != null ? Zodiac.fromDatabaseString(json['zodiac']) : Zodiac.aries,
       storageType: StorageTypeExtension.fromString(json['storageType'] ?? 'LOCAL_STORAGE'),
       googleAccountEmail: json['googleAccountEmail'],
+      isAdmin: json['isAdmin'] ?? false,
     );
   }
 
@@ -135,7 +138,6 @@ class UserProfile {
     if (googleAccountEmail != null) {
       data['googleAccountEmail'] = googleAccountEmail;
     }
-
     return data;
   }
 

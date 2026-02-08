@@ -24,6 +24,7 @@ abstract class UpdatesRepository {
     int entitySerial, {
     String? receiverPublicKey, // Optional: only needed for profile replies
   });
+  Future<bool> deleteAllUpdates();
 }
 
 class UpdatesRepositoryImpl implements UpdatesRepository {
@@ -252,6 +253,24 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
     } catch (e, stack) {
       debugPrint('REPO: Error replying to user: $e');
       debugPrint('REPO: Stack trace: $stack');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteAllUpdates() async {
+    try {
+      log('Deleting all updates for current user');
+      final response = await _apiRepository.dio.delete(Endpoints.deleteUpdates);
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        log('All updates deleted successfully: ${response.data['message']}');
+        return true;
+      }
+      log('Failed to delete updates: ${response.data}');
+      return false;
+    } catch (e) {
+      log('Error deleting updates: $e');
       return false;
     }
   }

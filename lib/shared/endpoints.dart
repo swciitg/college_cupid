@@ -8,6 +8,7 @@ class Endpoints {
 
   static const postPersonalInfo = '/user/personalInfo';
   static const getPersonalInfo = '/user/personalInfo';
+  static const clearPersonalInfoData = '/user/personalInfo/clear';
   static const postProfileImage = '/uploadImage';
 
   /// /deleteImage/photoId
@@ -48,6 +49,7 @@ class Endpoints {
   // Replies
   static const postReply = '/reply/add';
   static const getUpdates = '/reply/updates';
+  static const deleteUpdates = '/reply';
 
   static const regenerateToken = '/auth/refreshToken';
 

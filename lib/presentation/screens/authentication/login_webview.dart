@@ -8,6 +8,7 @@ import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
+import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
@@ -134,40 +135,39 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                 // Load user profile and personal info into providers
                 await ref.read(userProvider.notifier).updateMyProfile(userProfileData);
-                await SharedPrefService.setDHPublicKey(userProfileData.publicKey);
+                
+                // Clear all updates/replies (they contain encrypted content with old keys)
+                final updatesRepo = ref.read(updatesRepoProvider);
+                await updatesRepo.deleteAllUpdates();
 
-                // Load DH private key from local storage
-                var dhPrivateKey = await SharedPrefService.getDHPrivateKey();
+                // 
+                // For returning LOCAL_STORAGE users, always generate fresh keys
+                // because any previous session data is cleared on logout
+                debugPrint('Generating fresh keys for returning local storage user');
 
-                // If no private key exists, generate new keys and store them
-                if (dhPrivateKey == null || dhPrivateKey.isEmpty) {
-                  debugPrint('No keys found - generating new keys for local storage user');
+                final keyPair = DiffieHellman.generateKeyPair();
+                final dhPrivateKey = keyPair.privateKey.toString();
+                final publicKey = keyPair.publicKey.toString();
 
-                  final keyPair = DiffieHellman.generateKeyPair();
-                  dhPrivateKey = keyPair.privateKey.toString();
-                  final publicKey = keyPair.publicKey.toString();
+                // Store keys locally
+                await SharedPrefService.setDHPrivateKey(dhPrivateKey);
+                await SharedPrefService.setDHPublicKey(publicKey);
 
-                  // Store keys locally
-                  await SharedPrefService.setDHPrivateKey(dhPrivateKey);
-                  await SharedPrefService.setDHPublicKey(publicKey);
+                // Update public key in user profile and backend
+                final updatedProfile = userProfileData.copyWith(publicKey: publicKey);
+                await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+                await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
 
-                  // Update public key in user profile
-                  final updatedProfile = userProfileData.copyWith(publicKey: publicKey);
-                  await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-                  await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
-
-                  // Save keys to local storage
-                  final storageRepo = ref.read(storageRepositoryProvider);
-                  final driveData = DriveData(
-                    diffieHellmanPrivateKey: dhPrivateKey,
-                    crushEmailList: [],
-                  );
-                  await storageRepo.uploadPrivateData(driveData);
-
-                  debugPrint('Keys generated and stored successfully');
-                }
+                // Save keys to local storage
+                final storageRepo = ref.read(storageRepositoryProvider);
+                final driveData = DriveData(
+                  diffieHellmanPrivateKey: dhPrivateKey,
+                  crushEmailList: [],
+                );
+                await storageRepo.uploadPrivateData(driveData);
 
                 LoginStore.dhPrivateKey = dhPrivateKey;
+                debugPrint('Fresh keys generated and stored successfully');
 
                 debugPrint('User data loaded - navigating to home');
                 // Local storage users can go directly to home
