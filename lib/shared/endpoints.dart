@@ -2,6 +2,7 @@ class Endpoints {
   static const baseUrl = String.fromEnvironment('BASE_URL');
   static const apiUrl = String.fromEnvironment('API_URL');
   static const apiSecurityKey = String.fromEnvironment('SECURITY_KEY');
+  // static const wsUrl = String.fromEnvironment('WS_URL');
   static const wsUrl = String.fromEnvironment('WS_URL');
 
   static const microsoftAuth = '/auth/microsoft';

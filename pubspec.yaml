@@ -71,6 +71,9 @@ dependencies:
   audioplayers: ^6.5.1
   flutter_chat_reactions: ^0.2.7
   
+  socket_io_client: ^3.1.4
+  web_socket_channel: ^3.0.3
+  
   # Firebase and Google Drive
   firebase_core: ^3.4.0
   firebase_auth: ^5.3.0

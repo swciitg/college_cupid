@@ -1,9 +1,9 @@
-import 'dart:developer';
-
 import 'package:college_cupid/domain/models/event_model.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class EventCard extends StatelessWidget {
   final EventModel event;
@@ -60,6 +60,7 @@ class EventCard extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
+                context.pushNamed(AppRoutes.speedDating.name);
                 // TODO: Implement action
                 
               },

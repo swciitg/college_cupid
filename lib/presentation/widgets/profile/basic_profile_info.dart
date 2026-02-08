@@ -1,6 +1,5 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
-import 'package:college_cupid/presentation/widgets/profile/profile_match_score.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';

@@ -12,6 +12,7 @@ import 'package:college_cupid/presentation/screens/search/search_profiles_screen
 import 'package:college_cupid/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/presentation/screens/confessions/create_confession_screen.dart';
+import 'package:college_cupid/presentation/screens/speed_dating/speed_dating_screen.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoutes {
@@ -27,6 +28,7 @@ enum AppRoutes {
   editInterests,
   createConfession,
   searchProfiles,
+  speedDating,
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -109,6 +111,11 @@ final goRouter = GoRouter(
       path: '/${AppRoutes.createConfession.name}',
       name: AppRoutes.createConfession.name,
       builder: (context, state) => const CreateConfessionScreen(),
+    ),
+    GoRoute(
+      path: '/speedDating',
+      name: AppRoutes.speedDating.name,
+      builder: (context, state) => const SpeedDatingScreen(),
     ),
   ],
 );

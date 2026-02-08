@@ -12,6 +12,7 @@ class CupidButton extends StatelessWidget {
   final Color? backgroundColor;
   final TextStyle? style;
   final bool? loading;
+  final Icon? trailingIcon;
 
   const CupidButton({
     super.key,
@@ -23,6 +24,7 @@ class CupidButton extends StatelessWidget {
     this.backgroundColor,
     this.style,
     this.loading = false,
+    this.trailingIcon,
   });
 
   @override
@@ -39,13 +41,24 @@ class CupidButton extends StatelessWidget {
         child: Center(
           child: loading!
               ? const CustomLoader()
-              : Text(
-                  text,
-                  style: style ??
-                      CupidTextStyles.title2.copyWith(
-                        color: CupidColors.backgroundColor,
-                        fontSize: 16,
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      text,
+                      style: style ??
+                          CupidTextStyles.title2.copyWith(
+                            color: CupidColors.backgroundColor,
+                            fontSize: 16,
+                          ),
+                    ),
+                    if (trailingIcon != null) ...[
+                      SizedBox(
+                        width: 8,
                       ),
+                      trailingIcon!,
+                    ]
+                  ],
                 ),
         ),
       ),
