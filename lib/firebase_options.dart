@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCa-q6Uftb4lUGCKvO4YYLR0FPjnHxVmp4',
-    appId: '1:771812337595:android:7c66b5a4acbe71b3f7069e',
+    appId: '1:771812337595:android:4252ef86bd06d383f7069e',
     messagingSenderId: '771812337595',
     projectId: 'college-cupid-b53f0',
     storageBucket: 'college-cupid-b53f0.firebasestorage.app',
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '771812337595',
     projectId: 'college-cupid-b53f0',
     storageBucket: 'college-cupid-b53f0.firebasestorage.app',
-    androidClientId: '771812337595-4uc8o3oc51ues0ktsspcotarqqhsfhob.apps.googleusercontent.com',
+    androidClientId: '771812337595-0c5rjs4fnk7649rg2ed16s9i3petpkcv.apps.googleusercontent.com',
     iosClientId: '771812337595-j3dv3mao5u57norfgrafkklkk1ogoemk.apps.googleusercontent.com',
     iosBundleId: 'com.swciitg.collegecupid',
   );

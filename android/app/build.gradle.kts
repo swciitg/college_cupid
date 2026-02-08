@@ -51,13 +51,27 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.swciitg.college_cupid"
+        applicationId = "com.swciitg.collegecupid"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutterVersionCode
         versionName = flutterVersionName
+    }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            resValue("string", "app_name", "CollegeCupid Dev")
+        }
+        create("prod") {
+            dimension = "environment"
+            resValue("string", "app_name", "CollegeCupid")
+        }
     }
 
     signingConfigs {
