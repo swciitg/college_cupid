@@ -138,7 +138,7 @@ class _UpdateItemBuilderState extends ConsumerState<UpdateItemBuilder> {
       case UpdateType.match:
         return MatchUpdateCard(update: _update);
       case UpdateType.blindDateReply:
-        return MatchUpdateCard(update: _update);
+        return MatchUpdateCard(update: _update, blindMatch: true);
       case UpdateType.voiceReply:
         return VoiceNoteReplyCard(update: _update);
       case UpdateType.profileReply:

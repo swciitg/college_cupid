@@ -48,27 +48,27 @@ class EventCard extends StatelessWidget {
               child: Image.asset("assets/images/banner.png")),
           const SizedBox(height: 16),
           Text(
-            isActive ? "Blind Dating is Live!" : "Blind Dating is not Live",
-            style: CupidTextStyles.title2
-                .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+            event.title,
+            style: CupidTextStyles.title2.copyWith(fontWeight: FontWeight.bold),
+          ),
+          Text(
+            event.description,
+            style: CupidTextStyles.label3.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           if (isBlindDating && hasTimeInfo) ...[
             if (isActive)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.access_time,
-                        color: Colors.green, size: 16),
+                    const Icon(Icons.access_time, color: Colors.green, size: 16),
                     const SizedBox(width: 6),
                     Text(
                       'Active until ${_formatTime(event.endTime!)}',
@@ -83,13 +83,11 @@ class EventCard extends StatelessWidget {
             else
               // Event is not active - show schedule
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -112,14 +110,11 @@ class EventCard extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: isBlindDating && hasTimeInfo
-                  ? (isActive
-                      ? () => context.pushNamed(AppRoutes.speedDating.name)
-                      : null)
+                  ? (isActive ? () => context.pushNamed(AppRoutes.speedDating.name) : null)
                   : () => context.pushNamed(AppRoutes.speedDating.name),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isBlindDating && hasTimeInfo && !isActive
-                    ? Colors.grey
-                    : CupidColors.primary,
+                backgroundColor:
+                    isBlindDating && hasTimeInfo && !isActive ? Colors.grey : CupidColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(

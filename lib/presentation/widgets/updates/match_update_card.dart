@@ -1,10 +1,12 @@
 import 'package:college_cupid/domain/models/update_model.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchUpdateCard extends ConsumerWidget {
   final bool blindMatch;
@@ -26,6 +28,9 @@ class MatchUpdateCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    final whatsappURL = "https://wa.me/${update.matchedUser!.phnNumber}";
+    final instagramURL = "https://instagram.com/${update.matchedUser!.insta}";
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
@@ -41,7 +46,7 @@ class MatchUpdateCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF3366).withValues(alpha: 0.3),
+            color: CupidColors.primary.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -73,9 +78,12 @@ class MatchUpdateCard extends ConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _buildSocialButton('Whatsapp', FluentIcons.chat_24_regular)),
+              Expanded(
+                  child: _buildSocialButton('Whatsapp', FluentIcons.chat_24_regular, whatsappURL)),
               const SizedBox(width: 12),
-              Expanded(child: _buildSocialButton('Instagram', FluentIcons.camera_24_regular)),
+              Expanded(
+                  child:
+                      _buildSocialButton('Instagram', FluentIcons.camera_24_regular, instagramURL)),
             ],
           )
         ],
@@ -107,24 +115,30 @@ class MatchUpdateCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildSocialButton(String label, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
-          ),
-          const SizedBox(width: 6),
-          Icon(icon, color: Colors.white, size: 16),
-        ],
+  Widget _buildSocialButton(String label, IconData icon, String url) {
+    return GestureDetector(
+      onTap: () {
+        launchUrlString(url);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style:
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+            ),
+            const SizedBox(width: 6),
+            Icon(icon, color: Colors.white, size: 16),
+          ],
+        ),
       ),
     );
   }

@@ -26,8 +26,6 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
   final List<String> _eventTypes = [
     'BLIND_DATING',
-    'SPEED_DATING',
-    'OTHER',
   ];
 
   @override

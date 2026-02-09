@@ -230,22 +230,22 @@ class _WaitingPageState extends State<WaitingPage> {
               top: 140,
               left: 20,
               right: 20,
-              child: Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: widget.userProfile.isAdmin
-                    ? Row(
+              child: widget.userProfile.isAdmin
+                  ? Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 8,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Column(
@@ -310,52 +310,14 @@ class _WaitingPageState extends State<WaitingPage> {
                             ],
                           ),
                         ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${_boysCount + _girlsCount}',
-                                style: CupidTextStyles.brandTitle2.copyWith(
-                                  color: CupidColors.primary,
-                                ),
-                              ),
-                              Text(
-                                'Active Users',
-                                style: CupidTextStyles.label2.copyWith(
-                                  color: CupidColors.greySecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: CupidColors.greyTertiary,
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '$_totalRooms',
-                                style: CupidTextStyles.brandTitle2.copyWith(
-                                  color: CupidColors.primary,
-                                ),
-                              ),
-                              Text(
-                                'Active Chats',
-                                style: CupidTextStyles.label2.copyWith(
-                                  color: CupidColors.greySecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
-              ),
+                    )
+                  : Text(
+                      "${_boysCount + _girlsCount} active users",
+                      style: CupidTextStyles.body1.copyWith(
+                        color: _isMatched ? CupidColors.green : CupidColors.greySecondary,
+                      ),
+                    ),
             ),
 
             // 3. Avatar Animation Layer
