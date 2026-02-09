@@ -44,6 +44,8 @@ class ProfileImage extends StatelessWidget {
             child: CachedNetworkImage(
               fit: BoxFit.cover,
               imageUrl: url,
+              fadeInDuration: const Duration(milliseconds: 500),
+              fadeOutDuration: const Duration(milliseconds: 500),
               placeholder: (context, url) {
                 if (blurHash == null) return const CustomLoader();
                 return ClipRRect(

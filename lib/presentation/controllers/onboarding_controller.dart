@@ -26,7 +26,6 @@ import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 
 final onboardingControllerProvider = StateNotifierProvider<OnboardingController, OnboardingState>(
   (ref) => OnboardingController(ref: ref),
@@ -130,13 +129,37 @@ class OnboardingController extends StateNotifier<OnboardingState> {
           showSnackBar("Select all images!");
           return false;
         }
-        return true; // No longer the last step
+        // Create user profile here so we can check isAdmin before drive connect
+        final created = await createUser();
+        if (created) {
+          // Fetch the created user profile to get isAdmin status
+          try {
+            final userProfileMap =
+                await _ref.read(userProfileRepoProvider).getUserProfile(LoginStore.email!);
+            if (userProfileMap != null) {
+              final userProfile = UserProfile.fromJson(userProfileMap);
+              state = state.copyWith(
+                userProfile: userProfile,
+                isAdminUser: userProfile.isAdmin,
+              );
+              log("User isAdmin: ${userProfile.isAdmin}", name: "OnboardingController");
+            }
+          } catch (e) {
+            log("Error fetching user profile for admin check: $e", name: "OnboardingController");
+          }
+        }
+        return created;
       case OnboardingStep.driveConnect:
+        // Admins can skip Google Drive connection
+        if (state.isAdminUser == true) {
+          return true;
+        }
+        // Non-admins must connect Google Drive
         if (state.isDriveConnected != true) {
           showSnackBar("Please connect your Google Drive to continue");
           return false;
         }
-        return await createUser(); // Create user logic moved here as it's the actual last step
+        return true;
       case OnboardingStep.surpriseQuiz:
         for (var e in state.userProfile!.surpriseQuiz) {
           if (e.answer.isEmpty && (e.audioPath == null || e.audioPath!.isEmpty)) {
@@ -293,17 +316,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     state = state.copyWith(images: images);
   }
 
-  void addPhotoSlot() {
-    final images = List<File?>.from(state.images ?? []);
-    if (images.length < 9) {
-      // Limit to reasonable number
-      images.add(null);
-      state = state.copyWith(images: images);
-    } else {
-      showSnackBar("Maximum 9 photos allowed");
-    }
-  }
-
   Future<bool> createUser() async {
     state = state.copyWith(loading: true);
     log(state.dhPrivateKey != null ? "DH Private Key exists" : "DH Private Key is null");
@@ -372,7 +384,7 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       // Upload to storage using repository
       final storageRepo = _ref.read(storageRepositoryProvider);
       await storageRepo.uploadDHPrivateKey(state.dhPrivateKey!);
-      Logger().i("Private Key posted to storage: ${state.dhPrivateKey}");
+      log("Private Key posted to storage: ${state.dhPrivateKey}", name: "OnboardingController");
 
       await SharedPrefService.saveMyProfile(state.userProfile!.toJson());
       await _ref.read(userProvider.notifier).initializeProfile();
@@ -436,8 +448,13 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         final updatedProfile = userProfile.copyWith(
           googleAccountEmail: googleEmail,
         );
-        await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        await _ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+        final updatedProfileMap =
+            await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+        if (updatedProfileMap != null) {
+          final fetchedProfile = UserProfile.fromJson(updatedProfileMap);
+          await _ref.read(userProvider.notifier).updateMyProfile(fetchedProfile);
+          log("Profile updated after Google Drive connection. isAdmin: ${fetchedProfile.isAdmin}");
+        }
         log("Stored Google account email: $googleEmail");
       }
 
@@ -464,6 +481,47 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     } catch (e) {
       log("Error disconnecting from Google Drive: $e");
       showSnackBar("Failed to disconnect. Please try again.");
+    }
+  }
+
+  /// Continue with local storage (Admin only)
+  /// Updates the user profile to use LOCAL_STORAGE instead of Google Drive
+  Future<void> continueWithLocalStorage() async {
+    try {
+      state = state.copyWith(loading: true, loadingMessage: "Setting up local storage...");
+
+      // Set storage type to local storage
+      _ref.read(storageTypeProvider.notifier).state = StorageType.localStorage;
+
+      // Update user profile with LOCAL_STORAGE type
+      final userProfile = _ref.read(userProvider).myProfile;
+      if (userProfile != null) {
+        final updatedProfile = userProfile.copyWith(
+          storageType: StorageType.localStorage,
+          googleAccountEmail: null, // Clear Google email for local storage
+        );
+        final updatedProfileMap =
+            await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+        if (updatedProfileMap != null) {
+          final fetchedProfile = UserProfile.fromJson(updatedProfileMap);
+          await _ref.read(userProvider.notifier).updateMyProfile(fetchedProfile);
+          log("Profile updated after local storage setup. isAdmin: ${fetchedProfile.isAdmin}");
+        }
+        log("Updated storageType to LOCAL_STORAGE in backend");
+      }
+
+      // Store DH private key locally (already stored in SharedPreferences)
+      log("Using local storage for DH private key");
+
+      state = state.copyWith(loading: false, loadingMessage: null);
+      showSnackBar("Local storage configured successfully");
+
+      // Proceed to finish onboarding
+      nextStep();
+    } catch (e) {
+      log("Error setting up local storage: $e");
+      showSnackBar("Failed to setup local storage. Please try again.");
+      state = state.copyWith(loading: false, loadingMessage: null);
     }
   }
 
@@ -620,6 +678,7 @@ class OnboardingState {
   late List<File?>? images;
   final int year;
   final List<String>? interests;
+  final bool? isAdminUser;
   final HeartState? yellow;
   final HeartState? blue;
   final HeartState? pink;
@@ -637,6 +696,7 @@ class OnboardingState {
     this.images,
     this.year = 1,
     this.interests,
+    this.isAdminUser,
     this.yellow,
     this.blue,
     this.pink,
@@ -650,6 +710,31 @@ class OnboardingState {
     userProfile ??= UserProfile();
   }
 
+  // Dynamic validation for next button
+  bool get isNextEnabled {
+    switch (OnboardingStep.values[currentStep]) {
+      case OnboardingStep.basicDetails:
+        return userProfile?.gender != null &&
+            userProfile?.program != null &&
+            userProfile?.insta.isNotEmpty == true &&
+            userProfile?.phnNumber.isNotEmpty == true;
+      case OnboardingStep.datingPreference:
+        return userProfile?.sexualOrientation != null && userProfile?.relationshipGoal != null;
+      case OnboardingStep.chooseInterests:
+        return interests != null && interests!.length >= 5;
+      case OnboardingStep.addPhotos:
+        final nonNullImagesCount = images?.where((element) => element != null).length ?? 0;
+        return nonNullImagesCount >= 3;
+      case OnboardingStep.driveConnect:
+        // Admins can always proceed, non-admins need drive connection
+        return isAdminUser == true || isDriveConnected == true;
+      case OnboardingStep.surpriseQuiz:
+        return userProfile?.surpriseQuiz.every(
+                (e) => e.answer.isNotEmpty || (e.audioPath != null && e.audioPath!.isNotEmpty)) ??
+            false;
+    }
+  }
+
   OnboardingState copyWith({
     PersonalInfo? personalInfo,
     String? diffieHellmanPrivateKey,
@@ -659,6 +744,7 @@ class OnboardingState {
     int? year,
     SexualOrientationModel? sexualOrientation,
     List<String>? interests,
+    bool? isAdminUser,
     HeartState? yellow,
     HeartState? blue,
     HeartState? pink,
@@ -678,6 +764,7 @@ class OnboardingState {
       images: images ?? this.images,
       year: year ?? this.year,
       interests: interests ?? this.interests,
+      isAdminUser: isAdminUser ?? this.isAdminUser,
       yellow: yellow ?? this.yellow,
       blue: blue ?? this.blue,
       pink: pink ?? this.pink,

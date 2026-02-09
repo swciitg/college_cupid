@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/common_widgets.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -35,6 +37,10 @@ class _AudioRecorderState extends State<AudioRecorder> {
   bool _isRecording = false;
   bool _recordingStarted = false;
   String? _recordedFilePath;
+  Timer? _recordingTimer;
+  Timer? _durationTimer;
+  int _recordingDuration = 0;
+  static const int _maxRecordingDuration = 30;
 
   @override
   void initState() {
@@ -52,6 +58,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   @override
   void dispose() {
+    _recordingTimer?.cancel();
+    _durationTimer?.cancel();
     _waveController.dispose();
     _audioPlayer.dispose();
     super.dispose();
@@ -127,8 +135,9 @@ class _AudioRecorderState extends State<AudioRecorder> {
     );
   }
 
-  /// 2. RECORDING STATE: Waveform + Stop Button
+  /// 2. RECORDING STATE: Waveform + Duration + Stop Button
   Widget _buildWaveformView() {
+    final remainingSeconds = _maxRecordingDuration - _recordingDuration;
     return Padding(
       key: const ValueKey('recording'),
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -142,6 +151,15 @@ class _AudioRecorderState extends State<AudioRecorder> {
                 height: 50,
                 onRecordingStopped: _onRecordingStopped,
               ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${remainingSeconds}s',
+            style: CupidTextStyles.body1.copyWith(
+              color: remainingSeconds <= 5 ? Colors.red : CupidColors.grey600,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
           GestureDetector(
@@ -213,12 +231,29 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
       setState(() {
         _isRecording = true;
+        _recordingDuration = 0;
       });
       // Small delay to allow UI to build WaveformRecorder before starting
       await Future.delayed(const Duration(milliseconds: 100));
       await _waveController.startRecording();
       setState(() {
         _recordingStarted = true;
+      });
+
+      // Start duration counter (updates every second)
+      _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (mounted) {
+          setState(() {
+            _recordingDuration++;
+          });
+        }
+      });
+
+      // Auto-stop after 30 seconds
+      _recordingTimer = Timer(const Duration(seconds: _maxRecordingDuration), () {
+        if (_isRecording) {
+          _stopRecording();
+        }
       });
     } catch (e) {
       debugPrint("Error starting recorder: $e");
@@ -231,6 +266,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   Future<void> _stopRecording() async {
     try {
+      _recordingTimer?.cancel();
+      _durationTimer?.cancel();
       await _waveController.stopRecording();
       // Note: onRecordingStopped callback will handle the state update
     } catch (e) {

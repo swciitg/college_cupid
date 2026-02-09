@@ -3,7 +3,6 @@ import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/routing/app_router.dart';
@@ -33,7 +32,6 @@ class BasicProfileInfo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(userProvider).myProfile!;
     Program program = userProfile.program!;
 
     final showRelationshipGoal = userProfile.relationshipGoal?.display == true;

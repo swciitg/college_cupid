@@ -69,6 +69,7 @@ dependencies:
   waveform_recorder: ^1.8.0
   record: ^6.1.2
   audioplayers: ^6.5.1
+  audio_waveforms: ^1.1.0
   flutter_chat_reactions: ^0.2.7
   
   socket_io_client: ^3.1.4

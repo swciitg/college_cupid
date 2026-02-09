@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:college_cupid/domain/models/mbti_model.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/controllers/mbti_controller.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
@@ -92,8 +93,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       setState(() {
         _loading = true;
       });
-      final personality =
-          ref.read(mbtiControllerProvider.notifier).getPersonalityType();
+      final personality = ref.read(mbtiControllerProvider.notifier).getPersonalityType();
       if (personality == null) {
         setState(() {
           _loading = false;
@@ -103,10 +103,17 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       }
       final profile = ref.read(userProvider).myProfile!;
       final userProfile = profile.copyWith(personalityType: personality);
-      ref.read(userProvider.notifier).updateMyProfile(userProfile);
-      await SharedPrefService.saveMyProfile(userProfile.toJson());
-      ref.read(userProvider.notifier).updateMyProfile(userProfile);
-      await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
+
+      // Update backend and get complete profile back (with isAdmin)
+      final updatedProfileData =
+          await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
+
+      // Update local state with profile from backend (includes isAdmin)
+      final completeProfile =
+          updatedProfileData != null ? UserProfile.fromJson(updatedProfileData) : userProfile;
+
+      ref.read(userProvider.notifier).updateMyProfile(completeProfile);
+      await SharedPrefService.saveMyProfile(completeProfile.toJson());
       setState(() {
         _loading = false;
       });
@@ -229,8 +236,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
       builder: (context) {
         return FloatingActionButton(
           backgroundColor: CupidColors.cupidPeach,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
           onPressed: () {
             _postMBTI();
           },
@@ -309,8 +315,7 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
     return Consumer(
       builder: (context, ref, child) {
         final mbtiModel = ref.watch(mbtiControllerProvider);
-        final answered =
-            mbtiModel.questions.where((e) => e.answer != null).length;
+        final answered = mbtiModel.questions.where((e) => e.answer != null).length;
         final progress = (answered / 20 * 100).toInt();
         return Row(
           children: [
@@ -385,15 +390,12 @@ class _MbtiTestScreenState extends ConsumerState<MbtiTestScreen> {
                           selected: e.answer == index,
                           onTap: () async {
                             if (_loading) return;
-                            final lastAnswered = mbtiModel.questions
-                                    .where((e) => e.answer != null)
-                                    .lastOrNull
-                                    ?.id ??
-                                0;
+                            final lastAnswered =
+                                mbtiModel.questions.where((e) => e.answer != null).lastOrNull?.id ??
+                                    0;
                             if (e.id > lastAnswered + 1) {
                               setState(() {
-                                _errorMessage =
-                                    "Please answer the previous questions first!";
+                                _errorMessage = "Please answer the previous questions first!";
                               });
                               return;
                             }

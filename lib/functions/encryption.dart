@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:aes_crypt_null_safe/aes_crypt_null_safe.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:pointycastle/export.dart';
 
 class Encryption {
@@ -32,17 +33,17 @@ class Encryption {
 
   static Uint8List encryptAES({required String plainText, required String key}) {
     Uint8List keyBytes = calculateMD5(key);
-    // Uint8List keyBytes2 = calculateSHA256(key);
-    // print(key);
-    // print(keyBytes);
-    // print(keyBytes2);
     Uint8List iv = Uint8List(16);
 
     var crypt = AesCrypt();
     crypt.aesSetParams(keyBytes, iv, AesMode.cbc);
-    List<int> paddedText = utf8.encode(plainText.padLeft(512, '0'));
+    List<int> plainBytes = utf8.encode(plainText);
+    
+    // Add PKCS7 padding: pad to multiple of 16 bytes
+    int paddingLength = 16 - (plainBytes.length % 16);
+    List<int> paddedBytes = plainBytes + List.filled(paddingLength, paddingLength);
 
-    Uint8List srcData = Uint8List.fromList(paddedText);
+    Uint8List srcData = Uint8List.fromList(paddedBytes);
     Uint8List encrypted = crypt.aesEncrypt(srcData);
     return encrypted;
   }
@@ -55,6 +56,15 @@ class Encryption {
     crypt.aesSetParams(keyBytes, iv, AesMode.cbc);
 
     Uint8List decryptedData = crypt.aesDecrypt(encryptedText);
+    
+    // Remove PKCS7 padding: last byte indicates padding length
+    if (decryptedData.isNotEmpty) {
+      int paddingLength = decryptedData.last;
+      if (paddingLength > 0 && paddingLength <= 16) {
+        decryptedData = decryptedData.sublist(0, decryptedData.length - paddingLength);
+      }
+    }
+    
     return String.fromCharCodes(decryptedData);
   }
 
@@ -63,30 +73,37 @@ class Encryption {
     return bytesToHexadecimal(encryptedEmailBytes);
   }
 
-  /// Encrypt a message using the recipient's public key
-  /// Uses the public key as part of AES key derivation
-  static String encryptWithPublicKey({
+  /// Diffie-Hellman encryption using shared secret
+  static String encryptWithSharedSecret({
     required String message,
-    required String publicKey,
+    required String myPrivateKey,
+    required String theirPublicKey,
   }) {
-    // Use the public key as the encryption key
-    final encryptedBytes = encryptAES(plainText: message, key: publicKey);
+    // Calculate shared secret: theirPublicKey ^ myPrivateKey (mod prime)
+    final myPrivateBigInt = BigInt.parse(myPrivateKey);
+    final theirPublicBigInt = BigInt.parse(theirPublicKey);
+    final sharedSecret = DiffieHellman.generateSharedSecret(myPrivateKey: myPrivateBigInt, otherPublicKey: theirPublicBigInt);
+
+    // Use shared secret as AES key
+    final encryptedBytes = encryptAES(plainText: message, key: sharedSecret.toString());
     return bytesToHexadecimal(encryptedBytes);
   }
 
-  /// Decrypt a message using the user's own private key
-  /// The sender encrypted with our public key, we decrypt with our private key
-  static String decryptWithPrivateKey({
+  /// Diffie-Hellman decryption using shared secret
+  static String decryptWithSharedSecret({
     required String encryptedMessage,
-    required String privateKey,
+    required String myPrivateKey,
+    required String theirPublicKey,
   }) {
     try {
+      final myPrivateBigInt = BigInt.parse(myPrivateKey);
+      final theirPublicBigInt = BigInt.parse(theirPublicKey);
+      final sharedSecret = DiffieHellman.generateSharedSecret(myPrivateKey: myPrivateBigInt, otherPublicKey: theirPublicBigInt);
+
+      // Use shared secret as AES key
       final encryptedBytes = hexadecimalToBytes(encryptedMessage);
-      // Use private key to decrypt (since sender used our public key)
-      // In Diffie-Hellman context, we use the private key for decryption
-      return decryptAES(encryptedText: encryptedBytes, key: privateKey).trim();
+      return decryptAES(encryptedText: encryptedBytes, key: sharedSecret.toString()).trim();
     } catch (e) {
-      // If decryption fails, return the original message
       return encryptedMessage;
     }
   }

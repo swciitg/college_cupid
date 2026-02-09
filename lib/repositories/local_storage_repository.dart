@@ -1,25 +1,28 @@
 import 'dart:convert';
+import 'dart:developer' as math;
 import 'package:college_cupid/domain/models/drive_data.dart';
 import 'package:college_cupid/repositories/storage_repository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local storage implementation using Secure Storage
 /// Data is stored encrypted on the device
 class LocalStorageRepository implements StorageRepository {
-  static final Logger _logger = Logger();
   static const String _privateDataKey = 'local_private_data';
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+
+  void log(String message) {
+    math.log(message, name: 'LocalStorageRepository');
+  }
 
   @override
   Future<void> uploadPrivateData(DriveData data) async {
     try {
       final jsonString = jsonEncode(data.toJSON());
       await _secureStorage.write(key: _privateDataKey, value: jsonString);
-      _logger.i('Private data saved to local storage');
+      log('Private data saved to local storage');
     } catch (e) {
-      _logger.e('Error uploading private data to local storage: $e');
+      log('Error uploading private data to local storage: $e');
       rethrow;
     }
   }
@@ -29,14 +32,14 @@ class LocalStorageRepository implements StorageRepository {
     try {
       final jsonString = await _secureStorage.read(key: _privateDataKey);
       if (jsonString == null || jsonString.isEmpty) {
-        _logger.i('No private data found in local storage');
+        log('No private data found in local storage');
         return null;
       }
 
       final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
       return DriveData.fromJSON(jsonData);
     } catch (e) {
-      _logger.e('Error reading private data from local storage: $e');
+      log('Error reading private data from local storage: $e');
       return null;
     }
   }
@@ -47,7 +50,7 @@ class LocalStorageRepository implements StorageRepository {
       final data = await readPrivateData();
       return data?.crushEmailList ?? [];
     } catch (e) {
-      _logger.e('Error getting crushes from local storage: $e');
+      log('Error getting crushes from local storage: $e');
       return [];
     }
   }
@@ -73,9 +76,9 @@ class LocalStorageRepository implements StorageRepository {
           await uploadPrivateData(updatedData);
         }
       }
-      _logger.i('Crush added to local storage: $email');
+      log('Crush added to local storage: $email');
     } catch (e) {
-      _logger.e('Error adding crush to local storage: $e');
+      log('Error adding crush to local storage: $e');
       rethrow;
     }
   }
@@ -93,10 +96,10 @@ class LocalStorageRepository implements StorageRepository {
           crushEmailList: updatedList,
         );
         await uploadPrivateData(updatedData);
-        _logger.i('Crush removed from local storage at index: $index');
+        log('Crush removed from local storage at index: $index');
       }
     } catch (e) {
-      _logger.e('Error removing crush from local storage: $e');
+      log('Error removing crush from local storage: $e');
       rethrow;
     }
   }
@@ -110,9 +113,9 @@ class LocalStorageRepository implements StorageRepository {
         crushEmailList: existingData?.crushEmailList ?? [],
       );
       await uploadPrivateData(updatedData);
-      _logger.i('DH private key uploaded to local storage');
+      log('DH private key uploaded to local storage');
     } catch (e) {
-      _logger.e('Error uploading DH private key to local storage: $e');
+      log('Error uploading DH private key to local storage: $e');
       rethrow;
     }
   }
@@ -123,7 +126,7 @@ class LocalStorageRepository implements StorageRepository {
       final data = await readPrivateData();
       return data?.diffieHellmanPrivateKey;
     } catch (e) {
-      _logger.e('Error getting DH private key from local storage: $e');
+      log('Error getting DH private key from local storage: $e');
       return null;
     }
   }
@@ -136,9 +139,9 @@ class LocalStorageRepository implements StorageRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('viewed_events');
 
-      _logger.i('Local storage cleared');
+      log('Local storage cleared');
     } catch (e) {
-      _logger.e('Error clearing local storage: $e');
+      log('Error clearing local storage: $e');
       rethrow;
     }
   }
@@ -161,7 +164,7 @@ class LocalStorageRepository implements StorageRepository {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getStringList('viewed_events') ?? [];
     } catch (e) {
-      _logger.e('Error getting viewed events from local storage: $e');
+      log('Error getting viewed events from local storage: $e');
       return [];
     }
   }
@@ -174,10 +177,10 @@ class LocalStorageRepository implements StorageRepository {
       if (!viewedEvents.contains(eventId)) {
         viewedEvents.add(eventId);
         await prefs.setStringList('viewed_events', viewedEvents);
-        _logger.i('Event marked as viewed: $eventId');
+        log('Event marked as viewed: $eventId');
       }
     } catch (e) {
-      _logger.e('Error marking event as viewed: $e');
+      log('Error marking event as viewed: $e');
     }
   }
 }

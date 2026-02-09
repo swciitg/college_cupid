@@ -116,10 +116,11 @@ class UserProfileRepository extends ApiRepository {
     log("Finished uploading audio notes", name: "postAudio");
   }
 
-  Future<void> updateUserProfile(UserProfile userProfile) async {
+  Future<Map<String, dynamic>?> updateUserProfile(UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
     try {
-      await dio.put(Endpoints.updateUserProfile, data: userProfileMap);
+      final response = await dio.put(Endpoints.updateUserProfile, data: userProfileMap);
+      return response.data['userProfile'];
     } catch (error) {
       rethrow;
     }

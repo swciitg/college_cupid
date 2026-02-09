@@ -20,6 +20,8 @@ class ProfileSetup extends ConsumerStatefulWidget {
 }
 
 class _ProfileSetupState extends ConsumerState<ProfileSetup> {
+  final ScrollController _scrollController = ScrollController();
+
   final steps = [
     const BasicDetails(),
     const DatingPreferenceScreen(),
@@ -46,10 +48,15 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
   ];
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final onboardingController =
-        ref.read(onboardingControllerProvider.notifier);
+    final onboardingController = ref.read(onboardingControllerProvider.notifier);
     final loading = onboardingState.loading;
     final loadingMessage = onboardingState.loadingMessage;
     final currentStepIndex = onboardingState.currentStep;
@@ -95,12 +102,10 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(stepTitles[currentStepIndex],
-                              style: CupidTextStyles.brandTitle1),
+                          Text(stepTitles[currentStepIndex], style: CupidTextStyles.brandTitle1),
                           //  const SizedBox(height: 8),
                           if (stepSubtitles[currentStepIndex].isNotEmpty) ...[
-                            Text(stepSubtitles[currentStepIndex],
-                                style: CupidTextStyles.body1),
+                            Text(stepSubtitles[currentStepIndex], style: CupidTextStyles.body1),
                           ]
                         ],
                       ),
@@ -116,8 +121,8 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                     const SizedBox(height: 45),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(
-                            16, 0, 16, 80), 
+                        controller: _scrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                         child: steps[currentStepIndex],
                       ),
                     ),
@@ -136,16 +141,14 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
                           if (loadingMessage != null) ...[
                             const SizedBox(height: 16),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: CupidColors.secondaryColor,
                               ),
                               child: Text(
                                 loadingMessage,
-                                style: CupidStyles.normalTextStyle
-                                    .setColor(Colors.white),
+                                style: CupidStyles.normalTextStyle.setColor(Colors.white),
                               ),
                             )
                           ]
@@ -159,13 +162,25 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
           bottomNavigationBar: !loading
               ? BottomNavButtons(
                   onBack: currentStepIndex > 0
-                      ? onboardingController.previousStep
+                      ? () {
+                          onboardingController.previousStep();
+                          _scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       : null,
-                  onNext: onboardingController.nextStep,
-                  isNextEnabled:
-                      true, // You might want to bind this to validation logic
-                  nextLabel:
-                      currentStepIndex == steps.length - 1 ? 'Finish' : 'Next',
+                  onNext: () {
+                    onboardingController.nextStep();
+                    _scrollController.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  isNextEnabled: onboardingState.isNextEnabled,
+                  nextLabel: currentStepIndex == steps.length - 1 ? 'Finish' : 'Next',
                 )
               : null,
         ),
