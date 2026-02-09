@@ -121,6 +121,7 @@ class UserProfile {
         .where((e) => e.answer.isNotEmpty || e.audioPath != null)
         .map((e) => e.toJson())
         .toList();
+    data['voiceRecordings'] = voiceRecordings.map((e) => e.toJson()).toList();
     data['profilePicUrls'] = images.map((e) => e.toJson()).toList();
 
     data['personalityType'] = personalityType?.name;
@@ -150,6 +151,7 @@ class UserProfile {
     PersonalityType? personalityType,
     bool? deactivated,
     List<QuizQuestion>? surpriseQuiz,
+    List<VoiceRecording>? voiceRecordings,
     String? hometown,
     int? age,
     Zodiac? zodiac,
@@ -168,6 +170,7 @@ class UserProfile {
       personalityType: personalityType ?? this.personalityType,
       deactivated: deactivated ?? this.deactivated,
       surpriseQuiz: surpriseQuiz ?? this.surpriseQuiz,
+      voiceRecordings: voiceRecordings ?? this.voiceRecordings,
       hometown: hometown ?? this.hometown,
       age: age ?? this.age,
       zodiac: zodiac ?? this.zodiac,

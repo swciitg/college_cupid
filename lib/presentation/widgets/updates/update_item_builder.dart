@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:college_cupid/domain/models/update_model.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/functions/encryption.dart';
 import 'package:college_cupid/presentation/widgets/updates/match_update_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/confession_reply_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/voice_note_reply_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/profile_reply_card.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,7 +29,43 @@ class _UpdateItemBuilderState extends ConsumerState<UpdateItemBuilder> {
   void initState() {
     super.initState();
     _update = widget.update;
-    _fetchSenderProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchSenderProfile();
+    });
+  }
+
+  String _decryptProfileReply(String content, UpdateType type, String? senderPublicKey) {
+    // Only decrypt profile-related replies (IMAGES and QUESTIONS)
+    if (type != UpdateType.profileReply && type != UpdateType.textReply) {
+      return content;
+    }
+
+    // Check if user has a private key
+    if (LoginStore.dhPrivateKey == null || LoginStore.dhPrivateKey!.isEmpty) {
+      log('Warning: No private key available for decryption');
+      return content;
+    }
+
+    // Check if sender's public key is available
+    if (senderPublicKey == null || senderPublicKey.isEmpty) {
+      log('Warning: Sender public key not available for decryption');
+      return content;
+    }
+
+    try {
+      // Decrypt using shared secret (my private key + their public key)
+      final decrypted = Encryption.decryptWithSharedSecret(
+        encryptedMessage: content,
+        myPrivateKey: LoginStore.dhPrivateKey!,
+        theirPublicKey: senderPublicKey,
+      );
+      log('Successfully decrypted profile reply using shared secret');
+      return decrypted;
+    } catch (e) {
+      log('Error decrypting profile reply: $e');
+      // Return original content if decryption fails
+      return content;
+    }
   }
 
   Future<void> _fetchSenderProfile() async {
@@ -65,7 +105,11 @@ class _UpdateItemBuilderState extends ConsumerState<UpdateItemBuilder> {
             type: _update.type,
             headerText: _update.headerText,
             timestamp: _update.timestamp,
-            replyText: _update.replyText,
+            replyText: _decryptProfileReply(
+              _update.replyText ?? '',
+              _update.type,
+              senderProfile.publicKey,
+            ),
             replyTo: _update.replyTo,
             mediaUrl: _update.mediaUrl,
             senderEmail: _update.senderEmail,

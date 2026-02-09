@@ -81,7 +81,7 @@ class _DeactivateAccountAlertState extends ConsumerState<DeactivateAccountAlert>
       content: widget.activateBack
           ? null
           : const Text(
-              "Your account will not visible to anyone.",
+              "Your account will not be visible to anyone. You will be automatically activated when you log in again.",
               style: CupidTextStyles.body1,
             ),
       actions: [

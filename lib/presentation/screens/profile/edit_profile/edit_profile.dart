@@ -49,8 +49,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   late UserProfile profileSave;
   List<QuizQuestion> surprizeQuiz = [];
   List<TextEditingController> textEditingControllers = [];
-  final Map<String, String?> _audioPaths = {}; // Track audio paths by question
-  final Map<String, String?> _originalAudioPaths = {}; // Track original server paths by question
+  List<String?> _audioPaths = [null, null, null]; // Track audio paths by index (0, 1, 2)
   late TextEditingController _instaController;
   late TextEditingController _phoneController;
   late TextEditingController _hometownController;
@@ -89,6 +88,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     }
 
     surprizeQuiz.addAll(questionsMap.values);
+
+    // Ensure we always have exactly 3 questions
+    while (surprizeQuiz.length < 3) {
+      var rand = math.Random().nextInt(quizQuestions.length);
+      while (surprizeQuiz.any((e) => e.question == quizQuestions[rand].question)) {
+        rand = math.Random().nextInt(quizQuestions.length);
+      }
+      surprizeQuiz.add(quizQuestions[rand]);
+    }
+    if (surprizeQuiz.length > 3) {
+      surprizeQuiz = surprizeQuiz.sublist(0, 3);
+    }
+
     debugPrint('Total questions after merge: ${surprizeQuiz.length}');
     for (var q in surprizeQuiz) {
       debugPrint(
@@ -98,10 +110,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     textEditingControllers
         .addAll(surprizeQuiz.map((e) => TextEditingController(text: e.answer)).toList());
 
-    // Initialize audio paths from existing data and track originals using question as key
-    for (final quiz in surprizeQuiz) {
-      _audioPaths[quiz.question] = quiz.audioPath;
-      _originalAudioPaths[quiz.question] = quiz.audioPath; // Store original for comparison
+    // Initialize audio paths from existing data using index
+    for (int i = 0; i < surprizeQuiz.length; i++) {
+      _audioPaths[i] = surprizeQuiz[i].audioPath;
     }
 
     _selectedProgram = userState.myProfile!.program!;
@@ -191,9 +202,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
     // Check if all questions have either text or audio answers
     for (int i = 0; i < surprizeQuiz.length; i++) {
-      final question = surprizeQuiz[i].question;
       final hasText = textEditingControllers[i].text.trim().isNotEmpty;
-      final hasAudio = _audioPaths[question] != null && _audioPaths[question]!.isNotEmpty;
+      final hasAudio = _audioPaths[i] != null && _audioPaths[i]!.isNotEmpty;
       if (!hasText && !hasAudio) {
         showSnackBar("Please answer all quiz questions with text or audio!");
         return;
@@ -240,7 +250,73 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         }
       }
 
-      final userProfile = profile.copyWith(
+      // Upload audio files if new recordings exist FIRST
+      _loadingMessage = "Uploading audio notes";
+      setState(() {});
+
+      // Create a temporary profile just for uploading audio
+      final audioUploadProfile = profile.copyWith(
+        surpriseQuiz: List.generate(
+          surprizeQuiz.length,
+          (index) {
+            final currentPath = _audioPaths[index];
+            final isLocalFile = currentPath != null &&
+                !currentPath.startsWith('/uploads/') &&
+                !currentPath.startsWith('http');
+
+            return surprizeQuiz[index].copyWith(
+              question: surprizeQuiz[index].question,
+              answer: '',
+              audioPath: isLocalFile ? currentPath : null,
+            );
+          },
+        ),
+      );
+
+      await ref.read(userProfileRepoProvider).postAudioNotes(audioUploadProfile);
+
+      // Now fetch the updated profile to get the server URLs for voice recordings
+      _loadingMessage = "Updating profile";
+      setState(() {});
+
+      final fetchedProfileMap =
+          await ref.read(userProfileRepoProvider).getUserProfile(profile.email);
+      if (fetchedProfileMap == null) {
+        throw Exception("Failed to fetch updated profile");
+      }
+
+      final fetchedProfile = UserProfile.fromJson(fetchedProfileMap);
+
+      // Build the final voiceRecordings array based on current _audioPaths state
+      final voiceRecordings = <VoiceRecording>[];
+      for (int i = 0; i < surprizeQuiz.length; i++) {
+        final currentPath = _audioPaths[i];
+
+        // If path exists (either server URL or was just uploaded)
+        if (currentPath != null && currentPath.isNotEmpty) {
+          // If it's a local file path, find the corresponding server URL from fetched profile
+          if (currentPath.startsWith('/uploads/') || currentPath.startsWith('http')) {
+            // Already a server path
+            voiceRecordings.add(VoiceRecording(
+              question: surprizeQuiz[i].question,
+              answer: currentPath,
+            ));
+          } else {
+            // Was just uploaded, find it in the fetched profile
+            final matchingRecording = fetchedProfile.voiceRecordings.firstWhere(
+              (r) => r.question == surprizeQuiz[i].question,
+              orElse: () => VoiceRecording(question: '', answer: ''),
+            );
+            if (matchingRecording.answer.isNotEmpty) {
+              voiceRecordings.add(matchingRecording);
+            }
+          }
+        }
+        // If currentPath is null, the voice note was deleted - don't add it
+      }
+
+      // Now update the profile with all changes including the filtered voiceRecordings
+      final userProfile = fetchedProfile.copyWith(
         gender: _selectedGender,
         program: _selectedProgram,
         age: age,
@@ -258,34 +334,17 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           display: _displayRelationshipGoal,
         ),
         images: updatedImages,
+        voiceRecordings: voiceRecordings, // Sending the filtered list
         surpriseQuiz: List.generate(
           surprizeQuiz.length,
           (index) {
-            final question = surprizeQuiz[index].question;
-            final currentPath = _audioPaths[question];
-            final originalPath = _originalAudioPaths[question];
-
-            // Check if audio has changed (new recording or first time recording)
-            final hasNewRecording = currentPath != originalPath;
-
-            // Only include new local file paths for upload
-            final isLocalFile = currentPath != null &&
-                !currentPath.startsWith('/uploads/') &&
-                !currentPath.startsWith('http');
-
             return surprizeQuiz[index].copyWith(
               answer: textEditingControllers[index].text.trim(),
-              // Include audio path if it's a new local recording
-              audioPath: (hasNewRecording && isLocalFile) ? currentPath : null,
+              audioPath: null, // Don't send audio paths in update
             );
           },
         ),
       );
-
-      // Upload audio files if new recordings exist
-      _loadingMessage = "Uploading audio notes";
-      setState(() {});
-      await ref.read(userProfileRepoProvider).postAudioNotes(userProfile);
 
       final updatedProfileMap =
           await ref.read(userProfileRepoProvider).updateUserProfile(userProfile);
@@ -683,12 +742,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 .any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
-                            final oldQuestion = surprizeQuiz[index].question;
                             surprizeQuiz[index] = quizQuestions[rand];
                             textEditingControllers[index].clear();
-                            // Remove old question and reset audio for new question
-                            _audioPaths.remove(oldQuestion);
-                            _audioPaths[surprizeQuiz[index].question] = null;
+                            // Reset audio for this index
+                            _audioPaths[index] = null;
                             setState(() {});
                           },
                           icon: const Icon(Icons.refresh_rounded,
@@ -702,19 +759,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   ),
                   const SizedBox(height: 12),
                   AudioRecorder(
-                    existingFilePath: _audioPaths[surprizeQuiz[index].question],
+                    existingFilePath: _audioPaths[index],
                     textController: textEditingControllers[index],
                     onRecordingComplete: (path) {
                       setState(() {
-                        _audioPaths[surprizeQuiz[index].question] = path;
+                        _audioPaths[index] = path;
                       });
-                      log("Recording completed for question '${surprizeQuiz[index].question}': $path");
+                      log("Recording completed for question $index: $path");
                     },
                     onDelete: () {
                       setState(() {
-                        _audioPaths[surprizeQuiz[index].question] = null;
+                        _audioPaths[index] = null;
                       });
-                      log("Recording deleted for question '${surprizeQuiz[index].question}'");
+                      log("Recording deleted for question $index");
                     },
                     onChanged: (text) {
                       // Text changed callback

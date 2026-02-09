@@ -1,3 +1,4 @@
+import 'package:college_cupid/domain/models/update_model.dart';
 import 'package:college_cupid/presentation/widgets/updates/crush_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/update_item_builder.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
@@ -18,7 +19,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<String> _tabs = ['Crushes', 'Updates', 'Profile', 'Confession', 'Match'];
+  final List<String> _tabs = ['All', 'Your Crushes', 'Match', 'Profile', 'Confession'];
   int _currentTabIndex = 0;
   bool _crushesLoaded = false;
   bool _updatesLoaded = false;
@@ -85,7 +86,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    final updatesState = ref.watch(updatesControllerProvider);
+    final allUpdates = ref.watch(updatesControllerProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -117,14 +118,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       setState(() {
                         _currentTabIndex = index;
                       });
-                      if (index == 0 && !_crushesLoaded) {
-                        _crushesLoaded = true;
-                        _fetchCrushEmails();
-                      } else if (index != 0 && !_updatesLoaded) {
-                        // Fetch updates only once when first switching to any updates tab
-                        _updatesLoaded = true;
-                        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: 'All');
-                      }
                     },
                   ),
                   const SizedBox(height: 16),
@@ -132,19 +125,32 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
               ),
             ),
             Expanded(
-              child: _currentTabIndex == 0 // Crushes tab
+              child: _currentTabIndex == 1 // Crushes tab
                   ? _buildCrushesTab()
                   : RefreshIndicator(
+                      key: ValueKey(_currentTabIndex), // Rebuild when tab changes
                       color: CupidColors.primary,
                       onRefresh: () async {
                         await ref
                             .read(updatesControllerProvider.notifier)
                             .fetchUpdates(filter: 'All', isRefresh: true);
                       },
-                      child: updatesState.when(
-                        data: (allUpdates) {
+                      child: FutureBuilder(
+                        key: ValueKey(_currentTabIndex), // Rebuild when tab changes
+                        future: _filterUpdates(allUpdates),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(
+                                  color: CupidColors.primary,
+                                ),
+                              ),
+                            );
+                          }
                           // Filter updates based on current tab
-                          final filteredUpdates = _filterUpdates(allUpdates);
+                          final filteredUpdates = snapshot.data!;
 
                           if (filteredUpdates.isEmpty) {
                             return LayoutBuilder(
@@ -177,8 +183,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                             },
                           );
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
-                        error: (e, s) => Center(child: Text('Error: $e')),
                       ),
                     ),
             ),
@@ -224,26 +228,25 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
     );
   }
 
-  List<dynamic> _filterUpdates(List<dynamic> allUpdates) {
+  Future<List<UpdateModel>> _filterUpdates(List<UpdateModel> allUpdates) async {
     // If on "Updates" tab (index 1), show all updates
-    if (_currentTabIndex == 1) {
+    if (_currentTabIndex == 0) {
       return allUpdates;
     }
 
     // Filter based on the current tab
     final filterType = _tabs[_currentTabIndex];
-
+    print(filterType);
     return allUpdates.where((update) {
       switch (filterType) {
         case 'Profile':
-          return update.type.toString().contains('profileReply') ||
-              update.type.toString().contains('textReply') ||
-              update.type.toString().contains('voiceReply');
+          return update.type == UpdateType.profileReply ||
+              update.type == UpdateType.textReply ||
+              update.type == UpdateType.voiceReply;
         case 'Confession':
-          return update.type.toString().contains('confessionReply');
+          return update.type == UpdateType.confessionReply;
         case 'Match':
-          return update.type.toString().contains('match') ||
-              update.type.toString().contains('blindDateReply');
+          return update.type == UpdateType.match || update.type == UpdateType.blindDateReply;
         default:
           return true;
       }

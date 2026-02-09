@@ -107,6 +107,24 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     }
   }
 
+  Future<void> _handleSmash() async {
+    if (widget.onSmash != null) {
+      widget.onSmash!();
+      // Wait a bit for the API call to complete, then refresh the status
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _checkIfAlreadyLiked();
+    }
+  }
+
+  Future<void> _handleDislike() async {
+    if (widget.onDislike != null) {
+      widget.onDislike!();
+      // Wait a bit for the API call to complete, then refresh the status
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _checkIfAlreadyLiked();
+    }
+  }
+
   @override
   void didUpdateWidget(DisplayProfileInfo oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -198,7 +216,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                               children: [
                                 Expanded(
                                   child: GestureDetector(
-                                    onTap: widget.onDislike,
+                                    onTap: _handleDislike,
                                     child: Container(
                                       height: 80,
                                       decoration: BoxDecoration(
@@ -301,7 +319,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                                 ],
                                 Expanded(
                                   child: GestureDetector(
-                                    onTap: widget.onSmash,
+                                    onTap: _handleSmash,
                                     child: Container(
                                       height: 80,
                                       decoration: BoxDecoration(

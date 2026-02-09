@@ -35,40 +35,6 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
   UpdatesRepositoryImpl(
       this._apiRepository, this._userProfileRepository, this._confessionsRepository);
 
-  /// Decrypts profile reply content if it's a profile reply type
-  String _decryptProfileReply(String content, UpdateType type, String? senderPublicKey) {
-    // Only decrypt profile-related replies (IMAGES and QUESTIONS)
-    if (type != UpdateType.profileReply && type != UpdateType.textReply) {
-      return content;
-    }
-
-    // Check if user has a private key
-    if (LoginStore.dhPrivateKey == null || LoginStore.dhPrivateKey!.isEmpty) {
-      log('Warning: No private key available for decryption');
-      return content;
-    }
-
-    // Check if sender's public key is available
-    if (senderPublicKey == null || senderPublicKey.isEmpty) {
-      log('Warning: Sender public key not available for decryption');
-      return content;
-    }
-
-    try {
-      // Decrypt using shared secret (my private key + their public key)
-      final decrypted = Encryption.decryptWithSharedSecret(
-        encryptedMessage: content,
-        myPrivateKey: LoginStore.dhPrivateKey!,
-        theirPublicKey: senderPublicKey,
-      );
-      log('Successfully decrypted profile reply using shared secret');
-      return decrypted;
-    } catch (e) {
-      log('Error decrypting profile reply: $e');
-      // Return original content if decryption fails
-      return content;
-    }
-  }
 
   @override
   Future<List<UpdateModel>> fetchUpdates({String? filter}) async {
@@ -184,11 +150,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             senderUser: userProfile,
             type: type,
             headerText: headerText,
-            replyText: _decryptProfileReply(
-              json['replyContent'] ?? '',
-              type,
-              userProfile.publicKey,
-            ),
+            replyText: json['replyContent'],
             replyTo: replyToText,
             mediaUrl: mediaUrl,
             timestamp: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
