@@ -44,7 +44,6 @@ class EventsScreen extends ConsumerWidget {
                     GestureDetector(
                       onTap: () async {
                         await context.pushNamed(AppRoutes.adminEventsManagement.name);
-                        // Refresh events after returning from admin screen
                         ref.invalidate(eventsProvider);
                       },
                       child: Container(
