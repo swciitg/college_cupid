@@ -21,7 +21,7 @@ class EventUpdateMessageCard extends ConsumerStatefulWidget {
 
 class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
     with SingleTickerProviderStateMixin {
-  bool _isVisible = true;
+  bool _isVisible = false;
   int _currentPage = 0;
   Timer? _timer;
   late AnimationController _iconController;
