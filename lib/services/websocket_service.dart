@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:college_cupid/stores/login_store.dart';
-
-import 'package:college_cupid/shared/endpoints.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
   IOWebSocketChannel? _channel;

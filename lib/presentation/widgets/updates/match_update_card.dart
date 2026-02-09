@@ -1,34 +1,29 @@
 import 'package:college_cupid/domain/models/update_model.dart';
-import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MatchUpdateCard extends StatefulWidget {
+class MatchUpdateCard extends ConsumerWidget {
   final bool blindMatch;
   final UpdateModel update;
 
   const MatchUpdateCard({super.key, required this.update, this.blindMatch = false});
 
   @override
-  State<MatchUpdateCard> createState() => _MatchUpdateCardState();
-}
-
-class _MatchUpdateCardState extends State<MatchUpdateCard> {
-  late UpdateModel update;
-
-  @override
-  void initState() {
-    super.initState();
-    update = widget.update;
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (update.matchedUser == null) {
-      return const SizedBox.shrink(); // Safety check
+      return const SizedBox.shrink(); // Hide card if user not found
+    }
+
+    // Get current user's profile
+    final myProfile = ref.watch(userProvider).myProfile;
+
+    // If current user profile not available, don't show the card
+    if (myProfile == null || myProfile.images.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     return Container(
@@ -57,19 +52,18 @@ class _MatchUpdateCardState extends State<MatchUpdateCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(update.senderUser.images.first.url,
-                  update.senderUser.images.first.blurHash),
+              _buildAvatar(myProfile.images.first.url, myProfile.images.first.blurHash),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(FluentIcons.heart_24_filled, color: Colors.white, size: 28),
               ),
-              _buildAvatar(update.matchedUser!.images.first.url,
-                  update.matchedUser!.images.first.blurHash),
+              _buildAvatar(
+                  update.matchedUser!.images.first.url, update.matchedUser!.images.first.blurHash),
             ],
           ),
           const SizedBox(height: 16),
           Text(
-            '${widget.blindMatch ? "Blind Match: " : ""}You have a match with ${update.matchedUser!.name}!',
+            '${blindMatch ? "Blind Match: " : ""}You have a match with ${update.matchedUser!.name}!',
             style: CupidTextStyles.title2.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,

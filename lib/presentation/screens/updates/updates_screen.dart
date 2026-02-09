@@ -21,6 +21,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
   final List<String> _tabs = ['Crushes', 'Updates', 'Profile', 'Confession', 'Match'];
   int _currentTabIndex = 0;
   bool _crushesLoaded = false;
+  bool _updatesLoaded = false;
   List<String>? _crushEmails;
   bool _isLoadingCrushes = false;
 
@@ -31,6 +32,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
     _tabController.addListener(_handleTabSelection);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchCrushEmails();
+      _updatesLoaded = true;
+      ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: 'All');
     });
   }
 
@@ -43,11 +46,10 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
         // Load crushes only once when tab is first selected
         _crushesLoaded = true;
         _fetchCrushEmails();
-      } else if (_currentTabIndex != 0) {
-        // Only fetch updates for non-crushes tabs
-        // Map tab index to filter: Updates tab should fetch 'All'
-        final filter = _currentTabIndex == 1 ? 'All' : _tabs[_currentTabIndex];
-        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: filter);
+      } else if (_currentTabIndex != 0 && !_updatesLoaded) {
+        // Fetch updates only once when first switching to any updates tab
+        _updatesLoaded = true;
+        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: 'All');
       }
     }
   }
@@ -118,10 +120,10 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       if (index == 0 && !_crushesLoaded) {
                         _crushesLoaded = true;
                         _fetchCrushEmails();
-                      } else if (index != 0) {
-                        // Map tab index to filter: Updates tab should fetch 'All'
-                        final filter = index == 1 ? 'All' : _tabs[index];
-                        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: filter);
+                      } else if (index != 0 && !_updatesLoaded) {
+                        // Fetch updates only once when first switching to any updates tab
+                        _updatesLoaded = true;
+                        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: 'All');
                       }
                     },
                   ),
@@ -137,11 +139,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       onRefresh: () async {
                         await ref
                             .read(updatesControllerProvider.notifier)
-                            .fetchUpdates(filter: _tabs[_tabController.index], isRefresh: true);
+                            .fetchUpdates(filter: 'All', isRefresh: true);
                       },
                       child: updatesState.when(
-                        data: (updates) {
-                          if (updates.isEmpty) {
+                        data: (allUpdates) {
+                          // Filter updates based on current tab
+                          final filteredUpdates = _filterUpdates(allUpdates);
+
+                          if (filteredUpdates.isEmpty) {
                             return LayoutBuilder(
                               builder: (context, constraints) {
                                 return SingleChildScrollView(
@@ -163,11 +168,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                           }
                           return ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
-                            itemCount: updates.length,
+                            itemCount: filteredUpdates.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
-                                child: UpdateItemBuilder(update: updates[index]),
+                                child: UpdateItemBuilder(update: filteredUpdates[index]),
                               );
                             },
                           );
@@ -217,5 +222,31 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                   },
                 ),
     );
+  }
+
+  List<dynamic> _filterUpdates(List<dynamic> allUpdates) {
+    // If on "Updates" tab (index 1), show all updates
+    if (_currentTabIndex == 1) {
+      return allUpdates;
+    }
+
+    // Filter based on the current tab
+    final filterType = _tabs[_currentTabIndex];
+
+    return allUpdates.where((update) {
+      switch (filterType) {
+        case 'Profile':
+          return update.type.toString().contains('profileReply') ||
+              update.type.toString().contains('textReply') ||
+              update.type.toString().contains('voiceReply');
+        case 'Confession':
+          return update.type.toString().contains('confessionReply');
+        case 'Match':
+          return update.type.toString().contains('match') ||
+              update.type.toString().contains('blindDateReply');
+        default:
+          return true;
+      }
+    }).toList();
   }
 }

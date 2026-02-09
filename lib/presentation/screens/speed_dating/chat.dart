@@ -4,7 +4,6 @@ import 'package:college_cupid/repositories/speed_dating.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/utils/common_widgets.dart';
 import 'package:college_cupid/presentation/screens/speed_dating/match_revealpage.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:flutter_svg/svg.dart';

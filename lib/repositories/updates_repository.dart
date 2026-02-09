@@ -192,6 +192,7 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
             replyTo: replyToText,
             mediaUrl: mediaUrl,
             timestamp: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+            senderEmail: json['senderEmail'] as String?,
           );
         }));
 

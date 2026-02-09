@@ -15,11 +15,13 @@ class UpdateModel {
   final UpdateType type;
   final String headerText;
   final String? replyText;
+  final String? replyTo; // Content that was replied to(valid for confession and text answers)
   final String?
-      replyTo; // Content that was replied to(valid for confession and text answers)
-  final String? mediaUrl; //Voice notes and photo urls will be stored here(valid for voice and profile replies)
+      mediaUrl; //Voice notes and photo urls will be stored here(valid for voice and profile replies)
   final DateTime timestamp;
-  final UserProfile? matchedUser; // Only for match type
+  final String? senderEmail;
+
+  UserProfile? get matchedUser => type == UpdateType.match || type == UpdateType.blindDateReply ? senderUser : null; 
 
   UpdateModel({
     required this.id,
@@ -30,6 +32,6 @@ class UpdateModel {
     this.replyText,
     this.replyTo,
     this.mediaUrl,
-    this.matchedUser,
+    this.senderEmail,
   });
 }
