@@ -38,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return Scaffold(
       body: Center(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(90),
+          borderRadius: BorderRadius.circular(45),
           child: Image.asset(
             'assets/images/app_logo.png',
             fit: BoxFit.cover,
