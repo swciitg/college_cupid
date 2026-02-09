@@ -83,26 +83,26 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
         final List<dynamic> data = response.data['data'];
 
         // Extract unique sender emails to fetch profiles
-        final senderEmails = data
-            .map((json) => json['senderEmail'] as String?)
-            .where((email) => email != null && email.isNotEmpty)
-            .toSet();
+        // final senderEmails = data
+        //     .map((json) => json['senderEmail'] as String?)
+        //     .where((email) => email != null && email.isNotEmpty)
+        //     .toSet();
 
         // Fetch user profiles for these emails
         final Map<String, UserProfile> userProfileMap = {};
 
         // Concurrent fetching
-        await Future.wait(senderEmails.map((email) async {
-          if (email == null) return;
-          try {
-            final profileMap = await _userProfileRepository.getUserProfile(email);
-            if (profileMap != null) {
-              userProfileMap[email] = UserProfile.fromJson(profileMap);
-            }
-          } catch (e) {
-            log('Error fetching profile for $email: $e');
-          }
-        }));
+        // await Future.wait(senderEmails.map((email) async {
+        //   if (email == null) return;
+        //   try {
+        //     final profileMap = await _userProfileRepository.getUserProfile(email);
+        //     if (profileMap != null) {
+        //       userProfileMap[email] = UserProfile.fromJson(profileMap);
+        //     }
+        //   } catch (e) {
+        //     log('Error fetching profile for $email: $e');
+        //   }
+        // }));
 
         // Fetch my profile once to resolve entities (images/questions)
         UserProfile? myProfile;

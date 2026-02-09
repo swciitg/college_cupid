@@ -11,7 +11,7 @@ enum UpdateType {
 
 class UpdateModel {
   final String id;
-  final UserProfile senderUser;
+  final UserProfile? senderUser;
   final UpdateType type;
   final String headerText;
   final String? replyText;
@@ -25,7 +25,7 @@ class UpdateModel {
 
   UpdateModel({
     required this.id,
-    required this.senderUser,
+    this.senderUser,
     required this.type,
     required this.headerText,
     required this.timestamp,

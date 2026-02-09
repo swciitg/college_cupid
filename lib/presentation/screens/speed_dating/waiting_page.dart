@@ -48,7 +48,7 @@ class _WaitingPageState extends State<WaitingPage> {
   bool _isMatched = false;
   String? _roomId;
   List<String>? _questions;
-  TextEditingController _customMessageController = TextEditingController();
+  final TextEditingController _customMessageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   StreamSubscription? _matchedSubscription;
@@ -77,8 +77,7 @@ class _WaitingPageState extends State<WaitingPage> {
     // If we are the one waiting (didn't get questions), we wait for the first message to enter chat
     _chatMessageSubscription = _repository.chatMessageStream.listen((data) {
       if (mounted && _isMatched && _roomId != null) {
-        _navigateToChat(_roomId!,
-            initialMessage: "Partner: ${data['message']}");
+        _navigateToChat(_roomId!, initialMessage: "Partner: ${data['message']}");
       }
     });
 
@@ -145,8 +144,7 @@ class _WaitingPageState extends State<WaitingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final double avatarSize = 250;
+    const avatarSize = 250.0;
 
     return Scaffold(
       backgroundColor: CupidColors.surfaceS0,
@@ -183,25 +181,19 @@ class _WaitingPageState extends State<WaitingPage> {
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.arrow_back,
-                            size: 18, color: Colors.black),
+                        child: const Icon(Icons.arrow_back, size: 18, color: Colors.black),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text("Speed Dating",
-                        style: CupidTextStyles.brandTitle1),
+                    const Text("Speed Dating", style: CupidTextStyles.brandTitle1),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _isMatched
-                              ? "Found Someone"
-                              : "Finding you a partner...",
+                          _isMatched ? "Found Someone" : "Finding you a partner...",
                           style: CupidTextStyles.body1.copyWith(
-                            color: _isMatched
-                                ? CupidColors.green
-                                : CupidColors.greySecondary,
+                            color: _isMatched ? CupidColors.green : CupidColors.greySecondary,
                           ),
                         ),
                         if (!_isMatched)
@@ -231,9 +223,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   AnimatedAlign(
                     duration: const Duration(milliseconds: 800),
                     curve: Curves.easeInOutBack,
-                    alignment: _isMatched
-                        ? const Alignment(0.6, -0.2)
-                        : Alignment.center,
+                    alignment: _isMatched ? const Alignment(0.6, -0.2) : Alignment.center,
                     child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 600),
                       opacity: _isMatched ? 1.0 : 0.0,
@@ -248,8 +238,9 @@ class _WaitingPageState extends State<WaitingPage> {
                               width: avatarSize,
                               height: avatarSize,
                               decoration: ShapeDecoration(
-                                color: Color(
-                                  widget.userProfile.gender != Gender.female ? 0xFFFFE6E6: 0xFF5F0A18),
+                                color: Color(widget.userProfile.gender != Gender.female
+                                    ? 0xFFFFE6E6
+                                    : 0xFF5F0A18),
                                 shape: const OvalBorder(),
                               ),
                               child: Center(
@@ -262,8 +253,7 @@ class _WaitingPageState extends State<WaitingPage> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const Text("Who?",
-                                style: CupidTextStyles.brandTitle2),
+                            const Text("Who?", style: CupidTextStyles.brandTitle2),
                           ],
                         ),
                       ),
@@ -274,9 +264,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   AnimatedAlign(
                     duration: const Duration(milliseconds: 800),
                     curve: Curves.easeInOutBack,
-                    alignment: _isMatched
-                        ? const Alignment(-0.6, -0.2)
-                        : Alignment.center,
+                    alignment: _isMatched ? const Alignment(-0.6, -0.2) : Alignment.center,
                     child: AnimatedScale(
                       duration: const Duration(milliseconds: 800),
                       curve: Curves.easeInOutBack,
@@ -289,8 +277,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                   width: avatarSize,
                                   height: avatarSize,
                                   decoration: ShapeDecoration(
-                                    color: Color(widget.userProfile.gender ==
-                                            Gender.female
+                                    color: Color(widget.userProfile.gender == Gender.female
                                         ? 0xFFFFE6E6
                                         : 0xFF5F0A18),
                                     shape: const OvalBorder(),
@@ -305,24 +292,21 @@ class _WaitingPageState extends State<WaitingPage> {
                                   ),
                                 )
                               : RippleAnimation(
-                                  color:
-                                      widget.userProfile.gender == Gender.female
-                                          ? const Color(0xFFFFE6E6)
-                                          : const Color(0xFF5F0A18),
+                                  color: widget.userProfile.gender == Gender.female
+                                      ? const Color(0xFFFFE6E6)
+                                      : const Color(0xFF5F0A18),
                                   child: Container(
                                     width: avatarSize,
                                     height: avatarSize,
                                     decoration: ShapeDecoration(
-                                      color: Color(widget.userProfile.gender ==
-                                              Gender.female
+                                      color: Color(widget.userProfile.gender == Gender.female
                                           ? 0xFFFFE6E6
                                           : 0xFF5F0A18),
                                       shape: const OvalBorder(),
                                     ),
                                     child: Center(
                                       child: Image.asset(
-                                        widget.userProfile.gender !=
-                                                Gender.female
+                                        widget.userProfile.gender != Gender.female
                                             ? "assets/images/male_doll.png"
                                             : "assets/images/female_doll.png",
                                         scale: 0.75,
@@ -332,8 +316,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                 ),
                           if (_isMatched) ...[
                             const SizedBox(height: 10),
-                            const Text("You",
-                                style: CupidTextStyles.brandTitle2),
+                            const Text("You", style: CupidTextStyles.brandTitle2),
                           ]
                         ],
                       ),
@@ -369,8 +352,7 @@ class _WaitingPageState extends State<WaitingPage> {
               left: 0,
               right: 0,
               child: Container(
-                constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.5),
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
                 padding: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -402,23 +384,19 @@ class _WaitingPageState extends State<WaitingPage> {
                                 onTap: () => _sendStarterAndChat(q),
                                 child: Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: CupidColors.surfaceS2,
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: CupidColors.borderSecondary),
+                                    border: Border.all(color: CupidColors.borderSecondary),
                                   ),
                                   child: Text(q,
-                                      style: CupidTextStyles.body2
-                                          .copyWith(color: Colors.black)),
+                                      style: CupidTextStyles.body2.copyWith(color: Colors.black)),
                                 ),
                               ),
                             )),
                       const SizedBox(height: 12),
-                      const Center(
-                          child: Text("OR", style: CupidTextStyles.label2)),
+                      const Center(child: Text("OR", style: CupidTextStyles.label2)),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -433,19 +411,15 @@ class _WaitingPageState extends State<WaitingPage> {
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide.none,
                                 ),
-                                contentPadding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           InkWell(
                             onTap: () {
-                              if (_customMessageController.text
-                                  .trim()
-                                  .isNotEmpty) {
-                                _sendStarterAndChat(
-                                    _customMessageController.text.trim());
+                              if (_customMessageController.text.trim().isNotEmpty) {
+                                _sendStarterAndChat(_customMessageController.text.trim());
                               }
                             },
                             child: Container(
@@ -454,14 +428,12 @@ class _WaitingPageState extends State<WaitingPage> {
                                 color: CupidColors.primary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.send,
-                                  color: Colors.white, size: 20),
+                              child: const Icon(Icons.send, color: Colors.white, size: 20),
                             ),
                           )
                         ],
                       ),
-                      SizedBox(
-                          height: MediaQuery.of(context).viewInsets.bottom),
+                      SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
                     ],
                   ),
                 ),
@@ -477,12 +449,10 @@ class _WaitingPageState extends State<WaitingPage> {
                 child: Center(
                   child: Column(
                     children: [
-                      const CircularProgressIndicator(
-                          color: CupidColors.primary),
+                      const CircularProgressIndicator(color: CupidColors.primary),
                       const SizedBox(height: 16),
                       Text("Waiting for partner to initiate...",
-                          style: CupidTextStyles.body1
-                              .copyWith(color: CupidColors.greySecondary)),
+                          style: CupidTextStyles.body1.copyWith(color: CupidColors.greySecondary)),
                     ],
                   ),
                 ),

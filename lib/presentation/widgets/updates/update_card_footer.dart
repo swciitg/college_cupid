@@ -30,9 +30,9 @@ class UpdateCardFooter extends ConsumerWidget {
               width: 32,
               height: 32,
               child: ProfileImage(
-                url: update.senderUser.images.isNotEmpty ? update.senderUser.images.first.url : '',
-                blurHash: update.senderUser.images.isNotEmpty
-                    ? update.senderUser.images.first.blurHash
+                url: update.senderUser!.images.isNotEmpty ? update.senderUser!.images.first.url : '',
+                blurHash: update.senderUser!.images.isNotEmpty
+                    ? update.senderUser!.images.first.blurHash
                     : null,
                 width: 32,
                 height: 32,
@@ -53,7 +53,7 @@ class UpdateCardFooter extends ConsumerWidget {
                   );
                 },
                 child: Text(
-                  update.senderUser.name,
+                  update.senderUser!.name,
                   style: CupidTextStyles.label2.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -68,7 +68,7 @@ class UpdateCardFooter extends ConsumerWidget {
                 }
 
                 final sharedSecret = DiffieHellman.generateSharedSecret(
-                  otherPublicKey: BigInt.parse(profile.publicKey),
+                  otherPublicKey: BigInt.parse(profile!.publicKey),
                   myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
                 ).toString();
 
