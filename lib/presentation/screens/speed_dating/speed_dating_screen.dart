@@ -20,10 +20,6 @@ class SpeedDatingScreen extends StatefulWidget {
 }
 
 class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
-  // We remove repository listening from here because WaitingPage and ChatScreen handle it.
-  // Actually, chat screen might pop back here?
-  // User profile loading is still needed.
-
   bool _isLoading = true;
   UserProfile? _userProfile;
 
@@ -119,6 +115,36 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
             ),
             const Divider(
               color: CupidColors.borderSecondary,
+              height: 1,
+            ),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: CupidColors.primaryLight,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: CupidColors.borderSecondary,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info,
+                      color: CupidColors.primaryDark, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "You may report the user if the chats are not comfortable to you",
+                      style: CupidTextStyles.body2.copyWith(
+                        color: CupidColors.primaryDark,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Stack(

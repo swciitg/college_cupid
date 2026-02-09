@@ -58,7 +58,8 @@ class ConfessionCard extends ConsumerWidget {
             children: [
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: CupidColors.greyColor.withValues(alpha: 0.2),
@@ -82,7 +83,8 @@ class ConfessionCard extends ConsumerWidget {
                 spacing: 8,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: CupidColors.greyColor.withValues(alpha: 0.2),
@@ -96,7 +98,8 @@ class ConfessionCard extends ConsumerWidget {
                   ),
                   if (!isMine) ...[
                     IconButton(
-                      icon: const Icon(Icons.report_problem, size: 20, color: CupidColors.red),
+                      icon: const Icon(Icons.report_problem,
+                          size: 20, color: CupidColors.red),
                       onPressed: () {
                         onReport!();
                       },
@@ -118,33 +121,28 @@ class ConfessionCard extends ConsumerWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _ActionButton(
-                borderRadius: 20,
-                icon: FluentIcons.add_12_regular,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => Dialog(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      child: ReactionPicker(
-                        selectedReaction: myReaction,
-                        onReactionSelected: (reaction) {
-                          if (onReact != null) onReact!(reaction);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
+              Builder(builder: (context) {
+                return _ActionButton(
+                  borderRadius: 20,
+                  icon: FluentIcons.add_12_regular,
+                  onTap: () {
+                    final renderBox = context.findRenderObject() as RenderBox;
+                    final position = renderBox.localToGlobal(Offset.zero);
+                    final size = renderBox.size;
+                    _showReactionOverlay(context, position, size);
+                  },
+                );
+              }),
               const SizedBox(width: 8),
               Row(
                 children: [
                   if (confession.reactions.isNotEmpty) ...[
                     SizedBox(
                       height: 24,
-                      width: 30 + (confession.reactions.length > 1 ? 10.0 : 0.0), // Dynamic width
+                      width: 30 +
+                          (confession.reactions.length > 1
+                              ? 10.0
+                              : 0.0), // Dynamic width
                       child: Stack(
                         children: [
                           if (confession.reactions.length > 1)
@@ -179,7 +177,8 @@ class ConfessionCard extends ConsumerWidget {
                     if (onDelete != null) onDelete!();
                   },
                   shapeDecoration: BoxDecoration(
-                      border: Border.all(color: CupidColors.borderSecondary, width: 1),
+                      border: Border.all(
+                          color: CupidColors.borderSecondary, width: 1),
                       borderRadius: BorderRadius.circular(10)),
                 ),
                 const SizedBox(width: 12),
@@ -192,6 +191,52 @@ class ConfessionCard extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  void _showReactionOverlay(BuildContext context, Offset position, Size size) {
+    late OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => overlayEntry.remove(),
+              behavior: HitTestBehavior.translucent,
+              child: Container(color: Colors.black.withValues(alpha: 0.5)),
+            ),
+          ),
+          Positioned(
+            left: position.dx + size.width + 12, // Position to the right
+            top: position.dy - 10, // Center vertically roughly
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ReactionPicker(
+                  selectedReaction: myReaction,
+                  onReactionSelected: (reaction) {
+                    if (onReact != null) onReact!(reaction);
+                    overlayEntry.remove();
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    Overlay.of(context).insert(overlayEntry);
   }
 }
 
@@ -239,7 +284,9 @@ Widget chip(String label) {
       ),
     ),
     child: Center(
-      child: Text(label, style: CupidTextStyles.label3.copyWith(color: CupidColors.greySecondary)),
+      child: Text(label,
+          style: CupidTextStyles.label3
+              .copyWith(color: CupidColors.greySecondary)),
     ),
   );
 }

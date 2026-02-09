@@ -105,8 +105,9 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
                 Align(
                     alignment: Alignment.center,
                     child: Padding(
-                      padding:
-                          EdgeInsets.only(bottom: matched ? size.height * 0.4 : size.height * 0.3),
+                      padding: EdgeInsets.only(
+                          bottom:
+                              matched ? size.height * 0.4 : size.height * 0.3),
                       child: Image.asset(
                         "assets/images/doll_wo_hands.png",
                         fit: BoxFit.cover,
@@ -162,14 +163,28 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.email != null ? "It's a match!" : "Conversation ended!",
-                  style: CupidTextStyles.title2.copyWith(color: CupidColors.greyPrimary),
+                  widget.email != null
+                      ? "It's a match!"
+                      : "Conversation ended!",
+                  style: CupidTextStyles.title2
+                      .copyWith(color: CupidColors.greyPrimary),
                 ),
-                Text(
-                    widget.email != null
-                        ? "Seems like you both want to know more"
-                        : "No reveal this time. On to the next?",
-                    style: CupidTextStyles.body1.copyWith(color: CupidColors.greySecondary)),
+                widget.email == null
+                    ? Text("No reveal this time. On to the next?",
+                        style: CupidTextStyles.body1
+                            .copyWith(color: CupidColors.greySecondary))
+                    : Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          _fetchedProfile!.name,
+                          textAlign: TextAlign.center,
+                          style: CupidTextStyles.body1.copyWith(
+                              color: CupidColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20),
+                        ),
+                      ),
+
                 // if (widget.email != null &&
                 //     _fetchedProfile != null) ...[
                 //   Text(
@@ -206,12 +221,15 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
                       if (_fetchedProfile!.phnNumber.isNotEmpty)
                         Expanded(
                           child: CommonWidgets.button(
-                            icon: const Iconify(Jam.whatsapp, color: Colors.green),
+                            icon: const Iconify(Jam.whatsapp,
+                                color: Colors.green),
                             bgColor: CupidColors.whitePrimary,
                             title: "WhatsApp",
-                            textStyle: CupidTextStyles.body1.copyWith(color: Colors.green),
+                            textStyle: CupidTextStyles.body1
+                                .copyWith(color: Colors.green),
                             onTap: () {
-                              _launchUrl("https://wa.me/${_fetchedProfile!.phnNumber}");
+                              _launchUrl(
+                                  "https://wa.me/${_fetchedProfile!.phnNumber}");
                             },
                           ),
                         ),
@@ -223,11 +241,14 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
                         Expanded(
                           child: CommonWidgets.button(
                             title: "Instagram",
-                            textStyle: CupidTextStyles.body1.copyWith(color: CupidColors.primary),
-                            icon: const Iconify(Jam.instagram, color: CupidColors.primary),
+                            textStyle: CupidTextStyles.body1
+                                .copyWith(color: CupidColors.primary),
+                            icon: const Iconify(Jam.instagram,
+                                color: CupidColors.primary),
                             bgColor: CupidColors.whitePrimary,
                             onTap: () {
-                              _launchUrl("https://instagram.com/${_fetchedProfile!.insta}");
+                              _launchUrl(
+                                  "https://instagram.com/${_fetchedProfile!.insta}");
                             },
                           ),
                         ),
@@ -257,10 +278,12 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
                         } else {
                           // Fallback if profile failed to fetch but we have email
                           // Maybe retry or just go back
-                          Navigator.of(context).popUntil((route) => route.isFirst);
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
                         }
                       } else {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       }
                     })),
         ],

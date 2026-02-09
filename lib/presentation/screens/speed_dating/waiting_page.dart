@@ -83,7 +83,7 @@ class _WaitingPageState extends State<WaitingPage> {
 
     _disconnectedSubscription = _repository.disconnectedStream.listen((_) {
       if (mounted) {
-        _showErrorAndPop('Connection lost/failed. Please try again later.');
+        _showErrorAndPop(null);
       }
     });
   }
@@ -115,13 +115,15 @@ class _WaitingPageState extends State<WaitingPage> {
     );
   }
 
-  void _showErrorAndPop(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
+  void _showErrorAndPop(String? message) {
+    if (message != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
     _cancelAndPop();
   }
 
@@ -238,9 +240,10 @@ class _WaitingPageState extends State<WaitingPage> {
                               width: avatarSize,
                               height: avatarSize,
                               decoration: ShapeDecoration(
-                                color: Color(widget.userProfile.gender != Gender.female
-                                    ? 0xFFFFE6E6
-                                    : 0xFF5F0A18),
+                                color: Color(
+                                    widget.userProfile.gender != Gender.female
+                                        ? 0xFFFFE6E6
+                                        : 0xFF5F0A18),
                                 shape: const OvalBorder(),
                               ),
                               child: Center(
