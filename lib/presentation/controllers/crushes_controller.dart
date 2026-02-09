@@ -18,14 +18,15 @@ class CrushesController extends StateNotifier<AsyncValue<List<UserProfile>>> {
   CrushesController({required this.crushesService}) : super(const AsyncLoading());
 
   Future<void> getCrushProfiles() async {
-    try {
-      state = const AsyncLoading();
-      state = await AsyncValue.guard<List<UserProfile>>(() {
-        return crushesService.getCrushProfiles();
-      });
-    } catch (e) {
-      log("$e");
-    }
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<List<UserProfile>>(() async {
+      try {
+        return await crushesService.getCrushProfiles();
+      } catch (e) {
+        log("Error fetching crush profiles: $e");
+        rethrow;
+      }
+    });
   }
 
   Future<void> removeCrush(UserProfile profile) async {

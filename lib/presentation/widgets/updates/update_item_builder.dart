@@ -15,6 +15,8 @@ class UpdateItemBuilder extends StatelessWidget {
     switch (update.type) {
       case UpdateType.match:
         return MatchUpdateCard(update: update);
+      case UpdateType.blindDateReply:
+        return MatchUpdateCard(update: update);
       case UpdateType.voiceReply:
         return VoiceNoteReplyCard(update: update);
       case UpdateType.profileReply:

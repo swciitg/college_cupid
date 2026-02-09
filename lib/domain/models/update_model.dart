@@ -6,6 +6,7 @@ enum UpdateType {
   match,
   confessionReply,
   profileReply,
+  blindDateReply,
 }
 
 class UpdateModel {

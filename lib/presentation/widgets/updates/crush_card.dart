@@ -1,23 +1,25 @@
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/snackbar.dart';
-import 'package:college_cupid/presentation/controllers/crushes_controller.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/home_tab_provider.dart';
-import 'package:college_cupid/stores/page_view_controller.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class CrushCard extends ConsumerStatefulWidget {
-  final UserProfile profile;
+  final String email;
 
-  const CrushCard({required this.profile, super.key});
+  const CrushCard({required this.email, super.key});
 
   @override
   ConsumerState<CrushCard> createState() => _CrushCardState();
@@ -25,11 +27,60 @@ class CrushCard extends ConsumerStatefulWidget {
 
 class _CrushCardState extends ConsumerState<CrushCard> {
   bool _isRemoving = false;
+  bool _isLoading = true;
+  UserProfile? _profile;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile();
+  }
+
+  Future<void> _fetchProfile() async {
+    try {
+      final userProfileRepo = ref.read(userProfileRepoProvider);
+      final profileMap = await userProfileRepo.getUserProfile(widget.email);
+
+      if (profileMap == null) {
+        // Profile not found, keep _profile as null
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final profile = UserProfile.fromJson(profileMap);
+      if (mounted) {
+        setState(() {
+          _profile = profile;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Error fetching profile, keep _profile as null
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final program = Program.values.firstWhere((p) => p == widget.profile.program);
-    final crushesList = ref.read(crushesControllerProvider.notifier);
+    // If still loading, show nothing
+    if (_isLoading) {
+      return const SizedBox.shrink();
+    }
+
+    // If profile not found, hide the card
+    if (_profile == null) {
+      return const SizedBox.shrink();
+    }
+
+    final program = Program.values.firstWhere((p) => p == _profile!.program);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -52,7 +103,7 @@ class _CrushCardState extends ConsumerState<CrushCard> {
               MaterialPageRoute(
                 builder: (context) => UserProfileScreen(
                   isMine: false,
-                  userProfile: widget.profile,
+                  userProfile: _profile!,
                   showPass: false,
                 ),
               ),
@@ -71,14 +122,14 @@ class _CrushCardState extends ConsumerState<CrushCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        widget.profile.name,
+                        _profile!.name,
                         style: CupidTextStyles.title2.copyWith(
                           fontSize: 18,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "${program.displayString} '${widget.profile.yearOfJoin}",
+                        "${program.displayString} '${_profile!.yearOfJoin}",
                         style: CupidTextStyles.label2,
                       ),
                     ],
@@ -102,7 +153,47 @@ class _CrushCardState extends ConsumerState<CrushCard> {
                             _isRemoving = true;
                           });
                           try {
-                            await crushesList.removeCrush(widget.profile);
+                            final crushesRepo = ref.read(crushesRepoProvider);
+
+                            if (LoginStore.dhPrivateKey == null) {
+                              if (mounted) {
+                                setState(() {
+                                  _isRemoving = false;
+                                });
+                              }
+                              return;
+                            }
+
+                            // Calculate shared secret
+                            final sharedSecret = DiffieHellman.generateSharedSecret(
+                              otherPublicKey: BigInt.parse(_profile!.publicKey),
+                              myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
+                            ).toString();
+
+                            // Remove from backend
+                            final status = await crushesRepo.removeCrush(sharedSecret);
+
+                            if (status) {
+                              // Remove from OneDrive
+                              await OneDriveRepository.removeCrush(_profile!.email);
+                              // Decrease crush count
+                              await crushesRepo.decreaseCrushesCount(_profile!.email);
+
+                              // Hide this card by setting profile to null
+                              if (mounted) {
+                                setState(() {
+                                  _profile = null;
+                                  _isRemoving = false;
+                                });
+                              }
+                            } else {
+                              if (mounted) {
+                                setState(() {
+                                  _isRemoving = false;
+                                });
+                                showSnackBar('Failed to remove crush. Please try again.');
+                              }
+                            }
                           } catch (e) {
                             if (mounted) {
                               setState(() {
@@ -130,12 +221,12 @@ class _CrushCardState extends ConsumerState<CrushCard> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: CachedNetworkImage(
-        imageUrl: widget.profile.images.first.url,
+        imageUrl: _profile!.images.first.url,
         cacheManager: customCacheManager,
         fit: BoxFit.cover,
         height: 80,
         width: 80,
-        placeholder: (context, url) => BlurhashFfi(hash: widget.profile.images.first.blurHash!),
+        placeholder: (context, url) => BlurhashFfi(hash: _profile!.images.first.blurHash!),
         errorWidget: (context, url, error) => Container(
           color: CupidColors.primaryLight,
           child: const Center(

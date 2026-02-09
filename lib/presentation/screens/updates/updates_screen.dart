@@ -1,8 +1,8 @@
-import 'package:college_cupid/presentation/controllers/crushes_controller.dart';
 import 'package:college_cupid/presentation/widgets/updates/crush_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/update_item_builder.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/updates_controller.dart';
@@ -21,12 +21,17 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
   final List<String> _tabs = ['Crushes', 'Updates', 'Profile', 'Confession', 'Match'];
   int _currentTabIndex = 0;
   bool _crushesLoaded = false;
+  List<String>? _crushEmails;
+  bool _isLoadingCrushes = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(_handleTabSelection);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchCrushEmails();
+    });
   }
 
   void _handleTabSelection() {
@@ -37,12 +42,35 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
       if (_currentTabIndex == 0 && !_crushesLoaded) {
         // Load crushes only once when tab is first selected
         _crushesLoaded = true;
-        ref.read(crushesControllerProvider.notifier).getCrushProfiles();
+        _fetchCrushEmails();
       } else if (_currentTabIndex != 0) {
         // Only fetch updates for non-crushes tabs
         // Map tab index to filter: Updates tab should fetch 'All'
         final filter = _currentTabIndex == 1 ? 'All' : _tabs[_currentTabIndex];
         ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: filter);
+      }
+    }
+  }
+
+  Future<void> _fetchCrushEmails() async {
+    setState(() {
+      _isLoadingCrushes = true;
+    });
+
+    try {
+      final emails = await OneDriveRepository.getMyCrushes();
+      if (mounted) {
+        setState(() {
+          _crushEmails = emails;
+          _isLoadingCrushes = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _crushEmails = [];
+          _isLoadingCrushes = false;
+        });
       }
     }
   }
@@ -56,7 +84,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final updatesState = ref.watch(updatesControllerProvider);
-    final crushesState = ref.watch(crushesControllerProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -90,7 +117,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       });
                       if (index == 0 && !_crushesLoaded) {
                         _crushesLoaded = true;
-                        ref.read(crushesControllerProvider.notifier).getCrushProfiles();
+                        _fetchCrushEmails();
                       } else if (index != 0) {
                         // Map tab index to filter: Updates tab should fetch 'All'
                         final filter = index == 1 ? 'All' : _tabs[index];
@@ -104,7 +131,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
             ),
             Expanded(
               child: _currentTabIndex == 0 // Crushes tab
-                  ? _buildCrushesTab(crushesState)
+                  ? _buildCrushesTab()
                   : RefreshIndicator(
                       color: CupidColors.primary,
                       onRefresh: () async {
@@ -156,49 +183,39 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
     );
   }
 
-  Widget _buildCrushesTab(AsyncValue crushesState) {
+  Widget _buildCrushesTab() {
     return RefreshIndicator(
       color: CupidColors.primary,
       onRefresh: () async {
-        await ref.read(crushesControllerProvider.notifier).getCrushProfiles();
+        await _fetchCrushEmails();
       },
-      child: crushesState.when(
-        data: (crushes) {
-          if (crushes.isEmpty) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'No crushes yet',
-                        style: CupidTextStyles.body1,
+      child: _isLoadingCrushes
+          ? const Center(child: CustomLoader())
+          : _crushEmails == null || _crushEmails!.isEmpty
+              ? LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'No crushes yet',
+                            style: CupidTextStyles.body1,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-          return ListView.builder(
-            itemCount: crushes.length,
-            itemBuilder: (context, index) {
-              return CrushCard(profile: crushes[index]);
-            },
-          );
-        },
-        loading: () => const Center(child: CustomLoader()),
-        error: (e, s) => const Center(
-          child: Text(
-            'Error loading crushes',
-            style: CupidTextStyles.body1,
-          ),
-        ),
-      ),
+                    );
+                  },
+                )
+              : ListView.builder(
+                  itemCount: _crushEmails!.length,
+                  itemBuilder: (context, index) {
+                    return CrushCard(email: _crushEmails![index]);
+                  },
+                ),
     );
   }
 }
