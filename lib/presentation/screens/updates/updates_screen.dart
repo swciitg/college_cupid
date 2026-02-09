@@ -18,7 +18,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<String> _tabs = ['All', 'Crushes', 'Profile', 'Confession', 'Match'];
+  final List<String> _tabs = ['Crushes', 'Updates', 'Profile', 'Confession', 'Match'];
   int _currentTabIndex = 0;
   bool _crushesLoaded = false;
 
@@ -34,15 +34,15 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
       setState(() {
         _currentTabIndex = _tabController.index;
       });
-      if (_currentTabIndex == 1 && !_crushesLoaded) {
+      if (_currentTabIndex == 0 && !_crushesLoaded) {
         // Load crushes only once when tab is first selected
         _crushesLoaded = true;
         ref.read(crushesControllerProvider.notifier).getCrushProfiles();
-      } else if (_currentTabIndex != 1) {
+      } else if (_currentTabIndex != 0) {
         // Only fetch updates for non-crushes tabs
-        ref
-            .read(updatesControllerProvider.notifier)
-            .fetchUpdates(filter: _tabs[_tabController.index]);
+        // Map tab index to filter: Updates tab should fetch 'All'
+        final filter = _currentTabIndex == 1 ? 'All' : _tabs[_currentTabIndex];
+        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: filter);
       }
     }
   }
@@ -88,13 +88,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
                       setState(() {
                         _currentTabIndex = index;
                       });
-                      if (index == 1 && !_crushesLoaded) {
+                      if (index == 0 && !_crushesLoaded) {
                         _crushesLoaded = true;
                         ref.read(crushesControllerProvider.notifier).getCrushProfiles();
-                      } else if (index != 1) {
-                        ref
-                            .read(updatesControllerProvider.notifier)
-                            .fetchUpdates(filter: _tabs[index]);
+                      } else if (index != 0) {
+                        // Map tab index to filter: Updates tab should fetch 'All'
+                        final filter = index == 1 ? 'All' : _tabs[index];
+                        ref.read(updatesControllerProvider.notifier).fetchUpdates(filter: filter);
                       }
                     },
                   ),
@@ -103,7 +103,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
               ),
             ),
             Expanded(
-              child: _currentTabIndex == 1 // Crushes tab
+              child: _currentTabIndex == 0 // Crushes tab
                   ? _buildCrushesTab(crushesState)
                   : RefreshIndicator(
                       color: CupidColors.primary,

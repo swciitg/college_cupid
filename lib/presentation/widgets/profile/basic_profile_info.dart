@@ -101,10 +101,11 @@ class BasicProfileInfo extends ConsumerWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
+                                color: CupidColors.primary,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(FluentIcons.edit_16_regular, size: 14),
+                              child: const Icon(FluentIcons.edit_16_regular,
+                                  size: 14, color: CupidColors.whitePrimary),
                             ),
                           )
                         else if (!isMine) ...[
@@ -115,10 +116,14 @@ class BasicProfileInfo extends ConsumerWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
+                                color: CupidColors.primary,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(FluentIcons.search_24_regular, size: 14),
+                              child: const Icon(
+                                FluentIcons.search_24_regular,
+                                size: 14,
+                                color: CupidColors.whitePrimary,
+                              ),
                             ),
                           ),
                           // const SizedBox(width: 8),

@@ -1,6 +1,7 @@
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/controllers/crushes_controller.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
@@ -12,14 +13,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
-class CrushCard extends ConsumerWidget {
+class CrushCard extends ConsumerStatefulWidget {
   final UserProfile profile;
 
   const CrushCard({required this.profile, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final program = Program.values.firstWhere((p) => p == profile.program);
+  ConsumerState<CrushCard> createState() => _CrushCardState();
+}
+
+class _CrushCardState extends ConsumerState<CrushCard> {
+  bool _isRemoving = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final program = Program.values.firstWhere((p) => p == widget.profile.program);
     final crushesList = ref.read(crushesControllerProvider.notifier);
 
     return Padding(
@@ -40,7 +48,7 @@ class CrushCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           onTap: () {
             // Insert profile at the start of home tab profiles
-            ref.read(pageViewProvider.notifier).insertProfileAtStart(profile);
+            ref.read(pageViewProvider.notifier).insertProfileAtStart(widget.profile);
             // Switch to home tab (index 0)
             ref.read(homeTabIndexProvider.notifier).state = 0;
             // Force a small delay to ensure state updates before navigation
@@ -61,29 +69,53 @@ class CrushCard extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        profile.name,
+                        widget.profile.name,
                         style: CupidTextStyles.title2.copyWith(
                           fontSize: 18,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "${program.displayString} '${profile.yearOfJoin}",
+                        "${program.displayString} '${widget.profile.yearOfJoin}",
                         style: CupidTextStyles.label2,
                       ),
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () async {
-                    await crushesList.removeCrush(profile);
-                  },
-                  icon: const Icon(
-                    FluentIcons.dismiss_circle_24_filled,
-                    color: CupidColors.red,
-                    size: 28,
-                  ),
-                ),
+                _isRemoving
+                    ? const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: CupidColors.red,
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            _isRemoving = true;
+                          });
+                          try {
+                            await crushesList.removeCrush(widget.profile);
+                          } catch (e) {
+                            if (mounted) {
+                              setState(() {
+                                _isRemoving = false;
+                              });
+                              showSnackBar('Failed to remove crush. Please try again.');
+                            }
+                          }
+                        },
+                        icon: const Icon(
+                          FluentIcons.dismiss_circle_24_filled,
+                          color: CupidColors.red,
+                          size: 28,
+                        ),
+                      ),
               ],
             ),
           ),
@@ -96,12 +128,12 @@ class CrushCard extends ConsumerWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: CachedNetworkImage(
-        imageUrl: profile.images.first.url,
+        imageUrl: widget.profile.images.first.url,
         cacheManager: customCacheManager,
         fit: BoxFit.cover,
         height: 80,
         width: 80,
-        placeholder: (context, url) => BlurhashFfi(hash: profile.images.first.blurHash!),
+        placeholder: (context, url) => BlurhashFfi(hash: widget.profile.images.first.blurHash!),
         errorWidget: (context, url, error) => Container(
           color: CupidColors.primaryLight,
           child: const Center(

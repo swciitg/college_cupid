@@ -134,8 +134,7 @@ class UserProfileRepository extends ApiRepository {
     try {
       Response res = await dio.get('${Endpoints.getUserProfile}/$email');
       final profile = res.data['userProfile'];
-      log("Fetched User Profile: $profile");
-      return res.data['userProfile'];
+      return profile;
     } catch (error) {
       debugPrint("Error getting User Profile: $error");
       return null;
