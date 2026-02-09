@@ -5,7 +5,6 @@ import 'package:college_cupid/presentation/screens/profile_setup/widgets/choose_
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/common_widgets.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/dating_preference.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/add_profile_photos.dart';
-import 'package:college_cupid/presentation/screens/profile_setup/widgets/drive_connect.dart';
 import 'package:college_cupid/shared/assets.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -28,7 +27,6 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     const MoreAboutYou(),
     const ChooseInterests(),
     const AddPhotos(),
-    const DriveConnect(),
   ];
   final List<String> stepTitles = [
     'Your Basic Details',
@@ -36,7 +34,6 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     'More about you',
     'Interests',
     'Your Photos',
-    'Connect Your Drive',
   ];
   final List<String> stepSubtitles = [
     '',
@@ -44,7 +41,6 @@ class _ProfileSetupState extends ConsumerState<ProfileSetup> {
     'Answer 3 questions',
     '',
     '',
-    'Secure storage for your data',
   ];
 
   @override

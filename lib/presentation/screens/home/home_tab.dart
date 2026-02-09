@@ -1,19 +1,16 @@
 import 'dart:developer';
 
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
-import 'package:college_cupid/presentation/widgets/global/reauth_dialog.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
-import 'package:college_cupid/repositories/google_drive_repository.dart';
 import 'package:college_cupid/presentation/widgets/events/event_update_message_card.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/filter_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/stores/login_store.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -37,6 +34,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     final pageViewState = ref.watch(pageViewProvider);
     final pageViewNotifier = ref.read(pageViewProvider.notifier);
 
+    debugPrint(
+        'HomeTab build: currentPage=${pageViewNotifier.currentPage}, listLength=${pageViewState.homeTabProfileList.length}');
+
     // Safety check for index out of bounds
     if (pageViewState.homeTabProfileList.isEmpty ||
         pageViewNotifier.currentPage >= pageViewState.homeTabProfileList.length) {
@@ -52,8 +52,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     }
 
     final currentUser = pageViewState.homeTabProfileList[pageViewNotifier.currentPage];
+    debugPrint('HomeTab: Showing profile ${currentUser.name} (${currentUser.email})');
 
     return DisplayProfileInfo(
+      key: ValueKey(currentUser.email),
       customHeader: const EventUpdateMessageCard(),
       userProfile: currentUser,
       onPass: () {
@@ -78,35 +80,37 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         try {
           bool success = await crushesRepo.addCrush(sharedSecret, profile.email);
           if (success) {
-            final storageRepo = ref.read(storageRepositoryProvider);
-            await storageRepo.addCrush(profile.email);
+            await OneDriveRepository.addCrush(profile.email);
             await crushesRepo.increaseCrushesCount(profile.email);
-          }
-        } on AuthenticationExpiredException catch (e) {
-          log("Drive authentication expired: $e");
-          if (context.mounted) {
-            final userProfile = ref.read(userProvider).myProfile;
-            final shouldReAuth = await showDialog<bool>(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => ReAuthDialog(
-                googleAccountEmail: userProfile?.googleAccountEmail,
-              ),
-            );
-            if (shouldReAuth == true) {
-              // Retry after successful re-auth
-              try {
-                final storageRepo = ref.read(storageRepositoryProvider);
-                await storageRepo.addCrush(profile.email);
-                await crushesRepo.increaseCrushesCount(profile.email);
-              } catch (retryError) {
-                log("Error retrying crush add: $retryError");
-              }
-            }
           }
         } catch (e) {
           // Handle error
           log("Error adding crush: $e");
+        }
+      },
+      onDislike: () async {
+        final crushesRepo = ref.read(crushesRepoProvider);
+        final profile = currentUser;
+
+        if (LoginStore.dhPrivateKey == null) {
+          return;
+        }
+
+        final sharedSecret = DiffieHellman.generateSharedSecret(
+          otherPublicKey: BigInt.parse(profile.publicKey),
+          myPrivateKey: BigInt.parse(LoginStore.dhPrivateKey!),
+        ).toString();
+
+        // Optimistically move to next profile
+        pageViewNotifier.nextProfile();
+
+        try {
+          // Remove from OneDrive
+          await OneDriveRepository.removeCrush(profile.email);
+          // Remove from backend
+          await crushesRepo.removeCrush(sharedSecret);
+        } catch (e) {
+          log("Error removing crush: $e");
         }
       },
     );

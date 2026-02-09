@@ -1,14 +1,11 @@
 import 'package:college_cupid/domain/models/update_model.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
-import 'package:college_cupid/presentation/widgets/global/reauth_dialog.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
-import 'package:college_cupid/repositories/google_drive_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
-import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,31 +75,8 @@ class UpdateCardFooter extends ConsumerWidget {
                 try {
                   bool success = await crushesRepo.addCrush(sharedSecret, profile.email);
                   if (success) {
-                    final storageRepo = ref.read(storageRepositoryProvider);
-                    await storageRepo.addCrush(profile.email);
+                    await OneDriveRepository.addCrush(profile.email);
                     await crushesRepo.increaseCrushesCount(profile.email);
-                  }
-                } on AuthenticationExpiredException catch (e) {
-                  debugPrint("Drive authentication expired: $e");
-                  if (context.mounted) {
-                    final userProfile = ref.read(userProvider).myProfile;
-                    final shouldReAuth = await showDialog<bool>(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => ReAuthDialog(
-                        googleAccountEmail: userProfile?.googleAccountEmail,
-                      ),
-                    );
-                    if (shouldReAuth == true) {
-                      // Retry after successful re-auth
-                      try {
-                        final storageRepo = ref.read(storageRepositoryProvider);
-                        await storageRepo.addCrush(profile.email);
-                        await crushesRepo.increaseCrushesCount(profile.email);
-                      } catch (retryError) {
-                        debugPrint("Error retrying crush add: $retryError");
-                      }
-                    }
                   }
                 } catch (e) {
                   debugPrint("Error adding crush: $e");

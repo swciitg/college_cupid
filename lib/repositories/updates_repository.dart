@@ -167,6 +167,15 @@ class UpdatesRepositoryImpl implements UpdatesRepository {
               } else {
                 log("Question entity not found or index out of bounds: $entitySerial");
               }
+            } else if (entityType == 'MATCHES' && entitySerial != null) {
+              type = UpdateType.match;
+              headerText = "It's a match!";
+              // For matches, we might want to fetch the matched user's profile
+              // Assuming the mediaUrl field can be repurposed to store the matched user's email for now
+              // mediaUrl = json['matchedUserEmail'] as String?;
+            } else if (entityType == 'BLIND_DATING_MATCH' && entitySerial != null) {
+              type = UpdateType.blindDateReply;
+              headerText = "Replied to your blind date profile";
             }
           }
 

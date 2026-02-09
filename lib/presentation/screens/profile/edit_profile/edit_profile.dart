@@ -49,7 +49,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   late UserProfile profileSave;
   List<QuizQuestion> surprizeQuiz = [];
   List<TextEditingController> textEditingControllers = [];
-  final Map<int, String?> _audioPaths = {}; // Track audio paths for each question
+  final Map<String, String?> _audioPaths = {}; // Track audio paths by question
+  final Map<String, String?> _originalAudioPaths = {}; // Track original server paths by question
   late TextEditingController _instaController;
   late TextEditingController _phoneController;
   late TextEditingController _hometownController;
@@ -97,9 +98,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     textEditingControllers
         .addAll(surprizeQuiz.map((e) => TextEditingController(text: e.answer)).toList());
 
-    // Initialize audio paths from existing data
-    for (int i = 0; i < surprizeQuiz.length; i++) {
-      _audioPaths[i] = surprizeQuiz[i].audioPath;
+    // Initialize audio paths from existing data and track originals using question as key
+    for (final quiz in surprizeQuiz) {
+      _audioPaths[quiz.question] = quiz.audioPath;
+      _originalAudioPaths[quiz.question] = quiz.audioPath; // Store original for comparison
     }
 
     _selectedProgram = userState.myProfile!.program!;
@@ -189,8 +191,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
 
     // Check if all questions have either text or audio answers
     for (int i = 0; i < surprizeQuiz.length; i++) {
+      final question = surprizeQuiz[i].question;
       final hasText = textEditingControllers[i].text.trim().isNotEmpty;
-      final hasAudio = _audioPaths[i] != null && _audioPaths[i]!.isNotEmpty;
+      final hasAudio = _audioPaths[question] != null && _audioPaths[question]!.isNotEmpty;
       if (!hasText && !hasAudio) {
         showSnackBar("Please answer all quiz questions with text or audio!");
         return;
@@ -258,15 +261,22 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         surpriseQuiz: List.generate(
           surprizeQuiz.length,
           (index) {
-            final audioPath = _audioPaths[index];
-            // Only include local file paths for upload, not server paths
-            final isLocalFile = audioPath != null &&
-                !audioPath.startsWith('/uploads/') &&
-                !audioPath.startsWith('http');
+            final question = surprizeQuiz[index].question;
+            final currentPath = _audioPaths[question];
+            final originalPath = _originalAudioPaths[question];
+
+            // Check if audio has changed (new recording or first time recording)
+            final hasNewRecording = currentPath != originalPath;
+
+            // Only include new local file paths for upload
+            final isLocalFile = currentPath != null &&
+                !currentPath.startsWith('/uploads/') &&
+                !currentPath.startsWith('http');
 
             return surprizeQuiz[index].copyWith(
               answer: textEditingControllers[index].text.trim(),
-              audioPath: isLocalFile ? audioPath : null,
+              // Include audio path if it's a new local recording
+              audioPath: (hasNewRecording && isLocalFile) ? currentPath : null,
             );
           },
         ),
@@ -673,9 +683,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 .any((e) => e.question == quizQuestions[rand].question)) {
                               rand = math.Random().nextInt(quizQuestions.length);
                             }
+                            final oldQuestion = surprizeQuiz[index].question;
                             surprizeQuiz[index] = quizQuestions[rand];
                             textEditingControllers[index].clear();
-                            _audioPaths[index] = null;
+                            // Remove old question and reset audio for new question
+                            _audioPaths.remove(oldQuestion);
+                            _audioPaths[surprizeQuiz[index].question] = null;
                             setState(() {});
                           },
                           icon: const Icon(Icons.refresh_rounded,
@@ -689,19 +702,19 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   ),
                   const SizedBox(height: 12),
                   AudioRecorder(
-                    existingFilePath: _audioPaths[index],
+                    existingFilePath: _audioPaths[surprizeQuiz[index].question],
                     textController: textEditingControllers[index],
                     onRecordingComplete: (path) {
                       setState(() {
-                        _audioPaths[index] = path;
+                        _audioPaths[surprizeQuiz[index].question] = path;
                       });
-                      log("Recording completed for question $index: $path");
+                      log("Recording completed for question '${surprizeQuiz[index].question}': $path");
                     },
                     onDelete: () {
                       setState(() {
-                        _audioPaths[index] = null;
+                        _audioPaths[surprizeQuiz[index].question] = null;
                       });
-                      log("Recording deleted for question $index");
+                      log("Recording deleted for question '${surprizeQuiz[index].question}'");
                     },
                     onChanged: (text) {
                       // Text changed callback

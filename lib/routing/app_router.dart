@@ -8,7 +8,6 @@ import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_int
 import 'package:college_cupid/presentation/screens/profile/edit_profile/edit_profile.dart';
 import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/profile_setup.dart';
-import 'package:college_cupid/presentation/screens/restore/restore_drive_screen.dart';
 import 'package:college_cupid/presentation/screens/search/search_profiles_screen.dart';
 import 'package:college_cupid/splash.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,6 @@ enum AppRoutes {
   welcome,
   loginWebview,
   profileSetup,
-  restoreDrive,
   blockedUserListScreen,
   userProfileScreen,
   editProfile,
@@ -59,14 +57,6 @@ final goRouter = GoRouter(
       path: '/${AppRoutes.profileSetup.name}',
       name: AppRoutes.profileSetup.name,
       builder: (context, state) => const ProfileSetup(),
-    ),
-    GoRoute(
-      path: '/${AppRoutes.restoreDrive.name}',
-      name: AppRoutes.restoreDrive.name,
-      builder: (context, state) {
-        final googleEmail = state.uri.queryParameters['googleEmail'];
-        return RestoreDriveScreen(googleAccountEmail: googleEmail);
-      },
     ),
     GoRoute(
       path: '/${AppRoutes.home.name}',

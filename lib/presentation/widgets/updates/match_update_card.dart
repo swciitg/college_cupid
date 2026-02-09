@@ -1,13 +1,29 @@
 import 'package:college_cupid/domain/models/update_model.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
-class MatchUpdateCard extends StatelessWidget {
+class MatchUpdateCard extends StatefulWidget {
+  final bool blindMatch;
   final UpdateModel update;
 
-  const MatchUpdateCard({super.key, required this.update});
+  const MatchUpdateCard({super.key, required this.update, this.blindMatch = false});
+
+  @override
+  State<MatchUpdateCard> createState() => _MatchUpdateCardState();
+}
+
+class _MatchUpdateCardState extends State<MatchUpdateCard> {
+  late UpdateModel update;
+
+  @override
+  void initState() {
+    super.initState();
+    update = widget.update;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +57,19 @@ class MatchUpdateCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(
-                  update.senderUser.images.first.url, update.senderUser.images.first.blurHash),
+              _buildAvatar(update.senderUser.images.first.url,
+                  update.senderUser.images.first.blurHash),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(FluentIcons.heart_24_filled, color: Colors.white, size: 28),
               ),
-              _buildAvatar(
-                  update.matchedUser!.images.first.url, update.matchedUser!.images.first.blurHash),
+              _buildAvatar(update.matchedUser!.images.first.url,
+                  update.matchedUser!.images.first.blurHash),
             ],
           ),
           const SizedBox(height: 16),
           Text(
-            'You have a match with ${update.matchedUser!.name}!',
+            '${widget.blindMatch ? "Blind Match: " : ""}You have a match with ${update.matchedUser!.name}!',
             style: CupidTextStyles.title2.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,

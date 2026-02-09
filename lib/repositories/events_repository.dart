@@ -1,7 +1,6 @@
 import 'package:college_cupid/domain/models/event_model.dart';
 import 'package:college_cupid/repositories/api_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
-import 'package:college_cupid/repositories/storage_repository.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,9 +28,8 @@ abstract class EventsRepository {
 
 class EventsRepositoryImpl implements EventsRepository {
   final ApiRepository _apiRepository;
-  final StorageRepository _storageRepository;
 
-  EventsRepositoryImpl(this._apiRepository, this._storageRepository);
+  EventsRepositoryImpl(this._apiRepository);
 
   @override
   Future<List<EventModel>> fetchEvents({bool filterViewed = false}) async {
@@ -43,7 +41,7 @@ class EventsRepositoryImpl implements EventsRepository {
         final events = eventsJson.map((json) => EventModel.fromJson(json)).toList();
 
         if (filterViewed) {
-          final viewedIds = await _storageRepository.getViewedEventIds();
+          final viewedIds = await SharedPrefService.getViewedEventIds();
           return events.where((event) => !viewedIds.contains(event.id)).toList();
         }
         return events;
@@ -113,8 +111,7 @@ class EventsRepositoryImpl implements EventsRepository {
 
 final eventsRepoProvider = Provider<EventsRepository>((ref) {
   final apiRepo = ref.read(apiRepositoryProvider);
-  final storageRepo = ref.read(storageRepositoryProvider);
-  return EventsRepositoryImpl(apiRepo, storageRepo);
+  return EventsRepositoryImpl(apiRepo);
 });
 
 // Provider for Unseen Events (used by EventUpdateMessageCard)

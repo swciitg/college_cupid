@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
+import 'package:college_cupid/presentation/screens/profile/view_profile/user_profile_screen.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
-import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -91,12 +91,17 @@ class _SearchProfilesScreenState extends ConsumerState<SearchProfilesScreen> {
 
       final profile = UserProfile.fromJson(profileData);
 
-      // Insert profile at the start of home tab
-      ref.read(pageViewProvider.notifier).insertProfileAtStart(profile);
-
-      // Navigate back to home
+      // Navigate to user profile screen
       if (!mounted) return;
-      context.goNamed(AppRoutes.home.name);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UserProfileScreen(
+            isMine: false,
+            userProfile: profile,
+            showPass: true,
+          ),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       showSnackBar('Error loading profile');

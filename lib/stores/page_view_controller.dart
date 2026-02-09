@@ -66,8 +66,6 @@ class PageViewNotifier extends StateNotifier<PageViewState> {
     state = state.copyWith(
       homeTabProfileList: [profile, ...updatedList],
     );
-    // Reset to first profile
-    setCurrentPage(0);
   }
 
   void setHomeTabProfiles(List<UserProfile> value) {

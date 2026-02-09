@@ -71,11 +71,11 @@ class CrushesRepository extends ApiRepository {
     }
   }
 
-  Future<bool> removeCrush(int index) async {
+  Future<bool> removeCrush(String sharedSecret) async {
     try {
       Response res = await dio.delete(
         Endpoints.removeCrush,
-        queryParameters: {'index': index},
+        data: jsonEncode({'sharedSecret': sharedSecret}),
       );
       if (res.statusCode == 200) {
         if (res.data['success'] == false) showSnackBar(res.data['message']);
@@ -85,6 +85,22 @@ class CrushesRepository extends ApiRepository {
       }
     } catch (err) {
       return Future.error(err.toString());
+    }
+  }
+
+  Future<bool> checkCrushExists(String sharedSecret) async {
+    try {
+      Response res = await dio.post(
+        Endpoints.checkCrush,
+        data: jsonEncode({'sharedSecret': sharedSecret}),
+      );
+      if (res.statusCode == 200 && res.data['success'] == true) {
+        return res.data['exists'] as bool;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      return false;
     }
   }
 }

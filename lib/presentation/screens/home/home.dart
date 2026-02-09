@@ -33,7 +33,6 @@ class _HomeState extends ConsumerState<Home> {
       final user = ref.read(userProvider).myProfile!;
       if (user.personalityType != null) {
         ref.read(pageViewProvider.notifier).getInitialProfiles();
-        return;
       }
     });
   }
@@ -94,6 +93,7 @@ class _HomeState extends ConsumerState<Home> {
                         setState(() {
                           _selectedIndex = index;
                         });
+                        ref.read(homeTabIndexProvider.notifier).state = index;
                       },
                       children: [
                         const HomeTab(),
@@ -105,6 +105,7 @@ class _HomeState extends ConsumerState<Home> {
                         UserProfileScreen(
                           isMine: true,
                           userProfile: userController.myProfile!,
+                          backgroundColor: Colors.transparent,
                         ),
                       ],
                     ),
@@ -125,8 +126,7 @@ class _HomeState extends ConsumerState<Home> {
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
           if (states.contains(WidgetState.selected)) {
             // A → selected
-            return CupidTextStyles.label3
-                .copyWith(color: CupidColors.primaryDark, fontSize: 11);
+            return CupidTextStyles.label3.copyWith(color: CupidColors.primaryDark, fontSize: 11);
           }
           // B → unselected
           return CupidTextStyles.label3
@@ -146,26 +146,26 @@ class _HomeState extends ConsumerState<Home> {
       ),
       child: DecoratedBox(
         decoration: const BoxDecoration(
-          border: Border(
-              top: BorderSide(color: CupidColors.offWhiteColor, width: 2)),
+          border: Border(top: BorderSide(color: CupidColors.offWhiteColor, width: 2)),
         ),
         child: Padding(
           padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
           child: NavigationBar(
             backgroundColor: CupidColors.navBarBackgroundColor,
             selectedIndex: _selectedIndex,
-            onDestinationSelected: (i) => setState(() {
-              if ((i - _selectedIndex).abs() != 1) {
-                _pageController.jumpToPage(i);
-              } else {
-                _pageController.animateToPage(i,
-                    duration: const Duration(milliseconds: 150),
-                    curve: Curves.easeIn);
-              }
-              _selectedIndex = i;
-            }),
-            labelTextStyle:
-                WidgetStateProperty.resolveWith<TextStyle>((states) {
+            onDestinationSelected: (i) {
+              setState(() {
+                if ((i - _selectedIndex).abs() != 1) {
+                  _pageController.jumpToPage(i);
+                } else {
+                  _pageController.animateToPage(i,
+                      duration: const Duration(milliseconds: 150), curve: Curves.easeIn);
+                }
+                _selectedIndex = i;
+              });
+              ref.read(homeTabIndexProvider.notifier).state = i;
+            },
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
               if (states.contains(WidgetState.selected)) {
                 // A → selected
                 return CupidTextStyles.label3
@@ -179,8 +179,7 @@ class _HomeState extends ConsumerState<Home> {
               final item = navItems[index];
               return Container(
                 padding: EdgeInsets.zero,
-                margin: EdgeInsets.symmetric(
-                    horizontal: _selectedIndex == index ? 4 : 0),
+                margin: EdgeInsets.symmetric(horizontal: _selectedIndex == index ? 4 : 0),
                 decoration: _selectedIndex == index
                     ? ShapeDecoration(
                         color: Colors.white,

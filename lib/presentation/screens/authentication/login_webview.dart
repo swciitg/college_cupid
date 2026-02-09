@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:college_cupid/domain/models/drive_data.dart';
-import 'package:college_cupid/domain/models/storage_type.dart';
+
 import 'package:college_cupid/domain/models/user_profile.dart';
-import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/helpers.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
-import 'package:college_cupid/repositories/updates_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
@@ -54,10 +51,9 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
   @override
   void initState() {
     super.initState();
-    debugPrint('BASE URL: ${Endpoints.baseUrl}');
     final userProfileRepo = ref.read(userProfileRepoProvider);
     final personalInfoRepo = ref.read(personalInfoRepoProvider);
-    // final userController = ref.read(userProvider.notifier);
+    final userController = ref.read(userProvider.notifier);
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -74,7 +70,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
             if (!mounted) return;
             String outlookInfoString =
                 (await getElementById(controller, 'outlookInfo')).replaceAll("\\", '"');
-            // print(outlookInfoString);
 
             Map<String, dynamic> outlookInfo = jsonDecode(outlookInfoString);
 
@@ -110,76 +105,31 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               log('NEW USER');
               goRouter.goNamed(AppRoutes.profileSetup.name);
             } else {
-              debugPrint('USER ALREADY EXISTS - RETURNING USER');
+              debugPrint('USER ALREADY EXISTS');
+              debugPrint('LOGGING IN');
 
-              // Parse the user profile to check storage type
-              final userProfileData = UserProfile.fromJson(myProfile);
-              final storageType = userProfileData.storageType;
+              try {
+                // First load the user profile into state
+                final userProfileMap = await userProfileRepo.getUserProfile(email);
+                final userProfile = UserProfile.fromJson(userProfileMap!);
+                await userController.updateMyProfile(userProfile);
+                await SharedPrefService.setDHPublicKey(userProfile.publicKey);
 
-              debugPrint('User storage type: ${storageType.name}');
-
-              // Only show restore page if user was using Google Drive
-              if (storageType == StorageType.googleDrive) {
-                debugPrint('NAVIGATING TO RESTORE PAGE');
-                goRouter.goNamed(
-                  AppRoutes.restoreDrive.name,
-                  queryParameters: {
-                    'googleEmail': userProfileData.googleAccountEmail ?? '',
-                  },
-                );
-              } else {
-                debugPrint('LOCAL STORAGE USER - LOADING DATA AND SKIPPING RESTORE PAGE');
-
-                // Set storage type in provider
-                ref.read(storageTypeProvider.notifier).state = storageType;
-
-                // Load user profile and personal info into providers
-                await ref.read(userProvider.notifier).updateMyProfile(userProfileData);
-
-                // Clear all updates/replies (they contain encrypted content with old keys)
-                final updatesRepo = ref.read(updatesRepoProvider);
-                await updatesRepo.deleteAllUpdates();
-
-                //
-                // For returning LOCAL_STORAGE users, always generate fresh keys
-                // because any previous session data is cleared on logout
-                debugPrint('Generating fresh keys for returning local storage user');
-
-                final keyPair = DiffieHellman.generateKeyPair();
-                final dhPrivateKey = keyPair.privateKey.toString();
-                final publicKey = keyPair.publicKey.toString();
-
-                // Store keys locally
-                await SharedPrefService.setDHPrivateKey(dhPrivateKey);
-                await SharedPrefService.setDHPublicKey(publicKey);
-
-                // Update public key in user profile and backend
-                final updatedProfile = userProfileData.copyWith(publicKey: publicKey);
-                final updatedProfileData =
-                    await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-
-                // Update local state with complete profile from backend (includes isAdmin)
-                if (updatedProfileData != null) {
-                  final completeProfile = UserProfile.fromJson(updatedProfileData);
-                  await ref.read(userProvider.notifier).updateMyProfile(completeProfile);
+                // Now that user profile is loaded, we can access OneDrive
+                final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
+                if (dhPvtKey == null) {
+                  // TODO: SOMEONE CLEARED ONEDRIVE DATA : DO SOMETHING HERE
+                  LoginStore.logout();
+                  goRouter.goNamed(AppRoutes.splash.name);
                 } else {
-                  await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+                  await SharedPrefService.setDHPrivateKey(dhPvtKey);
+                  goRouter.goNamed(AppRoutes.splash.name);
                 }
-
-                // Save keys to local storage
-                final storageRepo = ref.read(storageRepositoryProvider);
-                final driveData = DriveData(
-                  diffieHellmanPrivateKey: dhPrivateKey,
-                  crushEmailList: [],
-                );
-                await storageRepo.uploadPrivateData(driveData);
-
-                LoginStore.dhPrivateKey = dhPrivateKey;
-                debugPrint('Fresh keys generated and stored successfully');
-
-                debugPrint('User data loaded - navigating to home');
-                // Local storage users can go directly to home
-                goRouter.goNamed(AppRoutes.home.name);
+              } catch (e) {
+                debugPrint('Error during login: $e');
+                // TODO: Handle onedrive data clear
+                LoginStore.logout();
+                goRouter.goNamed(AppRoutes.splash.name);
               }
             }
           },

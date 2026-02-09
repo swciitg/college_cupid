@@ -79,7 +79,7 @@ class CrushInfoTile extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () async {
-                  await crushesList.removeCrush(index, profile.email);
+                  await crushesList.removeCrush(profile);
                 },
                 icon: const Icon(
                   Icons.close,
