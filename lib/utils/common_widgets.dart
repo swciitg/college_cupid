@@ -7,6 +7,7 @@ class CommonWidgets {
   static Widget button(
       {required String title,
       Color? bgColor,
+      Widget? icon,
       TextStyle? textStyle,
       required VoidCallback onTap}) {
     return GestureDetector(
@@ -16,15 +17,23 @@ class CommonWidgets {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
         decoration: ShapeDecoration(
-          color: CupidColors.primary,
+          color: bgColor ?? CupidColors.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
+            side: BorderSide(color: CupidColors.borderSecondary),
           ),
         ),
         child: Center(
-          child: Text(
-            title,
-            style: textStyle ?? CupidTextStyles.label1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) icon,
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: textStyle ?? CupidTextStyles.label1,
+              ),
+            ],
           ),
         ),
       ),

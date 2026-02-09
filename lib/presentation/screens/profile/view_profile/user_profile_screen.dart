@@ -44,7 +44,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
         widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       drawer: widget.isMine ? const DrawerWidget() : null,
       body: SafeArea(
         child: Stack(
@@ -67,8 +67,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       ).toString();
 
                       try {
-                        bool success =
-                            await crushesRepo.addCrush(sharedSecret, profileToShow.email);
+                        bool success = await crushesRepo.addCrush(
+                            sharedSecret, profileToShow.email);
                         if (success) {
                           final storageRepo =
                               ref.read(storageRepositoryProvider);
@@ -87,20 +87,24 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                             context: context,
                             barrierDismissible: false,
                             builder: (context) => ReAuthDialog(
-                              googleAccountEmail: userProfile?.googleAccountEmail,
+                              googleAccountEmail:
+                                  userProfile?.googleAccountEmail,
                             ),
                           );
                           if (shouldReAuth == true) {
                             // Retry after successful re-auth
                             try {
-                              final storageRepo = ref.read(storageRepositoryProvider);
+                              final storageRepo =
+                                  ref.read(storageRepositoryProvider);
                               await storageRepo.addCrush(profileToShow.email);
-                              await crushesRepo.increaseCrushesCount(profileToShow.email);
+                              await crushesRepo
+                                  .increaseCrushesCount(profileToShow.email);
                               if (mounted) {
                                 showSnackBar('Added to crushes!');
                               }
                             } catch (retryError) {
-                              debugPrint("Error retrying crush add: $retryError");
+                              debugPrint(
+                                  "Error retrying crush add: $retryError");
                             }
                           }
                         }
