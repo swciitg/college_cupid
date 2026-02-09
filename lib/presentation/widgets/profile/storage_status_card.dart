@@ -1,5 +1,6 @@
 import 'package:college_cupid/domain/models/drive_data.dart';
 import 'package:college_cupid/domain/models/storage_type.dart';
+import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
 import 'package:college_cupid/repositories/storage_provider.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -193,8 +194,19 @@ class _StorageStatusCardState extends ConsumerState<StorageStatusCard> {
           phnNumber: userProfile.phnNumber.isEmpty ? 'N/A' : userProfile.phnNumber,
           insta: userProfile.insta.isEmpty ? 'N/A' : userProfile.insta,
         );
-        await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+
+        // Update backend and get the complete profile back (with isAdmin)
+        final updatedProfileData =
+            await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+
+        // Update local state with the profile from backend (includes isAdmin)
+        if (updatedProfileData != null) {
+          final completeProfile = UserProfile.fromJson(updatedProfileData);
+          await ref.read(userProvider.notifier).updateMyProfile(completeProfile);
+        } else {
+          // Fallback to local update if backend response is null
+          await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+        }
       }
 
       if (mounted) {

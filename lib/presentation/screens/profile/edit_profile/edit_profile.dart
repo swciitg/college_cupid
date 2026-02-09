@@ -884,6 +884,8 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 child: CachedNetworkImage(
                                   fit: BoxFit.cover,
                                   imageUrl: url,
+                                  fadeInDuration: const Duration(milliseconds: 300),
+                                  fadeOutDuration: const Duration(milliseconds: 100),
                                   placeholder: (context, url) {
                                     if (blurHash == null) {
                                       return const CustomLoader();

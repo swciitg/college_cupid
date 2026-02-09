@@ -135,12 +135,12 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                 // Load user profile and personal info into providers
                 await ref.read(userProvider.notifier).updateMyProfile(userProfileData);
-                
+
                 // Clear all updates/replies (they contain encrypted content with old keys)
                 final updatesRepo = ref.read(updatesRepoProvider);
                 await updatesRepo.deleteAllUpdates();
 
-                // 
+                //
                 // For returning LOCAL_STORAGE users, always generate fresh keys
                 // because any previous session data is cleared on logout
                 debugPrint('Generating fresh keys for returning local storage user');
@@ -155,8 +155,16 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
                 // Update public key in user profile and backend
                 final updatedProfile = userProfileData.copyWith(publicKey: publicKey);
-                await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-                await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+                final updatedProfileData =
+                    await ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
+
+                // Update local state with complete profile from backend (includes isAdmin)
+                if (updatedProfileData != null) {
+                  final completeProfile = UserProfile.fromJson(updatedProfileData);
+                  await ref.read(userProvider.notifier).updateMyProfile(completeProfile);
+                } else {
+                  await ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
+                }
 
                 // Save keys to local storage
                 final storageRepo = ref.read(storageRepositoryProvider);

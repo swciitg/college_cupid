@@ -100,6 +100,8 @@ class CrushInfoTile extends ConsumerWidget {
       child: CachedNetworkImage(
         imageUrl: profile.images.first.url,
         cacheManager: customCacheManager,
+        fadeInDuration: const Duration(milliseconds: 300),
+        fadeOutDuration: const Duration(milliseconds: 100),
         placeholder: (context, url) {
           if (profile.images.first.blurHash == null) {
             return const CustomLoader();
