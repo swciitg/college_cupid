@@ -11,7 +11,6 @@ class LogoutButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: GestureDetector(
@@ -29,8 +28,8 @@ class LogoutButton extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                     Icons.logout,
-                      color:Colors.red,
+                      Icons.logout,
+                      color: Colors.red,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
@@ -42,7 +41,7 @@ class LogoutButton extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                       'Are you sure you want to logout? Your data is safely stored in Google Drive.',
+                      'Are you sure you want to logout? Your data is safely stored in OneDrive.',
                       style: CupidTextStyles.body1,
                       textAlign: TextAlign.center,
                     ),

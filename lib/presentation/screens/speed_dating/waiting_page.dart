@@ -10,6 +10,7 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:college_cupid/presentation/widgets/global/ripple_animation.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 
 class WaitingPage extends StatefulWidget {
   final UserProfile userProfile;
@@ -54,6 +55,10 @@ class _WaitingPageState extends State<WaitingPage> {
   StreamSubscription? _matchedSubscription;
   StreamSubscription? _questionsSubscription;
   StreamSubscription? _chatMessageSubscription;
+  StreamSubscription? _poolStatsSubscription;
+  int _boysCount = 0;
+  int _girlsCount = 0;
+  int _totalRooms = 0;
 
   void _setupListeners() {
     _matchedSubscription = _repository.matchedStream.listen((data) {
@@ -84,6 +89,16 @@ class _WaitingPageState extends State<WaitingPage> {
     _disconnectedSubscription = _repository.disconnectedStream.listen((_) {
       if (mounted) {
         _showErrorAndPop(null);
+      }
+    });
+
+    _poolStatsSubscription = _repository.poolStatsStream.listen((data) {
+      if (mounted) {
+        setState(() {
+          _boysCount = data['boysCount'] ?? 0;
+          _girlsCount = data['girlsCount'] ?? 0;
+          _totalRooms = data['totalRooms'] ?? 0;
+        });
       }
     });
   }
@@ -117,12 +132,7 @@ class _WaitingPageState extends State<WaitingPage> {
 
   void _showErrorAndPop(String? message) {
     if (message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
+      showSnackBar(message);
     }
     _cancelAndPop();
   }
@@ -139,6 +149,7 @@ class _WaitingPageState extends State<WaitingPage> {
     _questionsSubscription?.cancel();
     _chatMessageSubscription?.cancel();
     _disconnectedSubscription?.cancel();
+    _poolStatsSubscription?.cancel();
     _customMessageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -214,9 +225,98 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
             ),
 
-            // 2. Avatar Animation Layer
+            // 2. Stats Card (Admin only)
+            if (widget.userProfile.isAdmin)
+              Positioned(
+                top: 140,
+                left: 20,
+                right: 20,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$_boysCount',
+                            style: CupidTextStyles.brandTitle2.copyWith(
+                              color: CupidColors.blackColor,
+                            ),
+                          ),
+                          Text(
+                            'Boys',
+                            style: CupidTextStyles.label2.copyWith(
+                              color: CupidColors.greySecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: CupidColors.greyTertiary,
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$_girlsCount',
+                            style: CupidTextStyles.brandTitle2.copyWith(
+                              color: CupidColors.primary,
+                            ),
+                          ),
+                          Text(
+                            'Girls',
+                            style: CupidTextStyles.label2.copyWith(
+                              color: CupidColors.greySecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: CupidColors.greyTertiary,
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$_totalRooms',
+                            style: CupidTextStyles.brandTitle2.copyWith(
+                              color: CupidColors.primary,
+                            ),
+                          ),
+                          Text(
+                            'Rooms',
+                            style: CupidTextStyles.label2.copyWith(
+                              color: CupidColors.greySecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // 3. Avatar Animation Layer
             Positioned.fill(
-              top: 100,
+              top: widget.userProfile.isAdmin ? 220 : 140,
               bottom: _isMatched ? 300 : 80,
               child: Stack(
                 alignment: Alignment.center,
@@ -240,10 +340,9 @@ class _WaitingPageState extends State<WaitingPage> {
                               width: avatarSize,
                               height: avatarSize,
                               decoration: ShapeDecoration(
-                                color: Color(
-                                    widget.userProfile.gender != Gender.female
-                                        ? 0xFFFFE6E6
-                                        : 0xFF5F0A18),
+                                color: Color(widget.userProfile.gender != Gender.female
+                                    ? 0xFFFFE6E6
+                                    : 0xFF5F0A18),
                                 shape: const OvalBorder(),
                               ),
                               child: Center(
@@ -329,7 +428,7 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
             ),
 
-            // 3. Bottom UI Layer
+            // 4. Bottom UI Layer
             if (!_isMatched)
               Positioned(
                 bottom: 20,

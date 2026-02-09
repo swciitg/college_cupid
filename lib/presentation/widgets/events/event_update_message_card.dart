@@ -21,7 +21,7 @@ class EventUpdateMessageCard extends ConsumerStatefulWidget {
 
 class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
     with SingleTickerProviderStateMixin {
-  bool _isVisible = false;
+  bool _isVisible = true;
   int _currentPage = 0;
   Timer? _timer;
   late AnimationController _iconController;
@@ -69,9 +69,6 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
 
   void _startAutoScroll(List<EventModel> events) {
     _timer?.cancel();
-    if (events.isNotEmpty) {
-      _markEventAsSeen(events[_currentPage].id);
-    }
 
     if (events.length > 1) {
       _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
@@ -92,7 +89,6 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
         _currentPage = 0;
       }
     });
-    _markEventAsSeen(events[_currentPage].id);
     if (!auto) _startAutoScroll(events);
   }
 
@@ -106,7 +102,6 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
         _currentPage = events.length - 1;
       }
     });
-    _markEventAsSeen(events[_currentPage].id);
     _startAutoScroll(events);
   }
 
@@ -250,7 +245,8 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
                           top: 8,
                           right: 8,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              await _markEventAsSeen(events[_currentPage].id);
                               setState(() {
                                 _isVisible = false;
                               });

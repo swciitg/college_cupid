@@ -9,35 +9,29 @@ class WebSocketService {
   IOWebSocketChannel? _channel;
 
   // Streams for various events
-  final _chatMessageController =
-      StreamController<Map<String, dynamic>>.broadcast();
+  final _chatMessageController = StreamController<Map<String, dynamic>>.broadcast();
   final _continuePromptController = StreamController<void>.broadcast();
-  final _partnerResponseController =
-      StreamController<dynamic>.broadcast(); // Can be map or null
+  final _partnerResponseController = StreamController<dynamic>.broadcast(); // Can be map or null
   final _chatClosedController = StreamController<void>.broadcast();
   final _partnerLeftController = StreamController<void>.broadcast();
   final _partnerDisconnectedController = StreamController<void>.broadcast();
   final _matchedController = StreamController<Map<String, dynamic>>.broadcast();
-  final _questionsController =
-      StreamController<List<dynamic>>.broadcast(); // List of strings
-  final _roomCreatedController =
-      StreamController<Map<String, dynamic>>.broadcast();
+  final _questionsController = StreamController<List<dynamic>>.broadcast(); // List of strings
+  final _roomCreatedController = StreamController<Map<String, dynamic>>.broadcast();
   final _disconnectedController = StreamController<void>.broadcast();
+  final _poolStatsController = StreamController<Map<String, dynamic>>.broadcast();
 
-  Stream<Map<String, dynamic>> get chatMessageStream =>
-      _chatMessageController.stream;
+  Stream<Map<String, dynamic>> get chatMessageStream => _chatMessageController.stream;
   Stream<void> get continuePromptStream => _continuePromptController.stream;
-  Stream<dynamic> get partnerResponseStream =>
-      _partnerResponseController.stream;
+  Stream<dynamic> get partnerResponseStream => _partnerResponseController.stream;
   Stream<void> get chatClosedStream => _chatClosedController.stream;
   Stream<void> get partnerLeftStream => _partnerLeftController.stream;
-  Stream<void> get partnerDisconnectedStream =>
-      _partnerDisconnectedController.stream;
+  Stream<void> get partnerDisconnectedStream => _partnerDisconnectedController.stream;
   Stream<Map<String, dynamic>> get matchedStream => _matchedController.stream;
   Stream<List<dynamic>> get questionsStream => _questionsController.stream;
-  Stream<Map<String, dynamic>> get roomCreatedStream =>
-      _roomCreatedController.stream;
+  Stream<Map<String, dynamic>> get roomCreatedStream => _roomCreatedController.stream;
   Stream<void> get disconnectedStream => _disconnectedController.stream;
+  Stream<Map<String, dynamic>> get poolStatsStream => _poolStatsController.stream;
 
   Completer<void>? _connectionCompleter;
 
@@ -161,6 +155,12 @@ class WebSocketService {
         log('Default WebSocketService: Received [partner_disconnected]');
         _partnerDisconnectedController.add(null);
         break;
+      case 'pool_stats':
+        log('Default WebSocketService: Received [pool_stats]: $data');
+        if (data != null) {
+          _poolStatsController.add(data as Map<String, dynamic>);
+        }
+        break;
       default:
         log('Default WebSocketService: Unhandled event: $event');
     }
@@ -176,8 +176,7 @@ class WebSocketService {
     }
   }
 
-  Future<void> joinPool(String email, int gender, List<String> interests,
-      String timeJoined) async {
+  Future<void> joinPool(String email, int gender, List<String> interests, String timeJoined) async {
     if (_channel == null || _channel!.closeCode != null) {
       // simplistic check, ready checks better
       await initConnection();
@@ -244,5 +243,6 @@ class WebSocketService {
     _questionsController.close();
     _roomCreatedController.close();
     _disconnectedController.close();
+    _poolStatsController.close();
   }
 }

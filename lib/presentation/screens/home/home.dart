@@ -5,14 +5,18 @@ import 'package:college_cupid/presentation/screens/updates/updates_screen.dart';
 import 'package:college_cupid/presentation/screens/events/events_screen.dart';
 import 'package:college_cupid/presentation/widgets/global/nav_icons.dart';
 import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
+import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:college_cupid/stores/home_tab_provider.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -30,11 +34,21 @@ class _HomeState extends ConsumerState<Home> {
     super.initState();
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBlocked();
       final user = ref.read(userProvider).myProfile!;
       if (user.personalityType != null) {
         ref.read(pageViewProvider.notifier).getInitialProfiles();
       }
     });
+  }
+
+  void _checkBlocked() async {
+    bool isBlocked = await ref.read(userProfileRepoProvider).checkIfUserBlocked(LoginStore.email!);
+    if (isBlocked) {
+      if (!mounted) return;
+      context.goNamed(AppRoutes.blocked.name);
+      return;
+    }
   }
 
   @override

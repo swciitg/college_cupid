@@ -5,6 +5,7 @@ import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 
 class AdminEventsManagementScreen extends ConsumerStatefulWidget {
   const AdminEventsManagementScreen({super.key});
@@ -62,15 +63,64 @@ class _AdminEventsManagementScreenState extends ConsumerState<AdminEventsManagem
       await repo.deleteEvent(eventId);
       await _loadEvents();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event deleted successfully')),
-        );
+        showSnackBar('Event deleted successfully');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete event: $e')),
-        );
+        showSnackBar('Failed to delete event: $e');
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _recreateEvent(EventModel event) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Re-create Event'),
+        content: const Text(
+            'This will delete the current event and create a new one with the same data. Continue?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: CupidColors.primary),
+            child: const Text('Re-create'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final repo = ref.read(eventsRepoProvider);
+
+      // Delete the existing event
+      await repo.deleteEvent(event.id);
+
+      // Create a new event with the same data
+      await repo.createEvent(
+        name: event.name,
+        title: event.title,
+        description: event.description,
+        startTime: event.startTime ?? '',
+        endTime: event.endTime ?? '',
+        eventType: event.eventType ?? '',
+      );
+      await _loadEvents();
+
+      if (mounted) {
+        showSnackBar('Event re-created successfully');
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar('Failed to re-create event: $e');
       }
     } finally {
       setState(() => _isLoading = false);
@@ -214,6 +264,14 @@ class _AdminEventsManagementScreenState extends ConsumerState<AdminEventsManagem
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _deleteEvent(event.id),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.refresh, color: CupidColors.primary),
+                                onPressed: () => _recreateEvent(event),
+                              ),
+                              IconButton(
                                 icon: const Icon(Icons.edit, color: CupidColors.primary),
                                 onPressed: () async {
                                   final result = await Navigator.push<bool>(
@@ -226,10 +284,6 @@ class _AdminEventsManagementScreenState extends ConsumerState<AdminEventsManagem
                                     _loadEvents();
                                   }
                                 },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => _deleteEvent(event.id),
                               ),
                             ],
                           ),
