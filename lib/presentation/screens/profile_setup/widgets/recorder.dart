@@ -67,13 +67,14 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    final hasRecording = _recordedFilePath != null && _recordedFilePath!.isNotEmpty;
+    final hasRecording =
+        _recordedFilePath != null && _recordedFilePath!.isNotEmpty;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       width: double.infinity,
-      height: _isRecording || hasRecording ? 60 : 110,
+      height: _isRecording || hasRecording ? 60 : 130,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -112,10 +113,12 @@ class _AudioRecorderState extends State<AudioRecorder> {
       key: const ValueKey('idle'),
       children: [
         CustomTextField(
+          showCounter: true,
           label: "",
           hintText: "Write your answer here...",
           controller: widget.textController,
           maxLines: 3,
+          maxLength: 250,
           textStyle: CupidTextStyles.label2.copyWith(
             color: CupidColors.grey700,
             fontWeight: FontWeight.w600,
@@ -250,7 +253,8 @@ class _AudioRecorderState extends State<AudioRecorder> {
       });
 
       // Auto-stop after 30 seconds
-      _recordingTimer = Timer(const Duration(seconds: _maxRecordingDuration), () {
+      _recordingTimer =
+          Timer(const Duration(seconds: _maxRecordingDuration), () {
         if (_isRecording) {
           _stopRecording();
         }

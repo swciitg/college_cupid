@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 
-final userProfileRepoProvider = Provider<UserProfileRepository>((ref) => UserProfileRepository());
+final userProfileRepoProvider =
+    Provider<UserProfileRepository>((ref) => UserProfileRepository());
 
 class UserProfileRepository extends ApiRepository {
   UserProfileRepository() : super();
 
-  Future<String> postUserProfileImage(File? image, {Function(double)? onSendProgress}) async {
+  Future<String> postUserProfileImage(File? image,
+      {Function(double)? onSendProgress}) async {
     try {
       final formData = FormData.fromMap({
         'dp': await MultipartFile.fromFile(
@@ -58,11 +60,13 @@ class UserProfileRepository extends ApiRepository {
 
     try {
       log("User profile");
-      final response = await dio.post(Endpoints.postUserProfile, data: userProfileMap);
+      final response =
+          await dio.post(Endpoints.postUserProfile, data: userProfileMap);
       log("Post response: ${response.data}");
 
       // Extract the created profile from backend response
-      final createdProfile = UserProfile.fromJson(response.data['newUserProfile']);
+      final createdProfile =
+          UserProfile.fromJson(response.data['newUserProfile']);
       return createdProfile;
     } catch (error) {
       log(error.toString());
@@ -75,17 +79,21 @@ class UserProfileRepository extends ApiRepository {
 
     for (var question in userProfile.surpriseQuiz) {
       if (question.audioPath == null || question.audioPath!.isEmpty) {
-        log("Skipped question (no audio): ${question.question}", name: "postAudio");
+        log("Skipped question (no audio): ${question.question}",
+            name: "postAudio");
         continue;
       }
 
       // Skip server paths - only upload local file paths
-      if (question.audioPath!.startsWith('/uploads/') || question.audioPath!.startsWith('http')) {
-        log("Skipped question (already on server): ${question.question}", name: "postAudio");
+      if (question.audioPath!.startsWith('/uploads/') ||
+          question.audioPath!.startsWith('http')) {
+        log("Skipped question (already on server): ${question.question}",
+            name: "postAudio");
         continue;
       }
 
-      log("Uploading audio for question: ${question.question}", name: "postAudio");
+      log("Uploading audio for question: ${question.question}",
+          name: "postAudio");
 
       final file = await MultipartFile.fromFile(
         question.audioPath!,
@@ -120,10 +128,12 @@ class UserProfileRepository extends ApiRepository {
     log("Finished uploading audio notes", name: "postAudio");
   }
 
-  Future<Map<String, dynamic>?> updateUserProfile(UserProfile userProfile) async {
+  Future<Map<String, dynamic>?> updateUserProfile(
+      UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
     try {
-      final response = await dio.put(Endpoints.updateUserProfile, data: userProfileMap);
+      final response =
+          await dio.put(Endpoints.updateUserProfile, data: userProfileMap);
       return response.data['userProfile'];
     } catch (error) {
       rethrow;
@@ -141,13 +151,27 @@ class UserProfileRepository extends ApiRepository {
     }
   }
 
+  Future<bool> checkIfUserBlocked(String email) async {
+    try {
+      final res = await dio.get(Endpoints.checkBlocked, data: {'email': email});
+      if (res.statusCode == 200) {
+        return res.data['isBlocked'] ?? false;
+      }
+      return false;
+    } catch (e) {
+      log("Error checking blocking status: $e");
+      return false;
+    }
+  }
+
   Future<List<UserProfile>> getPaginatedUsers(
       int pageNumber, Map<String, dynamic>? filterQuery) async {
     for (var key in filterQuery!.keys.toList()) {
       if (filterQuery[key] == null) filterQuery.remove(key);
     }
     try {
-      Response res = await dio.get('${Endpoints.getPaginatedUserProfiles}/$pageNumber',
+      Response res = await dio.get(
+          '${Endpoints.getPaginatedUserProfiles}/$pageNumber',
           queryParameters: filterQuery);
       if (res.statusCode == 200) {
         final users = res.data['users'];
@@ -195,7 +219,8 @@ class UserProfileRepository extends ApiRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> searchProfilesRaw(String searchQuery) async {
+  Future<List<Map<String, dynamic>>> searchProfilesRaw(
+      String searchQuery) async {
     try {
       Response res = await dio.get(
         Endpoints.searchProfiles,
