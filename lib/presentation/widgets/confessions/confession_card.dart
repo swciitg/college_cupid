@@ -2,12 +2,14 @@ import 'package:college_cupid/domain/models/confession.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/presentation/widgets/confessions/reaction_picker.dart';
+import 'package:college_cupid/stores/user_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:college_cupid/presentation/widgets/global/reply_button.dart';
 
-class ConfessionCard extends StatelessWidget {
+class ConfessionCard extends ConsumerWidget {
   final Confession confession;
   final Function(String)? onReact;
   final VoidCallback? onReply;
@@ -28,7 +30,11 @@ class ConfessionCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myProfile = ref.watch(userProvider).myProfile;
+    final isAdmin = myProfile?.isAdmin ?? false;
+    final canDelete = isMine || isAdmin;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8).copyWith(top: 8),
       padding: const EdgeInsets.all(12),
@@ -165,7 +171,7 @@ class ConfessionCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              if (isMine) ...[
+              if (canDelete) ...[
                 _ActionButton(
                   icon: FluentIcons.delete_24_regular,
                   color: Colors.red,

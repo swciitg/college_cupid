@@ -80,7 +80,7 @@ class _ConfessionsScreenState extends ConsumerState<ConfessionsScreen>
                   ),
                   const SizedBox(height: 16),
                   CupidTabBar(
-                    controller: _tabController,
+                  controller: _tabController,
                     tabs: _tabs.map((e) => e.displayName).toList(),
                     onTap: (index) {
                       ref.read(confessionsProvider.notifier).setFilter(_tabs[index]);

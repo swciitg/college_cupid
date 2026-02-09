@@ -111,6 +111,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               try {
                 // First load the user profile into state
                 final userProfileMap = await userProfileRepo.getUserProfile(email);
+                print(userProfileMap.toString());
                 final userProfile = UserProfile.fromJson(userProfileMap!);
                 await userController.updateMyProfile(userProfile);
                 await SharedPrefService.setDHPublicKey(userProfile.publicKey);

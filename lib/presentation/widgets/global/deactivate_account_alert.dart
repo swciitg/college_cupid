@@ -16,12 +16,10 @@ class DeactivateAccountAlert extends ConsumerStatefulWidget {
   const DeactivateAccountAlert({super.key, this.activateBack = false});
 
   @override
-  ConsumerState<DeactivateAccountAlert> createState() =>
-      _DeactivateAccountAlertState();
+  ConsumerState<DeactivateAccountAlert> createState() => _DeactivateAccountAlertState();
 }
 
-class _DeactivateAccountAlertState
-    extends ConsumerState<DeactivateAccountAlert> {
+class _DeactivateAccountAlertState extends ConsumerState<DeactivateAccountAlert> {
   final reportingReasonController = TextEditingController();
 
   @override
@@ -34,8 +32,7 @@ class _DeactivateAccountAlertState
     try {
       final goRouter = GoRouter.of(context);
       final user = ref.read(userProvider).myProfile!;
-      final deactivate =
-          await ref.read(userProfileRepoProvider).deactivateAccount(user);
+      final deactivate = await ref.read(userProfileRepoProvider).deactivateAccount(user);
       if (!deactivate) {
         goRouter.pop();
         showSnackBar("Couldn't deactivate your account");
@@ -56,8 +53,7 @@ class _DeactivateAccountAlertState
     try {
       final goRouter = GoRouter.of(context);
       final user = ref.read(userProvider).myProfile!;
-      final result =
-          await ref.read(userProfileRepoProvider).activateAccount(user);
+      final result = await ref.read(userProfileRepoProvider).activateAccount(user);
       if (!result) {
         goRouter.pop();
         showSnackBar("Couldn't activate your account");
@@ -111,7 +107,7 @@ class _DeactivateAccountAlertState
           onTap: widget.activateBack ? _activate : _deactivate,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: CupidColors.secondaryColor,
+              color: CupidColors.primary,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Padding(
