@@ -81,6 +81,7 @@ dependencies:
   google_sign_in: ^6.2.1
   googleapis: ^13.1.0
   googleapis_auth: ^1.5.1
+  iconify_flutter_plus: ^1.0.4
 
 dev_dependencies:
   flutter_test:

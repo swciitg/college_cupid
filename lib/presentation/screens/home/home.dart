@@ -105,6 +105,7 @@ class _HomeState extends ConsumerState<Home> {
                         UserProfileScreen(
                           isMine: true,
                           userProfile: userController.myProfile!,
+                          backgroundColor: Colors.transparent,
                         ),
                       ],
                     ),

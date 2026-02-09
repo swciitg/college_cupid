@@ -9,6 +9,7 @@ import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:college_cupid/presentation/widgets/global/ripple_animation.dart';
 
 class WaitingPage extends StatefulWidget {
   final UserProfile userProfile;
@@ -29,25 +30,9 @@ class _WaitingPageState extends State<WaitingPage> {
     super.initState();
     _setupListeners();
     _connectAndJoin();
-    // connectSocket();
   }
 
-  // void connectSocket() async {
-  //   final wsUrl = Uri.parse('wss://swc.iitg.ac.in/test/collegeCupid');
-  //   final channel = WebSocketChannel.connect(wsUrl);
-
-  //   await channel.ready;
-  //   log("message");
-
-  //   // channel.stream.listen((message) {
-  //   //   channel.sink.add('received!');
-  //   //   channel.sink.close(status.goingAway);
-  //   // });
-  // }
-
   Future<void> _connectAndJoin() async {
-    // Ensure fresh connection - maybe disconnect old one safely?
-    // Repository method connect() calls initConnection() which handles state.
     await _repository.connect();
     log("connected to socket");
 
@@ -63,6 +48,9 @@ class _WaitingPageState extends State<WaitingPage> {
   bool _isMatched = false;
   String? _roomId;
   List<String>? _questions;
+  TextEditingController _customMessageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   StreamSubscription? _matchedSubscription;
   StreamSubscription? _questionsSubscription;
   StreamSubscription? _chatMessageSubscription;
@@ -83,7 +71,6 @@ class _WaitingPageState extends State<WaitingPage> {
         setState(() {
           _questions = List<String>.from(data);
         });
-        _showQuestionPicker();
       }
     });
 
@@ -100,38 +87,6 @@ class _WaitingPageState extends State<WaitingPage> {
         _showErrorAndPop('Connection lost/failed. Please try again later.');
       }
     });
-  }
-
-  void _showQuestionPicker() {
-    showModalBottomSheet(
-      context: context,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false, // Prevent closing without selection
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text("Pick a conversation starter",
-                    style: CupidTextStyles.brandTitle2),
-                const SizedBox(height: 16),
-                if (_questions != null)
-                  ..._questions!.map((q) => ListTile(
-                        title: Text(q),
-                        onTap: () {
-                          Navigator.pop(context); // Close sheet
-                          _sendStarterAndChat(q);
-                        },
-                      )),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _sendStarterAndChat(String question) {
@@ -183,109 +138,355 @@ class _WaitingPageState extends State<WaitingPage> {
     _questionsSubscription?.cancel();
     _chatMessageSubscription?.cancel();
     _disconnectedSubscription?.cancel();
+    _customMessageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final double avatarSize = 250;
+
     return Scaffold(
       backgroundColor: CupidColors.surfaceS0,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12),
-                  // Back button acts as Cancel too? Probably safer to force use of Cancel button or handle WillPopScope.
-                  // But for UI consistency, let's keep it.
-                  GestureDetector(
-                    onTap: _cancelAndPop,
-                    child: Container(
-                      height: 36,
-                      width: 36,
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
+            // 1. Header & Background Elements
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: _cancelAndPop,
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        ],
+                          shadows: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.arrow_back,
+                            size: 18, color: Colors.black),
                       ),
-                      child: const Icon(Icons.arrow_back,
-                          size: 18, color: Colors.black),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text("Speed Dating",
+                        style: CupidTextStyles.brandTitle1),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _isMatched
+                              ? "Found Someone"
+                              : "Finding you a partner...",
+                          style: CupidTextStyles.body1.copyWith(
+                            color: _isMatched
+                                ? CupidColors.green
+                                : CupidColors.greySecondary,
+                          ),
+                        ),
+                        if (!_isMatched)
+                          const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: CupidColors.primary,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // 2. Avatar Animation Layer
+            Positioned.fill(
+              top: 100,
+              bottom: _isMatched ? 300 : 80,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Partner Avatar (Comes from behind/right)
+                  AnimatedAlign(
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeInOutBack,
+                    alignment: _isMatched
+                        ? const Alignment(0.6, -0.2)
+                        : Alignment.center,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 600),
+                      opacity: _isMatched ? 1.0 : 0.0,
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 800),
+                        curve: Curves.easeInOutBack,
+                        scale: _isMatched ? 0.65 : 0.5,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: avatarSize,
+                              height: avatarSize,
+                              decoration: ShapeDecoration(
+                                color: Color(
+                                  widget.userProfile.gender != Gender.female ? 0xFFFFE6E6: 0xFF5F0A18),
+                                shape: const OvalBorder(),
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  widget.userProfile.gender == Gender.female
+                                      ? "assets/images/male_doll.png"
+                                      : "assets/images/female_doll.png",
+                                  scale: 0.75,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text("Who?",
+                                style: CupidTextStyles.brandTitle2),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text("Speed Dating",
-                      style: CupidTextStyles.brandTitle1),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _isMatched
-                            ? "Matched! Waiting for partner..."
-                            : "Finding you a partner...",
-                        style: CupidTextStyles.body1,
+
+                  // User Avatar (Moves Left)
+                  AnimatedAlign(
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeInOutBack,
+                    alignment: _isMatched
+                        ? const Alignment(-0.6, -0.2)
+                        : Alignment.center,
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOutBack,
+                      scale: _isMatched ? 0.65 : 1.0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _isMatched
+                              ? Container(
+                                  width: avatarSize,
+                                  height: avatarSize,
+                                  decoration: ShapeDecoration(
+                                    color: Color(widget.userProfile.gender ==
+                                            Gender.female
+                                        ? 0xFFFFE6E6
+                                        : 0xFF5F0A18),
+                                    shape: const OvalBorder(),
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      widget.userProfile.gender == Gender.female
+                                          ? "assets/images/female_doll.png"
+                                          : "assets/images/male_doll.png",
+                                      scale: 0.75,
+                                    ),
+                                  ),
+                                )
+                              : RippleAnimation(
+                                  color:
+                                      widget.userProfile.gender == Gender.female
+                                          ? const Color(0xFFFFE6E6)
+                                          : const Color(0xFF5F0A18),
+                                  child: Container(
+                                    width: avatarSize,
+                                    height: avatarSize,
+                                    decoration: ShapeDecoration(
+                                      color: Color(widget.userProfile.gender ==
+                                              Gender.female
+                                          ? 0xFFFFE6E6
+                                          : 0xFF5F0A18),
+                                      shape: const OvalBorder(),
+                                    ),
+                                    child: Center(
+                                      child: Image.asset(
+                                        widget.userProfile.gender !=
+                                                Gender.female
+                                            ? "assets/images/male_doll.png"
+                                            : "assets/images/female_doll.png",
+                                        scale: 0.75,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                          if (_isMatched) ...[
+                            const SizedBox(height: 10),
+                            const Text("You",
+                                style: CupidTextStyles.brandTitle2),
+                          ]
+                        ],
                       ),
-                      const Center(
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: CupidColors.primary,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const Divider(
-              color: CupidColors.borderSecondary,
-            ),
-            Expanded(
-              child: Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: const ShapeDecoration(
-                    color: Color(0xFFFFE6E6),
-                    shape: OvalBorder(),
+
+            // 3. Bottom UI Layer
+            if (!_isMatched)
+              Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: CupidButton(
+                  text: 'Cancel',
+                  onTap: _cancelAndPop,
+                  backgroundColor: CupidColors.primaryLight,
+                  style: CupidTextStyles.label1.copyWith(
+                    color: CupidColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
-                  child: Center(
-                      child: Image.asset("assets/images/female_doll.png")),
+                ),
+              ),
+
+            // Question Picker
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOut,
+              bottom: (_isMatched && _questions != null) ? 0 : -500,
+              left: 0,
+              right: 0,
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.5),
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Select a prompt and start chatting",
+                          style: CupidTextStyles.body1),
+                      const SizedBox(height: 12),
+                      if (_questions != null)
+                        ..._questions!.map((q) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: InkWell(
+                                onTap: () => _sendStarterAndChat(q),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    color: CupidColors.surfaceS2,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: CupidColors.borderSecondary),
+                                  ),
+                                  child: Text(q,
+                                      style: CupidTextStyles.body2
+                                          .copyWith(color: Colors.black)),
+                                ),
+                              ),
+                            )),
+                      const SizedBox(height: 12),
+                      const Center(
+                          child: Text("OR", style: CupidTextStyles.label2)),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _customMessageController,
+                              decoration: InputDecoration(
+                                hintText: "Type your own...",
+                                filled: true,
+                                fillColor: CupidColors.surfaceS2,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () {
+                              if (_customMessageController.text
+                                  .trim()
+                                  .isNotEmpty) {
+                                _sendStarterAndChat(
+                                    _customMessageController.text.trim());
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                color: CupidColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.send,
+                                  color: Colors.white, size: 20),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).viewInsets.bottom),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: CupidButton(
-                text: 'Cancel',
-                onTap: _cancelAndPop,
-                backgroundColor: CupidColors.primaryLight,
-                style: CupidTextStyles.label1.copyWith(
-                  color: CupidColors
-                      .primary, // Contrast color for primaryLight? Assuming primaryLight is light pink, so primary (red) text is good.
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+
+            // Waiting for partner text
+            if (_isMatched && _questions == null)
+              Positioned(
+                bottom: 50,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Column(
+                    children: [
+                      const CircularProgressIndicator(
+                          color: CupidColors.primary),
+                      const SizedBox(height: 16),
+                      Text("Waiting for partner to initiate...",
+                          style: CupidTextStyles.body1
+                              .copyWith(color: CupidColors.greySecondary)),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),

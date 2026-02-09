@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:college_cupid/repositories/speed_dating.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/utils/common_widgets.dart';
+import 'package:college_cupid/presentation/screens/speed_dating/match_revealpage.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ChatScreen extends StatefulWidget {
   final String roomId;
@@ -28,6 +32,9 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<String> _messages = [];
   // final SpeedDatingRepository _repository = SpeedDatingRepository();
 
+  final ScrollController _scrollController = ScrollController();
+  bool _isChatDisabled = false;
+
   Timer? _timer;
   double _progress = 0.0;
   static const int _durationSeconds = 180; // 3 minutes
@@ -51,8 +58,21 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _timer?.cancel();
     _messageController.dispose();
+    _scrollController.dispose();
     widget.repository.disconnect();
     super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   void _startTimer() {
@@ -83,6 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add("Partner: ${data['message']}");
         });
+        _scrollToBottom();
       }
     });
 
@@ -146,51 +167,48 @@ class _ChatScreenState extends State<ChatScreen> {
 
     widget.repository.partnerResponseStream.listen((data) {
       if (mounted) {
-        // If data is null, no reveal.
-        if (data == null) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: const Text("Refused"),
-              content: const Text("No reveal this time. Try again!"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pop(
-                        context); // Close chat -> return to speed dating screen
-                  },
-                  child: const Text("OK"),
-                )
-              ],
-            ),
-          );
-        } else {
-          // Data contains email presumably.
-          // User: "display the email which i get from partner response data"
-          // Assuming data is a Map or just string? Prompt says "email which i get from partner response data".
-          // If data is map: data['email']? Or just data?
-          // I will dump data to string to be safe.
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: const Text("It's a Match!"),
-              content:
-                  Text("You both want to connect!\nPartner's Email: $data"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pop(context); // Close chat
-                  },
-                  child: const Text("Great!"),
-                )
-              ],
-            ),
-          );
+        String? partnerEmail;
+
+        if (data != null) {
+          if (data is Map<String, dynamic>) {
+            partnerEmail = data['email'] as String?;
+          } else if (data is String) {
+            try {
+              // Try decoding if it's a JSON string
+              final decoded = jsonDecode(data);
+              if (decoded is Map<String, dynamic>) {
+                partnerEmail = decoded['email'] as String?;
+              } else {
+                // Determine if the string itself is the email or just some message
+                // The prompt says: "if the data (email) is null then there is no match"
+                // "if email is not null then it is a matc pass the email"
+                // "in the data(after json decoded it contains email or null"
+                // So if data is a string and not json, it might be the email itself?
+                // Or maybe the data IS the JSON string "{ event: ... data: <email> }"
+                // The repo says: _partnerResponseController.add(data);
+                // And WebSocketService receives: decoded['data'].
+                // So 'data' here IS the 'data' field from the websocket message.
+                // The user says "dat ais in json in this format { event: partner_response.data:<email>}"
+                // But WebSocketService already parses the outer JSON.
+                // "in the data(after json decoded it contains email or null"
+                // It seems 'data' passed here IS the content of 'data' field.
+                partnerEmail = data;
+              }
+            } catch (e) {
+              // Not a JSON string, treat as email if it looks like one, or just the data string
+              partnerEmail = data;
+            }
+          }
         }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MatchRevealPage(
+              email: partnerEmail,
+            ),
+          ),
+        );
       }
     });
   }
@@ -203,6 +221,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add("Me: $msg");
       _messageController.clear();
     });
+    _scrollToBottom();
   }
 
   void _showRevealSheet() {
@@ -210,42 +229,70 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return WillPopScope(
           onWillPop: () async => false,
           child: Container(
-            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 48),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Time's up! Would you like to reveal your identity?",
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      onPressed: () {
-                        Navigator.pop(context); // Close sheet
-                        _sendMyResponse(false);
-                      },
-                      child: const Text("No"),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
-                      onPressed: () {
-                        Navigator.pop(context); // Close sheet
-                        _sendMyResponse(true);
-                      },
-                      child: const Text("Yes"),
-                    ),
-                  ],
-                )
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  child: Column(
+                    spacing: 8,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Time’s Up!",
+                        style: CupidTextStyles.title2
+                            .copyWith(color: CupidColors.greyPrimary),
+                      ),
+                      Text("Would you like to see who you were talking to?",
+                          textAlign: TextAlign.center,
+                          style: CupidTextStyles.body1
+                              .copyWith(color: CupidColors.greySecondary)),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  color: CupidColors.borderSecondary,
+                  thickness: 1,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _ActionButton(
+                          label: "No",
+                          onTap: () {
+                            Navigator.pop(context);
+                            _sendMyResponse(false);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ActionButton(
+                          label: "Yes",
+                          onTap: () {
+                            Navigator.pop(context);
+                            _sendMyResponse(true);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -255,6 +302,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMyResponse(bool accepted) {
+    setState(() {
+      _isChatDisabled = true;
+    });
     widget.repository.sendMyResponse(widget.roomId, accepted ? "yes" : "no");
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Response sent. Waiting for partner...')),
@@ -295,7 +345,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CommonWidgets.backButton(
                   context: context,
                   onTap: () async {
@@ -305,11 +355,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
                   },
                 ),
+                const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
                     children: [
-                      Text("Speed Dating", style: CupidTextStyles.brandTitle1),
+                      const Text("Speed Dating",
+                          style: CupidTextStyles.brandTitle1),
                       const Spacer(),
                       Text(
                         _formattedTime,
@@ -322,6 +374,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 20),
                 if (_progress < 1.0)
                   TweenAnimationBuilder<double>(
                     duration: const Duration(seconds: 1),
@@ -340,45 +393,99 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = _messages[index];
-                      final isMe = msg.startsWith("Me:");
-                      return Align(
-                        alignment:
-                            isMe ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.blue[100] : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/chatbg.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = _messages[index];
+                        final isMe = msg.startsWith("Me:");
+                        return Align(
+                          alignment: isMe
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: isMe
+                                  ? CupidColors.primary
+                                  : CupidColors.whitePrimary,
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(10),
+                                topRight: Radius.circular(isMe ? 0 : 10),
+                                bottomLeft: Radius.circular(isMe ? 10 : 0),
+                                bottomRight: const Radius.circular(10),
+                              ),
+                            ),
+                            child: Text(msg.substring(isMe ? 4 : 9)),
                           ),
-                          child: Text(msg.substring(isMe ? 4 : 9)),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16),
                   child: Row(
                     children: [
                       Expanded(
                         child: TextField(
+                          maxLines: 3,
+                          minLines: 1,
+                          enabled: !_isChatDisabled,
                           controller: _messageController,
-                          decoration: const InputDecoration(
-                            hintText: 'Type a message...',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            hintText: 'Message',
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            hintStyle: CupidTextStyles.label2
+                                .copyWith(color: CupidColors.greySecondary),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: CupidColors.borderSecondary),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  const BorderSide(color: CupidColors.primary),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: CupidColors.primaryDark),
+                            ),
                           ),
                           onSubmitted: (_) => _sendMessage(),
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.send),
-                        onPressed: _sendMessage,
+                      SizedBox(
+                        width: 12,
+                      ),
+                      GestureDetector(
+                        onTap: _isChatDisabled ? null : _sendMessage,
+                        child: Container(
+                            padding: const EdgeInsets.all(12),
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                                color: _isChatDisabled
+                                    ? Colors.grey
+                                    : const Color(0xFFEB425E),
+                                borderRadius: BorderRadius.circular(14)),
+                            child: SvgPicture.asset(
+                              'assets/icons/send.svg',
+                              width: 20,
+                              height: 20,
+                            )),
                       ),
                     ],
                   ),
@@ -387,5 +494,35 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ));
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2F2F2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: CupidColors.borderSecondary),
+        ),
+        child: Text(label,
+            style: CupidTextStyles.label1
+                .copyWith(color: CupidColors.greyPrimary)),
+      ),
+    );
   }
 }

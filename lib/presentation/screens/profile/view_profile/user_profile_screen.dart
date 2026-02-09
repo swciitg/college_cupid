@@ -5,6 +5,7 @@ import 'package:college_cupid/presentation/widgets/home/drawer_widget.dart';
 import 'package:college_cupid/presentation/widgets/profile/display_profile_info.dart';
 import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +15,13 @@ class UserProfileScreen extends ConsumerStatefulWidget {
   final UserProfile userProfile;
   final bool isMine;
   final bool showPass;
+  final Color? backgroundColor;
 
   const UserProfileScreen({
     required this.isMine,
     required this.userProfile,
     this.showPass = true,
+    this.backgroundColor,
     super.key,
   });
 
@@ -41,7 +44,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     final profileToShow = widget.isMine ? myProfile ?? widget.userProfile : widget.userProfile;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: widget.backgroundColor ?? CupidColors.backgroundColor,
       drawer: widget.isMine ? const DrawerWidget() : null,
       body: SafeArea(
         child: Stack(
