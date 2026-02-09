@@ -51,6 +51,10 @@ class SpeedDatingRepository {
     _webSocketService.sendMyResponse(roomId, answer);
   }
 
+  void reportUser(String email) {
+    _webSocketService.sendReport(email);
+  }
+
   void leave() {
     _webSocketService.leave();
   }

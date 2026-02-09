@@ -221,6 +221,13 @@ class WebSocketService {
     });
   }
 
+  void sendReport(String email) {
+    log('Default WebSocketService: Emitting [report] - Email: $email');
+    _send('report', {
+      'reportedEmail': email,
+    });
+  }
+
   void leave() {
     log('Default WebSocketService: Emitting [leave]');
     _send('leave', {});

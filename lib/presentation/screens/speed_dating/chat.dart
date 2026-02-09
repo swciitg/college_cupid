@@ -7,6 +7,7 @@ import 'package:college_cupid/presentation/screens/speed_dating/match_revealpage
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:college_cupid/shared/colors.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -314,26 +315,106 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Are you sure?'),
-            content: const Text('Do you want to leave the chat?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
+          builder: (context) => Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Are you sure?',
+                    style: CupidTextStyles.title2,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Do you want to leave the chat?',
+                    textAlign: TextAlign.center,
+                    style: CupidTextStyles.body1,
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ActionButton(
+                          label: "No",
+                          onTap: () => Navigator.of(context).pop(false),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ActionButton(
+                          label: "Yes",
+                          onTap: () {
+                            widget.repository.leave();
+                            widget.onLeave();
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  widget.repository.leave();
-                  widget.onLeave();
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text('Yes'),
-              ),
-            ],
+            ),
           ),
         )) ??
         false;
+  }
+
+  void _showReportConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Report User',
+                style: CupidTextStyles.title2,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Are you sure you want to report this user?',
+                textAlign: TextAlign.center,
+                style: CupidTextStyles.body1,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ActionButton(
+                      label: "No",
+                      onTap: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _ActionButton(
+                      label: "Yes",
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (LoginStore.email != null) {
+                          widget.repository.reportUser(LoginStore.email!);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('User reported.')),
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -371,6 +452,28 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       const SizedBox(width: 10),
+                      PopupMenuButton<String>(
+                        color: CupidColors.whitePrimary,
+                        surfaceTintColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        onSelected: (value) {
+                          if (value == 'report') {
+                            _showReportConfirmation();
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem<String>(
+                              value: 'report',
+                              child: Text('Report',
+                                  style: CupidTextStyles.body1
+                                      .copyWith(color: CupidColors.blackColor)),
+                            ),
+                          ];
+                        },
+                        icon: const Icon(Icons.more_vert, color: Colors.black),
+                      ),
                     ],
                   ),
                 ),
@@ -423,13 +526,16 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ? CupidColors.primary
                                   : CupidColors.whitePrimary,
                               borderRadius: BorderRadius.only(
-                                topLeft: const Radius.circular(10),
-                                topRight: Radius.circular(isMe ? 0 : 10),
-                                bottomLeft: Radius.circular(isMe ? 10 : 0),
-                                bottomRight: const Radius.circular(10),
+                                topLeft: Radius.circular(isMe ? 10 : 0),
+                                topRight: const Radius.circular(10),
+                                bottomLeft: const Radius.circular(10),
+                                bottomRight: Radius.circular(isMe ? 0 : 10),
                               ),
                             ),
-                            child: Text(msg.substring(isMe ? 4 : 9)),
+                            child: Text(msg.substring(isMe ? 4 : 9),
+                                style: CupidTextStyles.label2.copyWith(
+                                  color: isMe ? Colors.white : Colors.black,
+                                )),
                           ),
                         );
                       },

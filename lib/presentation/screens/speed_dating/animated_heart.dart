@@ -6,13 +6,15 @@ class AnimatedHeart extends StatefulWidget {
   final Duration startDelay;
   final double? begin;
   final double? end;
-  const AnimatedHeart({super.key, this.startDelay = Duration.zero, this.begin, this.end});
+  const AnimatedHeart(
+      {super.key, this.startDelay = Duration.zero, this.begin, this.end});
 
   @override
   State<AnimatedHeart> createState() => _AnimatedHeartState();
 }
 
-class _AnimatedHeartState extends State<AnimatedHeart> with SingleTickerProviderStateMixin {
+class _AnimatedHeartState extends State<AnimatedHeart>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Alignment> _alignmentAnimation;
   late Animation<double> _sizeAnimation;
@@ -22,7 +24,9 @@ class _AnimatedHeartState extends State<AnimatedHeart> with SingleTickerProvider
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: const Duration(seconds: 4)); // Slow duration as per path length
+        vsync: this,
+        duration:
+            const Duration(seconds: 4)); // Slow duration as per path length
 
     // Path: Bottom Right - 90 (approx aligned with doll center) -> Mid Left -> Top Right
     _alignmentAnimation = TweenSequence<Alignment>([
