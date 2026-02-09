@@ -440,6 +440,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Expanded(
                         child: TextField(
                           maxLines: 3,
+                          minLines: 1,
                           enabled: !_isChatDisabled,
                           controller: _messageController,
                           decoration: InputDecoration(
