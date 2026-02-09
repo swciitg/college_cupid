@@ -17,8 +17,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _tabs = ['All', 'Your Crushes', 'Match', 'Profile', 'Confession'];
   int _currentTabIndex = 0;
@@ -26,9 +25,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   bool _updatesLoaded = false;
   List<String>? _crushEmails;
   bool _isLoadingCrushes = false;
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -90,7 +86,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final allUpdates = ref.watch(updatesControllerProvider);
 
     return Scaffold(
@@ -133,16 +128,29 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
               child: _currentTabIndex == 1 // Crushes tab
                   ? _buildCrushesTab()
                   : RefreshIndicator(
+                      key: ValueKey(_currentTabIndex), // Rebuild when tab changes
                       color: CupidColors.primary,
                       onRefresh: () async {
                         await ref
                             .read(updatesControllerProvider.notifier)
                             .fetchUpdates(filter: 'All', isRefresh: true);
                       },
-                      child: Builder(
-                        builder: (context) {
+                      child: FutureBuilder(
+                        key: ValueKey(_currentTabIndex), // Rebuild when tab changes
+                        future: _filterUpdates(allUpdates),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(
+                                  color: CupidColors.primary,
+                                ),
+                              ),
+                            );
+                          }
                           // Filter updates based on current tab
-                          final filteredUpdates = _filterUpdates(allUpdates);
+                          final filteredUpdates = snapshot.data!;
 
                           if (filteredUpdates.isEmpty) {
                             return LayoutBuilder(
@@ -165,7 +173,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                             );
                           }
                           return ListView.builder(
-                            key: PageStorageKey('updates_list_$_currentTabIndex'),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             itemCount: filteredUpdates.length,
                             itemBuilder: (context, index) {
@@ -221,7 +228,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     );
   }
 
-  List<UpdateModel> _filterUpdates(List<UpdateModel> allUpdates) {
+  Future<List<UpdateModel>> _filterUpdates(List<UpdateModel> allUpdates) async {
     // If on "Updates" tab (index 1), show all updates
     if (_currentTabIndex == 0) {
       return allUpdates;
