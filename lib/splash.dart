@@ -1,3 +1,4 @@
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
@@ -20,6 +21,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     LoginStore.isAuthenticated().then((value) async {
       if (value == true && LoginStore.isProfileCompleted) {
         debugPrint('USER IS AUTHENTICATED');
+        if (!mounted) return;
+
+        bool isBlocked = await ref
+            .read(userProfileRepoProvider)
+            .checkIfUserBlocked(LoginStore.email!);
+        if (isBlocked) {
+          if (!mounted) return;
+          context.goNamed(AppRoutes.blocked.name);
+          return;
+        }
+
         if (!mounted) return;
         final goRouter = GoRouter.of(context);
         await ref.read(userProvider.notifier).initializeProfile();

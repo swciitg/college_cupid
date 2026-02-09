@@ -16,7 +16,8 @@ class Endpoints {
   static const deleteProfileImage = '/deleteImage';
   static const postUserProfile = '/user/profile';
   static const getUserProfile = '/user/profile/email'; // + '/${email}'
-  static const getPaginatedUserProfiles = '/user/profile/page'; // + '/${pageNumber}'
+  static const getPaginatedUserProfiles =
+      '/user/profile/page'; // + '/${pageNumber}'
   static const updateUserProfile = '/user/profile';
   static const deactivateAccount = '/user/profile/deactivate';
   static const activateAccount = '/user/profile/reactivate';
@@ -37,6 +38,7 @@ class Endpoints {
   static const reportUser = '/report/add';
   static const getBlockedUsers = '/report/blockedUsers';
   static const unblockUser = '/report/unblock';
+  static const checkBlocked = '/blocked';
 
   // Confessions
   static const getConfessions = '/confession';
@@ -56,10 +58,16 @@ class Endpoints {
   static const regenerateToken = '/auth/refreshToken';
 
   static getHeader() {
-    return {'Content-Type': 'application/json', 'security-key': Endpoints.apiSecurityKey};
+    return {
+      'Content-Type': 'application/json',
+      'security-key': Endpoints.apiSecurityKey
+    };
   }
 
   static getMultipartHeader() {
-    return {'Content-Type': 'multipart/form-data', 'security-key': Endpoints.apiSecurityKey};
+    return {
+      'Content-Type': 'multipart/form-data',
+      'security-key': Endpoints.apiSecurityKey
+    };
   }
 }

@@ -20,7 +20,7 @@ class CommonWidgets {
           color: bgColor ?? CupidColors.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
-            side: BorderSide(color: CupidColors.borderSecondary),
+            // side: BorderSide(color: CupidColors.borderSecondary),
           ),
         ),
         child: Center(

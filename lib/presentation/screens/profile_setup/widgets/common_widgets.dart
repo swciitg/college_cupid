@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final bool? enabled;
   final TextStyle? textStyle;
   final int? maxLength;
+  final bool showCounter;
   final Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
 
@@ -31,6 +32,7 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.textStyle,
     this.inputFormatters,
+    this.showCounter = false,
   });
 
   @override
@@ -40,7 +42,9 @@ class CustomTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (label.isNotEmpty) ...[
-          Text(label, style: CupidTextStyles.label1.copyWith(color: CupidColors.greySecondary)),
+          Text(label,
+              style: CupidTextStyles.label1
+                  .copyWith(color: CupidColors.greySecondary)),
           const SizedBox(height: 8),
         ],
         Container(
@@ -57,14 +61,16 @@ class CustomTextField extends StatelessWidget {
             maxLength: maxLength,
             onChanged: onChanged,
             inputFormatters: inputFormatters,
-            style: textStyle ?? CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
+            style: textStyle ??
+                CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: InputDecoration(
-              // label: ,
-              counter: maxLength != null ? const Text("") : null, //Text("data"),
+              counterText: showCounter ? null : "",
               hintText: hintText,
-              hintStyle: CupidTextStyles.label2.copyWith(color: CupidColors.grey600),
+              hintStyle:
+                  CupidTextStyles.label2.copyWith(color: CupidColors.grey600),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               suffixIcon: suffixIcon,
             ),
           ),
@@ -99,8 +105,9 @@ class SelectionChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color:
-              isSelected ? CupidColors.primaryLight : CupidColors.surfaceS2.withValues(alpha: .88),
+          color: isSelected
+              ? CupidColors.primaryLight
+              : CupidColors.surfaceS2.withValues(alpha: .88),
           borderRadius: BorderRadius.circular(12),
           //border: isSelected ? Border.all(color: const Color(0xFF6C5DD3), width: 1.5) : null,
         ),
@@ -111,7 +118,9 @@ class SelectionChip extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? CupidColors.primaryDark : CupidColors.greySecondary,
+                color: isSelected
+                    ? CupidColors.primaryDark
+                    : CupidColors.greySecondary,
               ),
               const SizedBox(width: 8),
             ],
@@ -119,8 +128,11 @@ class SelectionChip extends StatelessWidget {
               label,
               style: (isSelected ? selectedTextStyle : textStyle) ??
                   CupidTextStyles.label2.copyWith(
-                    color: isSelected ? CupidColors.primaryDark : CupidColors.greySecondary,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? CupidColors.primaryDark
+                        : CupidColors.greySecondary,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
             ),
           ],
@@ -167,7 +179,8 @@ class BottomNavButtons extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  disabledBackgroundColor: CupidColors.primary.withValues(alpha: 0.5),
+                  disabledBackgroundColor:
+                      CupidColors.primary.withValues(alpha: 0.5),
                 ),
                 child: Text(
                   'Go Back',
@@ -196,7 +209,8 @@ class BottomNavButtons extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                disabledBackgroundColor: CupidColors.primary.withValues(alpha: 0.5),
+                disabledBackgroundColor:
+                    CupidColors.primary.withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -209,7 +223,8 @@ class BottomNavButtons extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                  const Icon(Icons.arrow_forward,
+                      color: Colors.white, size: 18),
                 ],
               ),
             ),
@@ -239,7 +254,9 @@ class ProfileProgressBar extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 2),
             height: 4,
             decoration: BoxDecoration(
-              color: index <= currentStep ? CupidColors.primary : CupidColors.greyElement,
+              color: index <= currentStep
+                  ? CupidColors.primary
+                  : CupidColors.greyElement,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

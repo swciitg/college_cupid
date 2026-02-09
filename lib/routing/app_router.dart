@@ -1,6 +1,7 @@
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/presentation/screens/authentication/login_webview.dart';
 import 'package:college_cupid/presentation/screens/authentication/welcome.dart';
+import 'package:college_cupid/presentation/screens/blocked/blocked_screen.dart';
 import 'package:college_cupid/presentation/screens/blocked_users/blocked_user_list_screen.dart';
 import 'package:college_cupid/presentation/screens/events/admin_events_management_screen.dart';
 import 'package:college_cupid/presentation/screens/home/home.dart';
@@ -29,6 +30,7 @@ enum AppRoutes {
   searchProfiles,
   speedDating,
   adminEventsManagement,
+  blocked,
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -113,6 +115,11 @@ final goRouter = GoRouter(
       path: '/speedDating',
       name: AppRoutes.speedDating.name,
       builder: (context, state) => const SpeedDatingScreen(),
+    ),
+    GoRoute(
+      path: '/blocked',
+      name: AppRoutes.blocked.name,
+      builder: (context, state) => const BlockedScreen(),
     ),
   ],
 );
