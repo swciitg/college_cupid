@@ -110,17 +110,32 @@ class SharedPrefService {
   static Future<Map<String, String>> getOutlookInfo() async {
     SharedPreferences user = await SharedPreferences.getInstance();
     Map<String, String> info = {};
-    info[DatabaseStrings.accessToken] =
-        user.getString(DatabaseStrings.accessToken) ?? '';
-    info[DatabaseStrings.refreshToken] =
-        user.getString(DatabaseStrings.refreshToken) ?? '';
+    info[DatabaseStrings.accessToken] = user.getString(DatabaseStrings.accessToken) ?? '';
+    info[DatabaseStrings.refreshToken] = user.getString(DatabaseStrings.refreshToken) ?? '';
 
     info[DatabaseStrings.email] = user.getString(DatabaseStrings.email) ?? '';
-    info[DatabaseStrings.displayName] =
-        user.getString(DatabaseStrings.displayName) ?? '';
-    info[DatabaseStrings.rollNumber] =
-        user.getString(DatabaseStrings.rollNumber) ?? '';
+    info[DatabaseStrings.displayName] = user.getString(DatabaseStrings.displayName) ?? '';
+    info[DatabaseStrings.rollNumber] = user.getString(DatabaseStrings.rollNumber) ?? '';
 
     return info;
+  }
+
+  static Future<void> addViewedEventId(String eventId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> viewedIds = prefs.getStringList('viewedEventIds') ?? [];
+    if (!viewedIds.contains(eventId)) {
+      viewedIds.add(eventId);
+      await prefs.setStringList('viewedEventIds', viewedIds);
+    }
+  }
+
+  static Future<List<String>> getViewedEventIds() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('viewedEventIds') ?? [];
+  }
+
+  static Future<void> clearViewedEventIds() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('viewedEventIds');
   }
 }

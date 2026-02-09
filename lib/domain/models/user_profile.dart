@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:college_cupid/domain/models/storage_type.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/globals.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +25,6 @@ class UserProfile {
   List<VoiceRecording> voiceRecordings;
   String phnNumber;
   String insta;
-  StorageType storageType;
-  String? googleAccountEmail;
   bool isAdmin;
   // int whatsappNumber;
   // String instaUserName;
@@ -58,8 +55,6 @@ class UserProfile {
     this.voiceRecordings = const [],
     this.phnNumber = "",
     this.insta = '',
-    this.storageType = StorageType.localStorage,
-    this.googleAccountEmail,
     // this.whatsappNumber = 0,
     // this.instaUserName = '',
     this.isAdmin = false,
@@ -101,15 +96,15 @@ class UserProfile {
       hometown: json['hometown'] ?? '',
       age: json['age'] ?? 20,
       zodiac: json['zodiac'] != null ? Zodiac.fromDatabaseString(json['zodiac']) : Zodiac.aries,
-      storageType: StorageTypeExtension.fromString(json['storageType'] ?? 'LOCAL_STORAGE'),
-      googleAccountEmail: json['googleAccountEmail'],
       isAdmin: json['isAdmin'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    // data['_id'] = id;
+    if (id.isNotEmpty) {
+      data['_id'] = id;
+    }
     data['name'] = name;
     data['gender'] = gender?.databaseString;
     data['email'] = email;
@@ -134,10 +129,6 @@ class UserProfile {
     data['personalityType'] = PersonalityType.random().name;
     data['yearOfJoin'] = yearOfJoin;
     data['deactivated'] = deactivated;
-    data['storageType'] = storageType.value;
-    if (googleAccountEmail != null) {
-      data['googleAccountEmail'] = googleAccountEmail;
-    }
     return data;
   }
 
@@ -162,8 +153,6 @@ class UserProfile {
     String? hometown,
     int? age,
     Zodiac? zodiac,
-    StorageType? storageType,
-    String? googleAccountEmail,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -184,8 +173,6 @@ class UserProfile {
       zodiac: zodiac ?? this.zodiac,
       phnNumber: phnNumber ?? this.phnNumber,
       insta: insta ?? this.insta,
-      storageType: storageType ?? this.storageType,
-      googleAccountEmail: googleAccountEmail ?? this.googleAccountEmail,
     );
   }
 

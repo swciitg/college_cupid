@@ -6,6 +6,7 @@ import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/home_tab_provider.dart';
 import 'package:college_cupid/stores/page_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,6 +94,9 @@ class _SearchProfilesScreenState extends ConsumerState<SearchProfilesScreen> {
 
       // Insert profile at the start of home tab
       ref.read(pageViewProvider.notifier).insertProfileAtStart(profile);
+
+      // Set home tab index to 0 (Explore tab)
+      ref.read(homeTabIndexProvider.notifier).state = 0;
 
       // Navigate back to home
       if (!mounted) return;

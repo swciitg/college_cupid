@@ -52,7 +52,7 @@ class UserProfileRepository extends ApiRepository {
     }
   }
 
-  Future<void> postUserProfile(UserProfile userProfile) async {
+  Future<UserProfile> postUserProfile(UserProfile userProfile) async {
     final userProfileMap = userProfile.toJson();
     log("User Profile Map: $userProfileMap");
 
@@ -60,6 +60,10 @@ class UserProfileRepository extends ApiRepository {
       log("User profile");
       final response = await dio.post(Endpoints.postUserProfile, data: userProfileMap);
       log("Post response: ${response.data}");
+
+      // Extract the created profile from backend response
+      final createdProfile = UserProfile.fromJson(response.data['newUserProfile']);
+      return createdProfile;
     } catch (error) {
       log(error.toString());
       rethrow;

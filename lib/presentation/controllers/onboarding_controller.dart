@@ -1,24 +1,19 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:college_cupid/domain/models/drive_data.dart';
 import 'package:college_cupid/domain/models/personal_info.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/presentation/screens/profile_setup/widgets/heart_state.dart';
+import 'package:college_cupid/repositories/onedrive_repository.dart';
 // import 'package:college_cupid/services/secure_storage_service.dart';
 // import 'package:college_cupid/repositories/onedrive_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
-import 'package:college_cupid/domain/models/storage_type.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/routing/app_router.dart';
 import 'package:college_cupid/services/image_helpers.dart';
 import 'package:college_cupid/services/shared_prefs.dart';
-import 'package:college_cupid/services/firebase_drive_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:college_cupid/shared/diffie_hellman_constants.dart';
 import 'package:college_cupid/shared/enums.dart';
 import 'package:college_cupid/stores/login_store.dart';
@@ -37,7 +32,6 @@ enum OnboardingStep {
   surpriseQuiz,
   chooseInterests,
   addPhotos,
-  driveConnect,
 }
 
 class OnboardingController extends StateNotifier<OnboardingState> {
@@ -149,17 +143,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
           }
         }
         return created;
-      case OnboardingStep.driveConnect:
-        // Admins can skip Google Drive connection
-        if (state.isAdminUser == true) {
-          return true;
-        }
-        // Non-admins must connect Google Drive
-        if (state.isDriveConnected != true) {
-          showSnackBar("Please connect your Google Drive to continue");
-          return false;
-        }
-        return true;
       case OnboardingStep.surpriseQuiz:
         for (var e in state.userProfile!.surpriseQuiz) {
           if (e.answer.isEmpty && (e.audioPath == null || e.audioPath!.isEmpty)) {
@@ -324,7 +307,8 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       final personalInfoRepo = _ref.read(personalInfoRepoProvider);
       final userProfileRepo = _ref.read(userProfileRepoProvider);
 
-      log("BEFORE POST - PersonalInfo: ${state.personalInfo}", name: "OnboardingController");
+      log("BEFORE POST - PersonalInfo: ${state.personalInfo?.toJson()}",
+          name: "OnboardingController");
       await personalInfoRepo.postPersonalInfo(state.personalInfo!);
       log("PERSONAL INFO POSTED", name: "OnboardingController");
 
@@ -355,38 +339,24 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       state = state.copyWith(userProfile: state.userProfile?.copyWith(images: imageModels));
       state = state.copyWith(loadingMessage: "Creating User Profile");
 
-      // Determine storage type based on Google Drive connection
-      final storageType =
-          state.isDriveConnected == true ? StorageType.googleDrive : StorageType.localStorage;
-
-      // Get Google account email if Drive is connected
-      final googleEmail =
-          state.isDriveConnected == true ? FirebaseAuth.instance.currentUser?.email : null;
-
-      // Update user profile with storage type and Google email before posting
-      state = state.copyWith(
-        userProfile: state.userProfile?.copyWith(
-          storageType: storageType,
-          googleAccountEmail: googleEmail,
-        ),
-      );
-
-      log("POSTING USER PROFILE with storageType: ${storageType.name}, googleEmail: $googleEmail",
-          name: "OnboardingController");
       log("POSTING USER PROFILE: ${state.userProfile}", name: "OnboardingController");
-      await userProfileRepo.postUserProfile(state.userProfile!);
+      final createdProfile = await userProfileRepo.postUserProfile(state.userProfile!);
       log("USER PROFILE POSTED", name: "OnboardingController");
+
+      // Update state with the profile returned from backend (includes _id)
+      state = state.copyWith(userProfile: createdProfile);
+
+      // Save profile to shared prefs BEFORE OneDrive upload so _getUserId() can access it
+      await SharedPrefService.saveMyProfile(createdProfile.toJson());
+      log("PROFILE SAVED TO SHARED PREFS with ID: ${createdProfile.id}",
+          name: "OnboardingController");
 
       //upload voice
       await userProfileRepo.postAudioNotes(state.userProfile!);
 
       log("BEFORE DH KEY UPLOAD - Key: ${state.dhPrivateKey}", name: "OnboardingController");
-      // Upload to storage using repository
-      final storageRepo = _ref.read(storageRepositoryProvider);
-      await storageRepo.uploadDHPrivateKey(state.dhPrivateKey!);
+      await OneDriveRepository.uploadDHPrivateKey(state.dhPrivateKey!);
       log("Private Key posted to storage: ${state.dhPrivateKey}", name: "OnboardingController");
-
-      await SharedPrefService.saveMyProfile(state.userProfile!.toJson());
       await _ref.read(userProvider.notifier).initializeProfile();
       state = state.copyWith(loading: false);
       return true;
@@ -418,171 +388,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     state = OnboardingState(currentStep: 0);
   }
 
-  // Google Drive connection methods
-  Future<void> connectGoogleDrive({String? loginHint}) async {
-    try {
-      state = state.copyWith(loading: true, loadingMessage: "Connecting to Google Drive...");
-
-      // Get stored Google account email if exists (unless loginHint is provided)
-      final userProfile = _ref.read(userProvider).myProfile;
-      final storedEmail = loginHint ?? userProfile?.googleAccountEmail;
-
-      // Sign in with Google and initialize Drive API
-      // Pass stored email as hint to force using the same account
-      final credentials = await FirebaseDriveService.signInAndInitialize(
-        loginHint: storedEmail,
-      );
-
-      final googleEmail = credentials['email'];
-
-      state = state.copyWith(
-        isDriveConnected: true,
-        googleDriveToken: credentials['token'],
-        googleDriveFolderId: credentials['folderId'],
-        loading: false,
-        loadingMessage: null,
-      );
-
-      // Store Google account email in user profile
-      if (userProfile != null && googleEmail != null && googleEmail.isNotEmpty) {
-        final updatedProfile = userProfile.copyWith(
-          googleAccountEmail: googleEmail,
-        );
-        final updatedProfileMap =
-            await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        if (updatedProfileMap != null) {
-          final fetchedProfile = UserProfile.fromJson(updatedProfileMap);
-          await _ref.read(userProvider.notifier).updateMyProfile(fetchedProfile);
-          log("Profile updated after Google Drive connection. isAdmin: ${fetchedProfile.isAdmin}");
-        }
-        log("Stored Google account email: $googleEmail");
-      }
-
-      showSnackBar("Successfully connected to Google Drive");
-    } catch (e) {
-      log("Error connecting to Google Drive: $e");
-      showSnackBar("Failed to connect to Google Drive. Please try again.");
-      state = state.copyWith(loading: false, loadingMessage: null);
-      rethrow; // Allow caller to handle the error
-    }
-  }
-
-  Future<void> disconnectGoogleDrive() async {
-    try {
-      await FirebaseDriveService.signOut();
-
-      state = state.copyWith(
-        isDriveConnected: false,
-        googleDriveToken: null,
-        googleDriveFolderId: null,
-      );
-
-      showSnackBar("Disconnected from Google Drive");
-    } catch (e) {
-      log("Error disconnecting from Google Drive: $e");
-      showSnackBar("Failed to disconnect. Please try again.");
-    }
-  }
-
-  /// Continue with local storage (Admin only)
-  /// Updates the user profile to use LOCAL_STORAGE instead of Google Drive
-  Future<void> continueWithLocalStorage() async {
-    try {
-      state = state.copyWith(loading: true, loadingMessage: "Setting up local storage...");
-
-      // Set storage type to local storage
-      _ref.read(storageTypeProvider.notifier).state = StorageType.localStorage;
-
-      // Update user profile with LOCAL_STORAGE type
-      final userProfile = _ref.read(userProvider).myProfile;
-      if (userProfile != null) {
-        final updatedProfile = userProfile.copyWith(
-          storageType: StorageType.localStorage,
-          googleAccountEmail: null, // Clear Google email for local storage
-        );
-        final updatedProfileMap =
-            await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        if (updatedProfileMap != null) {
-          final fetchedProfile = UserProfile.fromJson(updatedProfileMap);
-          await _ref.read(userProvider.notifier).updateMyProfile(fetchedProfile);
-          log("Profile updated after local storage setup. isAdmin: ${fetchedProfile.isAdmin}");
-        }
-        log("Updated storageType to LOCAL_STORAGE in backend");
-      }
-
-      // Store DH private key locally (already stored in SharedPreferences)
-      log("Using local storage for DH private key");
-
-      state = state.copyWith(loading: false, loadingMessage: null);
-      showSnackBar("Local storage configured successfully");
-
-      // Proceed to finish onboarding
-      nextStep();
-    } catch (e) {
-      log("Error setting up local storage: $e");
-      showSnackBar("Failed to setup local storage. Please try again.");
-      state = state.copyWith(loading: false, loadingMessage: null);
-    }
-  }
-
-  /// Restore user data from Google Drive
-  /// Returns true if data was successfully restored, false otherwise
-  Future<bool> restoreDataFromDrive() async {
-    try {
-      state = state.copyWith(loading: true, loadingMessage: "Restoring your data...");
-
-      // Set storage type to Google Drive
-      _ref.read(storageTypeProvider.notifier).state = StorageType.googleDrive;
-
-      // Try to read data from storage
-      final storageRepo = _ref.read(storageRepositoryProvider);
-      final driveData = await storageRepo.readPrivateData();
-
-      if (driveData == null) {
-        log("No data found in storage");
-        state = state.copyWith(loading: false, loadingMessage: null);
-        return false;
-      }
-
-      // Restore DH private key
-      if (driveData.diffieHellmanPrivateKey.isNotEmpty) {
-        await SharedPrefService.setDHPrivateKey(driveData.diffieHellmanPrivateKey);
-        log("DH private key restored");
-      }
-
-      // Restore crush list (optional - may be empty for new users)
-      log("Crush list restored: ${driveData.crushEmailList.length} crushes");
-
-      // Update user profile's storageType in backend
-      final userProfile = _ref.read(userProvider).myProfile;
-      if (userProfile != null) {
-        // Get the Google account email from Firebase Auth
-        final googleUser = FirebaseAuth.instance.currentUser;
-        final googleEmail = googleUser?.email;
-
-        // Ensure all required fields are present with fallbacks
-        final updatedProfile = userProfile.copyWith(
-          storageType: StorageType.googleDrive,
-          googleAccountEmail: googleEmail,
-          hometown: userProfile.hometown.isEmpty ? 'Unknown' : userProfile.hometown,
-          phnNumber: userProfile.phnNumber.isEmpty ? 'N/A' : userProfile.phnNumber,
-          insta: userProfile.insta.isEmpty ? 'N/A' : userProfile.insta,
-        );
-        await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        await _ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
-        log("Updated storageType to GOOGLE_DRIVE in backend");
-      }
-
-      state = state.copyWith(loading: false, loadingMessage: null);
-      showSnackBar("Data restored successfully!");
-      return true;
-    } catch (e) {
-      log("Error restoring data from Drive: $e");
-      state = state.copyWith(loading: false, loadingMessage: null);
-      return false;
-    }
-  }
-
   /// Load user profile and personal info from backend
   Future<void> loadUserData() async {
     try {
@@ -599,10 +404,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
         final userProfile = UserProfile.fromJson(userProfileMap);
         await _ref.read(userProvider.notifier).updateMyProfile(userProfile);
         await SharedPrefService.setDHPublicKey(userProfile.publicKey);
-
-        // Set storage type from user profile
-        _ref.read(storageTypeProvider.notifier).state = userProfile.storageType;
-
         log("User profile loaded successfully");
       }
 
@@ -617,55 +418,6 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("Error loading user data: $e");
       state = state.copyWith(loading: false, loadingMessage: null);
       throw Exception("Failed to load user data: $e");
-    }
-  }
-
-  /// Skip restore and start fresh - regenerate keys and clear data
-  Future<void> skipRestoreAndStartFresh() async {
-    try {
-      state = state.copyWith(loading: true, loadingMessage: "Setting up fresh account...");
-
-      // Set storage type to Local Storage (default)
-      _ref.read(storageTypeProvider.notifier).state = StorageType.localStorage;
-
-      // Generate new DH key pair
-      final keyPair = DiffieHellman.generateKeyPair();
-      final privateKey = keyPair.privateKey.toString();
-
-      // Store the new private key locally
-      await SharedPrefService.setDHPrivateKey(privateKey);
-
-      // Upload the new keys to storage with empty crush list
-      final storageRepo = _ref.read(storageRepositoryProvider);
-      final driveData = DriveData(
-        diffieHellmanPrivateKey: privateKey,
-        crushEmailList: [],
-      );
-      await storageRepo.uploadPrivateData(driveData);
-
-      // Update user profile's storageType in backend
-      final userProfile = _ref.read(userProvider).myProfile;
-      if (userProfile != null) {
-        // Ensure all required fields are present with fallbacks
-        final updatedProfile = userProfile.copyWith(
-          storageType: StorageType.localStorage,
-          googleAccountEmail: null, // Clear Google account email when using local storage
-          hometown: userProfile.hometown.isEmpty ? 'Unknown' : userProfile.hometown,
-          phnNumber: userProfile.phnNumber.isEmpty ? 'N/A' : userProfile.phnNumber,
-          insta: userProfile.insta.isEmpty ? 'N/A' : userProfile.insta,
-        );
-        await _ref.read(userProfileRepoProvider).updateUserProfile(updatedProfile);
-        await _ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
-        log("Updated storageType to LOCAL_STORAGE in backend");
-      }
-
-      log("Fresh account setup complete with new keys");
-      state = state.copyWith(loading: false, loadingMessage: null);
-      showSnackBar("Account setup complete!");
-    } catch (e) {
-      log("Error setting up fresh account: $e");
-      state = state.copyWith(loading: false, loadingMessage: null);
-      throw Exception("Failed to setup fresh account: $e");
     }
   }
 }
@@ -684,9 +436,6 @@ class OnboardingState {
   final HeartState? pink;
   final bool loading;
   final String? loadingMessage;
-  final bool? isDriveConnected;
-  final String? googleDriveToken;
-  final String? googleDriveFolderId;
 
   OnboardingState({
     this.personalInfo,
@@ -702,9 +451,6 @@ class OnboardingState {
     this.pink,
     this.loading = false,
     this.loadingMessage,
-    this.isDriveConnected,
-    this.googleDriveToken,
-    this.googleDriveFolderId,
   }) {
     images ??= [null, null, null];
     userProfile ??= UserProfile();
@@ -725,9 +471,6 @@ class OnboardingState {
       case OnboardingStep.addPhotos:
         final nonNullImagesCount = images?.where((element) => element != null).length ?? 0;
         return nonNullImagesCount >= 3;
-      case OnboardingStep.driveConnect:
-        // Admins can always proceed, non-admins need drive connection
-        return isAdminUser == true || isDriveConnected == true;
       case OnboardingStep.surpriseQuiz:
         return userProfile?.surpriseQuiz.every(
                 (e) => e.answer.isNotEmpty || (e.audioPath != null && e.audioPath!.isNotEmpty)) ??
@@ -752,9 +495,6 @@ class OnboardingState {
     bool? confirmPasswordVisible,
     bool? loading,
     String? loadingMessage,
-    bool? isDriveConnected,
-    String? googleDriveToken,
-    String? googleDriveFolderId,
   }) {
     return OnboardingState(
       personalInfo: personalInfo ?? this.personalInfo,
@@ -770,9 +510,6 @@ class OnboardingState {
       pink: pink ?? this.pink,
       loading: loading ?? this.loading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
-      isDriveConnected: isDriveConnected ?? this.isDriveConnected,
-      googleDriveToken: googleDriveToken ?? this.googleDriveToken,
-      googleDriveFolderId: googleDriveFolderId ?? this.googleDriveFolderId,
     );
   }
 }

@@ -111,15 +111,15 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/app_logo.jpg"
+  image_path: "assets/images/app_logo.png"
   remove_alpha_ios: true
   adaptive_icon_background: "#FCF1EF"
-  adaptive_icon_foreground: "assets/images/app_logo.jpg"
+  adaptive_icon_foreground: "assets/images/app_logo.png"
 
 flutter_native_splash:
 
   color: "#000000"
-  image: "assets/images/app_logo.jpg"
+  image: "assets/images/app_logo.png"
   branding_mode: "bottom"
 
   android: true

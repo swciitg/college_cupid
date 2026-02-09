@@ -1,13 +1,15 @@
 import 'dart:developer';
 
 import 'package:college_cupid/domain/models/user_profile.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/profile/basic_profile_info.dart';
 import 'package:college_cupid/presentation/widgets/profile/logout_button.dart';
-import 'package:college_cupid/presentation/widgets/profile/storage_status_card.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/presentation/widgets/profile/voice_player.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/login_store.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +25,7 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
   final bool backButton;
   final VoidCallback? onPass;
   final VoidCallback? onSmash;
+  final VoidCallback? onDislike;
   final bool isMine;
   final bool showPass;
   final Widget? customHeader;
@@ -35,6 +38,7 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
       this.customHeader,
       this.onPass,
       this.onSmash,
+      this.onDislike,
       super.key});
 
   @override
@@ -44,11 +48,63 @@ class DisplayProfileInfo extends ConsumerStatefulWidget {
 class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
   var _expanded = false;
   final ScrollController _scrollController = ScrollController();
+  bool _isAlreadyLiked = false;
+  bool _isCheckingCrush = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfAlreadyLiked();
+  }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkIfAlreadyLiked() async {
+    if (widget.isMine) {
+      setState(() {
+        _isCheckingCrush = false;
+      });
+      return;
+    }
+
+    try {
+      final crushesRepo = ref.read(crushesRepoProvider);
+      final myPrivateKey = LoginStore.dhPrivateKey;
+
+      if (myPrivateKey == null) {
+        setState(() {
+          _isCheckingCrush = false;
+        });
+        return;
+      }
+
+      // Calculate shared secret
+      final sharedSecret = DiffieHellman.generateSharedSecret(
+        otherPublicKey: BigInt.parse(widget.userProfile.publicKey),
+        myPrivateKey: BigInt.parse(myPrivateKey),
+      ).toString();
+
+      // Check if crush exists via API
+      final exists = await crushesRepo.checkCrushExists(sharedSecret);
+
+      if (mounted) {
+        setState(() {
+          _isAlreadyLiked = exists;
+          _isCheckingCrush = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error checking crush status: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingCrush = false;
+        });
+      }
+    }
   }
 
   @override
@@ -57,6 +113,8 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     // Reset scroll position when profile changes
     if (oldWidget.userProfile.email != widget.userProfile.email) {
       _scrollController.jumpTo(0);
+      // Re-check if the new profile is already liked
+      _checkIfAlreadyLiked();
     }
   }
 
@@ -126,77 +184,154 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
                 if (allQuestions.length >= 3) _surpriseQues(allQuestions[2], 2),
                 const SizedBox(height: 24),
                 if (!widget.isMine) // Only show if not my profile
-                  Row(
-                    children: [
-                      if (widget.showPass) ...[
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: widget.onPass,
-                            child: Container(
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: CupidColors.primaryLight,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    CupidIcons.passButtonIcon,
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Pass",
-                                    style: CupidTextStyles.label1.copyWith(
-                                      color: CupidColors.primaryDark,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                  _isCheckingCrush
+                      ? const SizedBox(
+                          height: 80,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: CupidColors.secondaryColor,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: widget.onSmash,
-                          child: Container(
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: CupidColors.cupidGreen.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                        )
+                      : _isAlreadyLiked
+                          ? Row(
                               children: [
-                                SvgPicture.asset(
-                                  CupidIcons.smashButtonIcon,
-                                  height: 30,
-                                  width: 30,
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: widget.onDislike,
+                                    child: Container(
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: CupidColors.primaryLight,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            CupidIcons.passButtonIcon,
+                                            height: 30,
+                                            width: 30,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Dislike",
+                                            style: CupidTextStyles.label1.copyWith(
+                                              color: CupidColors.primaryDark,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Like",
-                                  style: CupidTextStyles.label1.copyWith(
-                                    color: CupidColors.green,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: widget.onPass,
+                                    child: Container(
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: CupidColors.cupidGreen.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            CupidIcons.smashButtonIcon,
+                                            height: 30,
+                                            width: 30,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Next",
+                                            style: CupidTextStyles.label1.copyWith(
+                                              color: CupidColors.green,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                if (widget.showPass) ...[
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: widget.onPass,
+                                      child: Container(
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          color: CupidColors.primaryLight,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              CupidIcons.passButtonIcon,
+                                              height: 30,
+                                              width: 30,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              "Pass",
+                                              style: CupidTextStyles.label1.copyWith(
+                                                color: CupidColors.primaryDark,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                ],
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: widget.onSmash,
+                                    child: Container(
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: CupidColors.cupidGreen.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            CupidIcons.smashButtonIcon,
+                                            height: 30,
+                                            width: 30,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Like",
+                                            style: CupidTextStyles.label1.copyWith(
+                                              color: CupidColors.green,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                // Only show StorageStatusCard for admins
-                if (widget.isMine && widget.userProfile.isAdmin) const StorageStatusCard(),
                 if (widget.isMine) const LogoutButton(),
                 const SizedBox(height: 100),
               ],

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:college_cupid/domain/models/event_model.dart';
 import 'package:college_cupid/repositories/events_repository.dart';
-import 'package:college_cupid/repositories/storage_provider.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:college_cupid/shared/assets.dart';
 import 'package:college_cupid/stores/home_tab_provider.dart';
 import 'package:college_cupid/shared/colors.dart';
@@ -61,8 +61,10 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
     super.dispose();
   }
 
-  void _markEventAsSeen(String eventId) {
-    ref.read(storageRepositoryProvider).markEventAsViewed(eventId);
+  Future<void> _markEventAsSeen(String eventId) async {
+    await SharedPrefService.addViewedEventId(eventId);
+    // Invalidate the events provider to refresh the list
+    ref.invalidate(eventsFutureProvider);
   }
 
   void _startAutoScroll(List<EventModel> events) {
@@ -125,7 +127,7 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
         }
 
         return GestureDetector(
-          onTap: () {
+          onTap: () async {
             final event = events[_currentPage];
             if (event.route != null) {
               final routeName =
@@ -134,11 +136,19 @@ class _EventUpdateMessageCardState extends ConsumerState<EventUpdateMessageCard>
               final isAppRoute = AppRoutes.values.any((e) => e.name == routeName);
 
               if (isAppRoute) {
-                context.pushNamed(routeName);
+                // Mark event as viewed before navigating
+                await _markEventAsSeen(event.id);
+                if (mounted) {
+                  context.pushNamed(routeName);
+                }
                 return;
               }
             }
-            ref.read(homeTabIndexProvider.notifier).state = 3;
+            // Mark event as viewed when going to events tab
+            await _markEventAsSeen(event.id);
+            if (mounted) {
+              ref.read(homeTabIndexProvider.notifier).state = 3;
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

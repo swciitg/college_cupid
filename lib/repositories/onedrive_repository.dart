@@ -2,15 +2,40 @@ import 'dart:developer';
 
 import 'package:college_cupid/domain/models/onedrive_data.dart';
 import 'package:college_cupid/services/secure_storage_service.dart';
+import 'package:college_cupid/services/shared_prefs.dart';
 import 'package:dio/dio.dart';
 
 class OneDriveRepository {
+  static _log(String message) {
+    log(message, name: "OneDriveRepository");
+  }
+
+  static Future<String> _getUserId() async {
+    try {
+      final profile = await SharedPrefService.getMyProfile();
+      final userId = profile['_id'] ?? profile['id'];
+      if (userId == null || userId.toString().isEmpty) {
+        throw Exception('User ID not found in profile');
+      }
+      return userId.toString();
+    } catch (e) {
+      _log('Error getting user ID: $e');
+      rethrow;
+    }
+  }
+
+  static Future<String> _getFileUrl() async {
+    final userId = await _getUserId();
+    final fileUrl =
+        'https://graph.microsoft.com/v1.0/me/drive/special/approot:/${userId}_user_keys.json:/content';
+    return fileUrl;
+  }
+
   static Future<void> uploadPrivateData(OneDriveData data) async {
     final dio = Dio();
     dio.interceptors.add(AuthInterceptor(dio));
 
-    const uploadUrl =
-        'https://graph.microsoft.com/v1.0/me/drive/special/approot:/user_keys.json:/content';
+    final uploadUrl = await _getFileUrl();
 
     final accessToken = await SecureStorageService.getOutlookAccessToken();
 
@@ -29,9 +54,11 @@ class OneDriveRepository {
       if (res.statusCode == 200 || res.statusCode == 201) {
         return;
       } else {
+        _log('Upload failed with status: ${res.statusCode}');
         return Future.error(res.data);
       }
     } catch (e) {
+      _log('Upload error: $e');
       return Future.error(e);
     }
   }
@@ -40,12 +67,9 @@ class OneDriveRepository {
     final dio = Dio();
     dio.interceptors.add(AuthInterceptor(dio));
 
-    const fileUrl =
-        'https://graph.microsoft.com/v1.0/me/drive/special/approot:/user_keys.json:/content';
+    final fileUrl = await _getFileUrl();
 
     final accessToken = await SecureStorageService.getOutlookAccessToken();
-
-    // log("AccessToken: $accessToken");
 
     try {
       final res = await dio.get(
@@ -59,11 +83,11 @@ class OneDriveRepository {
         final data = OneDriveData.fromJSON(res.data);
         return data;
       } else {
-        log("Onedrive Error200: ${res.data}");
+        _log("Onedrive Error: ${res.data}");
         return Future.error(res.data);
       }
     } on DioException catch (e) {
-      log("Onedrive Error: ${e.response?.data}");
+      _log("Onedrive Error: ${e.response?.data}");
       return Future.error(e.response?.data);
     }
   }
@@ -71,6 +95,7 @@ class OneDriveRepository {
   static Future<List<String>> getMyCrushes() async {
     final data = await readPrivateData();
     if (data == null) {
+      _log('Error: File missing from OneDrive');
       throw Exception("File missing from OneDrive!");
     }
     return data.crushEmailList;
@@ -79,24 +104,28 @@ class OneDriveRepository {
   static Future<void> addCrush(String email) async {
     var data = await readPrivateData();
     if (data == null) {
+      _log('Error: File missing from OneDrive');
       throw Exception("File missing from OneDrive!");
     }
     if (data.crushEmailList.contains(email)) {
+      _log('Error: Email already present in the list');
       throw Exception("Email already present in the list!");
     }
     data.crushEmailList.add(email);
     return uploadPrivateData(data);
   }
 
-  static Future<void> removeCrush(int index) async {
+  static Future<void> removeCrush(String email) async {
     var data = await readPrivateData();
     if (data == null) {
+      _log('Error: File missing from OneDrive');
       throw Exception("File missing from OneDrive!");
     }
-    if (data.crushEmailList.length <= index || index < 0) {
-      throw Exception("Index out of bounds!");
+    if (!data.crushEmailList.contains(email)) {
+      _log('Error: Email not found in crush list');
+      throw Exception("Email not found in crush list!");
     }
-    data.crushEmailList.removeAt(index);
+    data.crushEmailList.remove(email);
     return uploadPrivateData(data);
   }
 
@@ -108,7 +137,8 @@ class OneDriveRepository {
   }
 
   static Future<String?> getDHPrivateKey() async {
-    return (await readPrivateData())?.diffieHellmanPrivateKey;
+    final key = (await readPrivateData())?.diffieHellmanPrivateKey;
+    return key;
   }
 }
 
@@ -119,13 +149,10 @@ class AuthInterceptor extends Interceptor {
   final clientSecret = const String.fromEnvironment("CLIENT_SECRET");
   final tenantID = const String.fromEnvironment("TENANT_ID");
 
-  AuthInterceptor(this.dio) {
-    log(clientSecret);
-  }
+  AuthInterceptor(this.dio);
 
   @override
-  void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Get the access token from secure storage
     String? accessToken = await SecureStorageService.getOutlookAccessToken();
 
@@ -148,8 +175,8 @@ class AuthInterceptor extends Interceptor {
         opts.headers['Authorization'] =
             'Bearer ${await SecureStorageService.getOutlookAccessToken()}';
         if (opts.method == "GET") {
-          cloneReq = await dio.request(opts.path,
-              queryParameters: opts.queryParameters, options: options);
+          cloneReq =
+              await dio.request(opts.path, queryParameters: opts.queryParameters, options: options);
         } else {
           cloneReq = await dio.request(
             opts.path,
@@ -172,13 +199,10 @@ class AuthInterceptor extends Interceptor {
       return false;
     }
 
-    log("Refresh Token: $refreshToken");
-
     try {
       final response = await dio.post(
         'https://login.microsoftonline.com/$tenantID/oauth2/v2.0/token',
-        options: Options(
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}),
+        options: Options(headers: {'Content-Type': 'application/x-www-form-urlencoded'}),
         data: {
           'client_id': clientID,
           'scope': 'User.Read Files.ReadWrite.AppFolder offline_access',
@@ -199,7 +223,7 @@ class AuthInterceptor extends Interceptor {
         return true;
       }
     } on DioException catch (e) {
-      log('Refresh Token Failed: ${e.response?.data}');
+      log('Refresh Token Failed: ${e.response?.data}', name: 'OneDriveRepository');
     }
 
     return false;
