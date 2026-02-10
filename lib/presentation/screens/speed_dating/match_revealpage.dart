@@ -83,6 +83,20 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
               fit: BoxFit.cover,
             ),
           ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: CommonWidgets.backButton(
+                  context: context,
+                  onTap: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                ),
+              ),
+            ),
+          ),
           Center(
             child: Stack(
               children: [
@@ -168,17 +182,19 @@ class _MatchRevealPageState extends ConsumerState<MatchRevealPage> {
                 widget.email == null
                     ? Text("No reveal this time. On to the next?",
                         style: CupidTextStyles.body1.copyWith(color: CupidColors.greySecondary))
-                    : Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          _fetchedProfile!.name,
-                          textAlign: TextAlign.center,
-                          style: CupidTextStyles.body1.copyWith(
-                              color: CupidColors.primary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20),
-                        ),
-                      ),
+                    : _fetchedProfile != null
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              _fetchedProfile!.name,
+                              textAlign: TextAlign.center,
+                              style: CupidTextStyles.body1.copyWith(
+                                  color: CupidColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
 
                 // if (widget.email != null &&
                 //     _fetchedProfile != null) ...[

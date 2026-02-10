@@ -111,8 +111,13 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   void _navigateToChat(String roomId, {String? initialMessage}) {
-    // Avoid double navigation
-    // We can just pushReplacement
+    // Cancel subscriptions before navigating to prevent double handling
+    _matchedSubscription?.cancel();
+    _questionsSubscription?.cancel();
+    _chatMessageSubscription?.cancel();
+    _poolStatsSubscription?.cancel();
+
+    // Navigate to chat, passing the repository so chat can handle it
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -138,7 +143,12 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   void _cancelAndPop() {
-    _repository.leave();
+    try {
+      _repository.leave();
+    } catch (e) {
+      // Ignore errors when leaving (connection might be already closed)
+      log('Error sending leave event: $e');
+    }
     _repository.disconnect();
     context.pop();
   }
@@ -152,6 +162,15 @@ class _WaitingPageState extends State<WaitingPage> {
     _poolStatsSubscription?.cancel();
     _customMessageController.dispose();
     _scrollController.dispose();
+
+    // Clean up repository connection
+    try {
+      _repository.leave();
+    } catch (e) {
+      log('Error sending leave event in dispose: $e');
+    }
+    _repository.disconnect();
+
     super.dispose();
   }
 

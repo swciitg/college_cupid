@@ -143,8 +143,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 onPressed: () {
                   Navigator.pop(context); // Close dialog
                   Navigator.pop(context); // Close chat
-                  if (Navigator.canPop(context))
-                    Navigator.pop(context); // Close associated waiting page if needed
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } // Close associated waiting page if needed
                 },
                 child: const Text("OK"),
               )
@@ -226,8 +227,8 @@ class _ChatScreenState extends State<ChatScreen> {
       enableDrag: false,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false,
+        return PopScope(
+          canPop: false,
           child: Container(
             margin: const EdgeInsets.only(left: 16, right: 16, bottom: 48),
             decoration: BoxDecoration(

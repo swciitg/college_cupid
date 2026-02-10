@@ -21,6 +21,7 @@ import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,7 +50,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   late UserProfile profileSave;
   List<QuizQuestion> surprizeQuiz = [];
   List<TextEditingController> textEditingControllers = [];
-  List<String?> _audioPaths = [null, null, null]; // Track audio paths by index (0, 1, 2)
+  final List<String?> _audioPaths = [null, null, null]; // Track audio paths by index (0, 1, 2)
   late TextEditingController _instaController;
   late TextEditingController _phoneController;
   late TextEditingController _hometownController;
@@ -420,10 +421,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     ),
                     const SizedBox(height: 16),
                     _buildCustomTextField(
-                      label: "WhatsApp Number",
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                    ),
+                        label: "WhatsApp Number",
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        formatters: [LengthLimitingTextInputFormatter(10)]),
                     const SizedBox(height: 16),
                     _buildCustomTextField(
                       label: "Hometown",
@@ -1052,11 +1053,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     );
   }
 
-  Widget _buildCustomTextField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+  Widget _buildCustomTextField(
+      {required String label,
+      required TextEditingController controller,
+      TextInputType keyboardType = TextInputType.text,
+      List<TextInputFormatter> formatters = const <TextInputFormatter>[]}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1073,6 +1074,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: formatters,
             style: CupidTextStyles.label2.copyWith(color: CupidColors.grey950),
             decoration: const InputDecoration(
               border: InputBorder.none,

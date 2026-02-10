@@ -54,6 +54,11 @@ class SpeedDatingRepository {
   }
 
   void disconnect() {
+    try {
+      leave();
+    } catch (e) {
+      log("Error sending leave event", name: "SpeedDatingRepository");
+    }
     _webSocketService.disconnect();
   }
 }

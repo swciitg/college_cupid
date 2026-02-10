@@ -18,7 +18,7 @@ class RippleAnimation extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _RippleAnimationState createState() => _RippleAnimationState();
+  State<RippleAnimation> createState() => _RippleAnimationState();
 }
 
 class _RippleAnimationState extends State<RippleAnimation>
@@ -79,7 +79,7 @@ class _RipplePainter extends CustomPainter {
       // Opacity goes from 0.5 to 0.0 as it expands
       double opacity = (1.0 - value).clamp(0.0, 1.0) * 0.5;
 
-      paint.color = color.withOpacity(opacity);
+      paint.color = color.withValues(alpha: opacity);
 
       // Radius expands from 0 to maxRadius
       // Using a curve makes it look more natural (easeOut)

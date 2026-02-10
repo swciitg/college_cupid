@@ -28,7 +28,6 @@ class DrawerWidget extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 16),
                     const Row(),
-                    // TODO: App Logo
                     const SizedBox(height: 8),
                     // const Divider(),
                     // CupidTextButton(

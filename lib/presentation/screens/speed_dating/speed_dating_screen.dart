@@ -193,7 +193,7 @@ class _SpeedDatingScreenState extends State<SpeedDatingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: CupidButton(
                 text: 'Start Chatting',
-                trailingIcon: Icon(
+                trailingIcon: const Icon(
                   Icons.arrow_forward,
                   color: CupidColors.whitePrimary,
                   size: 20,

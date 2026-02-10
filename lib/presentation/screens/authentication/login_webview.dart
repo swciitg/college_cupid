@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/helpers.dart';
+import 'package:college_cupid/functions/snackbar.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
@@ -111,7 +112,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
               try {
                 // First load the user profile into state
                 final userProfileMap = await userProfileRepo.getUserProfile(email);
-                print(userProfileMap.toString());
                 final userProfile = UserProfile.fromJson(userProfileMap!);
                 await userController.updateMyProfile(userProfile);
                 await SharedPrefService.setDHPublicKey(userProfile.publicKey);
@@ -119,6 +119,7 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                 // Now that user profile is loaded, we can access OneDrive
                 final dhPvtKey = await OneDriveRepository.getDHPrivateKey();
                 if (dhPvtKey == null) {
+                  showSnackBar("Error: User cleared OneDrive Data");
                   // TODO: SOMEONE CLEARED ONEDRIVE DATA : DO SOMETHING HERE
                   LoginStore.logout();
                   goRouter.goNamed(AppRoutes.splash.name);
@@ -128,7 +129,6 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
                 }
               } catch (e) {
                 debugPrint('Error during login: $e');
-                // TODO: Handle onedrive data clear
                 LoginStore.logout();
                 goRouter.goNamed(AppRoutes.splash.name);
               }

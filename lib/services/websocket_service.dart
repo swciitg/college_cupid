@@ -167,12 +167,16 @@ class WebSocketService {
   }
 
   void _send(String event, dynamic data) {
-    if (_channel != null) {
-      final message = jsonEncode({'event': event, 'data': data});
-      // log('Default WebSocketService: Sending: $message');
-      _channel!.sink.add(message);
+    if (_channel != null && _channel!.closeCode == null) {
+      try {
+        final message = jsonEncode({'event': event, 'data': data});
+        // log('Default WebSocketService: Sending: $message');
+        _channel!.sink.add(message);
+      } catch (e) {
+        log('Default WebSocketService: Error sending message: $e');
+      }
     } else {
-      log('Default WebSocketService: Cannot send, channel is null');
+      log('Default WebSocketService: Cannot send, channel is null or closed');
     }
   }
 
@@ -230,9 +234,14 @@ class WebSocketService {
   }
 
   void disconnect() {
-    if (_channel != null) {
-      _channel!.sink.close();
+    if (_channel != null && _channel!.closeCode == null) {
+      try {
+        _channel!.sink.close();
+      } catch (e) {
+        log('Default WebSocketService: Error closing channel: $e');
+      }
     }
+    _channel = null;
     _chatMessageController.close();
     _continuePromptController.close();
     _partnerResponseController.close();

@@ -33,7 +33,6 @@ class LoginStore {
         }
         debugPrint('DEBUG: LoginStore.userId from API set to: ${data['_id']}');
       } else {
-        // TODO: Don't logout if internet is turned-off
         await logout();
         return false;
       }
