@@ -1,18 +1,24 @@
 import 'package:college_cupid/domain/models/update_model.dart';
+import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/stores/user_controller.dart';
+import 'package:college_cupid/utils/common_widgets.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconify_flutter_plus/iconify_flutter_plus.dart';
+import 'package:iconify_flutter_plus/icons/jam.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchUpdateCard extends ConsumerWidget {
   final bool blindMatch;
   final UpdateModel update;
 
-  const MatchUpdateCard({super.key, required this.update, this.blindMatch = false});
+  const MatchUpdateCard(
+      {super.key, required this.update, this.blindMatch = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,13 +63,15 @@ class MatchUpdateCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(myProfile.images.first.url, myProfile.images.first.blurHash),
+              _buildAvatar(
+                  myProfile.images.first.url, myProfile.images.first.blurHash),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(FluentIcons.heart_24_filled, color: Colors.white, size: 28),
+                child: Icon(FluentIcons.heart_24_filled,
+                    color: Colors.white, size: 28),
               ),
-              _buildAvatar(
-                  update.matchedUser!.images.first.url, update.matchedUser!.images.first.blurHash),
+              _buildAvatar(update.matchedUser!.images.first.url,
+                  update.matchedUser!.images.first.blurHash),
             ],
           ),
           const SizedBox(height: 16),
@@ -79,13 +87,44 @@ class MatchUpdateCard extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                  child: _buildSocialButton('Whatsapp', FluentIcons.chat_24_regular, whatsappURL)),
-              const SizedBox(width: 12),
+                child: CommonWidgets.button(
+                  height: 40,
+                  icon: const Iconify(Jam.whatsapp, color: Colors.green),
+                  bgColor: CupidColors.whitePrimary.withAlpha(200),
+                  title: update.matchedUser!.phnNumber,
+                  textStyle:
+                      CupidTextStyles.body1.copyWith(color: Colors.green),
+                  onTap: () async {
+                    final uri = Uri.parse(whatsappURL);
+                    if (!await launchUrl(uri,
+                        mode: LaunchMode.externalApplication)) {
+                      debugPrint('Could not launch $whatsappURL');
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
               Expanded(
-                  child:
-                      _buildSocialButton('Instagram', FluentIcons.camera_24_regular, instagramURL)),
+                child: CommonWidgets.button(
+                  height: 40,
+                  title: update.matchedUser!.insta,
+                  textStyle: CupidTextStyles.body1
+                      .copyWith(color: CupidColors.primary),
+                  icon:
+                      const Iconify(Jam.instagram, color: CupidColors.primary),
+                  bgColor: CupidColors.whitePrimary.withAlpha(200),
+                  onTap: () async {
+                    final uri = Uri.parse(instagramURL);
+                    if (!await launchUrl(uri,
+                        mode: LaunchMode.externalApplication)) {
+                      debugPrint('Could not launch $instagramURL');
+                    }
+                  },
+                ),
+              ),
             ],
-          )
+          ),
+          // )
         ],
       ),
     );
@@ -110,34 +149,6 @@ class MatchUpdateCard extends ConsumerWidget {
             height: 60,
             index: 0,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialButton(String label, IconData icon, String url) {
-    return GestureDetector(
-      onTap: () {
-        launchUrlString(url);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style:
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
-            ),
-            const SizedBox(width: 6),
-            Icon(icon, color: Colors.white, size: 16),
-          ],
         ),
       ),
     );

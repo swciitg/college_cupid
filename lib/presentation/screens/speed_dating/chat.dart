@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:college_cupid/repositories/speed_dating.dart';
 import 'package:college_cupid/shared/styles.dart';
 import 'package:college_cupid/utils/common_widgets.dart';
@@ -86,6 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
           } else {
             _progress = 1.0;
             _timer?.cancel();
+            HapticFeedback.heavyImpact();
           }
         });
       }
@@ -101,6 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _setupListeners() {
     widget.repository.chatMessageStream.listen((data) {
       if (mounted) {
+        HapticFeedback.lightImpact();
         setState(() {
           _messages.add("Partner: ${data['message']}");
         });
@@ -125,13 +128,15 @@ class _ChatScreenState extends State<ChatScreen> {
         // For now, assume popping back to WaitingPage which then handles its own state or just closes.
         // WaitingPage has `_disconnect`.
         Navigator.pop(context); // Close Chat
-        if (Navigator.canPop(context)) Navigator.pop(context); // Close WaitingPage if possible?
+        if (Navigator.canPop(context))
+          Navigator.pop(context); // Close WaitingPage if possible?
         // Or just one pop if we replaced WaitingPage.
       }
     });
 
     widget.repository.disconnectedStream.listen((_) {
       if (mounted) {
+        HapticFeedback.mediumImpact();
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -240,18 +245,21 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Column(
                     spacing: 8,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Time’s Up!",
-                        style: CupidTextStyles.title2.copyWith(color: CupidColors.greyPrimary),
+                        style: CupidTextStyles.title2
+                            .copyWith(color: CupidColors.greyPrimary),
                       ),
                       Text("Would you like to see who you were talking to?",
                           textAlign: TextAlign.center,
-                          style: CupidTextStyles.body1.copyWith(color: CupidColors.greySecondary)),
+                          style: CupidTextStyles.body1
+                              .copyWith(color: CupidColors.greySecondary)),
                     ],
                   ),
                 ),
@@ -260,7 +268,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   thickness: 1,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                   child: Row(
                     children: [
                       Expanded(
@@ -305,7 +314,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return (await showDialog(
           context: context,
           builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -429,7 +439,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
                     children: [
-                      const Text("Speed Dating", style: CupidTextStyles.brandTitle1),
+                      const Text("Speed Dating",
+                          style: CupidTextStyles.brandTitle1),
                       const Spacer(),
                       Text(
                         _formattedTime,
@@ -442,7 +453,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       PopupMenuButton<String>(
                         color: CupidColors.whitePrimary,
                         surfaceTintColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         onSelected: (value) {
                           if (value == 'report') {
                             _showReportConfirmation();
@@ -496,15 +508,21 @@ class _ChatScreenState extends State<ChatScreen> {
                         final msg = _messages[index];
                         final isMe = msg.startsWith("Me:");
                         return Align(
-                          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                          alignment: isMe
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
                           child: Container(
                             constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.75,
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.75,
                             ),
                             padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
                             decoration: BoxDecoration(
-                              color: isMe ? CupidColors.primary : CupidColors.whitePrimary,
+                              color: isMe
+                                  ? CupidColors.primary
+                                  : CupidColors.whitePrimary,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(isMe ? 10 : 0),
                                 topRight: const Radius.circular(10),
@@ -523,7 +541,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16),
                   child: Row(
                     children: [
                       Expanded(
@@ -534,21 +553,24 @@ class _ChatScreenState extends State<ChatScreen> {
                           controller: _messageController,
                           decoration: InputDecoration(
                             hintText: 'Message',
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            hintStyle:
-                                CupidTextStyles.label2.copyWith(color: CupidColors.greySecondary),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            hintStyle: CupidTextStyles.label2
+                                .copyWith(color: CupidColors.greySecondary),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: CupidColors.borderSecondary),
+                              borderSide: const BorderSide(
+                                  color: CupidColors.borderSecondary),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: CupidColors.primary),
+                              borderSide:
+                                  const BorderSide(color: CupidColors.primary),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: CupidColors.primaryDark),
+                              borderSide: const BorderSide(
+                                  color: CupidColors.primaryDark),
                             ),
                           ),
                           onSubmitted: (_) => _sendMessage(),
@@ -563,7 +585,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             padding: const EdgeInsets.all(12),
                             clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
-                                color: _isChatDisabled ? Colors.grey : const Color(0xFFEB425E),
+                                color: _isChatDisabled
+                                    ? Colors.grey
+                                    : const Color(0xFFEB425E),
                                 borderRadius: BorderRadius.circular(14)),
                             child: SvgPicture.asset(
                               'assets/icons/send.svg',
@@ -603,7 +627,9 @@ class _ActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: CupidColors.borderSecondary),
         ),
-        child: Text(label, style: CupidTextStyles.label1.copyWith(color: CupidColors.greyPrimary)),
+        child: Text(label,
+            style: CupidTextStyles.label1
+                .copyWith(color: CupidColors.greyPrimary)),
       ),
     );
   }

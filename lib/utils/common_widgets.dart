@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 class CommonWidgets {
   static Widget button(
       {required String title,
+      double? height,
       Color? bgColor,
       Widget? icon,
       TextStyle? textStyle,
@@ -14,7 +15,7 @@ class CommonWidgets {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        height: 56,
+        height: height ?? 56,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
         decoration: ShapeDecoration(
           color: bgColor ?? CupidColors.primary,
