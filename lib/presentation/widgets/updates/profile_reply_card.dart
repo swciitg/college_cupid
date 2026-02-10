@@ -34,8 +34,6 @@ class ProfileReplyCard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildContent(),
           const SizedBox(height: 12),
-          const Divider(height: 1, color: Color(0xFFEEEEEE)),
-          const SizedBox(height: 12),
           UpdateCardFooter(update: update),
         ],
       ),

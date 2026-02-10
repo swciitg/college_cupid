@@ -72,6 +72,7 @@ class _DisplayProfileInfoState extends ConsumerState<DisplayProfileInfo> {
     }
 
     try {
+      if (!mounted) return;
       final crushesRepo = ref.read(crushesRepoProvider);
       final myPrivateKey = LoginStore.dhPrivateKey;
 

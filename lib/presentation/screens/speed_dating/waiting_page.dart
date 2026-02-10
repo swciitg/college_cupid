@@ -57,6 +57,7 @@ class _WaitingPageState extends State<WaitingPage> {
   StreamSubscription? _questionsSubscription;
   StreamSubscription? _chatMessageSubscription;
   StreamSubscription? _poolStatsSubscription;
+  StreamSubscription? _partnerLeftSubscription;
   int _boysCount = 0;
   int _girlsCount = 0;
   int _totalRooms = 0;
@@ -93,6 +94,12 @@ class _WaitingPageState extends State<WaitingPage> {
       }
     });
 
+    _partnerLeftSubscription = _repository.partnerLeftStream.listen((_) {
+      if (mounted) {
+        _showErrorAndPop('Partner left the waiting room');
+      }
+    });
+
     _poolStatsSubscription = _repository.poolStatsStream.listen((data) {
       if (mounted) {
         setState(() {
@@ -120,6 +127,7 @@ class _WaitingPageState extends State<WaitingPage> {
     _questionsSubscription?.cancel();
     _chatMessageSubscription?.cancel();
     _poolStatsSubscription?.cancel();
+    _partnerLeftSubscription?.cancel();
 
     // Navigate to chat, passing the repository so chat can handle it
     Navigator.pushReplacement(
@@ -163,6 +171,7 @@ class _WaitingPageState extends State<WaitingPage> {
     _questionsSubscription?.cancel();
     _chatMessageSubscription?.cancel();
     _disconnectedSubscription?.cancel();
+    _partnerLeftSubscription?.cancel();
     _poolStatsSubscription?.cancel();
     _customMessageController.dispose();
     _scrollController.dispose();
@@ -170,6 +179,7 @@ class _WaitingPageState extends State<WaitingPage> {
     // Only clean up repository connection if NOT navigating to chat
     // If navigating to chat, the ChatScreen will manage the connection
     if (!_isNavigatingToChat) {
+      log("LEAVING WAITING ROOM");
       try {
         _repository.leave();
       } catch (e) {
