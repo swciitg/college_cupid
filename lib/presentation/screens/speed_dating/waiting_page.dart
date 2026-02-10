@@ -25,6 +25,7 @@ class _WaitingPageState extends State<WaitingPage> {
   final SpeedDatingRepository _repository = SpeedDatingRepository();
 
   StreamSubscription? _disconnectedSubscription;
+  bool _isNavigatingToChat = false;
 
   @override
   void initState() {
@@ -111,6 +112,9 @@ class _WaitingPageState extends State<WaitingPage> {
   }
 
   void _navigateToChat(String roomId, {String? initialMessage}) {
+    // Set flag to prevent dispose from closing connection
+    _isNavigatingToChat = true;
+
     // Cancel subscriptions before navigating to prevent double handling
     _matchedSubscription?.cancel();
     _questionsSubscription?.cancel();
@@ -163,13 +167,16 @@ class _WaitingPageState extends State<WaitingPage> {
     _customMessageController.dispose();
     _scrollController.dispose();
 
-    // Clean up repository connection
-    try {
-      _repository.leave();
-    } catch (e) {
-      log('Error sending leave event in dispose: $e');
+    // Only clean up repository connection if NOT navigating to chat
+    // If navigating to chat, the ChatScreen will manage the connection
+    if (!_isNavigatingToChat) {
+      try {
+        _repository.leave();
+      } catch (e) {
+        log('Error sending leave event in dispose: $e');
+      }
+      _repository.disconnect();
     }
-    _repository.disconnect();
 
     super.dispose();
   }
