@@ -1,5 +1,4 @@
 import 'package:college_cupid/domain/models/update_model.dart';
-import 'package:college_cupid/functions/launchers.dart';
 import 'package:college_cupid/presentation/widgets/profile/profile_image.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
@@ -11,14 +10,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconify_flutter_plus/iconify_flutter_plus.dart';
 import 'package:iconify_flutter_plus/icons/jam.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchUpdateCard extends ConsumerWidget {
   final bool blindMatch;
   final UpdateModel update;
 
-  const MatchUpdateCard(
-      {super.key, required this.update, this.blindMatch = false});
+  const MatchUpdateCard({super.key, required this.update, this.blindMatch = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,15 +60,13 @@ class MatchUpdateCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(
-                  myProfile.images.first.url, myProfile.images.first.blurHash),
+              _buildAvatar(myProfile.images.first.url, myProfile.images.first.blurHash),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(FluentIcons.heart_24_filled,
-                    color: Colors.white, size: 28),
+                child: Icon(FluentIcons.heart_24_filled, color: Colors.white, size: 28),
               ),
-              _buildAvatar(update.matchedUser!.images.first.url,
-                  update.matchedUser!.images.first.blurHash),
+              _buildAvatar(
+                  update.matchedUser!.images.first.url, update.matchedUser!.images.first.blurHash),
             ],
           ),
           const SizedBox(height: 16),
@@ -92,12 +87,10 @@ class MatchUpdateCard extends ConsumerWidget {
                   icon: const Iconify(Jam.whatsapp, color: Colors.green),
                   bgColor: CupidColors.whitePrimary.withAlpha(200),
                   title: update.matchedUser!.phnNumber,
-                  textStyle:
-                      CupidTextStyles.body1.copyWith(color: Colors.green),
+                  textStyle: CupidTextStyles.body1.copyWith(color: Colors.green),
                   onTap: () async {
                     final uri = Uri.parse(whatsappURL);
-                    if (!await launchUrl(uri,
-                        mode: LaunchMode.externalApplication)) {
+                    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                       debugPrint('Could not launch $whatsappURL');
                     }
                   },
@@ -108,15 +101,12 @@ class MatchUpdateCard extends ConsumerWidget {
                 child: CommonWidgets.button(
                   height: 40,
                   title: update.matchedUser!.insta,
-                  textStyle: CupidTextStyles.body1
-                      .copyWith(color: CupidColors.primary),
-                  icon:
-                      const Iconify(Jam.instagram, color: CupidColors.primary),
+                  textStyle: CupidTextStyles.body1.copyWith(color: CupidColors.primary),
+                  icon: const Iconify(Jam.instagram, color: CupidColors.primary),
                   bgColor: CupidColors.whitePrimary.withAlpha(200),
                   onTap: () async {
                     final uri = Uri.parse(instagramURL);
-                    if (!await launchUrl(uri,
-                        mode: LaunchMode.externalApplication)) {
+                    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                       debugPrint('Could not launch $instagramURL');
                     }
                   },

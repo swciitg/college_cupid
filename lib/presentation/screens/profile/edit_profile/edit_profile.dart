@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:blurhash_ffi/blurhashffi_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -45,7 +46,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   late bool _displaySexualOrientation;
   late LookingFor _relationshipGoal;
   late bool _displayRelationshipGoal;
-  List<File?> newImages = [null, null, null];
+  List<Uint8List?> newImages = [null, null, null];
   List<String> deletedImages = [];
   late UserProfile profileSave;
   List<QuizQuestion> surprizeQuiz = [];
@@ -230,9 +231,15 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         setState(() {});
         var count = 0;
         for (int i = 0; i < newImages.length; i++) {
-          final image = newImages[i];
-          if (image == null) continue;
-          final url = await ref.read(userProfileRepoProvider).postUserProfileImage(image,
+          final imageBytes = newImages[i];
+          if (imageBytes == null) continue;
+
+          // Create a temporary file from memory bytes for upload
+          final tempDir = await Directory.systemTemp.createTemp('cupid_edit_');
+          final tempFile = File('${tempDir.path}/upload_$i.jpg');
+          await tempFile.writeAsBytes(imageBytes);
+
+          final url = await ref.read(userProfileRepoProvider).postUserProfileImage(tempFile,
               onSendProgress: (val) {
             final imageProgress = (count + val) / newImagesLenth * 100;
             setState(
@@ -241,13 +248,18 @@ class _EditProfileState extends ConsumerState<EditProfile> {
               },
             );
           });
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+
+          // Use MemoryImage instead of FileImage for blurhash to avoid file access issues
+          final blurHash =
+              await imageHelpers.encodeBlurHash(imageProvider: MemoryImage(imageBytes));
           if (i <= profile.images.length - 1) {
             updatedImages[i] = ImageModel(url: url, blurHash: blurHash);
           } else {
             updatedImages.add(ImageModel(url: url, blurHash: blurHash));
           }
           count++;
+
+          log("UPLOADED");
         }
       }
 
@@ -353,6 +365,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
         final updatedProfile = UserProfile.fromJson(updatedProfileMap);
         ref.read(userProvider.notifier).updateMyProfile(updatedProfile);
         await SharedPrefService.saveMyProfile(updatedProfile.toJson());
+        ref.read(onboardingControllerProvider.notifier).setAdmin(updatedProfile.isAdmin);
       }
 
       setState(() {
@@ -938,7 +951,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             borderRadius: const BorderRadius.all(
                               Radius.circular(20),
                             ),
-                            child: Image.file(newImages[index]!, fit: BoxFit.cover),
+                            child: Image.memory(newImages[index]!, fit: BoxFit.cover),
                           ),
                         ),
                         _deleteImageButton(index),
@@ -983,18 +996,18 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         )
                       : GestureDetector(
                           onTap: () async {
-                            final image = await imageHelpers.pickImage();
-                            if (image == null) return;
-                            final pickedImage = await imageHelpers.xFileToImage(xFile: image);
-                            if (!mounted) return;
-                            final croppedImage =
-                                await Navigator.of(context).push<File>(MaterialPageRoute(
-                              builder: (context) => CropImageScreen(image: pickedImage),
-                            ));
-                            if (croppedImage == null) return;
-                            setState(() {
-                              newImages[index] = croppedImage;
-                            });
+                            final xFile = await imageHelpers.pickImage();
+                            if (xFile == null) return;
+
+                            // Read bytes directly into memory
+                            try {
+                              final bytes = await xFile.readAsBytes();
+                              setState(() {
+                                newImages[index] = bytes;
+                              });
+                            } catch (e) {
+                              log("Error reading image bytes: $e");
+                            }
                           },
                           child: const Center(
                             child: Icon(Icons.add, size: 40),

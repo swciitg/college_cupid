@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:college_cupid/domain/models/personal_info.dart';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/diffie_hellman.dart';
@@ -66,6 +67,10 @@ class OnboardingController extends StateNotifier<OnboardingState> {
   //     pink: pink,
   //   );
   // }
+
+  void setAdmin(bool isAdmin) {
+    state = state.copyWith(isAdminUser: isAdmin);
+  }
 
   void nextStep() async {
     final valid = await validateSubmit();
@@ -289,14 +294,25 @@ class OnboardingController extends StateNotifier<OnboardingState> {
     );
   }
 
-  void pickImage(Future<File?> Function(Image) cropImage, int index) async {
-    final image = await imageHelpers.pickImage();
-    if (image == null) return;
-    Image pickedImage = await imageHelpers.xFileToImage(xFile: image);
-    final croppedImage = await cropImage(pickedImage);
-    final images = state.images;
-    images![index] = croppedImage;
-    state = state.copyWith(images: images);
+  void pickImage(int index) async {
+    final xFile = await imageHelpers.pickImage();
+    if (xFile == null) return;
+
+    // Read bytes into memory immediately from the original file
+    try {
+      final bytes = await xFile.readAsBytes();
+      final imageBytes = state.imageBytes;
+      imageBytes![index] = bytes;
+
+      // Keep a dummy file reference for compatibility (won't be used)
+      final images = state.images;
+      images![index] = File(xFile.path);
+
+      state = state.copyWith(images: images, imageBytes: imageBytes);
+    } catch (e) {
+      log("Error reading image bytes: $e");
+      showSnackBar("Failed to load image");
+    }
   }
 
   Future<bool> createUser() async {
@@ -319,11 +335,18 @@ class OnboardingController extends StateNotifier<OnboardingState> {
       log("IMAGES COUNT: ${state.images?.length}, Images: $state.images",
           name: "OnboardingController");
       for (int i = 0; i < state.images!.length; i++) {
-        final image = state.images![i];
-        if (image != null) {
+        final imageBytes = state.imageBytes![i];
+
+        if (imageBytes != null) {
           log("UPLOADING IMAGE $i", name: "OnboardingController");
+
+          // Create a temporary file from memory bytes for upload
+          final tempDir = await Directory.systemTemp.createTemp('cupid_upload_');
+          final tempFile = File('${tempDir.path}/upload_$i.jpg');
+          await tempFile.writeAsBytes(imageBytes);
+
           final imageUrl = await userProfileRepo.postUserProfileImage(
-            image,
+            tempFile,
             onSendProgress: (val) {
               imageProgress = (i + val) / state.images!.length * 100;
               state = state.copyWith(
@@ -331,8 +354,12 @@ class OnboardingController extends StateNotifier<OnboardingState> {
               );
             },
           );
-          final blurHash = await imageHelpers.encodeBlurHash(imageProvider: FileImage(image));
+
+          // Use MemoryImage instead of FileImage for blurhash to avoid file access issues
+          final blurHash =
+              await imageHelpers.encodeBlurHash(imageProvider: MemoryImage(imageBytes));
           imageModels.add(ImageModel(url: imageUrl, blurHash: blurHash));
+          log("UPLOADED");
         }
       }
       log("IMAGES POSTED", name: "OnboardingController");
@@ -428,6 +455,7 @@ class OnboardingState {
   final int currentStep;
   late UserProfile? userProfile;
   late List<File?>? images;
+  late List<Uint8List?>? imageBytes; // Store bytes in memory
   final int year;
   final List<String>? interests;
   final bool? isAdminUser;
@@ -443,6 +471,7 @@ class OnboardingState {
     required this.currentStep,
     this.userProfile,
     this.images,
+    this.imageBytes,
     this.year = 1,
     this.interests,
     this.isAdminUser,
@@ -453,6 +482,7 @@ class OnboardingState {
     this.loadingMessage,
   }) {
     images ??= [null, null, null];
+    imageBytes ??= [null, null, null];
     userProfile ??= UserProfile();
   }
 
@@ -484,6 +514,7 @@ class OnboardingState {
     int? currentStep,
     UserProfile? userProfile,
     List<File?>? images,
+    List<Uint8List?>? imageBytes,
     int? year,
     SexualOrientationModel? sexualOrientation,
     List<String>? interests,
@@ -502,6 +533,7 @@ class OnboardingState {
       currentStep: currentStep ?? this.currentStep,
       userProfile: userProfile ?? this.userProfile,
       images: images ?? this.images,
+      imageBytes: imageBytes ?? this.imageBytes,
       year: year ?? this.year,
       interests: interests ?? this.interests,
       isAdminUser: isAdminUser ?? this.isAdminUser,

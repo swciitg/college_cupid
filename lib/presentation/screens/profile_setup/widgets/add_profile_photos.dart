@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:college_cupid/presentation/controllers/onboarding_controller.dart';
-import 'package:college_cupid/presentation/screens/profile/edit_profile/crop_image_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,15 +10,15 @@ class AddPhotos extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingControllerProvider);
-    final images = onboardingState.images ?? [];
+    final imageBytes = onboardingState.imageBytes ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...List.generate(images.length, (index) {
+        ...List.generate(imageBytes.length, (index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: _buildPhotoSlot(context, ref, index, images[index]),
+            child: _buildPhotoSlot(context, ref, index, imageBytes[index]),
           );
         }),
 
@@ -28,7 +27,7 @@ class AddPhotos extends ConsumerWidget {
     );
   }
 
-  Widget _buildPhotoSlot(BuildContext context, WidgetRef ref, int index, File? image) {
+  Widget _buildPhotoSlot(BuildContext context, WidgetRef ref, int index, Uint8List? imageBytes) {
     // Aspect ratio 1:1 or 4:5? Design looks like square or slightly tall.
     // Using simple container with height.
     const height = 350.0;
@@ -50,8 +49,8 @@ class AddPhotos extends ConsumerWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (image != null)
-                Image.file(image, fit: BoxFit.cover)
+              if (imageBytes != null)
+                Image.memory(imageBytes, fit: BoxFit.cover)
               else
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +82,7 @@ class AddPhotos extends ConsumerWidget {
                     const SizedBox(height: 20),
                   ],
                 ),
-              if (image != null)
+              if (imageBytes != null)
                 Positioned(
                   bottom: 16,
                   left: 0,
@@ -120,12 +119,6 @@ class AddPhotos extends ConsumerWidget {
   }
 
   void _pickImage(BuildContext context, WidgetRef ref, int index) {
-    ref.read(onboardingControllerProvider.notifier).pickImage((val) {
-      return Navigator.of(context).push<File>(
-        MaterialPageRoute(
-          builder: (context) => CropImageScreen(image: val),
-        ),
-      );
-    }, index);
+    ref.read(onboardingControllerProvider.notifier).pickImage(index);
   }
 }

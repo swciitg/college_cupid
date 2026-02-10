@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:college_cupid/domain/models/user_profile.dart';
 import 'package:college_cupid/functions/helpers.dart';
 import 'package:college_cupid/functions/snackbar.dart';
+import 'package:college_cupid/presentation/widgets/ui/college_cupid_upgrader.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
 import 'package:college_cupid/repositories/personal_info_repository.dart';
 import 'package:college_cupid/repositories/user_profile_repository.dart';
@@ -141,11 +142,13 @@ class _LoginWebviewState extends ConsumerState<LoginWebview> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CupidColors.backgroundColor,
-      body: SafeArea(
-        child: WebViewWidget(
-          controller: controller,
+    return CollegeCupidUpgrader(
+      child: Scaffold(
+        backgroundColor: CupidColors.backgroundColor,
+        body: SafeArea(
+          child: WebViewWidget(
+            controller: controller,
+          ),
         ),
       ),
     );
