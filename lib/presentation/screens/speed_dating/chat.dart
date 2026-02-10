@@ -87,7 +87,6 @@ class _ChatScreenState extends State<ChatScreen> {
           } else {
             _progress = 1.0;
             _timer?.cancel();
-            HapticFeedback.heavyImpact();
           }
         });
       }
@@ -136,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     widget.repository.disconnectedStream.listen((_) {
       if (mounted) {
-        HapticFeedback.mediumImpact();
+        HapticFeedback.heavyImpact();
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -162,6 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     widget.repository.continuePromptStream.listen((_) {
       if (mounted) {
+        HapticFeedback.heavyImpact();
         _showRevealSheet();
       }
     });
@@ -201,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
             }
           }
         }
-
+        HapticFeedback.heavyImpact();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -311,6 +311,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<bool> _onWillPop() async {
+    HapticFeedback.lightImpact();
     return (await showDialog(
           context: context,
           builder: (context) => Dialog(
