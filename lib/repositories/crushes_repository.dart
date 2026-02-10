@@ -103,4 +103,20 @@ class CrushesRepository extends ApiRepository {
       return false;
     }
   }
+
+  Future<bool> updateCrushes(List<String> sharedSecretList) async {
+    try {
+      Response res = await dio.post(
+        Endpoints.updateCrushes,
+        data: jsonEncode({'sharedSecretList': sharedSecretList}),
+      );
+      if (res.statusCode == 200 && res.data['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      return false;
+    }
+  }
 }

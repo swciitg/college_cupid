@@ -1,11 +1,17 @@
+import 'dart:developer';
+
 import 'package:college_cupid/domain/models/update_model.dart';
+import 'package:college_cupid/functions/diffie_hellman.dart';
 import 'package:college_cupid/presentation/widgets/updates/crush_card.dart';
 import 'package:college_cupid/presentation/widgets/updates/update_item_builder.dart';
 import 'package:college_cupid/presentation/widgets/global/cupid_tab_bar.dart';
 import 'package:college_cupid/presentation/widgets/global/custom_loader.dart';
+import 'package:college_cupid/repositories/crushes_repository.dart';
 import 'package:college_cupid/repositories/onedrive_repository.dart';
+import 'package:college_cupid/repositories/user_profile_repository.dart';
 import 'package:college_cupid/shared/colors.dart';
 import 'package:college_cupid/shared/styles.dart';
+import 'package:college_cupid/stores/login_store.dart';
 import 'package:college_cupid/stores/updates_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,6 +68,12 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
 
     try {
       final emails = await OneDriveRepository.getMyCrushes();
+
+      // Silently sync shared secrets with backend
+      if (emails.isNotEmpty && LoginStore.dhPrivateKey != null) {
+        _syncSharedSecretsWithBackend(emails);
+      }
+
       if (mounted) {
         setState(() {
           _crushEmails = emails;
@@ -75,6 +87,42 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with SingleTicker
           _isLoadingCrushes = false;
         });
       }
+    }
+  }
+
+  Future<void> _syncSharedSecretsWithBackend(List<String> crushEmails) async {
+    try {
+      final userProfileRepo = ref.read(userProfileRepoProvider);
+      final crushesRepo = ref.read(crushesRepoProvider);
+      final myPrivateKey = BigInt.parse(LoginStore.dhPrivateKey!);
+
+      List<String> sharedSecrets = [];
+
+      for (String email in crushEmails) {
+        try {
+          final profileMap = await userProfileRepo.getUserProfile(email);
+          if (profileMap != null && profileMap['publicKey'] != null) {
+            final theirPublicKey = BigInt.parse(profileMap['publicKey']);
+            final sharedSecret = DiffieHellman.generateSharedSecret(
+              otherPublicKey: theirPublicKey,
+              myPrivateKey: myPrivateKey,
+            ).toString();
+            sharedSecrets.add(sharedSecret);
+          }
+        } catch (e) {
+          // Skip this crush if there's an error fetching their profile
+          continue;
+        }
+      }
+
+      // Update backend with all shared secrets
+      if (sharedSecrets.isNotEmpty) {
+        await crushesRepo.updateCrushes(sharedSecrets);
+        log("Updated sharedSecrets with ${sharedSecrets.length} entries");
+      }
+    } catch (e) {
+      // Silently fail - don't show error to user as this is a background sync
+      log("Error syncing sharedSecrets with backend");
     }
   }
 
